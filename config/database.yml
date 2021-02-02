@@ -1,0 +1,33 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode  
+  pool: <%= ENV["DB_POOL"] || ENV['RAILS_MAX_THREADS'] || 5 %>
+
+local: 
+  <<: *default
+  database: <%= ENV["DATABASE_NAME"]%>
+
+development:
+  <<: *default
+  url: <%= ENV["DATABASE_URL"] %>
+  database: <%= ENV["DATABASE_NAME"]%>
+
+staging:
+  <<: *default
+  url: <%= ENV["DATABASE_URL"] %>
+  sslmode: require
+  reconnect: true
+  prepared_statements: false
+  advisory_locks: false
+
+test:
+  <<: *default
+  database: mvms-test
+
+production:
+  <<: *default
+  url: <%= ENV["DATABASE_URL"] %>
+  sslmode: require
+  reconnect: true
+  prepared_statements: false
+  advisory_locks: false
