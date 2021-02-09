@@ -66,5 +66,6 @@ Rails.application.configure do
 
   config.debug_exception_response_format = :api
 
-  config.hosts << ENV['API_GATEWAY_URL']
+  # Clear the entire whitelist
+  config.hosts.clear
 end
