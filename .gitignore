@@ -12,6 +12,8 @@
 /tmp/*
 !/log/.keep
 !/tmp/.keep
+/.idea
+
 
 # Ignore pidfiles, but keep the directory.
 /tmp/pids/*
@@ -29,4 +31,3 @@
 # Ignore application configuration
 /config/application.yml
 
-/swagger
