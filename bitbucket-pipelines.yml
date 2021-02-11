@@ -1,0 +1,19 @@
+#  Template Ruby build
+
+#  This template allows you to validate your Ruby code.
+#  The workflow allows running tests and code linting on the default branch.
+
+image: ruby:2.6.6
+
+pipelines:
+  default:
+    - parallel:
+      - step:
+          name: Test
+          script:
+            - bundle install
+            - bundle exec rake
+      - step:
+          name: Swagger
+          script:
+            - bundle exec rake rswag
