@@ -21,6 +21,7 @@ pipelines:
           script:
             - gem install bundler:2.2.8
             - bundle install
+            - apt-get update && apt-get install -y postgresql-client
             - postgres -D /var/lib/postgresql/data
             - bundle exec rake rswag
           services:
