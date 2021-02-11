@@ -21,7 +21,7 @@ pipelines:
           script:
             - gem install bundler:2.2.8
             - bundle install
-            - docker run -v /tmp/my_scripts:/docker-entrypoint-initdb.d postgres
+            - sudo -u postgres psql -c "\l"
             - bundle exec rake rswag RAILS_ENV=development
           services:
             - postgres
