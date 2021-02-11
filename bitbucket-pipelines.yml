@@ -16,4 +16,5 @@ pipelines:
         - step:
             name: Swagger
             script:
+              - bundle install
               - bundle exec rake rswag
