@@ -18,12 +18,14 @@ pipelines:
         - step:
             name: Test
             script:
+              - gem install bundler:2.2.8
               - bundle install
             services:
               - postgres
         - step:
             name: Swagger
             script:
+              - gem install bundler:2.2.8
               - bundle install
               - bundle exec rake rswag
             services:
