@@ -9,28 +9,19 @@ definitions:
   services:
     postgres:
       image: postgres
-      environment:
+      variables:
         POSTGRES_DB: d1jnti2aeegab7
         POSTGRES_USER: hctwqjbrvcsgma
         POSTGRES_PASSWORD: 62ec456ec10405cc7691530aa392118fa0e01af0f2bbf97f188dba6689e6dc0d
         DATABASE_URL: postgres://hctwqjbrvcsgma:62ec456ec10405cc7691530aa392118fa0e01af0f2bbf97f188dba6689e6dc0d@ec2-54-228-209-117.eu-west-1.compute.amazonaws.com:5432/d1jnti2aeegab7
 pipelines:
   default:
-    - parallel:
-        - step:
-            name: Test
-            script:
-              - gem install bundler:2.2.8
-              - bundle install
-            services:
-              - postgres
-        - step:
-            name: Swagger
-            script:
-              - gem install bundler:2.2.8
-              - bundle install
-              - pg_ctl -D /var/lib/postgresql/data -l logfile start
-              - bundle exec rake rswag RAILS_ENV=development
-            services:
-              - postgres
+      - step:
+          name: Swagger
+          script:
+            - gem install bundler:2.2.8
+            - bundle install
+            - bundle exec rake rswag RAILS_ENV=development
+          services:
+            - postgres
 
