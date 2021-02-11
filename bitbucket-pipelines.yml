@@ -21,8 +21,8 @@ pipelines:
           script:
             - gem install bundler:2.2.8
             - bundle install
-            - psql -c -u postgres "\l"
-            - bundle exec rake rswag RAILS_ENV=development
+            - postgres -D /var/lib/postgresql/data
+            - bundle exec rake rswag
           services:
             - postgres
 
