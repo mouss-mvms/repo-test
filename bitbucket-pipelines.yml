@@ -27,7 +27,7 @@ pipelines:
             script:
               - gem install bundler:2.2.8
               - bundle install
-              - bundle exec rake rswag
+              - bundle exec rake rswag RAILS_ENV=development
             services:
               - postgres
 
