@@ -225,7 +225,38 @@ RSpec.configure do |config|
             required: %w[startAt endAt discount]
           },
           Order: {
-            type: 'object'
+            type: 'object',
+            properties: {
+              variant: {
+                '$ref': '#/components/schemas/Variant',
+                description: 'Variant of an order.'
+              },
+              quantity: {
+                type: 'integer',
+                minimum: 1,
+                description: 'Variant quantity of an order.'
+              }
+            }
+          },
+          Error: {
+            type: 'object',
+            properties: {
+              status: {
+                type: 'integer',
+                example: 400,
+                description: 'Status of an error.'
+              },
+              message: {
+                type: 'string',
+                example: 'Bad Request',
+                description: 'Message of an error.'
+              },
+              detail: {
+                type: 'string',
+                example: 'The syntax of the query is incorrect.',
+                description: 'Detail message of an error.'
+              }
+            }
           }
         }
       }
