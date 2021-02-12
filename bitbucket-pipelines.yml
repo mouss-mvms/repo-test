@@ -6,7 +6,8 @@
 image: ruby:2.6.6
 
 pipelines:
-  default:
+  pull-requests:
+    '**':
       - step:
           name: Swagger
           script:
@@ -15,9 +16,9 @@ pipelines:
             - bundle install
             - bundle exec rake rswag
             - git status
-            - git pull
             - git add swagger/v1/swagger.json
             - git commit -m "[skip ci] Bitbucket pipelines - update swagger.json"
+            - git pull
             - git push
 
 
