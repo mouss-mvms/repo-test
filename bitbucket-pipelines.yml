@@ -14,9 +14,8 @@ pipelines:
             - gem install bundler:2.2.8
             - bundle install
             - bundle exec rake rswag
-            - git remote set-url origin ${BITBUCKET_GIT_HTTP_ORIGIN}
             - git config user.email "l.boussiquet@mavillemonshopping.fr"
-            - git config user.name "bitbucket-pipelines"
+            - git config user.name "Loïc Boussiquet-Moreau"
             - git status
             - git pull
             - git add swagger/v1/swagger.json
