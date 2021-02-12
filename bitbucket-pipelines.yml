@@ -25,5 +25,6 @@ pipelines:
             - gem install bundler:2.2.8
             - bundle install
             - bundle exec rake rswag
+            - git status
 
 
