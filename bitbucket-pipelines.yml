@@ -20,7 +20,7 @@ pipelines:
             - bundle install
             - bundle exec rake rswag
             - git status
-            - git add swagger/v1/swagger.yml
+            - git add swagger/v1/swagger.yaml
             - git commit -m "[skip ci] Bitbucket pipelines - update swagger.yaml"
             - git pull
             - git push
