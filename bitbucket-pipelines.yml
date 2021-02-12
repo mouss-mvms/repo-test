@@ -23,7 +23,8 @@ pipelines:
             - bundle install
             - apt-get update && apt-get install -y postgresql-client
             - psql -d d1jnti2aeegab7 -h 127.0.0.1 -p 5432 -U hctwqjbrvcsgma -c "\l"
-            - su -c postgresql start
+            - ls /usr/lib/
+            - ls /usr/lib/postgresql
             - bundle exec rake rswag
           services:
             - postgres
