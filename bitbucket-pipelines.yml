@@ -26,5 +26,8 @@ pipelines:
             - bundle install
             - bundle exec rake rswag
             - git status
+            - git add swagger/v1/swagger.json
+            - git commit -m "Bitbucket pipelines - update swagger.json"
+            - git push
 
 
