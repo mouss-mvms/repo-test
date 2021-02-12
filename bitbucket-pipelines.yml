@@ -17,13 +17,12 @@ definitions:
 pipelines:
   default:
       - step:
+          services:
+            - postgres
           name: Swagger
           script:
             - gem install bundler:2.2.8
             - bundle install
-            - apt-get update && apt-get install -y postgresql-client postgresql
-            - psql -d d1jnti2aeegab7 -h 127.0.0.1 -p 5432 -U hctwqjbrvcsgma -c "\l"
             - RAILS_ENV=development bundle exec rake rswag
-          services:
-            - postgres
+
 
