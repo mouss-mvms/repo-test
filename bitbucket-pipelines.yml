@@ -5,31 +5,18 @@
 
 image: ruby:2.6.6
 
-definitions:
-  services:
-    postgres:
-      image: postgres
-      variables:
-        POSTGRES_DB: d1jnti2aeegab7
-        POSTGRES_USER: hctwqjbrvcsgma
-        POSTGRES_PASSWORD: 62ec456ec10405cc7691530aa392118fa0e01af0f2bbf97f188dba6689e6dc0d
-        DATABASE_URL: postgres://hctwqjbrvcsgma:62ec456ec10405cc7691530aa392118fa0e01af0f2bbf97f188dba6689e6dc0d@ec2-54-228-209-117.eu-west-1.compute.amazonaws.com:5432/d1jnti2aeegab7
 pipelines:
   default:
       - step:
-          services:
-            - postgres
           name: Swagger
           script:
             - export DATABASE_URL="postgres://hctwqjbrvcsgma:62ec456ec10405cc7691530aa392118fa0e01af0f2bbf97f188dba6689e6dc0d@ec2-54-228-209-117.eu-west-1.compute.amazonaws.com:5432/d1jnti2aeegab7"
             - gem install bundler:2.2.8
             - bundle install
             - bundle exec rake rswag
-            - git config user.email "l.boussiquet@mavillemonshopping.fr"
-            - git config user.name "Loïc Boussiquet-Moreau"
             - git status
             - git add swagger/v1/swagger.json
-            - git commit -m "Bitbucket pipelines - update swagger.json"
+            - git commit -m "[skip ci] Bitbucket pipelines - update swagger.json"
             - git push
 
 
