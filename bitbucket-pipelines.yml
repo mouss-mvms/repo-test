@@ -14,6 +14,7 @@ pipelines:
             - gem install bundler:2.2.8
             - bundle install
             - bundle exec rake rswag
+            - git remote set-url origin http://bitbucket.org/e-city/mvms-api
             - git status
             - git add swagger/v1/swagger.json
             - git commit -m "[skip ci] Bitbucket pipelines - update swagger.json"
