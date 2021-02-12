@@ -22,7 +22,7 @@ pipelines:
             - gem install bundler:2.2.8
             - bundle install
             - apt-get update && apt-get install -y postgresql-client
-            - psql -U hctwqjbrvcsgma -p 5432 -c "\l"
+            - psql -U hctwqjbrvcsgma -h 127.0.0.1 -p 5432 -c "\l"
             - bundle exec rake rswag
           services:
             - postgres
