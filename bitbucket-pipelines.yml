@@ -25,6 +25,8 @@ pipelines:
             - gem install bundler:2.2.8
             - bundle install
             - bundle exec rake rswag
+            - git config user.email "l.boussiquet@mavillemonshopping.fr"
+            - git config user.name "bitbucket-pipelines"
             - git status
             - git add swagger/v1/swagger.json
             - git commit -m "Bitbucket pipelines - update swagger.json"
