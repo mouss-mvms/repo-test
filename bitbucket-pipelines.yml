@@ -6,18 +6,22 @@
 image: ruby:2.6.6
 
 pipelines:
-  pull-requests:
-    '**':
+  branches:
+    dev:
       - step:
           name: Swagger
           script:
             - export DATABASE_URL="postgres://hctwqjbrvcsgma:62ec456ec10405cc7691530aa392118fa0e01af0f2bbf97f188dba6689e6dc0d@ec2-54-228-209-117.eu-west-1.compute.amazonaws.com:5432/d1jnti2aeegab7"
+            - export RACK_ENV="development"
+            - export RAILS_ENV="development"
+            - export RAKE_ENV="development"
+            - export BASE_URL="https://dev.mavillemonshopping.fr/fr"
             - gem install bundler:2.2.8
             - bundle install
             - bundle exec rake rswag
             - git status
-            - git add swagger/v1/swagger.json
-            - git commit -m "[skip ci] Bitbucket pipelines - update swagger.json"
+            - git add swagger/v1/swagger.yml
+            - git commit -m "[skip ci] Bitbucket pipelines - update swagger.yaml"
             - git pull
             - git push
 
