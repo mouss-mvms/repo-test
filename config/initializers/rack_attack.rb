@@ -5,6 +5,7 @@ class Rack::Attack
 
   safelist("allow access to api docs") do |req|
     req.path.start("/api-docs")
+    req.path == "/"
   end
 
   safelist("allow from localhost") do |req|
