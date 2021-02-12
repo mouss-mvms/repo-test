@@ -18,6 +18,7 @@ pipelines:
             - git config user.email "l.boussiquet@mavillemonshopping.fr"
             - git config user.name "bitbucket-pipelines"
             - git status
+            - git pull
             - git add swagger/v1/swagger.json
             - git commit -m "[skip ci] Bitbucket pipelines - update swagger.json"
             - git push
