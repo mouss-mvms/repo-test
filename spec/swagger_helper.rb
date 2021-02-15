@@ -28,11 +28,12 @@ RSpec.configure do |config|
         }
       ]
     },
-    'v1/swagger.yaml' => {
+    'swagger.yaml' => {
       openapi: '3.0.1',
       info: {
-        title: 'API V1',
-        version: 'v2'
+        title: 'CATALOG API',
+        version: '0.1.0',
+        description: 'Ma Ville Mon Shopping Catalog API'
       },
       paths: {},
       servers: [
@@ -47,7 +48,7 @@ RSpec.configure do |config|
             properties: {
               id: {
                 type: 'integer',
-                exemple: 1,
+                example: 1,
                 description: 'Unique identifier of a shop.'
               },
               name: {
@@ -74,7 +75,7 @@ RSpec.configure do |config|
             properties: {
               id: {
                 type: 'integer',
-                exemple: 1,
+                example: 1,
                 description: 'Unique identifier of a product.'
               },
               name: {
@@ -86,6 +87,54 @@ RSpec.configure do |config|
                 type: 'string',
                 example: 'chaise-longue',
                 description: 'Slug of a product.'
+              },
+              description: {
+                type: 'string',
+                example: 'Chaise longue pour jardin extérieur.',
+                description: 'Description of a product.'
+              },
+              category: {
+                '$ref': '#/components/schemas/Category',
+                description: 'Category of a product.'
+              },
+              brand: {
+                type: 'string',
+                example: 'Lafuma',
+                description: 'Brand of a product.'
+              },
+              status: {
+                type: 'string',
+                example: 'online',
+                default: 'not_online',
+                enum: ['not_online', 'online', 'draft_cityzen', 'submitted', 'refused'],
+                description: 'Status of a product.'
+              },
+              sellerAdvice: {
+                type: 'string',
+                example: 'Nettoyez votre mobilier à l’eau claire ou savonneuse sans détergent.',
+                description: 'Seller advice of a product'
+              },
+              isService: {
+                type: 'boolean',
+                example: false,
+                description: 'This product is a merchandise or a service.'
+              },
+              variants: {
+                type: 'array',
+                items: {
+                  '$ref': '#/components/schemas/Variant'
+                },
+                description: 'List of variants.'
+              }
+            }
+          },
+          NewProduct: {
+            type: 'object',
+            properties: {
+              name: {
+                type: 'string',
+                example: 'Chaise longue',
+                description: 'Display name of a product.'
               },
               description: {
                 type: 'string',
@@ -111,22 +160,23 @@ RSpec.configure do |config|
               },
               sellerAdvice: {
                 type: 'string',
-                exemple: 'Nettoyez votre mobilier à l’eau claire ou savonneuse sans détergent.',
+                example: 'Nettoyez votre mobilier à l’eau claire ou savonneuse sans détergent.',
                 description: 'Seller advice of a product'
               },
               isService: {
                 type: 'boolean',
+                example: false,
                 description: 'This product is a merchandise or a service.'
               },
               variants: {
                 type: 'array',
                 items: {
-                  '$ref': '#/components/schemas/Variant'
+                  '$ref': '#/components/schemas/NewVariant'
                 },
                 description: 'List of variants.'
               }
             },
-            required: %w[name slug isService]
+            required: %w[name]
           },
           Category: {
             type: 'object',
@@ -148,9 +198,48 @@ RSpec.configure do |config|
             properties: {
               id: {
                 type: 'integer',
-                exemple: 1,
+                example: 1,
                 description: 'Unique identifier of a variant.'
               },
+              basePrice: {
+                type: 'number',
+                format: 'double',
+                example: 20.50,
+                description: 'Base price of a variant.'
+              },
+              weight: {
+                type: 'number',
+                format: 'double',
+                nullable: true,
+                example: 20.50,
+                description: 'Weight in grams of a variant.'
+              },
+              quantity: {
+                type: 'integer',
+                example: 20,
+                description: 'Quantity in stock of a variant.'
+              },
+              isDefault: {
+                type: 'boolean',
+                default: false,
+                description: 'Default state of a variant.'
+              },
+              goodDeal: {
+                '$ref': '#/components/schemas/GoodDeal',
+                description: 'Good deal of a variant.'
+              },
+              characteristics: {
+                type: 'array',
+                items: {
+                  '$ref': '#/components/schemas/Characteristic'
+                },
+                description: 'List of characteristics.'
+              }
+            }
+          },
+          NewVariant: {
+            type: 'object',
+            properties: {
               basePrice: {
                 type: 'number',
                 format: 'double',
@@ -228,28 +317,44 @@ RSpec.configure do |config|
                 description: 'Discount amount of a good deal.'
               }
             },
-            required: %w[startAt endAt discount]
+            required: %w[startsAt endsAt discount]
           },
           Order: {
             type: 'object',
             properties: {
               id: {
                 type: 'integer',
-                exemple: 1,
+                example: 1,
                 description: 'Unique identifier of an order.'
               },
+              variant: {
+                '$ref': '#/components/schemas/Variant',
+                description: 'Variant of an order.'
+              },
+              quantity: {
+                type: 'integer',
+                example: 2,
+                minimum: 1,
+                description: 'Variant quantity of an order.'
+              }
+            }
+          },
+          NewOrder: {
+            type: 'object',
+            properties: {
               variantId: {
                 type: 'integer',
-                exemple: 1,
+                example: 1,
                 description: 'Unique identifier of a variant.'
               },
               quantity: {
                 type: 'integer',
+                example: 2,
                 minimum: 1,
                 description: 'Variant quantity of an order.'
               }
             },
-            required: %w[variant quantity]
+            required: %w[variantId quantity]
           },
           Error: {
             type: 'object',
