@@ -28,6 +28,8 @@
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 
+/swagger
+
 # Ignore application configuration
 /config/application.yml
 

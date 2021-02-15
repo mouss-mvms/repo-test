@@ -20,8 +20,8 @@ pipelines:
             - bundle install
             - bundle exec rake rswag
             - git status
-            - git add swagger/v1/swagger.yaml
-            - git commit -m "[skip ci] Bitbucket pipelines - update swagger.yaml"
+            - git add swagger/v1/swagger.json
+            - git commit -m "[skip ci] Bitbucket pipelines - update swagger.json"
             - git pull
             - git push
     release/v*:
@@ -37,8 +37,8 @@ pipelines:
             - bundle install
             - bundle exec rake rswag
             - git status
-            - git add swagger/v1/swagger.yaml
-            - git commit -m "[skip ci] Bitbucket pipelines - update swagger.yaml"
+            - git add swagger/v1/swagger.json
+            - git commit -m "[skip ci] Bitbucket pipelines - update swagger.json"
             - git pull
             - git push
     hotfix/v*:
@@ -54,8 +54,8 @@ pipelines:
             - bundle install
             - bundle exec rake rswag
             - git status
-            - git add swagger/v1/swagger.yaml
-            - git commit -m "[skip ci] Bitbucket pipelines - update swagger.yaml"
+            - git add swagger/v1/swagger.json
+            - git commit -m "[skip ci] Bitbucket pipelines - update swagger.json"
             - git pull
             - git push
     master:
@@ -71,8 +71,8 @@ pipelines:
             - bundle install
             - bundle exec rake rswag
             - git status
-            - git add swagger/v1/swagger.yaml
-            - git commit -m "[skip ci] Bitbucket pipelines - update swagger.yaml"
+            - git add swagger/v1/swagger.json
+            - git commit -m "[skip ci] Bitbucket pipelines - update swagger.json"
             - git pull
             - git push
 
