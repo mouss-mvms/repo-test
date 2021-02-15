@@ -29,9 +29,9 @@ pipelines:
           name: Swagger
           script:
             - export DATABASE_URL="postgres://ywawyfvtudfszr:bcaff794ea9e2e3329ae474c3a247bedc61c2726451a58997903cd21442ff66d@ec2-46-137-123-136.eu-west-1.compute.amazonaws.com:5432/d4qqi485bt0bg1"
-            - export RACK_ENV="development"
-            - export RAILS_ENV="development"
-            - export RAKE_ENV="development"
+            - export RACK_ENV="staging"
+            - export RAILS_ENV="staging"
+            - export RAKE_ENV="staging"
             - export BASE_URL="https://preprod.mavillemonshopping.fr/fr"
             - gem install bundler:2.2.8
             - bundle install
@@ -46,9 +46,9 @@ pipelines:
           name: Swagger
           script:
             - export DATABASE_URL="postgres://ywawyfvtudfszr:bcaff794ea9e2e3329ae474c3a247bedc61c2726451a58997903cd21442ff66d@ec2-46-137-123-136.eu-west-1.compute.amazonaws.com:5432/d4qqi485bt0bg1"
-            - export RACK_ENV="staging"
-            - export RAILS_ENV="staging"
-            - export RAKE_ENV="staging"
+            - export RACK_ENV="production"
+            - export RAILS_ENV="production"
+            - export RAKE_ENV="production"
             - export BASE_URL="https://preprod.mavillemonshopping.fr/fr"
             - gem install bundler:2.2.8
             - bundle install

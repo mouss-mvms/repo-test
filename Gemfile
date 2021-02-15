@@ -29,7 +29,6 @@ group :development, :test, :local do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
   gem "rspec-rails"
-  gem "rswag-specs"
 end
 
 gem 'listen', '~> 3.3'
@@ -48,3 +47,5 @@ end
 gem 'rack-attack'
 gem 'rswag-api'
 gem 'rswag-ui'
+gem "rswag-specs"
+
