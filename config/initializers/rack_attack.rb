@@ -3,9 +3,8 @@ class Rack::Attack
     req.env["HTTP_APIKEY"] != ENV["HTTP_APIKEY"]
   end
 
-  safelist("allow access to api docs") do |req|
-    req.path.start_with?("/api-docs")
-    req.path == "/"
+  safelist("allow access root path") do |req|
+    req.path == "/" && req.get?
   end
 
   safelist("allow from localhost") do |req|
