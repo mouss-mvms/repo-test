@@ -45,6 +45,11 @@ RSpec.configure do |config|
           Shop: {
             type: 'object',
             properties: {
+              id: {
+                type: 'integer',
+                exemple: 1,
+                description: 'Unique identifier of a shop.'
+              },
               name: {
                 type: 'string',
                 exemple: 'Jardin Local',
@@ -52,9 +57,8 @@ RSpec.configure do |config|
               },
               slug: {
                 type: 'string',
-                example: 'shops/jardin-local',
-                pattern: 'shops\/[a-z0-9-]+',
-                description: 'Resource Name of a shop.'
+                example: 'jardin-local',
+                description: 'Slug of a shop.'
               },
               products: {
                 type: 'array',
@@ -68,6 +72,11 @@ RSpec.configure do |config|
           Product: {
             type: 'object',
             properties: {
+              id: {
+                type: 'integer',
+                exemple: 1,
+                description: 'Unique identifier of a product.'
+              },
               name: {
                 type: 'string',
                 exemple: 'Chaise longue',
@@ -75,20 +84,22 @@ RSpec.configure do |config|
               },
               slug: {
                 type: 'string',
-                example: 'products/chaise-longue',
-                pattern: 'products\/[a-z0-9-]+',
-                description: 'Resource Name of a product.'
+                example: 'chaise-longue',
+                description: 'Slug of a product.'
               },
               description: {
                 type: 'string',
+                example: 'Chaise longue pour jardin extérieur.',
                 description: 'Description of a product.'
               },
-              category: {
-                '$ref': '#/components/schemas/Category',
-                description: 'Category of a product.'
+              categoryId: {
+                type: 'integer',
+                example: 1,
+                description: 'Unique identifier of a category.'
               },
               brand: {
-                '$ref': '#/components/schemas/Brand',
+                type: 'string',
+                example: 'Lafuma',
                 description: 'Brand of a product.'
               },
               status: {
@@ -100,6 +111,7 @@ RSpec.configure do |config|
               },
               sellerAdvice: {
                 type: 'string',
+                exemple: 'Nettoyez votre mobilier à l’eau claire ou savonneuse sans détergent.',
                 description: 'Seller advice of a product'
               },
               isService: {
@@ -119,11 +131,10 @@ RSpec.configure do |config|
           Category: {
             type: 'object',
             properties: {
-              slug: {
-                type: 'string',
-                example: 'categories/mobilier-exterieur',
-                pattern: 'categories\/[a-z0-9-]+',
-                description: 'Resource Name of a category.'
+              id: {
+                type: 'integer',
+                example: 1,
+                description: 'Unique identifier of a category.'
               },
               name: {
                 type: 'string',
@@ -132,19 +143,14 @@ RSpec.configure do |config|
               }
             }
           },
-          Brand: {
-            type: 'object',
-            properties: {
-              name: {
-                type: 'string',
-                example: 'Magimix',
-                description: 'Display name of a brand.'
-              }
-            }
-          },
           Variant: {
             type: 'object',
             properties: {
+              id: {
+                type: 'integer',
+                exemple: 1,
+                description: 'Unique identifier of a variant.'
+              },
               basePrice: {
                 type: 'number',
                 format: 'double',
@@ -227,16 +233,23 @@ RSpec.configure do |config|
           Order: {
             type: 'object',
             properties: {
-              variant: {
-                '$ref': '#/components/schemas/Variant',
-                description: 'Variant of an order.'
+              id: {
+                type: 'integer',
+                exemple: 1,
+                description: 'Unique identifier of an order.'
+              },
+              variantId: {
+                type: 'integer',
+                exemple: 1,
+                description: 'Unique identifier of a variant.'
               },
               quantity: {
                 type: 'integer',
                 minimum: 1,
                 description: 'Variant quantity of an order.'
               }
-            }
+            },
+            required: %w[variant quantity]
           },
           Error: {
             type: 'object',
