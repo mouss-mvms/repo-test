@@ -12,14 +12,13 @@ pipelines:
           name: Swagger
           script:
             - export DATABASE_URL="postgres://hctwqjbrvcsgma:62ec456ec10405cc7691530aa392118fa0e01af0f2bbf97f188dba6689e6dc0d@ec2-54-228-209-117.eu-west-1.compute.amazonaws.com:5432/d1jnti2aeegab7"
-            - export RACK_ENV="development"
-            - export RAILS_ENV="development"
-            - export RAKE_ENV="development"
+            - export RACK_ENV="test"
+            - export RAILS_ENV="test"
+            - export RAKE_ENV="test"
             - export BASE_URL="https://dev.mavillemonshopping.fr/fr"
             - gem install bundler:2.2.8
             - bundle install
             - bundle exec rake rswag
-            - git status
             - git add swagger/v1/swagger.json
             - git commit -m "[skip ci] Bitbucket pipelines - update swagger.json"
             - git pull
@@ -29,14 +28,13 @@ pipelines:
           name: Swagger
           script:
             - export DATABASE_URL="postgres://ywawyfvtudfszr:bcaff794ea9e2e3329ae474c3a247bedc61c2726451a58997903cd21442ff66d@ec2-46-137-123-136.eu-west-1.compute.amazonaws.com:5432/d4qqi485bt0bg1"
-            - export RACK_ENV="staging"
-            - export RAILS_ENV="staging"
-            - export RAKE_ENV="staging"
+            - export RACK_ENV="test"
+            - export RAILS_ENV="test"
+            - export RAKE_ENV="test"
             - export BASE_URL="https://preprod.mavillemonshopping.fr/fr"
             - gem install bundler:2.2.8
             - bundle install
             - bundle exec rake rswag
-            - git status
             - git add swagger/v1/swagger.json
             - git commit -m "[skip ci] Bitbucket pipelines - update swagger.json"
             - git pull
@@ -46,14 +44,13 @@ pipelines:
           name: Swagger
           script:
             - export DATABASE_URL="postgres://ywawyfvtudfszr:bcaff794ea9e2e3329ae474c3a247bedc61c2726451a58997903cd21442ff66d@ec2-46-137-123-136.eu-west-1.compute.amazonaws.com:5432/d4qqi485bt0bg1"
-            - export RACK_ENV="staging"
-            - export RAILS_ENV="staging"
-            - export RAKE_ENV="staging"
+            - export RACK_ENV="test"
+            - export RAILS_ENV="test"
+            - export RAKE_ENV="test"
             - export BASE_URL="https://preprod.mavillemonshopping.fr/fr"
             - gem install bundler:2.2.8
             - bundle install
             - bundle exec rake rswag
-            - git status
             - git add swagger/v1/swagger.json
             - git commit -m "[skip ci] Bitbucket pipelines - update swagger.json"
             - git pull
@@ -63,14 +60,13 @@ pipelines:
           name: Swagger
           script:
             - export DATABASE_URL="postgres://u673f92v2bceiv:p031efefa456f1845b4d0a88b77be90d9ebc6eba52be9250a7c4301a58fb06205@ec2-54-220-81-52.eu-west-1.compute.amazonaws.com:5432/d4omsse7rcam7v"
-            - export RACK_ENV="production"
-            - export RAILS_ENV="production"
-            - export RAKE_ENV="production"
+            - export RACK_ENV="test"
+            - export RAILS_ENV="test"
+            - export RAKE_ENV="test"
             - export BASE_URL="https://www.mavillemonshopping.fr/fr"
             - gem install bundler:2.2.8
             - bundle install
             - bundle exec rake rswag
-            - git status
             - git add swagger/v1/swagger.json
             - git commit -m "[skip ci] Bitbucket pipelines - update swagger.json"
             - git pull

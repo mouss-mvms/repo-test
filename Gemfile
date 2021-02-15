@@ -48,3 +48,4 @@ end
 gem 'rack-attack'
 gem 'rswag-api'
 gem 'rswag-ui'
+

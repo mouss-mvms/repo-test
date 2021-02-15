@@ -55,7 +55,7 @@
   },
   "servers": [
     {
-      "url": "https://dev.mavillemonshopping.fr/fr"
+      "url": "https://preprod.mavillemonshopping.fr/fr"
     }
   ]
 }
