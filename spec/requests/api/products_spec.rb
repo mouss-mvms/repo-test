@@ -1,12 +1,22 @@
 require 'swagger_helper'
 
-RSpec.describe 'api/products', type: :request do
-
-  path '/api/products' do
-
-    get('list products') do
-      response(200, 'successful') do
-
+RSpec.describe '/products', swagger_doc: 'v1/swagger.yaml', type: :request do
+  path '/shops/{shopId}/products' do
+    parameter name: :shopId, in: :path, type: :integer, description: 'Unique identifier of the desired shop.'
+    get('') do
+      tags 'Products'
+      produces 'application/json'
+      description 'Retrieve all products from the given shop.'
+      response(200, 'Successful response') do
+        schema type: :object,
+          properties: {
+            products: {
+              type: :array,
+              items: {
+                '$ref': '#/components/schemas/Product'
+              }
+            }
+          }
         after do |example|
           example.metadata[:response][:content] = {
             'application/json' => {
@@ -18,9 +28,16 @@ RSpec.describe 'api/products', type: :request do
       end
     end
 
-    post('create product') do
-      response(200, 'successful') do
-
+    post('') do
+      tags 'Products'
+      produces 'application/json'
+      description 'Create a product in the given shop.'
+      parameter name: :product, in: :body, schema: { '$ref'=> '#/components/schemas/Product' }
+      response(200, 'Successful response') do
+        schema type: :object,
+          properties: {
+            product: { '$ref': '#/components/schemas/Product' }
+          }
         after do |example|
           example.metadata[:response][:content] = {
             'application/json' => {
@@ -28,41 +45,38 @@ RSpec.describe 'api/products', type: :request do
             }
           }
         end
+        run_test!
+      end
+      response(422, 'Invalid request') do
+        schema type: :object,
+          properties: {
+            error: { '$ref': '#/components/schemas/Error' }
+          }
         run_test!
       end
     end
   end
 
-  path '/api/products/{id}' do
-    # You'll want to customize the parameter types...
-    parameter name: 'id', in: :path, type: :string, description: 'id'
+  path '/shops/{shopId}/products/{productId}' do
+    parameter name: :shopId, in: :path, type: :integer, description: 'Unique identifier of the desired shop.'
+    parameter name: :productId, in: :path, type: :integer, description: 'Unique identifier of the desired product.'
 
-    put('update product') do
-      response(200, 'successful') do
-        let(:id) { '123' }
-
-        after do |example|
-          example.metadata[:response][:content] = {
-            'application/json' => {
-              example: JSON.parse(response.body, symbolize_names: true)
-            }
+    get('') do 
+      tags 'Products'
+      produces 'application/json'
+      description 'Retrieve a single product from the given shop.'
+      response(200, 'Successful response') do
+        schema type: :object,
+          properties: {
+            product: { '$ref': '#/components/schemas/Product' }
           }
-        end
         run_test!
       end
-    end
-
-    delete('delete product') do
-      response(200, 'successful') do
-        let(:id) { '123' }
-
-        after do |example|
-          example.metadata[:response][:content] = {
-            'application/json' => {
-              example: JSON.parse(response.body, symbolize_names: true)
-            }
+      response(404, 'Not found') do
+        schema type: :object,
+          properties: {
+            error: { '$ref': '#/components/schemas/Error' }
           }
-        end
         run_test!
       end
     end
