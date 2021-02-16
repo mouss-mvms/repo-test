@@ -370,7 +370,7 @@
   },
   "servers": [
     {
-      "url": "https://mavillemonshopping.apigee.net/catalog-dev"
+      "url": "https://jbernard-eval-test.apigee.net/order-managment-dev"
     }
   ],
   "components": {
