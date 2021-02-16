@@ -15,7 +15,7 @@ pipelines:
             - export RACK_ENV="test"
             - export RAILS_ENV="test"
             - export RAKE_ENV="test"
-            - export BASE_URL="https://dev.mavillemonshopping.fr/fr"
+            - export BASE_URL="https://mavillemonshopping.apigee.net/catalog-dev"
             - gem install bundler:2.2.8
             - bundle install
             - bundle exec rake rswag
@@ -31,7 +31,7 @@ pipelines:
             - export RACK_ENV="test"
             - export RAILS_ENV="test"
             - export RAKE_ENV="test"
-            - export BASE_URL="https://preprod.mavillemonshopping.fr/fr"
+            - export BASE_URL="https://mavillemonshopping.apigee.net/catalog-preprod"
             - gem install bundler:2.2.8
             - bundle install
             - bundle exec rake rswag
@@ -47,7 +47,7 @@ pipelines:
             - export RACK_ENV="test"
             - export RAILS_ENV="test"
             - export RAKE_ENV="test"
-            - export BASE_URL="https://preprod.mavillemonshopping.fr/fr"
+            - export BASE_URL="https://mavillemonshopping.apigee.net/catalog-preprod"
             - gem install bundler:2.2.8
             - bundle install
             - bundle exec rake rswag
@@ -63,7 +63,7 @@ pipelines:
             - export RACK_ENV="test"
             - export RAILS_ENV="test"
             - export RAKE_ENV="test"
-            - export BASE_URL="https://www.mavillemonshopping.fr/fr"
+            - export BASE_URL="https://mavillemonshopping.apigee.net/catalog"
             - gem install bundler:2.2.8
             - bundle install
             - bundle exec rake rswag
