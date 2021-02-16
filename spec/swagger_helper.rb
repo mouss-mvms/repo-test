@@ -115,56 +115,6 @@ RSpec.configure do |config|
               }
             }
           },
-          NewProduct: {
-            type: 'object',
-            properties: {
-              name: {
-                type: 'string',
-                example: 'Chaise longue',
-                description: 'Display name of a product.'
-              },
-              description: {
-                type: 'string',
-                example: 'Chaise longue pour jardin extérieur.',
-                description: 'Description of a product.'
-              },
-              categoryId: {
-                type: 'integer',
-                example: 1,
-                description: 'Unique identifier of a category.'
-              },
-              brand: {
-                type: 'string',
-                example: 'Lafuma',
-                description: 'Brand of a product.'
-              },
-              status: {
-                type: 'string',
-                example: 'online',
-                default: 'not_online',
-                enum: ['not_online', 'online', 'draft_cityzen', 'submitted', 'refused'],
-                description: 'Status of a product.'
-              },
-              sellerAdvice: {
-                type: 'string',
-                example: 'Nettoyez votre mobilier à l’eau claire ou savonneuse sans détergent.',
-                description: 'Seller advice of a product'
-              },
-              isService: {
-                type: 'boolean',
-                example: false,
-                description: 'This product is a merchandise or a service.'
-              },
-              variants: {
-                type: 'array',
-                items: {
-                  '$ref': '#/components/schemas/NewVariant'
-                },
-                description: 'List of variants.'
-              }
-            },
-            required: %w[name]
-          },
           Category: {
             type: 'object',
             properties: {
@@ -224,46 +174,6 @@ RSpec.configure do |config|
               }
             }
           },
-          NewVariant: {
-            type: 'object',
-            properties: {
-              basePrice: {
-                type: 'number',
-                format: 'double',
-                example: 20.50,
-                description: 'Base price of a variant.'
-              },
-              weight: {
-                type: 'number',
-                format: 'double',
-                nullable: true,
-                example: 20.50,
-                description: 'Weight in grams of a variant.'
-              },
-              quantity: {
-                type: 'integer',
-                example: 20,
-                description: 'Quantity in stock of a variant.'
-              },
-              isDefault: {
-                type: 'boolean',
-                default: false,
-                description: 'Default state of a variant.'
-              },
-              goodDeal: {
-                '$ref': '#/components/schemas/GoodDeal',
-                description: 'Good deal of a variant.'
-              },
-              characteristics: {
-                type: 'array',
-                items: {
-                  '$ref': '#/components/schemas/Characteristic'
-                },
-                description: 'List of characteristics.'
-              }
-            },
-            required: %w[basePrice quantity]
-          },
           Characteristic: {
             type: 'object',
             properties: {
@@ -305,43 +215,6 @@ RSpec.configure do |config|
               }
             },
             required: %w[startsAt endsAt discount]
-          },
-          Order: {
-            type: 'object',
-            properties: {
-              id: {
-                type: 'integer',
-                example: 1,
-                description: 'Unique identifier of an order.'
-              },
-              variant: {
-                '$ref': '#/components/schemas/Variant',
-                description: 'Variant of an order.'
-              },
-              quantity: {
-                type: 'integer',
-                example: 2,
-                minimum: 1,
-                description: 'Variant quantity of an order.'
-              }
-            }
-          },
-          NewOrder: {
-            type: 'object',
-            properties: {
-              variantId: {
-                type: 'integer',
-                example: 1,
-                description: 'Unique identifier of a variant.'
-              },
-              quantity: {
-                type: 'integer',
-                example: 2,
-                minimum: 1,
-                description: 'Variant quantity of an order.'
-              }
-            },
-            required: %w[variantId quantity]
           },
           Error: {
             type: 'object',
