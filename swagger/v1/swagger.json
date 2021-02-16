@@ -50,229 +50,6 @@
         }
       }
     },
-    "/shops/{shopId}/orders": {
-      "get": {
-        "summary": "",
-        "tags": [
-          "Orders"
-        ],
-        "description": "Retrieve all orders from the given shop.",
-        "parameters": [
-          {
-            "name": "shopId",
-            "in": "path",
-            "description": "Unique identifier of the desired shop.",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "orders": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Order"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "$ref": "#/components/schemas/Error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "$ref": "#/components/schemas/Error"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "summary": "",
-        "tags": [
-          "Orders"
-        ],
-        "description": "Create an order in the given shop.",
-        "parameters": [
-          {
-            "name": "shopId",
-            "in": "path",
-            "description": "Unique identifier of the desired shop.",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "order": {
-                      "$ref": "#/components/schemas/Order"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "$ref": "#/components/schemas/Error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "$ref": "#/components/schemas/Error"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewOrder"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/shops/{shopId}/orders/{orderId}": {
-      "parameters": [
-        {
-          "name": "shopId",
-          "in": "path",
-          "description": "Unique identifier of the desired shop.",
-          "required": true,
-          "schema": {
-            "type": "integer"
-          }
-        },
-        {
-          "name": "orderId",
-          "in": "path",
-          "description": "Unique identifier of the desired order.",
-          "required": true,
-          "schema": {
-            "type": "integer"
-          }
-        }
-      ],
-      "delete": {
-        "summary": "",
-        "tags": [
-          "Orders"
-        ],
-        "description": "Delete an order from the given shop.",
-        "responses": {
-          "200": {
-            "description": "Successful response"
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "$ref": "#/components/schemas/Error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "$ref": "#/components/schemas/Error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "$ref": "#/components/schemas/Error"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/shops/{shopId}/products": {
       "parameters": [
         {
@@ -292,7 +69,7 @@
         ],
         "description": "Retrieve all products from the given shop.",
         "responses": {
-          "200": {
+          "201": {
             "description": "Successful response",
             "content": {
               "application/json": {
@@ -402,7 +179,97 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewProduct"
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Chaise longue",
+                    "description": "Display name of a product."
+                  },
+                  "description": "List of variants.",
+                  "categoryId": {
+                    "type": "integer",
+                    "example": 1,
+                    "description": "Unique identifier of a category."
+                  },
+                  "brand": {
+                    "type": "string",
+                    "example": "Lafuma",
+                    "description": "Brand of a product."
+                  },
+                  "status": {
+                    "type": "string",
+                    "example": "online",
+                    "default": "not_online",
+                    "enum": [
+                      "not_online",
+                      "online",
+                      "draft_cityzen",
+                      "submitted",
+                      "refused"
+                    ],
+                    "description": "Status of a product."
+                  },
+                  "sellerAdvice": {
+                    "type": "string",
+                    "example": "Nettoyez votre mobilier à l’eau claire ou savonneuse sans détergent.",
+                    "description": "Seller advice of a product"
+                  },
+                  "isService": {
+                    "type": "boolean",
+                    "example": false,
+                    "description": "This product is a merchandise or a service."
+                  },
+                  "variants": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "basePrice": {
+                          "type": "number",
+                          "format": "double",
+                          "example": 20.5,
+                          "description": "Base price of a variant."
+                        },
+                        "weight": {
+                          "type": "number",
+                          "format": "double",
+                          "nullable": true,
+                          "example": 20.5,
+                          "description": "Weight in grams of a variant."
+                        },
+                        "quantity": {
+                          "type": "integer",
+                          "example": 20,
+                          "description": "Quantity in stock of a variant."
+                        },
+                        "isDefault": {
+                          "type": "boolean",
+                          "default": false,
+                          "description": "Default state of a variant."
+                        },
+                        "goodDeal": {
+                          "$ref": "#/components/schemas/GoodDeal",
+                          "description": "Good deal of a variant."
+                        },
+                        "characteristics": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Characteristic"
+                          },
+                          "description": "List of characteristics."
+                        }
+                      },
+                      "required": [
+                        "basePrice",
+                        "quantity"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "name"
+                ]
               }
             }
           }
@@ -503,7 +370,7 @@
   },
   "servers": [
     {
-      "url": "https://dev.mavillemonshopping.fr/fr"
+      "url": "https://mavillemonshopping.apigee.net/catalog-dev"
     }
   ],
   "components": {
@@ -599,64 +466,6 @@
           }
         }
       },
-      "NewProduct": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "Chaise longue",
-            "description": "Display name of a product."
-          },
-          "description": {
-            "type": "string",
-            "example": "Chaise longue pour jardin extérieur.",
-            "description": "Description of a product."
-          },
-          "categoryId": {
-            "type": "integer",
-            "example": 1,
-            "description": "Unique identifier of a category."
-          },
-          "brand": {
-            "type": "string",
-            "example": "Lafuma",
-            "description": "Brand of a product."
-          },
-          "status": {
-            "type": "string",
-            "example": "online",
-            "default": "not_online",
-            "enum": [
-              "not_online",
-              "online",
-              "draft_cityzen",
-              "submitted",
-              "refused"
-            ],
-            "description": "Status of a product."
-          },
-          "sellerAdvice": {
-            "type": "string",
-            "example": "Nettoyez votre mobilier à l’eau claire ou savonneuse sans détergent.",
-            "description": "Seller advice of a product"
-          },
-          "isService": {
-            "type": "boolean",
-            "example": false,
-            "description": "This product is a merchandise or a service."
-          },
-          "variants": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/NewVariant"
-            },
-            "description": "List of variants."
-          }
-        },
-        "required": [
-          "name"
-        ]
-      },
       "Category": {
         "type": "object",
         "properties": {
@@ -716,49 +525,6 @@
           }
         }
       },
-      "NewVariant": {
-        "type": "object",
-        "properties": {
-          "basePrice": {
-            "type": "number",
-            "format": "double",
-            "example": 20.5,
-            "description": "Base price of a variant."
-          },
-          "weight": {
-            "type": "number",
-            "format": "double",
-            "nullable": true,
-            "example": 20.5,
-            "description": "Weight in grams of a variant."
-          },
-          "quantity": {
-            "type": "integer",
-            "example": 20,
-            "description": "Quantity in stock of a variant."
-          },
-          "isDefault": {
-            "type": "boolean",
-            "default": false,
-            "description": "Default state of a variant."
-          },
-          "goodDeal": {
-            "$ref": "#/components/schemas/GoodDeal",
-            "description": "Good deal of a variant."
-          },
-          "characteristics": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Characteristic"
-            },
-            "description": "List of characteristics."
-          }
-        },
-        "required": [
-          "basePrice",
-          "quantity"
-        ]
-      },
       "Characteristic": {
         "type": "object",
         "properties": {
@@ -809,46 +575,6 @@
           "startsAt",
           "endsAt",
           "discount"
-        ]
-      },
-      "Order": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "example": 1,
-            "description": "Unique identifier of an order."
-          },
-          "variant": {
-            "$ref": "#/components/schemas/Variant",
-            "description": "Variant of an order."
-          },
-          "quantity": {
-            "type": "integer",
-            "example": 2,
-            "minimum": 1,
-            "description": "Variant quantity of an order."
-          }
-        }
-      },
-      "NewOrder": {
-        "type": "object",
-        "properties": {
-          "variantId": {
-            "type": "integer",
-            "example": 1,
-            "description": "Unique identifier of a variant."
-          },
-          "quantity": {
-            "type": "integer",
-            "example": 2,
-            "minimum": 1,
-            "description": "Variant quantity of an order."
-          }
-        },
-        "required": [
-          "variantId",
-          "quantity"
         ]
       },
       "Error": {
