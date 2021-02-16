@@ -1,6 +1,6 @@
 require 'swagger_helper'
 
-RSpec.describe '/categories', swagger_doc: 'swagger.yaml', type: :request do
+RSpec.describe '/categories', swagger_doc: 'v1/swagger.json', type: :request do
   path '/categories' do
     get('') do
       tags 'Categories'

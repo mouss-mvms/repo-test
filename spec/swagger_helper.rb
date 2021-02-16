@@ -18,19 +18,6 @@ RSpec.configure do |config|
     'v1/swagger.json' => {
       openapi: '3.0.1',
       info: {
-        title: 'API V1',
-        version: 'v1'
-      },
-      paths: {},
-      servers: [
-        {
-          url: ENV['BASE_URL'].to_s
-        }
-      ]
-    },
-    'swagger.yaml' => {
-      openapi: '3.0.1',
-      info: {
         title: 'CATALOG API',
         version: '0.1.0',
         description: 'Ma Ville Mon Shopping Catalog API'
@@ -53,7 +40,7 @@ RSpec.configure do |config|
               },
               name: {
                 type: 'string',
-                exemple: 'Jardin Local',
+                example: 'Jardin Local',
                 description: 'Display name of a shop.'
               },
               slug: {
@@ -80,7 +67,7 @@ RSpec.configure do |config|
               },
               name: {
                 type: 'string',
-                exemple: 'Chaise longue',
+                example: 'Chaise longue',
                 description: 'Display name of a product.'
               },
               slug: {
@@ -385,5 +372,5 @@ RSpec.configure do |config|
   # The swagger_docs configuration option has the filename including format in
   # the key, this may want to be changed to avoid putting yaml in json files.
   # Defaults to json. Accepts ':json' and ':yaml'.
-  config.swagger_format = :yaml
+  config.swagger_format = :json
 end

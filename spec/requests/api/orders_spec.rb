@@ -1,6 +1,6 @@
 require 'swagger_helper'
 
-RSpec.describe '/orders', swagger_doc: 'swagger.yaml', type: :request do
+RSpec.describe '/orders', swagger_doc: 'v1/swagger.json', type: :request do
   path '/shops/{shopId}/orders' do
     get('') do
       tags 'Orders'

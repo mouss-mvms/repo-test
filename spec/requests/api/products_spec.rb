@@ -1,6 +1,6 @@
 require 'swagger_helper'
 
-RSpec.describe '/products', swagger_doc: 'swagger.yaml', type: :request do
+RSpec.describe '/products', swagger_doc: 'v1/swagger.json', type: :request do
   path '/shops/{shopId}/products' do
     parameter name: :shopId, in: :path, type: :integer, description: 'Unique identifier of the desired shop.'
 
