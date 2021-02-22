@@ -6,16 +6,23 @@
     "description": "Ma Ville Mon Shopping Catalog API"
   },
   "paths": {
-    "/categories": {
+    "/api/categories": {
       "get": {
-        "summary": "",
+        "summary": "list categories",
         "tags": [
           "Categories"
         ],
-        "description": "Retrieve all categories.",
+        "description": "Return the list of categories.",
+        "security": [
+          {
+            "apikey": [
+
+            ]
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Successful response",
+            "description": "successful",
             "content": {
               "application/json": {
                 "schema": {
@@ -31,46 +38,38 @@
                 }
               }
             }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "$ref": "#/components/schemas/Error"
-                    }
-                  }
-                }
-              }
-            }
           }
         }
       }
     },
-    "/shops/{shopId}/products": {
+    "/api/shops/{shop_id}/products": {
       "parameters": [
         {
-          "name": "shopId",
+          "name": "shop_id",
           "in": "path",
           "description": "Unique identifier of the desired shop.",
           "required": true,
           "schema": {
-            "type": "integer"
+            "type": "string"
           }
         }
       ],
       "get": {
-        "summary": "",
+        "summary": "list products",
         "tags": [
           "Products"
         ],
         "description": "Retrieve all products from the given shop.",
+        "security": [
+          {
+            "apikey": [
+
+            ]
+          }
+        ],
         "responses": {
-          "201": {
-            "description": "Successful response",
+          "200": {
+            "description": "Successful",
             "content": {
               "application/json": {
                 "schema": {
@@ -120,17 +119,176 @@
         }
       },
       "post": {
-        "summary": "",
+        "summary": "create product",
         "tags": [
           "Products"
         ],
         "description": "Create a product in the given shop.",
+        "security": [
+          {
+            "apikey": [
+
+            ]
+          }
+        ],
         "parameters": [
 
         ],
         "responses": {
+          "201": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "product": {
+                      "$ref": "#/components/schemas/Product"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Chaise longue",
+                    "description": "Display name of a product."
+                  },
+                  "description": "List of variants.",
+                  "categoryId": {
+                    "type": "integer",
+                    "example": 1,
+                    "description": "Unique identifier of a category."
+                  },
+                  "brand": {
+                    "type": "string",
+                    "example": "Lafuma",
+                    "description": "Brand of a product."
+                  },
+                  "status": {
+                    "type": "string",
+                    "example": "online",
+                    "default": "not_online",
+                    "enum": [
+                      "not_online",
+                      "online",
+                      "draft_cityzen",
+                      "submitted",
+                      "refused"
+                    ],
+                    "description": "Status of a product."
+                  },
+                  "sellerAdvice": {
+                    "type": "string",
+                    "example": "Nettoyez votre mobilier à l’eau claire ou savonneuse sans détergent.",
+                    "description": "Seller advice of a product"
+                  },
+                  "isService": {
+                    "type": "boolean",
+                    "example": false,
+                    "description": "This product is a merchandise or a service."
+                  },
+                  "variants": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "basePrice": {
+                          "type": "number",
+                          "format": "double",
+                          "example": 20.5,
+                          "description": "Base price of a variant."
+                        },
+                        "weight": {
+                          "type": "number",
+                          "format": "double",
+                          "nullable": true,
+                          "example": 20.5,
+                          "description": "Weight in grams of a variant."
+                        },
+                        "quantity": {
+                          "type": "integer",
+                          "example": 20,
+                          "description": "Quantity in stock of a variant."
+                        },
+                        "isDefault": {
+                          "type": "boolean",
+                          "default": false,
+                          "description": "Default state of a variant."
+                        },
+                        "goodDeal": {
+                          "$ref": "#/components/schemas/GoodDeal",
+                          "description": "Good deal of a variant."
+                        },
+                        "characteristics": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Characteristic"
+                          },
+                          "description": "List of characteristics."
+                        }
+                      },
+                      "required": [
+                        "basePrice",
+                        "quantity"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/shops/{shop_id}/products/{id}": {
+      "parameters": [
+        {
+          "name": "shop_id",
+          "in": "path",
+          "description": "Unique identifier of the desired shop.",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of the desired product.",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "show product",
+        "tags": [
+          "Products"
+        ],
+        "description": "Retrieve a single product from the given shop.",
+        "security": [
+          {
+            "apikey": [
+
+            ]
+          }
+        ],
+        "responses": {
           "200": {
-            "description": "Successful response",
+            "description": "Successful",
             "content": {
               "application/json": {
                 "schema": {
@@ -161,6 +319,115 @@
           },
           "401": {
             "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "$ref": "#/components/schemas/Error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "$ref": "#/components/schemas/Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "update product",
+        "tags": [
+          "Products"
+        ],
+        "description": "Update a single product from the given shop.",
+        "security": [
+          {
+            "apikey": [
+
+            ]
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "product": {
+                      "$ref": "#/components/schemas/Product"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "$ref": "#/components/schemas/Error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "$ref": "#/components/schemas/Error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "$ref": "#/components/schemas/Error"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "An Error Happended",
             "content": {
               "application/json": {
                 "schema": {
@@ -274,95 +541,35 @@
             }
           }
         }
-      }
-    },
-    "/shops/{shopId}/products/{productId}": {
-      "parameters": [
-        {
-          "name": "shopId",
-          "in": "path",
-          "description": "Unique identifier of the desired shop.",
-          "required": true,
-          "schema": {
-            "type": "integer"
-          }
-        },
-        {
-          "name": "productId",
-          "in": "path",
-          "description": "Unique identifier of the desired product.",
-          "required": true,
-          "schema": {
-            "type": "integer"
-          }
-        }
-      ],
-      "get": {
-        "summary": "",
+      },
+      "delete": {
+        "summary": "delete product",
         "tags": [
           "Products"
         ],
-        "description": "Retrieve a single product from the given shop.",
+        "description": "Delete a single product from the given shop.",
+        "security": [
+          {
+            "apikey": [
+
+            ]
+          }
+        ],
         "responses": {
-          "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "product": {
-                      "$ref": "#/components/schemas/Product"
-                    }
-                  }
-                }
-              }
-            }
+          "204": {
+            "description": "Successful"
           },
           "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "$ref": "#/components/schemas/Error"
-                    }
-                  }
-                }
-              }
-            }
+            "description": "Bad request"
           },
           "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "$ref": "#/components/schemas/Error"
-                    }
-                  }
-                }
-              }
-            }
+            "description": "Unauthorized"
           },
           "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "$ref": "#/components/schemas/Error"
-                    }
-                  }
-                }
-              }
-            }
+            "description": "Not found"
+          },
+          "500": {
+            "description": "An Error Happended"
           }
         }
       }
@@ -370,10 +577,17 @@
   },
   "servers": [
     {
-      "url": "https://jbernard-eval-test.apigee.net/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {
+    "securitySchemes": {
+      "api_key": {
+        "type": "apikey",
+        "name": "apikey",
+        "in": "query"
+      }
+    },
     "schemas": {
       "Shop": {
         "type": "object",
@@ -551,13 +765,13 @@
       "GoodDeal": {
         "type": "object",
         "properties": {
-          "startsAt": {
+          "startAt": {
             "type": "string",
             "format": "date",
             "example": "20/01/2021",
             "description": "Start date of a good deal."
           },
-          "endsAt": {
+          "endAt": {
             "type": "string",
             "format": "date",
             "example": "16/02/2021",
@@ -572,8 +786,8 @@
           }
         },
         "required": [
-          "startsAt",
-          "endsAt",
+          "startAt",
+          "endAt",
           "discount"
         ]
       },

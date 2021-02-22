@@ -11,7 +11,8 @@ Rails.application.routes.draw do
   get '/' => "rails/welcome#index"
 
   namespace :api do
-    draw(:products)
-    draw(:categories)
+    draw(:shops)
+    get '/categories', to: 'categories#index'
   end
+
 end
