@@ -577,7 +577,7 @@
   },
   "servers": [
     {
-      "url": "https://jbernard-eval-test.apigee.net/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {
