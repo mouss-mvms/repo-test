@@ -33,7 +33,7 @@ RSpec.configure do |config|
           apikey: {
             type: :apiKey,
             name: 'x-apikey',
-            in: :query
+            in: :header
           }
         },
         schemas: {
