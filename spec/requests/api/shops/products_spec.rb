@@ -91,6 +91,7 @@ RSpec.describe 'api/shops/products', type: :request do
           },
           variants: {
             type: 'array',
+            description: 'List of variants.',
             items: {
               type: 'object',
               properties: {
@@ -131,8 +132,7 @@ RSpec.describe 'api/shops/products', type: :request do
               },
               required: %w[basePrice quantity]
             }
-          },
-          description: 'List of variants.'
+          }
         },
         required: %w[name]
       }
@@ -238,6 +238,7 @@ RSpec.describe 'api/shops/products', type: :request do
           },
           variants: {
             type: 'array',
+            description: 'List of variants.',
             items: {
               type: 'object',
               properties: {
@@ -278,8 +279,7 @@ RSpec.describe 'api/shops/products', type: :request do
               },
               required: %w[basePrice quantity]
             }
-          },
-          description: 'List of variants.'
+          }
         },
         required: %w[name]
       }

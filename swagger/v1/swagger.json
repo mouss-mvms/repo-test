@@ -162,7 +162,11 @@
                     "example": "Chaise longue",
                     "description": "Display name of a product."
                   },
-                  "description": "List of variants.",
+                  "description": {
+                    "type": "string",
+                    "example": "Chaise longue pour jardin extérieur.",
+                    "description": "Description of a product."
+                  },
                   "categoryId": {
                     "type": "integer",
                     "example": 1,
@@ -198,6 +202,7 @@
                   },
                   "variants": {
                     "type": "array",
+                    "description": "List of variants.",
                     "items": {
                       "type": "object",
                       "properties": {
@@ -453,7 +458,11 @@
                     "example": "Chaise longue",
                     "description": "Display name of a product."
                   },
-                  "description": "List of variants.",
+                  "description": {
+                    "type": "string",
+                    "example": "Chaise longue pour jardin extérieur.",
+                    "description": "Description of a product."
+                  },
                   "categoryId": {
                     "type": "integer",
                     "example": 1,
@@ -489,6 +498,7 @@
                   },
                   "variants": {
                     "type": "array",
+                    "description": "List of variants.",
                     "items": {
                       "type": "object",
                       "properties": {
@@ -577,13 +587,13 @@
   },
   "servers": [
     {
-      "url": "https://jbernard-eval-test.apigee.net/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {
     "securitySchemes": {
-      "api_key": {
-        "type": "apikey",
+      "apikey": {
+        "type": "apiKey",
         "name": "apikey",
         "in": "query"
       }
