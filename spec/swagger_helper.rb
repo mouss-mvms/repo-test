@@ -32,8 +32,8 @@ RSpec.configure do |config|
         securitySchemes: {
           apikey: {
             type: :apiKey,
-            name: 'x-apikey',
-            in: :header
+            name: 'apikey',
+            in: :query
           }
         },
         schemas: {
