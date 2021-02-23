@@ -4,13 +4,13 @@ module Api
   class CategoriesController < ApplicationController
     def index
       categories = []
-      dto_category1 = Category.new
+      dto_category1 = CategoryDto.new
       dto_category1.name = "Chaussures"
       dto_category1.id = 1
-      dto_category2 = Category.new
+      dto_category2 = CategoryDto.new
       dto_category2.name = "Jeans"
       dto_category2.id = 2
-      dto_category3 = Category.new
+      dto_category3 = CategoryDto.new
       dto_category3.name = "Vestes"
       dto_category3.id = 3
       categories << dto_category1
