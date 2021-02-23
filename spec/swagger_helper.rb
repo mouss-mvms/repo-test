@@ -18,15 +18,233 @@ RSpec.configure do |config|
     'v1/swagger.json' => {
       openapi: '3.0.1',
       info: {
-        title: 'API V1',
-        version: 'v1'
+        title: 'CATALOG API',
+        version: '0.1.0',
+        description: 'Ma Ville Mon Shopping Catalog API'
       },
       paths: {},
       servers: [
         {
           url: ENV['BASE_URL'].to_s
         }
-      ]
+      ],
+      components: {
+        securitySchemes: {
+          apikey: {
+            type: :apiKey,
+            name: 'x-apikey',
+            in: :query
+          }
+        },
+        schemas: {
+          Shop: {
+            type: 'object',
+            properties: {
+              id: {
+                type: 'integer',
+                example: 1,
+                description: 'Unique identifier of a shop.'
+              },
+              name: {
+                type: 'string',
+                example: 'Jardin Local',
+                description: 'Display name of a shop.'
+              },
+              slug: {
+                type: 'string',
+                example: 'jardin-local',
+                description: 'Slug of a shop.'
+              },
+              products: {
+                type: 'array',
+                items: {
+                  '$ref': '#/components/schemas/Product'
+                },
+                description: 'List of products.',
+              }
+            }
+          },
+          Product: {
+            type: 'object',
+            properties: {
+              id: {
+                type: 'integer',
+                example: 1,
+                description: 'Unique identifier of a product.'
+              },
+              name: {
+                type: 'string',
+                example: 'Chaise longue',
+                description: 'Display name of a product.'
+              },
+              slug: {
+                type: 'string',
+                example: 'chaise-longue',
+                description: 'Slug of a product.'
+              },
+              description: {
+                type: 'string',
+                example: 'Chaise longue pour jardin extérieur.',
+                description: 'Description of a product.'
+              },
+              category: {
+                '$ref': '#/components/schemas/Category',
+                description: 'Category of a product.'
+              },
+              brand: {
+                type: 'string',
+                example: 'Lafuma',
+                description: 'Brand of a product.'
+              },
+              status: {
+                type: 'string',
+                example: 'online',
+                default: 'not_online',
+                enum: ['not_online', 'online', 'draft_cityzen', 'submitted', 'refused'],
+                description: 'Status of a product.'
+              },
+              sellerAdvice: {
+                type: 'string',
+                example: 'Nettoyez votre mobilier à l’eau claire ou savonneuse sans détergent.',
+                description: 'Seller advice of a product'
+              },
+              isService: {
+                type: 'boolean',
+                example: false,
+                description: 'This product is a merchandise or a service.'
+              },
+              variants: {
+                type: 'array',
+                items: {
+                  '$ref': '#/components/schemas/Variant'
+                },
+                description: 'List of variants.'
+              }
+            }
+          },
+          Category: {
+            type: 'object',
+            properties: {
+              id: {
+                type: 'integer',
+                example: 1,
+                description: 'Unique identifier of a category.'
+              },
+              name: {
+                type: 'string',
+                example: 'Mobilier extérieur',
+                description: 'Display name of a category.'
+              }
+            }
+          },
+          Variant: {
+            type: 'object',
+            properties: {
+              id: {
+                type: 'integer',
+                example: 1,
+                description: 'Unique identifier of a variant.'
+              },
+              basePrice: {
+                type: 'number',
+                format: 'double',
+                example: 20.50,
+                description: 'Base price of a variant.'
+              },
+              weight: {
+                type: 'number',
+                format: 'double',
+                nullable: true,
+                example: 20.50,
+                description: 'Weight in grams of a variant.'
+              },
+              quantity: {
+                type: 'integer',
+                example: 20,
+                description: 'Quantity in stock of a variant.'
+              },
+              isDefault: {
+                type: 'boolean',
+                default: false,
+                description: 'Default state of a variant.'
+              },
+              goodDeal: {
+                '$ref': '#/components/schemas/GoodDeal',
+                description: 'Good deal of a variant.'
+              },
+              characteristics: {
+                type: 'array',
+                items: {
+                  '$ref': '#/components/schemas/Characteristic'
+                },
+                description: 'List of characteristics.'
+              }
+            }
+          },
+          Characteristic: {
+            type: 'object',
+            properties: {
+              name: {
+                type: 'string',
+                example: 'blue',
+                description: 'Display name of a characteristic.'
+              },
+              type: {
+                type: 'string',
+                example: 'color',
+                enum: ['color', 'size'],
+                description: 'Type of a characteristic.'
+              }
+            },
+            required: %w[name type]
+          },
+          GoodDeal: {
+            type: 'object',
+            properties: {
+              startAt: {
+                type: 'string',
+                format: 'date',
+                example: '20/01/2021',
+                description: 'Start date of a good deal.'
+              },
+              endAt: {
+                type: 'string',
+                format: 'date',
+                example: '16/02/2021',
+                description: 'End date of a good deal.'
+              },
+              discount: {
+                type: 'integer',
+                example: '20',
+                minimum: 1,
+                maximum: 100,
+                description: 'Discount amount of a good deal.'
+              }
+            },
+            required: %w[startAt endAt discount]
+          },
+          Error: {
+            type: 'object',
+            properties: {
+              status: {
+                type: 'integer',
+                example: 400,
+                description: 'Status of an error.'
+              },
+              message: {
+                type: 'string',
+                example: 'Bad Request',
+                description: 'Message of an error.'
+              },
+              detail: {
+                type: 'string',
+                example: 'The syntax of the query is incorrect.',
+                description: 'Detail message of an error.'
+              }
+            }
+          }
+        }
+      }
     }
   }
 
