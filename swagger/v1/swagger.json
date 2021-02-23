@@ -587,7 +587,7 @@
   },
   "servers": [
     {
-      "url": "https://jbernard-eval-test.apigee.net/catalog-dev"
+      "url": "https://jbernard-eval-prod.apigee.net/catalog"
     }
   ],
   "components": {
