@@ -594,7 +594,7 @@
     "securitySchemes": {
       "apikey": {
         "type": "apiKey",
-        "name": "apikey",
+        "name": "x-apikey",
         "in": "query"
       }
     },
