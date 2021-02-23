@@ -32,7 +32,7 @@ RSpec.configure do |config|
         securitySchemes: {
           apikey: {
             type: :apiKey,
-            name: 'x-apikey',
+            name: 'apikey',
             in: :query
           }
         },
