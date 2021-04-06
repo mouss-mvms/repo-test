@@ -29,6 +29,13 @@ RSpec.configure do |config|
         }
       ],
       components: {
+        securitySchemes: {
+          apikey: {
+            type: :apiKey,
+            name: 'apikey',
+            in: :query
+          }
+        },
         schemas: {
           Shop: {
             type: 'object',
@@ -194,13 +201,13 @@ RSpec.configure do |config|
           GoodDeal: {
             type: 'object',
             properties: {
-              startsAt: {
+              startAt: {
                 type: 'string',
                 format: 'date',
                 example: '20/01/2021',
                 description: 'Start date of a good deal.'
               },
-              endsAt: {
+              endAt: {
                 type: 'string',
                 format: 'date',
                 example: '16/02/2021',
@@ -214,7 +221,7 @@ RSpec.configure do |config|
                 description: 'Discount amount of a good deal.'
               }
             },
-            required: %w[startsAt endsAt discount]
+            required: %w[startAt endAt discount]
           },
           Error: {
             type: 'object',
