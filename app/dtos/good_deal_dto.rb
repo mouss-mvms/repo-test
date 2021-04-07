@@ -10,6 +10,6 @@ class GoodDealDto
 
   def self.create(reference)
     return unless reference.good_deal
-    GoodDealDto.new(start_at: reference&.good_deal&.start_at, end_at: reference&.good_deal&.end_at, discount: reference&.good_deal&.discount)
+    GoodDealDto.new(start_at: reference&.good_deal&.starts_at.to_time.to_i, end_at: reference&.good_deal&.ends_at.to_time.to_i, discount: reference&.good_deal&.discount)
   end
 end

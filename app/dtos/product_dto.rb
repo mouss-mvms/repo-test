@@ -13,8 +13,7 @@ class ProductDto
     @variants = args[:variants]
   end
 
-  def self.create(id)
-      product = Product.find(id)
+  def self.create(product)
       dto_product = ProductDto.new( id: product.id, 
                                     name: product.name, 
                                     slug: product.slug, 
