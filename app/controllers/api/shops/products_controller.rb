@@ -66,35 +66,13 @@ module Api
       end
 
       def show
-        id = params[:id]
-        dto_product = ProductDto.new
-        dto_product.id = id.to_i
-        dto_product.name = 'Product name'
-        dto_product.slug = 'product-name'
-        dto_category = CategoryDto.new
-        dto_category.id = Random.rand(12)
-        dto_category.name = 'category'
-        dto_product.category = dto_category
-        dto_product.brand = 'brand'
-        dto_product.status = 'active'
-        dto_product.seller_advice = 'Bon produit'
-        dto_variant = VariantDto.new
-        dto_variant.id = 23
-        dto_variant.weight = 12.8
-        dto_variant.quantity = 23
-        dto_variant.base_price = 15
-        dto_variant.is_default = true
-        dto_good_deal = GoodDealDto.new
-        dto_good_deal.start_at = DateTime.now.to_date
-        dto_good_deal.end_at = DateTime.now.to_date + 2
-        dto_good_deal.discount = 20
-        dto_variant.good_deal = dto_good_deal
-        dto_characteristic = CharacteristicDto.new
-        dto_characteristic.name = 'blue'
-        dto_characteristic.type = 'color'
-        dto_variant.characteristics << dto_characteristic
-        dto_product.variants << dto_variant
-        render json: dto_product.to_json
+        begin 
+          response = ProductDto.create(product_params[:id])
+        rescue ActiveRecord::RecordNotFound => e
+          error = ErrorDto.new(e.message, 'Not Found', 404)
+          return render json: error.to_json, status: :not_found
+        end
+        render json: response.to_json
       end
 
       def create
@@ -108,7 +86,7 @@ module Api
         end
         unless params[:brand] || !params[:brand].blank?
           error = ErrorDto.new('Incorrect brand', 'Bad request', 400)
-          return render json: error.to_json, status: :bad_request
+          
         end
 
         dto_product = ProductDto.new
@@ -212,6 +190,11 @@ module Api
         end
 
         head :no_content
+      end
+      private
+
+      def product_params
+        params.permit(:id, :shop_id)
       end
     end
   end

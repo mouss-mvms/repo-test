@@ -27,6 +27,7 @@ gem 'rack-cors'
 
 group :development, :test, :local do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
+  gem 'pry-byebug'
   gem 'byebug'
   gem "rspec-rails"
   gem "rswag-specs"
