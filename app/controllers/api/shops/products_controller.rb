@@ -1,10 +1,3 @@
-require_relative '../../../dtos/category_dto.rb'
-require_relative '../../../dtos/characteristic_dto.rb'
-require_relative '../../../dtos/error_dto.rb'
-require_relative '../../../dtos/good_deal_dto.rb'
-require_relative '../../../dtos/product_dto.rb'
-require_relative '../../../dtos/variant_dto.rb'
-
 module Api
   module Shops
     class ProductsController < ApplicationController
@@ -15,9 +8,9 @@ module Api
           error = ErrorDto.new(e.message, 'Not Found', 404)
           return render json: error.to_json, status: :not_found
         end
-        products = shop.products.includes(:category, :brand, references: [:sample, :color, :size, :good_deal])
+        products = shop.products.includes(:category, :brand, references: [:sample, :color, :size, :good_deal]).actives
         response = products.map {|product| ProductDto.create(product)}
-        render json: response.to_json
+        paginate json: response, per_page: 50
       end
 
       def show
@@ -42,7 +35,6 @@ module Api
         end
         unless params[:brand] || !params[:brand].blank?
           error = ErrorDto.new('Incorrect brand', 'Bad request', 400)
-          
         end
 
         dto_product = ProductDto.new
