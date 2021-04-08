@@ -15,7 +15,7 @@ module Api
           error = ErrorDto.new(e.message, 'Not Found', 404)
           return render json: error.to_json, status: :not_found
         end
-        products = shop.products.preload(:references)
+        products = shop.products.includes(:category, :brand, references: [:sample, :color, :size, :good_deal])
         response = products.map {|product| ProductDto.create(product)}
         render json: response.to_json
       end
