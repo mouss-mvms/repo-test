@@ -140,13 +140,20 @@ module Api
       end
 
       def destroy
-        unless params[:id] || params[:id].is_a?(Numeric)
-          error = ErrorDto.new('Not found', 'Not found', 404)
-          return render json: error.to_json, status: :bad_request
+        begin
+          product = Product.find(product_params[:id])
+          if ProductsSpecifications::IsRemovable.new.is_satisfied_by?(product)
+            product.destroy
+          else
+            product.soft_destroy
+          end
+        rescue ActiveRecord::RecordNotFound => e
+          error = ErrorDto.new(e.message, 'Not Found', 404)
+          return render json: error.to_json, status: :not_found
         end
-
         head :no_content
       end
+
       private
 
       def product_params
