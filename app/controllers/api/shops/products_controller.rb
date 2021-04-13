@@ -136,8 +136,6 @@ module Api
           product = Product.find(product_params[:id])
           if ProductsSpecifications::IsRemovable.new.is_satisfied_by?(product)
             product.destroy
-          else
-            product.soft_destroy
           end
         rescue ActiveRecord::RecordNotFound => e
           error = ErrorDto.new(e.message, 'Not Found', 404)
