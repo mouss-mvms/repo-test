@@ -14,10 +14,10 @@ module Api
       end
 
       def show
-        begin 
-          product = Product.find(product_params[:id])
+        product = Product.where(id: product_params[:id], shop_id: product_params[:shop_id])
+        if product.present?
           response = ProductDto.create(product)
-        rescue ActiveRecord::RecordNotFound => e
+        else
           error = ErrorDto.new(e.message, 'Not Found', 404)
           return render json: error.to_json, status: :not_found
         end
@@ -132,12 +132,10 @@ module Api
       end
 
       def destroy
-        begin
-          product = Product.find(product_params[:id])
-          if ProductsSpecifications::IsRemovable.new.is_satisfied_by?(product)
-            product.destroy
-          end
-        rescue ActiveRecord::RecordNotFound => e
+        product = Product.where(id: product_params[:id], shop_id: product_params[:shop_id])
+        if products.present?
+          product.destroy if ProductsSpecifications::IsRemovable.new.is_satisfied_by?(product)   
+        else
           error = ErrorDto.new(e.message, 'Not Found', 404)
           return render json: error.to_json, status: :not_found
         end
