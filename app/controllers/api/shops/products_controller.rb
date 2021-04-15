@@ -29,7 +29,7 @@ module Api
           error = ErrorDto.new('Incorrect name', 'Bad request', 400)
           return render json: error.to_json, status: :bad_request
         end
-        unless params[:categoryId] || !params[:categoryId].blank?
+        unless Category.exists?(id: params[:categoryId])
           error = ErrorDto.new('Incorrect category', 'Bad request', 400)
           return render json: error.to_json, status: :bad_request
         end
@@ -37,42 +37,57 @@ module Api
           error = ErrorDto.new('Incorrect brand', 'Bad request', 400)
         end
 
-        dto_product = ProductDto.new
-        dto_product.id = Random.rand(1000)
-        dto_product.name = params[:name]
-        dto_product.slug = params[:name].parameterize
-        dto_category = CategoryDto.new
-        dto_category.id = params[:categoryId]
-        dto_category.name = 'category'
-        dto_product.category = dto_category
-        dto_product.brand = params[:brand]
-        dto_product.status = (params[:status] || 'not_online')
-        dto_product.seller_advice = params[:sellerAdvice] if params[:sellerAdvice]
-        params[:variants].each do |variant|
-          dto_variant = VariantDto.new
-          dto_variant.id = Random.rand(1000)
-          dto_variant.weight = variant[:weight]
-          dto_variant.quantity = variant[:quantity]
-          dto_variant.base_price = variant[:basePrice]
-          dto_variant.is_default = variant[:isDefault]
-          if variant[:goodDeal]
-            dto_good_deal = GoodDealDto.new
-            dto_good_deal.start_at = variant[:goodDeal][:startAt]
-            dto_good_deal.end_at = variant[:goodDeal][:endAt]
-            dto_good_deal.discount = variant[:goodDeal][:discount]
-            dto_variant.good_deal = dto_good_deal
-          end
-          if variant[:characteristics]
-            variant[:characteristics]&.each do |characteristic|
-              dto_characteristic = CharacteristicDto.new
-              dto_characteristic.name = characteristic[:name]
-              dto_characteristic.type = characteristic[:type]
-              dto_variant.characteristics << dto_characteristic
+        ActiveRecord::Base.transaction do
+          begin
+            shop = Shop.find(product_params[:shop_id])
+
+            product = Product.new(
+              name: params[:name],
+              category_id: params[:categoryId],
+              brand_id: Brand.where(name: params[:brand]).first_or_create.id,
+              is_a_service: params[:isService],
+              status: params[:status] || 'not_online',
+              pro_advice: params[:sellerAdvice]
+            )
+            
+            shop.products << product
+            params[:variants].each do |variant|
+              sample = Sample.new(name: "Test #{SecureRandom.hex(4)}", default: variant[:isDefault])
+              product.samples << sample
+    
+              if sample.save!
+                variant[:characteristics].each do |characteristic|
+                  reference = Reference.new(
+                    weight: variant[:weigth],
+                    quantity: variant[:quantity],
+                    base_price: variant[:basePrice],
+                    product_id: product.id,
+                    sample_id: sample.id,
+                    color_id: characteristic[:type] == "color" ? Color.where(name: characteristic[:name]).first_or_create.id : nil,
+                    size_id: characteristic[:type] == "size" ? Size.where(name: characteristic[:name]).first_or_create.id : nil,
+                  )
+                  reference.save!
+                end     
+              end
             end
+              
+            p "== PRODUCT =="
+            p product
+
+            p "== SAMPLE =="
+            p product.samples
+
+            p "== REFERENCE =="
+            p product.references
+
+            product.save!
+            response = ProductDto.create(product)
+            return render json: response.to_json, status: :created
+          rescue => e
+            error = ErrorDto.new(e.message, "Not Created", 500)
+            return render json: error.to_json, status: :not_found
           end
-          dto_product.variants << dto_variant
         end
-        render json: dto_product.to_json, status: :created
       end
 
       def update
