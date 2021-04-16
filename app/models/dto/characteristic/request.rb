@@ -1,0 +1,19 @@
+module Dto
+  module Characteristic
+    class Request
+      attr_reader :name, :type
+
+      def initialize(**args)
+        @name = args[:name]
+        @type = args[:type]
+      end
+    
+      def self.create(**args)
+        Dto::Characteristic::Request.new(
+          name: args[:name],
+          type: args[:type]
+        )
+      end
+    end
+  end
+end
