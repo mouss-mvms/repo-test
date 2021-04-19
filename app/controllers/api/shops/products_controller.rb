@@ -37,22 +37,18 @@ module Api
           error = Dto::Error.new('Incorrect brand', 'Bad request', 400)
         end
 
-        Product.transaction do
-          p params
+        ActiveRecord::Base.transaction do
           begin
             dto_product = Dto::Product::Request.create(**build_product_params.to_h.symbolize_keys)
             dto_category = Dto::Category::Request.new(::Category.where(id: params[:category_id]).select(:id, :name)&.first.as_json.symbolize_keys)
             product = Dto::Product::Request.build(dto_product: dto_product, dto_category: dto_category, shop_id: product_params[:shop_id])
             response = Dto::Product::Response.create(product).to_h
-            p "=== FINAL ==="
-            p response
             return render json: response, status: :created
           rescue => e
             error = Dto::Error.new(e.message, "Not Created", 500)
             return render json: error.to_json, status: :not_found
           end
-        end
-     
+        end     
       end
 
       def update
