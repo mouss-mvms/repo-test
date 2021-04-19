@@ -41,8 +41,8 @@ module Dto
       private
     
       def create_characteristics(reference)
-        self.characteristics << Dto::Characteristic::Response.create(name: reference.color.name, type: 'color') if reference.color
-        self.characteristics << Dto::Characteristic::Response.create(name: reference.size.name, type: 'size') if reference.size
+        self.characteristics << Dto::Characteristic::Response.new(name: reference.color.name, type: 'color') if reference.color
+        self.characteristics << Dto::Characteristic::Response.new(name: reference.size.name, type: 'size') if reference.size
       end
     end
   end

@@ -7,13 +7,6 @@ module Dto
         @name = args[:name]
         @type = args[:type]
       end
-    
-      def self.create(**args)
-        Dto::Characteristic::Response.new(
-          name: args[:name],
-          type: args[:type]
-        )
-      end
 
       def to_h
         {

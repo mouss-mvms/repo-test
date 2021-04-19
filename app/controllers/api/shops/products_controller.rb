@@ -5,8 +5,8 @@ module Api
         begin
           shop = Shop.find(product_params[:shop_id])
         rescue ActiveRecord::RecordNotFound => e
-          error = Dto::Error.new(e.message, 'Not Found', 404)
-          return render json: error.to_json, status: :not_found
+          error = Dto::Error::NotFound.new(e.message)
+          return render json: error.to_h, status: :not_found
         end
         products = shop.products.includes(:category, :brand, references: [:sample, :color, :size, :good_deal]).actives
         response = products.map {|product| Dto::Product::Response.create(product)}
@@ -18,23 +18,23 @@ module Api
         if product.present?
           response = Dto::Product::Response.create(product)
         else
-          error = Dto::Error.new(e.message, 'Not Found', 404)
-          return render json: error.to_json, status: :not_found
+          error = Dto::Error::NotFound.new(e.message)
+          return render json: error.to_h, status: :not_found
         end
         render json: response.to_json
       end
 
       def create
         unless params[:name] || !params[:name].blank?
-          error = Dto::Error.new('Incorrect name', 'Bad request', 400)
-          return render json: error.to_json, status: :bad_request
+          error = Dto::Error::UnprocessableEntity.new("Incorrect Name")
+          return render json: error.to_h, status: :bad_request
         end
         unless Category.exists?(id: params[:category_id])
-          error = Dto::Error.new('Incorrect category', 'Bad request', 400)
-          return render json: error.to_json, status: :bad_request
+          error = Dto::Errors::BadRequest.new('Incorrect category')
+          return render json: error.to_h, status: :bad_request
         end
         unless params[:brand] || !params[:brand].blank?
-          error = Dto::Error.new('Incorrect brand', 'Bad request', 400)
+          error = Dto::Error::BadRequest.new('Incorrect brand')
         end
 
         ActiveRecord::Base.transaction do
@@ -45,28 +45,28 @@ module Api
             response = Dto::Product::Response.create(product).to_h
             return render json: response, status: :created
           rescue => e
-            error = Dto::Error.new(e.message, "Not Created", 500)
-            return render json: error.to_json, status: :not_found
+            error = Dto::Error::InternalServer.new(e.message)
+            return render json: error.to_h, status: :not_found
           end
         end     
       end
 
       def update
         unless params[:id] || params[:id].is_a?(Numeric)
-          error = Dto::Error.new('Not found', 'Not found', 404)
-          return render json: error.to_json, status: :bad_request
+          error = Dto::Error::NotFound.new('Not found')
+          return render json: error.to_h, status: :bad_request
         end
         unless params[:name] || !params[:name].blank?
-          error = Dto::Error.new('Incorrect name', 'Bad request', 400)
-          return render json: error.to_json, status: :bad_request
+          error = Dto::Error::BadRequest.new('Incorrect name')
+          return render json: error.to_h, status: :bad_request
         end
         unless params[:categoryId] || !params[:categoryId].blank?
-          error = Dto::Error.new('Incorrect category', 'Bad request', 400)
-          return render json: error.to_json, status: :bad_request
+          error = Dto::Error::BadRequest.new('Incorrect category')
+          return render json: error.to_h, status: :bad_request
         end
         unless params[:brand] || !params[:brand].blank?
-          error = Dto::Error.new('Incorrect brand', 'Bad request', 400)
-          return render json: error.to_json, status: :bad_request
+          error = Dto::Error::BadRequest.new('Incorrect brand')
+          return render json: error.to_h, status: :bad_request
         end
 
         dto_product = Dto::Product::Response.new
@@ -112,8 +112,8 @@ module Api
         if products.present?
           product.destroy if ProductsSpecifications::IsRemovable.new.is_satisfied_by?(product)   
         else
-          error = Dto::Error.new(e.message, 'Not Found', 404)
-          return render json: error.to_json, status: :not_found
+          error = Dto::Error::NotFound.new(e.message)
+          return render json: error.to_h, status: :not_found
         end
         head :no_content
       end
