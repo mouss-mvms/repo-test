@@ -12,9 +12,9 @@ module Dto
       def self.create(good_deal)
         return nil unless good_deal
         Dto::GoodDeal::Response.new(
-          start_at: good_deal&.starts_at.to_time.to_i, 
-          end_at: good_deal&.ends_at.to_time.to_i, 
-          discount: good_deal&.discount
+          start_at: good_deal.starts_at.to_time.to_i, 
+          end_at: good_deal.ends_at.to_time.to_i, 
+          discount: good_deal.discount
         )
       end
 

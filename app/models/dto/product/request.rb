@@ -30,7 +30,6 @@ module Dto
       end
 
       def self.build(dto_product:, dto_category:, shop_id:)
-        p "=== BUILD #{DateTime.now()} =="
         product = ::Product.create(
           name: dto_product.name,
           shop_id: shop_id,
@@ -39,10 +38,14 @@ module Dto
           is_a_service: dto_product.is_service,
           status: dto_product.status || 'not_online',
           pro_advice: dto_product.seller_advice,
-        ) 
+          fields_attributes: [
+            { lang: "fr", field: "description", content: dto_product.description },
+            { lang: "en", field: "description", content: "" }
+          ]
+        )
     
         dto_product.variants.each do |dto_variant|
-          sample = ::Sample.create(name: SecureRandom.hex(4), default: dto_variant.is_default, product_id: product.id)
+          sample = ::Sample.create(name: dto_product.name, default: dto_variant.is_default, product_id: product.id)
     
           dto_good_deal = dto_variant.good_deal
           good_deal = nil

@@ -41,7 +41,7 @@ module Api
           p params
           begin
             dto_product = Dto::Product::Request.create(**build_product_params.to_h.symbolize_keys)
-            dto_category = Dto::Category::Request.create(::Category.where(id: params[:category_id]).select(:id, :name)&.first.as_json.symbolize_keys)
+            dto_category = Dto::Category::Request.new(::Category.where(id: params[:category_id]).select(:id, :name)&.first.as_json.symbolize_keys)
             product = Dto::Product::Request.build(dto_product: dto_product, dto_category: dto_category, shop_id: product_params[:shop_id])
             response = Dto::Product::Response.create(product).to_h
             p "=== FINAL ==="

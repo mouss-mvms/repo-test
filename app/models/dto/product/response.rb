@@ -20,6 +20,7 @@ module Dto
         Dto::Product::Response.new( 
           id: product.id, 
           name: product.name, 
+          description: product.description,
           slug: product.slug, 
           brand: product&.brand&.name, 
           status: product.status, 

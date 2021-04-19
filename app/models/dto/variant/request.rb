@@ -18,8 +18,8 @@ module Dto
           weight: args[:weight],
           quantity: args[:quantity],
           is_default: args[:is_default],
-          good_deal: Dto::GoodDeal::Request.create(**args[:good_deal]&.symbolize_keys),
-          characteristics: args[:characteristics]&.map { |c| Dto::Characteristic::Request.create(**c&.symbolize_keys) }
+          good_deal: Dto::GoodDeal::Request.new(**args[:good_deal]&.symbolize_keys),
+          characteristics: args[:characteristics]&.map { |c| Dto::Characteristic::Request.new(**c&.symbolize_keys) }
         )
       end
 
