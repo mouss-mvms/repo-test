@@ -6,8 +6,8 @@ ruby '2.6.6'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.2.0'
 #api-pagination
-gem 'pagy'
 gem 'api-pagination'
+gem 'pagy'
 
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 1.2', '>= 1.2.3'
@@ -31,10 +31,11 @@ gem 'rack-cors'
 
 group :development, :test, :local do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'pry-byebug'
   gem 'byebug'
+  gem 'pry-byebug'
   gem "rspec-rails"
   gem "rswag-specs"
+
 end
 
 gem 'listen', '~> 3.3'
@@ -54,5 +55,6 @@ gem 'rack-attack'
 gem 'rswag-api'
 gem 'rswag-ui'
 
-# MVMS Core
-gem 'mvms-core', :git => "https://bitbucket.org/e-city/mvms-core"
+source 'https://gem.fury.io/mvms/' do
+  gem 'mvms-core'
+end
