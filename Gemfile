@@ -56,5 +56,5 @@ gem 'rswag-api'
 gem 'rswag-ui'
 
 source 'https://gem.fury.io/mvms/' do
-  gem 'mvms-core'
+  gem 'mvms-core', '1.4.6'
 end
