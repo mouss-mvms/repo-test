@@ -1,7 +1,7 @@
 GEM
   remote: https://gem.fury.io/mvms/
   specs:
-    mvms-core (1.4.7)
+    mvms-core (2.4.14)
       MailchimpMarketing (~> 3.0.34)
       activerecord (~> 5.2, >= 5.2.0)
       activerecord-sortable
@@ -20,7 +20,7 @@ GEM
 GEM
   remote: https://rubygems.org/
   specs:
-    MailchimpMarketing (3.0.40)
+    MailchimpMarketing (3.0.41)
       excon (~> 0.76.0)
       json (~> 2.1, >= 2.1.0)
     aasm (5.1.1)
@@ -414,7 +414,7 @@ DEPENDENCIES
   byebug
   figaro
   listen (~> 3.3)
-  mvms-core (= 1.4.7)!
+  mvms-core (= 2.4.14)!
   pagy
   pg (~> 1.2, >= 1.2.3)
   pry-byebug
