@@ -26,7 +26,7 @@ module Api
 
       def create
         unless params[:name] || !params[:name].blank?
-          error = Dto::Errors::UnprocessableEntity.new("Incorrect Name")
+          error = Dto::Errors::UnprocessableEntity.new('Incorrect Name')
           return render json: error.to_h, status: :bad_request
         end
         unless Category.exists?(id: params[:category_id])
