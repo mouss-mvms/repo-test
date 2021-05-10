@@ -5,7 +5,7 @@ module Api
         begin
           shop = Shop.find(product_params[:shop_id])
         rescue ActiveRecord::RecordNotFound => e
-          error = Dto::Error::NotFound.new(e.message)
+          error = Dto::Errors::NotFound.new(e.message)
           return render json: error.to_h, status: :not_found
         end
         products = shop.products.includes(:category, :brand, references: [:sample, :color, :size, :good_deal]).actives
@@ -18,7 +18,7 @@ module Api
         if product.present?
           response = Dto::Product::Response.create(product)
         else
-          error = Dto::Error::NotFound.new(e.message)
+          error = Dto::Errors::NotFound.new(e.message)
           return render json: error.to_h, status: :not_found
         end
         render json: response.to_json
@@ -26,7 +26,7 @@ module Api
 
       def create
         unless params[:name] || !params[:name].blank?
-          error = Dto::Error::UnprocessableEntity.new("Incorrect Name")
+          error = Dto::Errors::UnprocessableEntity.new("Incorrect Name")
           return render json: error.to_h, status: :bad_request
         end
         unless Category.exists?(id: params[:category_id])
@@ -34,7 +34,7 @@ module Api
           return render json: error.to_h, status: :bad_request
         end
         unless params[:brand] || !params[:brand].blank?
-          error = Dto::Error::BadRequest.new('Incorrect brand')
+          error = Dto::Errors::BadRequest.new('Incorrect brand')
         end
 
         ActiveRecord::Base.transaction do
@@ -45,7 +45,7 @@ module Api
             response = Dto::Product::Response.create(product).to_h
             return render json: response, status: :created
           rescue => e
-            error = Dto::Error::InternalServer.new(e.message)
+            error = Dto::Errors::InternalServer.new(e.message)
             return render json: error.to_h, status: :not_found
           end
         end     
@@ -53,19 +53,19 @@ module Api
 
       def update
         unless params[:id] || params[:id].is_a?(Numeric)
-          error = Dto::Error::NotFound.new('Not found')
+          error = Dto::Errors::NotFound.new('Not found')
           return render json: error.to_h, status: :bad_request
         end
         unless params[:name] || !params[:name].blank?
-          error = Dto::Error::BadRequest.new('Incorrect name')
+          error = Dto::Errors::BadRequest.new('Incorrect name')
           return render json: error.to_h, status: :bad_request
         end
         unless params[:categoryId] || !params[:categoryId].blank?
-          error = Dto::Error::BadRequest.new('Incorrect category')
+          error = Dto::Errors::BadRequest.new('Incorrect category')
           return render json: error.to_h, status: :bad_request
         end
         unless params[:brand] || !params[:brand].blank?
-          error = Dto::Error::BadRequest.new('Incorrect brand')
+          error = Dto::Errors::BadRequest.new('Incorrect brand')
           return render json: error.to_h, status: :bad_request
         end
 
@@ -112,7 +112,7 @@ module Api
         if products.present?
           product.destroy if ProductsSpecifications::IsRemovable.new.is_satisfied_by?(product)   
         else
-          error = Dto::Error::NotFound.new(e.message)
+          error = Dto::Errors::NotFound.new(e.message)
           return render json: error.to_h, status: :not_found
         end
         head :no_content
