@@ -55,6 +55,8 @@ gem 'rack-attack'
 gem 'rswag-api'
 gem 'rswag-ui'
 
+gem 'delayed_job_active_record'
+
 source 'https://gem.fury.io/mvms/' do
-  gem 'mvms-core', '2.4.14'
+  gem 'mvms-core', '2.4.20'
 end

@@ -12,7 +12,7 @@ module Dto
         @is_service = args[:is_service]
         @seller_advice = args[:seller_advice]
         @description = args[:description]
-        @variants = args[:variants]
+        @variants = args[:variants] || []
       end  
 
       def self.create(**args)
@@ -36,7 +36,7 @@ module Dto
           category_id: dto_category.id,
           brand_id: ::Brand.where(name: dto_product.brand).first_or_create.id,
           is_a_service: dto_product.is_service,
-          status: dto_product.status || 'not_online',
+          status: dto_product.status || 'offline',
           pro_advice: dto_product.seller_advice,
           fields_attributes: [
             { lang: "fr", field: "description", content: dto_product.description },
