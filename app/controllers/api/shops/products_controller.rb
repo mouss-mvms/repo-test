@@ -26,7 +26,7 @@ module Api
 
       def create
         unless params[:name] || !params[:name].blank?
-          error = Dto::Errors::UnprocessableEntity.new('Incorrect Name')
+          error = Dto::Errors::BadRequest.new('Incorrect Name')
           return render json: error.to_h, status: :bad_request
         end
         unless Category.exists?(id: params[:category_id])
@@ -35,6 +35,7 @@ module Api
         end
         unless params[:brand] || !params[:brand].blank?
           error = Dto::Errors::BadRequest.new('Incorrect brand')
+          return render json: error.to_h, status: :bad_request
         end
 
         ActiveRecord::Base.transaction do
@@ -46,9 +47,9 @@ module Api
             return render json: response, status: :created
           rescue => e
             error = Dto::Errors::InternalServer.new(e.message)
-            return render json: error.to_h, status: :not_found
+            return render json: error.to_h, status: :internal_server_error
           end
-        end     
+        end
       end
 
       def update
@@ -110,7 +111,7 @@ module Api
       def destroy
         product = Product.where(id: product_params[:id], shop_id: product_params[:shop_id])
         if products.present?
-          product.destroy if ProductsSpecifications::IsRemovable.new.is_satisfied_by?(product)   
+          product.destroy if ProductsSpecifications::IsRemovable.new.is_satisfied_by?(product)
         else
           error = Dto::Errors::NotFound.new(e.message)
           return render json: error.to_h, status: :not_found
@@ -124,26 +125,26 @@ module Api
         params.permit(:id, :shop_id)
       end
 
-      def build_product_params      
+      def build_product_params
         params.permit(
-          :name, 
-          :description, 
-          :brand, 
-          :status, 
-          :seller_advice, 
-          :is_service, 
+          :name,
+          :description,
+          :brand,
+          :status,
+          :seller_advice,
+          :is_service,
           variants: [
-            :base_price, 
-            :weight, 
-            :quantity, 
-            :is_default, 
-            good_deal: [ 
-              :start_at, 
-              :end_at, 
-              :discount 
-            ], 
+            :base_price,
+            :weight,
+            :quantity,
+            :is_default,
+            good_deal: [
+              :start_at,
+              :end_at,
+              :discount
+            ],
             characteristics: [
-              :name, 
+              :name,
               :type
             ]
           ]

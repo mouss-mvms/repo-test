@@ -1,7 +1,7 @@
 GEM
   remote: https://gem.fury.io/mvms/
   specs:
-    mvms-core (2.4.14)
+    mvms-core (2.4.20)
       MailchimpMarketing (~> 3.0.34)
       activerecord (~> 5.2, >= 5.2.0)
       activerecord-sortable
@@ -23,7 +23,7 @@ GEM
     MailchimpMarketing (3.0.41)
       excon (~> 0.76.0)
       json (~> 2.1, >= 2.1.0)
-    aasm (5.1.1)
+    aasm (5.2.0)
       concurrent-ruby (~> 1.0)
     actioncable (5.2.5)
       actionpack (= 5.2.5)
@@ -90,7 +90,12 @@ GEM
       activerecord (>= 5.0)
       railties (>= 5.0)
     declarative (0.0.20)
-    devise (4.7.3)
+    delayed_job (4.1.9)
+      activesupport (>= 3.0, < 6.2)
+    delayed_job_active_record (4.1.6)
+      activerecord (>= 3.0, < 6.2)
+      delayed_job (>= 3.0, < 5)
+    devise (4.8.0)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
       railties (>= 4.1.0)
@@ -157,7 +162,7 @@ GEM
       google-apis-core (~> 0.1)
       google-apis-discovery_v1 (~> 0.0)
       thor (>= 0.20, < 2.a)
-    googleauth (0.16.1)
+    googleauth (0.16.2)
       faraday (>= 0.17.3, < 2.0)
       jwt (>= 1.4, < 3.0)
       memoist (~> 0.16)
@@ -236,10 +241,6 @@ GEM
     pry (0.13.1)
       coderay (~> 1.1)
       method_source (~> 1.0)
-    pry (0.13.1-java)
-      coderay (~> 1.1)
-      method_source (~> 1.0)
-      spoon (~> 0.0)
     pry-byebug (3.9.0)
       byebug (~> 11.0)
       pry (~> 0.13.0)
@@ -361,8 +362,6 @@ GEM
       faraday (>= 0.17.3, < 2.0)
       jwt (>= 1.5, < 3.0)
       multi_json (~> 1.10)
-    spoon (0.0.6)
-      ffi
     spreadsheet (1.2.8)
       ruby-ole
     spring (2.1.1)
@@ -412,9 +411,10 @@ DEPENDENCIES
   api-pagination
   bootsnap (>= 1.4.4)
   byebug
+  delayed_job_active_record
   figaro
   listen (~> 3.3)
-  mvms-core (= 2.4.14)!
+  mvms-core (= 2.4.20)!
   pagy
   pg (~> 1.2, >= 1.2.3)
   pry-byebug
@@ -434,4 +434,4 @@ RUBY VERSION
    ruby 2.6.6p146
 
 BUNDLED WITH
-   2.2.14
+   2.2.16
