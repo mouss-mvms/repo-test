@@ -14,7 +14,7 @@ module Api
       end
 
       def show
-        product = Product.where(id: product_params[:id], shop_id: product_params[:shop_id])
+        product = Product.find(product_params[:id])
         if product.present?
           response = Dto::Product::Response.create(product)
         else
