@@ -1,5 +1,3 @@
-require_relative '../../dtos/category_dto.rb'
-
 module Api
   class CategoriesController < ApplicationController
     def index
