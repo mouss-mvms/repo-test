@@ -16,7 +16,7 @@ pipelines:
             - export RAILS_ENV="test"
             - export RAKE_ENV="test"
             - export BASE_URL="https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog"
-            - gem install bundler:2.2.8
+            - gem install bundler:2.2.16
             - bundle install
             - bundle exec rake rswag
             - git add swagger/v1/swagger.json
