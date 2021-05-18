@@ -58,5 +58,5 @@ gem 'rswag-ui'
 gem 'delayed_job_active_record'
 
 source 'https://gem.fury.io/mvms/' do
-  gem 'mvms-core', '2.4.20'
+  gem 'mvms-core', '2.5.22'
 end
