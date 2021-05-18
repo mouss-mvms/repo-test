@@ -3,7 +3,7 @@ module Api
     class ProductsController < ApplicationController
       def index
         begin
-          shop = Shop.find(product_params[:shop_id])
+          shop = Shop.find(route_params[:shop_id])
         rescue ActiveRecord::RecordNotFound => e
           error = Dto::Errors::NotFound.new(e.message)
           return render json: error.to_h, status: :not_found
@@ -14,11 +14,11 @@ module Api
       end
 
       def show
-        product = Product.find(product_params[:id])
+        product = Product.where(route_params).first
         if product.present?
           response = Dto::Product::Response.create(product)
         else
-          error = Dto::Errors::NotFound.new(e.message)
+          error = Dto::Errors::NotFound.new('Not Found')
           return render json: error.to_h, status: :not_found
         end
         render json: response.to_json
@@ -29,20 +29,22 @@ module Api
           error = Dto::Errors::BadRequest.new('Incorrect Name')
           return render json: error.to_h, status: :bad_request
         end
-        unless Category.exists?(id: params[:category_id])
+
+        unless ::Category.exists?(id: category_product_params[:category_id])
           error = Dto::Errors::BadRequest.new('Incorrect category')
           return render json: error.to_h, status: :bad_request
         end
-        unless params[:brand] || !params[:brand].blank?
-          error = Dto::Errors::BadRequest.new('Incorrect brand')
+
+        unless ::Shop.exists?(id: route_params[:shop_id])
+          error = Dto::Errors::BadRequest.new('Incorrect shop')
           return render json: error.to_h, status: :bad_request
         end
 
         ActiveRecord::Base.transaction do
           begin
-            dto_product = Dto::Product::Request.create(**build_product_params.to_h.symbolize_keys)
+            dto_product = Dto::Product::Request.create(**product_params.to_h.symbolize_keys)
             dto_category = Dto::Category::Request.new(::Category.where(id: params[:category_id]).select(:id, :name)&.first.as_json.symbolize_keys)
-            product = Dto::Product::Request.build(dto_product: dto_product, dto_category: dto_category, shop_id: product_params[:shop_id])
+            product = Dto::Product.build(dto_product: dto_product, dto_category: dto_category, shop_id: route_params[:shop_id].to_i)
             response = Dto::Product::Response.create(product).to_h
             return render json: response, status: :created
           rescue => e
@@ -53,67 +55,60 @@ module Api
       end
 
       def update
-        unless params[:id] || params[:id].is_a?(Numeric)
+        unless route_params[:id] || route_params[:id].is_a?(Numeric)
           error = Dto::Errors::NotFound.new('Not found')
           return render json: error.to_h, status: :bad_request
         end
-        unless params[:name] || !params[:name].blank?
-          error = Dto::Errors::BadRequest.new('Incorrect name')
+
+        unless route_params[:shop_id] || route_params[:shop_id].is_a?(Numeric)
+          error = Dto::Errors::NotFound.new('Not found')
           return render json: error.to_h, status: :bad_request
         end
-        unless params[:categoryId] || !params[:categoryId].blank?
+
+        if product_params.blank? && category_product_params.blank?
+          error = Dto::Errors::BadRequest.new("Can't update without relevant params")
+          return render json: error.to_h, status: :bad_request
+        end
+
+        unless ::Category.exists?(id: category_product_params[:category_id])
           error = Dto::Errors::BadRequest.new('Incorrect category')
           return render json: error.to_h, status: :bad_request
         end
-        unless params[:brand] || !params[:brand].blank?
-          error = Dto::Errors::BadRequest.new('Incorrect brand')
+
+        unless ::Shop.exists?(id: route_params[:shop_id])
+          error = Dto::Errors::BadRequest.new('Incorrect shop')
           return render json: error.to_h, status: :bad_request
         end
 
-        dto_product = Dto::Product::Response.new
-        dto_product.id = params[:id].to_i
-        dto_product.name = params[:name]
-        dto_product.slug = params[:name].parameterize
-        dto_category = Dto::Category::Response.new
-        dto_category.id = params[:categoryId]
-        dto_category.name = 'category'
-        dto_product.category = dto_category
-        dto_product.brand = params[:brand]
-        dto_product.status = (params[:status] || 'not_online')
-        dto_product.seller_advice = params[:sellerAdvice] if params[:sellerAdvice]
-        params[:variants].each do |variant|
-          dto_variant = Dto::Variant::Response.new
-          dto_variant.id = Random.rand(1000)
-          dto_variant.weight = variant[:weight]
-          dto_variant.quantity = variant[:quantity]
-          dto_variant.base_price = variant[:basePrice]
-          dto_variant.is_default = variant[:isDefault]
-          if variant[:goodDeal]
-            dto_good_deal = Dto::GoodDeal::Response.new
-            dto_good_deal.start_at = DateTime.now.to_date
-            dto_good_deal.end_at = DateTime.now.to_date + 2
-            dto_good_deal.discount = variant[:goodDeal][:discount]
-            dto_variant.good_deal = dto_good_deal
-          end
-          if variant[:characteristics]
-            variant[:characteristics]&.each do |characteristic|
-              dto_characteristic = Dto::Characteristic::Response.new
-              dto_characteristic.name = characteristic[:name]
-              dto_characteristic.type = characteristic[:type]
-              dto_variant.characteristics << dto_characteristic
+
+        product = ::Product.where(route_params).first
+
+        if product
+          ActiveRecord::Base.transaction do
+            begin
+              dto_product = Dto::Product::Request.create(**product_params.to_h.symbolize_keys)
+              dto_category = Dto::Category::Request.new(::Category.where(id: category_product_params[:category_id]).select(:id, :name)&.first.as_json.symbolize_keys)
+              product = Dto::Product.build(shop_id: product.shop_id, product: product, dto_product: dto_product, dto_category: dto_category)
+              response = Dto::Product::Response.create(product).to_json
+              return render json: response, status: :ok
+            rescue => e
+              error = Dto::Errors::InternalServer.new(e.message)
+              return render json: error.to_h, status: :internal_server_error
             end
           end
-          dto_product.variants << dto_variant
+        else
+          error = Dto::Errors::NotFound.new('Not found')
+          return render json: error.to_h, status: :not_found
         end
-        render json: dto_product.to_json, status: :ok
+
       end
 
       def destroy
-        product = Product.where(id: product_params[:id], shop_id: product_params[:shop_id])
-        if products.present?
+        product = Product.where(id: route_params[:id], shop_id: route_params[:shop_id]).first
+        if product.present?
           product.destroy if ProductsSpecifications::IsRemovable.new.is_satisfied_by?(product)
         else
-          error = Dto::Errors::NotFound.new(e.message)
+          error = Dto::Errors::NotFound.new('Not Found')
           return render json: error.to_h, status: :not_found
         end
         head :no_content
@@ -121,11 +116,11 @@ module Api
 
       private
 
-      def product_params
+      def route_params
         params.permit(:id, :shop_id)
       end
 
-      def build_product_params
+      def product_params
         params.permit(
           :name,
           :description,
