@@ -20,6 +20,8 @@ pipelines:
             - bundle config https://gem.fury.io/mvms/ 1NRAu1-s5LftEnpweDkWewfASsrNMbVmaQ
             - bundle install
             - bundle exec rake rswag
+            - git config --global user.name "bitbucket.pipelines"
+            - git config --global user.email l.boussiquet@mavillemonshopping.fr
             - git add swagger/v1/swagger.json
             - git commit -m "[skip ci] Bitbucket pipelines - update swagger.json"
             - git pull
