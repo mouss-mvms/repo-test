@@ -15,7 +15,7 @@ pipelines:
             - export RACK_ENV="test"
             - export RAILS_ENV="test"
             - export RAKE_ENV="test"
-            - export BASE_URL="https://jbernard-eval-test.apigee.net/catalog-dev"
+            - export BASE_URL="https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog"
             - gem install bundler:2.2.8
             - bundle install
             - bundle exec rake rswag
