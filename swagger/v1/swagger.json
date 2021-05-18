@@ -593,7 +593,7 @@
   "components": {
     "securitySchemes": {
       "apikey": {
-        "type": "Authorization",
+        "type": "apikey",
         "name": "authorization",
         "in": "query"
       }
