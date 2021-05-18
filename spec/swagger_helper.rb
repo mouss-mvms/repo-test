@@ -33,7 +33,7 @@ RSpec.configure do |config|
           apikey: {
             type: :Authorization,
             name: 'authorization',
-            in: :header
+            in: :query
           }
         },
         schemas: {
