@@ -10,7 +10,7 @@ RSpec.describe 'api/shops/products', type: :request do
       tags 'Products'
       produces 'application/json'
       description 'Retrieve all products from the given shop.'
-      security [{ apikey: [] }]
+      security [{ Authorization: [] }]
 
       response(200, 'Successful') do
         schema type: :object,
