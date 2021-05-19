@@ -15,7 +15,7 @@
         "description": "Return the list of categories.",
         "security": [
           {
-            "apikey": [
+            "Authorization": [
 
             ]
           }
