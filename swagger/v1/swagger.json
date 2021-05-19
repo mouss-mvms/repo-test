@@ -15,7 +15,7 @@
         "description": "Return the list of categories.",
         "security": [
           {
-            "Authorization": [
+            "authorization": [
 
             ]
           }
@@ -62,7 +62,7 @@
         "description": "Retrieve all products from the given shop.",
         "security": [
           {
-            "Authorization": [
+            "authorization": [
 
             ]
           }
@@ -592,9 +592,9 @@
   ],
   "components": {
     "securitySchemes": {
-      "Authorization": {
+      "authorization": {
         "type": "apiKey",
-        "name": "Authorization",
+        "name": "authorization",
         "in": "header"
       }
     },
