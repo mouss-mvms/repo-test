@@ -1,7 +1,7 @@
 GEM
   remote: https://gem.fury.io/mvms/
   specs:
-    mvms-core (2.5.22)
+    mvms-core (2.5.23)
       MailchimpMarketing (~> 3.0.34)
       activerecord (~> 5.2, >= 5.2.0)
       activerecord-sortable
@@ -158,7 +158,7 @@ GEM
       rexml
       signet (~> 0.14)
       webrick
-    google-apis-discovery_v1 (0.2.0)
+    google-apis-discovery_v1 (0.3.0)
       google-apis-core (~> 0.1)
     google-apis-generator (0.2.0)
       activesupport (>= 5.0)
@@ -427,7 +427,7 @@ DEPENDENCIES
   delayed_job_active_record
   figaro
   listen (~> 3.3)
-  mvms-core (= 2.5.22)!
+  mvms-core (= 2.5.23)!
   pagy
   pg (~> 1.2, >= 1.2.3)
   pry-byebug
