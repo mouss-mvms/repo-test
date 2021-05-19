@@ -8,7 +8,7 @@ RSpec.describe 'api/categories', type: :request do
       tags 'Categories'
       produces 'application/json'
       description 'Return the list of categories.'
-      security [{ Authorization: [] }]
+      security [{ authorization: [] }]
       response(200, 'successful') do
         schema type: :object,
                properties: {
