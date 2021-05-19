@@ -4,7 +4,11 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '2.6.6'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 6.1.1'
+gem 'rails', '~> 5.2.0'
+#api-pagination
+gem 'api-pagination'
+gem 'pagy'
+
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 1.2', '>= 1.2.3'
 # Use Puma as the app server
@@ -28,8 +32,10 @@ gem 'rack-cors'
 group :development, :test, :local do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
+  gem 'pry-byebug'
   gem "rspec-rails"
   gem "rswag-specs"
+
 end
 
 gem 'listen', '~> 3.3'
@@ -49,3 +55,8 @@ gem 'rack-attack'
 gem 'rswag-api'
 gem 'rswag-ui'
 
+gem 'delayed_job_active_record'
+
+source 'https://gem.fury.io/mvms/' do
+  gem 'mvms-core', '2.4.20'
+end
