@@ -13,13 +13,6 @@
           "Categories"
         ],
         "description": "Return the list of categories.",
-        "security": [
-          {
-            "authorization": [
-
-            ]
-          }
-        ],
         "responses": {
           "200": {
             "description": "successful",
