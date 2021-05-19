@@ -31,9 +31,9 @@ RSpec.configure do |config|
       components: {
         securitySchemes: {
           authorization: {
-            type: :apikey,
+            type: :apiKey,
             name: 'authorization',
-            in: :query
+            in: :header
           }
         },
         schemas: {
