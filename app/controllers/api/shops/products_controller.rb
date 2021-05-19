@@ -1,177 +1,80 @@
-require_relative '../../../dtos/category_dto.rb'
-require_relative '../../../dtos/characteristic_dto.rb'
-require_relative '../../../dtos/error_dto.rb'
-require_relative '../../../dtos/good_deal_dto.rb'
-require_relative '../../../dtos/product_dto.rb'
-require_relative '../../../dtos/variant_dto.rb'
-
 module Api
   module Shops
     class ProductsController < ApplicationController
       def index
-        dto_product1 = ProductDto.new
-        dto_product1.id = Random.rand(1000)
-        dto_product1.name = 'Product name'
-        dto_product1.slug = 'product-name'
-        dto_category = CategoryDto.new
-        dto_category.id = Random.rand(12)
-        dto_category.name = 'category'
-        dto_product1.category = dto_category
-        dto_product1.brand = 'brand'
-        dto_product1.status = 'active'
-        dto_product1.seller_advice = 'Bon produit'
-        dto_variant1 = VariantDto.new
-        dto_variant1.id = 23
-        dto_variant1.weight = 12.8
-        dto_variant1.quantity = 23
-        dto_variant1.base_price = 15
-        dto_variant1.is_default = true
-        dto_good_deal = GoodDealDto.new
-        dto_good_deal.start_at = DateTime.now.to_date
-        dto_good_deal.end_at = DateTime.now.to_date + 2
-        dto_good_deal.discount = 20
-        dto_variant1.good_deal = dto_good_deal
-        dto_characteristic = CharacteristicDto.new
-        dto_characteristic.name = 'blue'
-        dto_characteristic.type = 'color'
-        dto_variant1.characteristics << dto_characteristic
-        dto_product1.variants << dto_variant1
-
-        dto_product2 = ProductDto.new
-        dto_product2.id = Random.rand(1000)
-        dto_product2.name = 'Product name'
-        dto_product2.slug = 'product-name'
-        dto_category = CategoryDto.new
-        dto_category.id = Random.rand(12)
-        dto_category.name = 'category'
-        dto_product2.category = dto_category
-        dto_product2.brand = 'brand'
-        dto_product2.status = 'active'
-        dto_product2.seller_advice = 'Bon produit'
-        dto_variant2 = VariantDto.new
-        dto_variant2.id = 23
-        dto_variant2.weight = 12.8
-        dto_variant2.quantity = 23
-        dto_variant2.base_price = 15
-        dto_variant2.is_default = true
-        dto_characteristic = CharacteristicDto.new
-        dto_characteristic.name = 'blue'
-        dto_characteristic.type = 'color'
-        dto_variant2.characteristics << dto_characteristic
-        dto_product2.variants << dto_variant2
-        products = []
-        products << dto_product1
-        products << dto_product2
-        render json: products.to_json
+        begin
+          shop = Shop.find(product_params[:shop_id])
+        rescue ActiveRecord::RecordNotFound => e
+          error = Dto::Errors::NotFound.new(e.message)
+          return render json: error.to_h, status: :not_found
+        end
+        products = shop.products.includes(:category, :brand, references: [:sample, :color, :size, :good_deal]).actives
+        response = products.map {|product| Dto::Product::Response.create(product)}
+        paginate json: response, per_page: 50
       end
 
       def show
-        id = params[:id]
-        dto_product = ProductDto.new
-        dto_product.id = id.to_i
-        dto_product.name = 'Product name'
-        dto_product.slug = 'product-name'
-        dto_category = CategoryDto.new
-        dto_category.id = Random.rand(12)
-        dto_category.name = 'category'
-        dto_product.category = dto_category
-        dto_product.brand = 'brand'
-        dto_product.status = 'active'
-        dto_product.seller_advice = 'Bon produit'
-        dto_variant = VariantDto.new
-        dto_variant.id = 23
-        dto_variant.weight = 12.8
-        dto_variant.quantity = 23
-        dto_variant.base_price = 15
-        dto_variant.is_default = true
-        dto_good_deal = GoodDealDto.new
-        dto_good_deal.start_at = DateTime.now.to_date
-        dto_good_deal.end_at = DateTime.now.to_date + 2
-        dto_good_deal.discount = 20
-        dto_variant.good_deal = dto_good_deal
-        dto_characteristic = CharacteristicDto.new
-        dto_characteristic.name = 'blue'
-        dto_characteristic.type = 'color'
-        dto_variant.characteristics << dto_characteristic
-        dto_product.variants << dto_variant
-        render json: dto_product.to_json
+        product = Product.where(id: product_params[:id], shop_id: product_params[:shop_id])
+        if product.present?
+          response = Dto::Product::Response.create(product)
+        else
+          error = Dto::Errors::NotFound.new(e.message)
+          return render json: error.to_h, status: :not_found
+        end
+        render json: response.to_json
       end
 
       def create
         unless params[:name] || !params[:name].blank?
-          error = ErrorDto.new('Incorrect name', 'Bad request', 400)
-          return render json: error.to_json, status: :bad_request
+          error = Dto::Errors::BadRequest.new('Incorrect Name')
+          return render json: error.to_h, status: :bad_request
         end
-        unless params[:categoryId] || !params[:categoryId].blank?
-          error = ErrorDto.new('Incorrect category', 'Bad request', 400)
-          return render json: error.to_json, status: :bad_request
+        unless Category.exists?(id: params[:category_id])
+          error = Dto::Errors::BadRequest.new('Incorrect category')
+          return render json: error.to_h, status: :bad_request
         end
         unless params[:brand] || !params[:brand].blank?
-          error = ErrorDto.new('Incorrect brand', 'Bad request', 400)
-          return render json: error.to_json, status: :bad_request
+          error = Dto::Errors::BadRequest.new('Incorrect brand')
+          return render json: error.to_h, status: :bad_request
         end
 
-        dto_product = ProductDto.new
-        dto_product.id = Random.rand(1000)
-        dto_product.name = params[:name]
-        dto_product.slug = params[:name].parameterize
-        dto_category = CategoryDto.new
-        dto_category.id = params[:categoryId]
-        dto_category.name = 'category'
-        dto_product.category = dto_category
-        dto_product.brand = params[:brand]
-        dto_product.status = (params[:status] || 'not_online')
-        dto_product.seller_advice = params[:sellerAdvice] if params[:sellerAdvice]
-        params[:variants].each do |variant|
-          dto_variant = VariantDto.new
-          dto_variant.id = Random.rand(1000)
-          dto_variant.weight = variant[:weight]
-          dto_variant.quantity = variant[:quantity]
-          dto_variant.base_price = variant[:basePrice]
-          dto_variant.is_default = variant[:isDefault]
-          if variant[:goodDeal]
-            dto_good_deal = GoodDealDto.new
-            dto_good_deal.start_at = variant[:goodDeal][:startAt]
-            dto_good_deal.end_at = variant[:goodDeal][:endAt]
-            dto_good_deal.discount = variant[:goodDeal][:discount]
-            dto_variant.good_deal = dto_good_deal
+        ActiveRecord::Base.transaction do
+          begin
+            dto_product = Dto::Product::Request.create(**build_product_params.to_h.symbolize_keys)
+            dto_category = Dto::Category::Request.new(::Category.where(id: params[:category_id]).select(:id, :name)&.first.as_json.symbolize_keys)
+            product = Dto::Product::Request.build(dto_product: dto_product, dto_category: dto_category, shop_id: product_params[:shop_id])
+            response = Dto::Product::Response.create(product).to_h
+            return render json: response, status: :created
+          rescue => e
+            error = Dto::Errors::InternalServer.new(e.message)
+            return render json: error.to_h, status: :internal_server_error
           end
-          if variant[:characteristics]
-            variant[:characteristics]&.each do |characteristic|
-              dto_characteristic = CharacteristicDto.new
-              dto_characteristic.name = characteristic[:name]
-              dto_characteristic.type = characteristic[:type]
-              dto_variant.characteristics << dto_characteristic
-            end
-          end
-          dto_product.variants << dto_variant
         end
-        render json: dto_product.to_json, status: :created
       end
 
       def update
         unless params[:id] || params[:id].is_a?(Numeric)
-          error = ErrorDto.new('Not found', 'Not found', 404)
-          return render json: error.to_json, status: :bad_request
+          error = Dto::Errors::NotFound.new('Not found')
+          return render json: error.to_h, status: :bad_request
         end
         unless params[:name] || !params[:name].blank?
-          error = ErrorDto.new('Incorrect name', 'Bad request', 400)
-          return render json: error.to_json, status: :bad_request
+          error = Dto::Errors::BadRequest.new('Incorrect name')
+          return render json: error.to_h, status: :bad_request
         end
         unless params[:categoryId] || !params[:categoryId].blank?
-          error = ErrorDto.new('Incorrect category', 'Bad request', 400)
-          return render json: error.to_json, status: :bad_request
+          error = Dto::Errors::BadRequest.new('Incorrect category')
+          return render json: error.to_h, status: :bad_request
         end
         unless params[:brand] || !params[:brand].blank?
-          error = ErrorDto.new('Incorrect brand', 'Bad request', 400)
-          return render json: error.to_json, status: :bad_request
+          error = Dto::Errors::BadRequest.new('Incorrect brand')
+          return render json: error.to_h, status: :bad_request
         end
 
-        dto_product = ProductDto.new
+        dto_product = Dto::Product::Response.new
         dto_product.id = params[:id].to_i
         dto_product.name = params[:name]
         dto_product.slug = params[:name].parameterize
-        dto_category = CategoryDto.new
+        dto_category = Dto::Category::Response.new
         dto_category.id = params[:categoryId]
         dto_category.name = 'category'
         dto_product.category = dto_category
@@ -179,14 +82,14 @@ module Api
         dto_product.status = (params[:status] || 'not_online')
         dto_product.seller_advice = params[:sellerAdvice] if params[:sellerAdvice]
         params[:variants].each do |variant|
-          dto_variant = VariantDto.new
+          dto_variant = Dto::Variant::Response.new
           dto_variant.id = Random.rand(1000)
           dto_variant.weight = variant[:weight]
           dto_variant.quantity = variant[:quantity]
           dto_variant.base_price = variant[:basePrice]
           dto_variant.is_default = variant[:isDefault]
           if variant[:goodDeal]
-            dto_good_deal = GoodDealDto.new
+            dto_good_deal = Dto::GoodDeal::Response.new
             dto_good_deal.start_at = DateTime.now.to_date
             dto_good_deal.end_at = DateTime.now.to_date + 2
             dto_good_deal.discount = variant[:goodDeal][:discount]
@@ -194,7 +97,7 @@ module Api
           end
           if variant[:characteristics]
             variant[:characteristics]&.each do |characteristic|
-              dto_characteristic = CharacteristicDto.new
+              dto_characteristic = Dto::Characteristic::Response.new
               dto_characteristic.name = characteristic[:name]
               dto_characteristic.type = characteristic[:type]
               dto_variant.characteristics << dto_characteristic
@@ -206,12 +109,50 @@ module Api
       end
 
       def destroy
-        unless params[:id] || params[:id].is_a?(Numeric)
-          error = ErrorDto.new('Not found', 'Not found', 404)
-          return render json: error.to_json, status: :bad_request
+        product = Product.where(id: product_params[:id], shop_id: product_params[:shop_id])
+        if products.present?
+          product.destroy if ProductsSpecifications::IsRemovable.new.is_satisfied_by?(product)
+        else
+          error = Dto::Errors::NotFound.new(e.message)
+          return render json: error.to_h, status: :not_found
         end
-
         head :no_content
+      end
+
+      private
+
+      def product_params
+        params.permit(:id, :shop_id)
+      end
+
+      def build_product_params
+        params.permit(
+          :name,
+          :description,
+          :brand,
+          :status,
+          :seller_advice,
+          :is_service,
+          variants: [
+            :base_price,
+            :weight,
+            :quantity,
+            :is_default,
+            good_deal: [
+              :start_at,
+              :end_at,
+              :discount
+            ],
+            characteristics: [
+              :name,
+              :type
+            ]
+          ]
+        )
+      end
+
+      def category_product_params
+        params.permit(:category_id)
       end
     end
   end

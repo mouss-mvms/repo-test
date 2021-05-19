@@ -13,13 +13,6 @@
           "Categories"
         ],
         "description": "Return the list of categories.",
-        "security": [
-          {
-            "apikey": [
-
-            ]
-          }
-        ],
         "responses": {
           "200": {
             "description": "successful",
@@ -62,7 +55,7 @@
         "description": "Retrieve all products from the given shop.",
         "security": [
           {
-            "apikey": [
+            "authorization": [
 
             ]
           }
@@ -587,15 +580,15 @@
   },
   "servers": [
     {
-      "url": "https://jbernard-eval-prod.apigee.net/catalog"
+      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
     }
   ],
   "components": {
     "securitySchemes": {
-      "apikey": {
+      "authorization": {
         "type": "apiKey",
-        "name": "apikey",
-        "in": "query"
+        "name": "authorization",
+        "in": "header"
       }
     },
     "schemas": {
