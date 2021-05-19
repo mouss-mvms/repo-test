@@ -13,6 +13,13 @@
           "Categories"
         ],
         "description": "Return the list of categories.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
         "responses": {
           "200": {
             "description": "successful",
@@ -119,7 +126,7 @@
         "description": "Create a product in the given shop.",
         "security": [
           {
-            "apikey": [
+            "authorization": [
 
             ]
           }
@@ -279,7 +286,7 @@
         "description": "Retrieve a single product from the given shop.",
         "security": [
           {
-            "apikey": [
+            "authorization": [
 
             ]
           }
@@ -355,7 +362,7 @@
         "description": "Update a single product from the given shop.",
         "security": [
           {
-            "apikey": [
+            "authorization": [
 
             ]
           }
@@ -553,7 +560,7 @@
         "description": "Delete a single product from the given shop.",
         "security": [
           {
-            "apikey": [
+            "authorization": [
 
             ]
           }
