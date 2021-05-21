@@ -33,8 +33,8 @@ module MvmsApi
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.i18n.available_locales = [:fr, :en]
-    config.i18n.default_locale = :fr   
-    
+    config.i18n.default_locale = :fr
+    config.autoload_paths += Dir["#{config.root}/app/**/*.rb"]
     config.api_only = true
   end
 end
