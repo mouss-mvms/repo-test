@@ -30,7 +30,7 @@ module Api
           return render json: error.to_h, status: :bad_request
         end
 
-        unless ::Category.exists?(id: category_product_params[:category_id])
+        unless ::Category.exists?(id: category_product_params[:categoryId])
           error = Dto::Errors::BadRequest.new('Incorrect category')
           return render json: error.to_h, status: :bad_request
         end
@@ -42,8 +42,8 @@ module Api
 
         ActiveRecord::Base.transaction do
           begin
-            dto_product = Dto::Product::Request.create(**product_params.to_h.symbolize_keys)
-            dto_category = Dto::Category::Request.new(::Category.where(id: params[:category_id]).select(:id, :name)&.first.as_json.symbolize_keys)
+            dto_product = Dto::Product::Request.create(permitted_params_to_underscore(product_params))
+            dto_category = Dto::Category::Request.new(::Category.where(id: params[:categoryId]).select(:id, :name)&.first.as_json.symbolize_keys)
             product = Dto::Product.build(dto_product: dto_product, dto_category: dto_category, shop_id: route_params[:shop_id].to_i)
             response = Dto::Product::Response.create(product).to_h
             return render json: response, status: :created
@@ -55,52 +55,51 @@ module Api
       end
 
       def update
-        unless route_params[:id] || route_params[:id].is_a?(Numeric)
-          error = Dto::Errors::NotFound.new('Not found')
+        unless route_params[:id].to_i > 0
+          error = Dto::Errors::BadRequest.new('The syntax of the query is incorrect')
           return render json: error.to_h, status: :bad_request
         end
 
-        unless route_params[:shop_id] || route_params[:shop_id].is_a?(Numeric)
-          error = Dto::Errors::NotFound.new('Not found')
+        unless route_params[:shop_id].to_i > 0
+          error = Dto::Errors::BadRequest.new('The syntax of the query is incorrect')
           return render json: error.to_h, status: :bad_request
         end
 
         if product_params.blank? && category_product_params.blank?
-          error = Dto::Errors::BadRequest.new("Can't update without relevant params")
+          error = Dto::Errors::BadRequest.new("The syntax of the query is incorrect: Can't update without relevant params")
           return render json: error.to_h, status: :bad_request
         end
 
-        unless ::Category.exists?(id: category_product_params[:category_id])
-          error = Dto::Errors::BadRequest.new('Incorrect category')
-          return render json: error.to_h, status: :bad_request
-        end
-
-        unless ::Shop.exists?(id: route_params[:shop_id])
-          error = Dto::Errors::BadRequest.new('Incorrect shop')
-          return render json: error.to_h, status: :bad_request
-        end
-
-
-        product = ::Product.where(route_params).first
-
-        if product
-          ActiveRecord::Base.transaction do
-            begin
-              dto_product = Dto::Product::Request.create(**product_params.to_h.symbolize_keys)
-              dto_category = Dto::Category::Request.new(::Category.where(id: category_product_params[:category_id]).select(:id, :name)&.first.as_json.symbolize_keys)
-              product = Dto::Product.build(shop_id: product.shop_id, product: product, dto_product: dto_product, dto_category: dto_category)
-              response = Dto::Product::Response.create(product).to_json
-              return render json: response, status: :ok
-            rescue => e
-              error = Dto::Errors::InternalServer.new(e.message)
-              return render json: error.to_h, status: :internal_server_error
-            end
-          end
-        else
-          error = Dto::Errors::NotFound.new('Not found')
+        unless ::Category.exists?(id: category_product_params[:categoryId])
+          error = Dto::Errors::NotFound.new('Category not found')
           return render json: error.to_h, status: :not_found
         end
 
+        unless ::Shop.exists?(id: route_params[:shop_id])
+          error = Dto::Errors::NotFound.new('Shop not found')
+          return render json: error.to_h, status: :not_found
+        end
+
+        product = ::Product.where(route_params).first
+
+        unless product
+          error = Dto::Errors::NotFound.new('Product not found')
+          return render json: error.to_h, status: :not_found
+        end
+
+        ActiveRecord::Base.transaction do
+          begin
+            dto_product = Dto::Product::Request.create(permitted_params_to_underscore(product_params))
+            dto_category = Dto::Category::Request.new(::Category.where(id: category_product_params[:categoryId]).select(:id, :name)&.first.as_json.symbolize_keys)
+            product = Dto::Product.build(shop_id: product.shop_id, product: product, dto_product: dto_product, dto_category: dto_category)
+            response = Dto::Product::Response.create(product).to_h
+          rescue => e
+            Rails.logger.error(e.message)
+            error = Dto::Errors::InternalServer.new(e.message)
+            return render json: error.to_h, status: :internal_server_error
+          end
+          return render json: response, status: :ok
+        end
       end
 
       def destroy
@@ -115,6 +114,9 @@ module Api
       end
 
       private
+      def permitted_params_to_underscore(params)
+        params.to_h.deep_transform_keys { |key| key.to_s.underscore.to_sym }
+      end
 
       def route_params
         params.permit(:id, :shop_id)
@@ -126,16 +128,16 @@ module Api
           :description,
           :brand,
           :status,
-          :seller_advice,
-          :is_service,
+          :sellerAdvice,
+          :isService,
           variants: [
-            :base_price,
+            :basePrice,
             :weight,
             :quantity,
-            :is_default,
-            good_deal: [
-              :start_at,
-              :end_at,
+            :isDefault,
+            goodDeal: [
+              :startAt,
+              :endAt,
               :discount
             ],
             characteristics: [
@@ -147,7 +149,7 @@ module Api
       end
 
       def category_product_params
-        params.permit(:category_id)
+        params.permit(:categoryId)
       end
     end
   end

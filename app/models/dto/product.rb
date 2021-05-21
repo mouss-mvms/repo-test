@@ -9,7 +9,6 @@ module Dto
 
       dto_product.variants.each do |dto_variant|
         sample = ::Sample.create!(name: dto_product.name, default: dto_variant.is_default, product_id: product.id)
-
         dto_good_deal = dto_variant.good_deal if dto_variant&.good_deal&.discount && dto_variant&.good_deal&.end_at && dto_variant&.good_deal&.start_at
         good_deal = nil
 
@@ -44,7 +43,7 @@ module Dto
     private
 
     def self.create_product(dto_product:, dto_category:, shop_id:)
-      ::Product.create(
+      ::Product.create!(
         name: dto_product.name,
         shop_id: shop_id,
         category_id: dto_category.id,
@@ -60,7 +59,7 @@ module Dto
     end
 
     def self.update_product(dto_product:, dto_category:, shop_id:, product:)
-      product.update(
+      product.update!(
         name: dto_product.name,
         category_id: dto_category.id,
         brand_id: ::Brand.where(name: dto_product.brand).first_or_create.id,

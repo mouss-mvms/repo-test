@@ -76,6 +76,22 @@ GEM
     arel (9.0.0)
     awesome_nested_set (3.4.0)
       activerecord (>= 4.0.0, < 7.0)
+    aws-eventstream (1.1.1)
+    aws-partitions (1.451.0)
+    aws-sdk-core (3.114.0)
+      aws-eventstream (~> 1, >= 1.0.2)
+      aws-partitions (~> 1, >= 1.239.0)
+      aws-sigv4 (~> 1.1)
+      jmespath (~> 1.0)
+    aws-sdk-kms (1.43.0)
+      aws-sdk-core (~> 3, >= 3.112.0)
+      aws-sigv4 (~> 1.1)
+    aws-sdk-s3 (1.94.1)
+      aws-sdk-core (~> 3, >= 3.112.0)
+      aws-sdk-kms (~> 1)
+      aws-sigv4 (~> 1.1)
+    aws-sigv4 (1.2.3)
+      aws-eventstream (~> 1, >= 1.0.2)
     bcrypt (3.1.16)
     bcrypt (3.1.16-java)
     bootsnap (1.7.3)
@@ -118,6 +134,11 @@ GEM
       multi_json
     erubi (1.10.0)
     excon (0.76.0)
+    factory_bot (6.2.0)
+      activesupport (>= 5.0.0)
+    factory_bot_rails (6.2.0)
+      factory_bot (~> 6.2.0)
+      railties (>= 5.0.0)
     faraday (1.4.1)
       faraday-excon (~> 1.1)
       faraday-net_http (~> 1.0)
@@ -182,6 +203,7 @@ GEM
     httpclient (2.8.3)
     i18n (1.8.10)
       concurrent-ruby (~> 1.0)
+    jmespath (1.4.0)
     json (2.5.1)
     json (2.5.1-java)
     json-schema (2.8.1)
@@ -365,6 +387,8 @@ GEM
       activemodel (>= 5)
       elasticsearch (>= 6)
       hashie
+    shoulda-matchers (4.5.1)
+      activesupport (>= 4.2.0)
     shrine (3.3.0)
       content_disposition (~> 1.0)
       down (~> 5.1)
@@ -393,8 +417,6 @@ GEM
     trailblazer-option (0.1.1)
     tzinfo (1.2.9)
       thread_safe (~> 0.1)
-    tzinfo-data (1.2021.1)
-      tzinfo (>= 1.0.0)
     uber (0.1.0)
     unf (0.1.4)
       unf_ext
@@ -422,9 +444,11 @@ PLATFORMS
 
 DEPENDENCIES
   api-pagination
+  aws-sdk-s3
   bootsnap (>= 1.4.4)
   byebug
   delayed_job_active_record
+  factory_bot_rails
   figaro
   listen (~> 3.3)
   mvms-core (= 2.5.23)!
@@ -440,6 +464,7 @@ DEPENDENCIES
   rswag-api
   rswag-specs
   rswag-ui
+  shoulda-matchers
   spring
   tzinfo-data
 

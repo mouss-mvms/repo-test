@@ -193,7 +193,7 @@ RSpec.describe 'api/shops/products', type: :request do
       tags 'Products'
       consumes 'application/json'
       produces 'application/json'
-      description 'Update a single product from the given shop.'
+      description 'Update a single product from the given shop. **You must provide all existing product attributes.**'
       security [{ apikey: [] }]
 
       parameter name: :product, in: :body, schema: {
@@ -281,7 +281,7 @@ RSpec.describe 'api/shops/products', type: :request do
             }
           }
         },
-        required: %w[name]
+        required: %w[name description categoryId brand status sellerAdvice isService variants]
       }
       response(200, 'Successful') do
         schema type: :object,

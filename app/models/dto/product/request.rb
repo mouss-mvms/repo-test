@@ -13,10 +13,10 @@ module Dto
         @seller_advice = args[:seller_advice]
         @description = args[:description]
         @variants = args[:variants] || []
-      end  
+      end
 
       def self.create(**args)
-        Dto::Product::Request.new( 
+        Dto::Product::Request.new(
           name: args[:name],
           slug: args[:slug],
           category: args[:category],
