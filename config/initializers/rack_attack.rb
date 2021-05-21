@@ -1,6 +1,6 @@
 class Rack::Attack
   blocklist("block access if not authenticated") do |req|
-    req.env["HTTP_APIKEY"] != ENV["HTTP_APIKEY"]
+    req.env["HTTP_X_APIKEY"] != ENV["HTTP_APIKEY"]
   end
 
   safelist("allow access root path") do |req|

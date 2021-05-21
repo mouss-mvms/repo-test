@@ -15,7 +15,7 @@
         "description": "Return the list of categories.",
         "security": [
           {
-            "apikey": [
+            "authorization": [
 
             ]
           }
@@ -62,7 +62,7 @@
         "description": "Retrieve all products from the given shop.",
         "security": [
           {
-            "apikey": [
+            "authorization": [
 
             ]
           }
@@ -126,7 +126,7 @@
         "description": "Create a product in the given shop.",
         "security": [
           {
-            "apikey": [
+            "authorization": [
 
             ]
           }
@@ -286,7 +286,7 @@
         "description": "Retrieve a single product from the given shop.",
         "security": [
           {
-            "apikey": [
+            "authorization": [
 
             ]
           }
@@ -362,7 +362,7 @@
         "description": "Update a single product from the given shop. **You must provide all existing product attributes.**",
         "security": [
           {
-            "apikey": [
+            "authorization": [
 
             ]
           }
@@ -567,7 +567,7 @@
         "description": "Delete a single product from the given shop.",
         "security": [
           {
-            "apikey": [
+            "authorization": [
 
             ]
           }
@@ -594,15 +594,15 @@
   },
   "servers": [
     {
-      "url": "https://dev.mavillemonshopping.fr/fr"
+      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
     }
   ],
   "components": {
     "securitySchemes": {
-      "apikey": {
+      "authorization": {
         "type": "apiKey",
-        "name": "apikey",
-        "in": "query"
+        "name": "authorization",
+        "in": "header"
       }
     },
     "schemas": {
