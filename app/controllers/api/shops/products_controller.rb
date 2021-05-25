@@ -2,6 +2,11 @@ module Api
   module Shops
     class ProductsController < ApplicationController
       def index
+        unless route_params[:shop_id].to_i > 0
+          error = Dto::Errors::BadRequest.new('shop_id: The syntax of the query is incorrect')
+          return render json: error.to_h, status: :bad_request
+        end
+
         begin
           shop = Shop.find(route_params[:shop_id])
         rescue ActiveRecord::RecordNotFound => e
@@ -14,31 +19,53 @@ module Api
       end
 
       def show
-        product = Product.where(route_params).first
-        if product.present?
-          response = Dto::Product::Response.create(product)
-        else
-          error = Dto::Errors::NotFound.new('Not Found')
-          return render json: error.to_h, status: :not_found
-        end
-        render json: response.to_json
-      end
-
-      def create
-        unless params[:name] || !params[:name].blank?
-          error = Dto::Errors::BadRequest.new('Incorrect Name')
+        unless route_params[:id].to_i > 0
+          error = Dto::Errors::BadRequest.new('id: The syntax of the query is incorrect')
           return render json: error.to_h, status: :bad_request
         end
 
-        unless ::Category.exists?(id: category_product_params[:categoryId])
-          error = Dto::Errors::BadRequest.new('Incorrect category')
+        unless route_params[:shop_id].to_i > 0
+          error = Dto::Errors::BadRequest.new('shop_id: The syntax of the query is incorrect')
           return render json: error.to_h, status: :bad_request
         end
 
         unless ::Shop.exists?(id: route_params[:shop_id])
-          error = Dto::Errors::BadRequest.new('Incorrect shop')
+          error = Dto::Errors::NotFound.new("Couldn't find Shop with 'id'=#{route_params[:shop_id]}")
+          return render json: error.to_h, status: :not_found
+        end
+
+        product = Product.where(route_params).first
+
+        unless product
+          error = Dto::Errors::NotFound.new("Couldn't find Product with 'id'=#{route_params[:id]}")
+          return render json: error.to_h, status: :not_found
+        end
+
+        response = Dto::Product::Response.create(product).to_h
+        render json: response
+      end
+
+      def create
+        unless route_params[:shop_id].to_i > 0
+          error = Dto::Errors::BadRequest.new('shop_id: The syntax of the query is incorrect')
           return render json: error.to_h, status: :bad_request
         end
+
+        unless params[:name] && !params[:name].blank?
+          error = Dto::Errors::BadRequest.new('name: The syntax of the query is incorrect')
+          return render json: error.to_h, status: :bad_request
+        end
+
+        unless ::Category.exists?(id: category_product_params[:categoryId])
+          error = Dto::Errors::NotFound.new("Couldn't find Category with 'id'=#{category_product_params[:categoryId]}")
+          return render json: error.to_h, status: :not_found
+        end
+
+        unless ::Shop.exists?(id: route_params[:shop_id])
+          error = Dto::Errors::NotFound.new("Couldn't find Shop with 'id'=#{route_params[:shop_id]}")
+          return render json: error.to_h, status: :not_found
+        end
+
 
         ActiveRecord::Base.transaction do
           begin
@@ -46,22 +73,23 @@ module Api
             dto_category = Dto::Category::Request.new(::Category.where(id: params[:categoryId]).select(:id, :name)&.first.as_json.symbolize_keys)
             product = Dto::Product.build(dto_product: dto_product, dto_category: dto_category, shop_id: route_params[:shop_id].to_i)
             response = Dto::Product::Response.create(product).to_h
-            return render json: response, status: :created
           rescue => e
             error = Dto::Errors::InternalServer.new(e.message)
             return render json: error.to_h, status: :internal_server_error
+          else
+            return render json: response, status: :created
           end
         end
       end
 
       def update
         unless route_params[:id].to_i > 0
-          error = Dto::Errors::BadRequest.new('The syntax of the query is incorrect')
+          error = Dto::Errors::BadRequest.new('id: The syntax of the query is incorrect')
           return render json: error.to_h, status: :bad_request
         end
 
         unless route_params[:shop_id].to_i > 0
-          error = Dto::Errors::BadRequest.new('The syntax of the query is incorrect')
+          error = Dto::Errors::BadRequest.new('shop_id: The syntax of the query is incorrect')
           return render json: error.to_h, status: :bad_request
         end
 
@@ -71,19 +99,19 @@ module Api
         end
 
         unless ::Category.exists?(id: category_product_params[:categoryId])
-          error = Dto::Errors::NotFound.new('Category not found')
+          error = Dto::Errors::NotFound.new("Couldn't find Category with 'id'=#{category_product_params[:categoryId]}")
           return render json: error.to_h, status: :not_found
         end
 
         unless ::Shop.exists?(id: route_params[:shop_id])
-          error = Dto::Errors::NotFound.new('Shop not found')
+          error = Dto::Errors::NotFound.new("Couldn't find Shop with 'id'=#{route_params[:shop_id]}")
           return render json: error.to_h, status: :not_found
         end
 
         product = ::Product.where(route_params).first
 
         unless product
-          error = Dto::Errors::NotFound.new('Product not found')
+          error = Dto::Errors::NotFound.new("Couldn't find Product with 'id'=#{route_params[:id]}")
           return render json: error.to_h, status: :not_found
         end
 
@@ -97,19 +125,37 @@ module Api
             Rails.logger.error(e.message)
             error = Dto::Errors::InternalServer.new(e.message)
             return render json: error.to_h, status: :internal_server_error
+          else
+            return render json: response, status: :ok
           end
-          return render json: response, status: :ok
         end
       end
 
       def destroy
-        product = Product.where(id: route_params[:id], shop_id: route_params[:shop_id]).first
-        if product.present?
-          product.destroy if ProductsSpecifications::IsRemovable.new.is_satisfied_by?(product)
-        else
-          error = Dto::Errors::NotFound.new('Not Found')
+        unless route_params[:id].to_i > 0
+          error = Dto::Errors::BadRequest.new('id: The syntax of the query is incorrect')
+          return render json: error.to_h, status: :bad_request
+        end
+
+        unless route_params[:shop_id].to_i > 0
+          error = Dto::Errors::BadRequest.new('shop_id: The syntax of the query is incorrect')
+          return render json: error.to_h, status: :bad_request
+        end
+
+        unless ::Shop.exists?(id: route_params[:shop_id])
+          error = Dto::Errors::NotFound.new("Couldn't find Shop with 'id'=#{route_params[:shop_id]}")
           return render json: error.to_h, status: :not_found
         end
+
+        product = Product.where(route_params).first
+
+        unless product
+          error = Dto::Errors::NotFound.new("Couldn't find Product with 'id'=#{route_params[:id]}")
+          return render json: error.to_h, status: :not_found
+        end
+
+        product.destroy if ProductsSpecifications::IsRemovable.new.is_satisfied_by?(product)
+
         head :no_content
       end
 
