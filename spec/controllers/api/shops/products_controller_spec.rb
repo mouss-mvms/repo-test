@@ -20,15 +20,6 @@ require 'rails_helper'
 
 RSpec.describe Api::Shops::ProductsController, type: :controller do
 
-  # Routing
-  describe "Routing", type: :routing do
-    it { should route(:get, '/api/shops/26/products').to(action: :index, shop_id: 26) }
-    it { should route(:get, '/api/shops/26/products/47671').to(action: :show, shop_id: 26, id: 47671) }
-    it { should route(:post, '/api/shops/26/products').to(action: :create, shop_id: 26) }
-    it { should route(:put, '/api/shops/26/products/47671').to(action: :update, shop_id: 26, id: 47671) }
-    it { should route(:delete, '/api/shops/26/products/47671').to(action: :destroy, shop_id: 26, id: 47671) }
-  end
-
   # GET #index
   describe "GET #index" do
     before(:each) do
@@ -55,7 +46,7 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
       it "Returns 400 Bad Request if shop_id not a Numeric" do
         get :index, params: { locale: I18n.locale, shop_id: 'Xenomorph' }
         should respond_with(400)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"shop_id: The syntax of the query is incorrect", "message"=>"Bad Request", "status"=>400})
+        expect(JSON.parse(response.body)).to eq({"detail"=>"Shop_id is incorrect", "message"=>"Bad Request", "status"=>400})
       end
 
       it "Returns 404 Not Found if shop doesn't exists" do
@@ -87,13 +78,13 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
       it "Returns 400 Bad Request if shop_id not a Numeric" do
         get :show, params: { locale: I18n.locale, shop_id: 'Kowabunga', id: @product.id }
         should respond_with(400)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"shop_id: The syntax of the query is incorrect", "message"=>"Bad Request", "status"=>400})
+        expect(JSON.parse(response.body)).to eq({"detail"=>"Shop_id is incorrect", "message"=>"Bad Request", "status"=>400})
       end
 
       it "Returns 400 Bad Request if id not a Numeric" do
         get :show, params: { locale: I18n.locale, shop_id: @shop.id, id: '§§' }
         should respond_with(400)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"id: The syntax of the query is incorrect", "message"=>"Bad Request", "status"=>400})
+        expect(JSON.parse(response.body)).to eq({"detail"=>"Id is incorrect", "message"=>"Bad Request", "status"=>400})
       end
 
       it "Returns 404 Not Found if shop doesn't exists" do
@@ -162,7 +153,7 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
       it "Returns 400 Bad Request if shop_id not a Numeric" do
         post :create, params: @create_params.merge(locale: I18n.locale, shop_id: "ErenJäger")
         should respond_with(400)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"shop_id: The syntax of the query is incorrect", "message"=>"Bad Request", "status"=>400})
+        expect(JSON.parse(response.body)).to eq({"detail"=>"Shop_id is incorrect", "message"=>"Bad Request", "status"=>400})
       end
 
       it "Returns 404 Not Found if category doesn't exists" do
@@ -176,14 +167,14 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
         @create_params.delete(:name)
         post :create, params: @create_params.merge(locale: I18n.locale, shop_id: @shop.id)
         should respond_with(400)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"name: The syntax of the query is incorrect", "message"=>"Bad Request", "status"=>400})
+        expect(JSON.parse(response.body)).to eq({"detail"=>"Name is incorrect", "message"=>"Bad Request", "status"=>400})
       end
 
       it "Returns 400 Bad Request if name is blank" do
         @create_params[:name] = ""
         post :create, params: @create_params.merge(locale: I18n.locale, shop_id: @shop.id)
         should respond_with(400)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"name: The syntax of the query is incorrect", "message"=>"Bad Request", "status"=>400})
+        expect(JSON.parse(response.body)).to eq({"detail"=>"Name is incorrect", "message"=>"Bad Request", "status"=>400})
       end
     end
   end
@@ -259,14 +250,14 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
       it "Returns 400 Bad Request if shop_id not a Numeric" do
         put :update, params: @update_params.merge(locale: I18n.locale, shop_id: 'ChuckNorris', id: @product.id)
         should respond_with(400)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"shop_id: The syntax of the query is incorrect", "message"=>"Bad Request", "status"=>400})
+        expect(JSON.parse(response.body)).to eq({"detail"=>"Shop_id is incorrect", "message"=>"Bad Request", "status"=>400})
       end
 
 
       it "Returns 400 Bad Request if id not a Numeric" do
         put :update, params: @update_params.merge(locale: I18n.locale, shop_id: @product.shop_id, id: 'Terminator')
         should respond_with(400)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"id: The syntax of the query is incorrect", "message"=>"Bad Request", "status"=>400})
+        expect(JSON.parse(response.body)).to eq({"detail"=>"Id is incorrect", "message"=>"Bad Request", "status"=>400})
       end
     end
 
@@ -314,13 +305,13 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
       it "Returns 400 Bad Request if shop_id not a Numeric" do
         get :show, params: { locale: I18n.locale, shop_id: 'Kowabunga', id: @product.id }
         should respond_with(400)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"shop_id: The syntax of the query is incorrect", "message"=>"Bad Request", "status"=>400})
+        expect(JSON.parse(response.body)).to eq({"detail"=>"Shop_id is incorrect", "message"=>"Bad Request", "status"=>400})
       end
 
       it "Returns 400 Bad Request if id not a Numeric" do
         get :show, params: { locale: I18n.locale, shop_id: @shop.id, id: '§§' }
         should respond_with(400)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"id: The syntax of the query is incorrect", "message"=>"Bad Request", "status"=>400})
+        expect(JSON.parse(response.body)).to eq({"detail"=>"Id is incorrect", "message"=>"Bad Request", "status"=>400})
       end
 
       it "Returns 404 Not Found if shop doesn't exists" do

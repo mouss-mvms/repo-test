@@ -3,7 +3,7 @@ module Api
     class ProductsController < ApplicationController
       def index
         unless route_params[:shop_id].to_i > 0
-          error = Dto::Errors::BadRequest.new('shop_id: The syntax of the query is incorrect')
+          error = Dto::Errors::BadRequest.new('Shop_id is incorrect')
           return render json: error.to_h, status: :bad_request
         end
 
@@ -20,12 +20,12 @@ module Api
 
       def show
         unless route_params[:id].to_i > 0
-          error = Dto::Errors::BadRequest.new('id: The syntax of the query is incorrect')
+          error = Dto::Errors::BadRequest.new('Id is incorrect')
           return render json: error.to_h, status: :bad_request
         end
 
         unless route_params[:shop_id].to_i > 0
-          error = Dto::Errors::BadRequest.new('shop_id: The syntax of the query is incorrect')
+          error = Dto::Errors::BadRequest.new('Shop_id is incorrect')
           return render json: error.to_h, status: :bad_request
         end
 
@@ -47,12 +47,12 @@ module Api
 
       def create
         unless route_params[:shop_id].to_i > 0
-          error = Dto::Errors::BadRequest.new('shop_id: The syntax of the query is incorrect')
+          error = Dto::Errors::BadRequest.new('Shop_id is incorrect')
           return render json: error.to_h, status: :bad_request
         end
 
         unless params[:name] && !params[:name].blank?
-          error = Dto::Errors::BadRequest.new('name: The syntax of the query is incorrect')
+          error = Dto::Errors::BadRequest.new('Name is incorrect')
           return render json: error.to_h, status: :bad_request
         end
 
@@ -69,7 +69,7 @@ module Api
 
         ActiveRecord::Base.transaction do
           begin
-            dto_product = Dto::Product::Request.create(permitted_params_to_underscore(product_params))
+            dto_product = Dto::Product::Request.new(permitted_params_to_underscore(product_params))
             dto_category = Dto::Category::Request.new(::Category.where(id: params[:categoryId]).select(:id, :name)&.first.as_json.symbolize_keys)
             product = Dto::Product.build(dto_product: dto_product, dto_category: dto_category, shop_id: route_params[:shop_id].to_i)
             response = Dto::Product::Response.create(product).to_h
@@ -84,12 +84,12 @@ module Api
 
       def update
         unless route_params[:id].to_i > 0
-          error = Dto::Errors::BadRequest.new('id: The syntax of the query is incorrect')
+          error = Dto::Errors::BadRequest.new('Id is incorrect')
           return render json: error.to_h, status: :bad_request
         end
 
         unless route_params[:shop_id].to_i > 0
-          error = Dto::Errors::BadRequest.new('shop_id: The syntax of the query is incorrect')
+          error = Dto::Errors::BadRequest.new('Shop_id is incorrect')
           return render json: error.to_h, status: :bad_request
         end
 
@@ -117,7 +117,7 @@ module Api
 
         ActiveRecord::Base.transaction do
           begin
-            dto_product = Dto::Product::Request.create(permitted_params_to_underscore(product_params))
+            dto_product = Dto::Product::Request.new(permitted_params_to_underscore(product_params))
             dto_category = Dto::Category::Request.new(::Category.where(id: category_product_params[:categoryId]).select(:id, :name)&.first.as_json.symbolize_keys)
             product = Dto::Product.build(shop_id: product.shop_id, product: product, dto_product: dto_product, dto_category: dto_category)
             response = Dto::Product::Response.create(product).to_h
@@ -133,12 +133,12 @@ module Api
 
       def destroy
         unless route_params[:id].to_i > 0
-          error = Dto::Errors::BadRequest.new('id: The syntax of the query is incorrect')
+          error = Dto::Errors::BadRequest.new('Id is incorrect')
           return render json: error.to_h, status: :bad_request
         end
 
         unless route_params[:shop_id].to_i > 0
-          error = Dto::Errors::BadRequest.new('shop_id: The syntax of the query is incorrect')
+          error = Dto::Errors::BadRequest.new('Shop_id is incorrect')
           return render json: error.to_h, status: :bad_request
         end
 
