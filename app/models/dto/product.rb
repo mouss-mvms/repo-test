@@ -12,7 +12,7 @@ module Dto
         dto_good_deal = dto_variant.good_deal if dto_variant&.good_deal&.discount && dto_variant&.good_deal&.end_at && dto_variant&.good_deal&.start_at
         good_deal = nil
 
-        if dto_good_deal
+        if dto_good_deal && dto_good_deal.start_at && dto_good_deal.end_at
           good_deal = ::GoodDeal.create!(
             starts_at: date_from_string(date_string: dto_good_deal.start_at),
             ends_at: date_from_string(date_string: dto_good_deal.end_at),
@@ -79,6 +79,8 @@ module Dto
     end
 
     def self.date_from_string(date_string:)
+      return nil unless date_string
+
       date_array = date_string.split('/').map(&:to_i).reverse
       DateTime.new(date_array[0], date_array[1], date_array[2])
     end
