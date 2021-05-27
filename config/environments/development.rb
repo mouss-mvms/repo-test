@@ -66,5 +66,4 @@ Rails.application.configure do
   # config.action_cable.disable_request_forgery_protection = true
 
   config.debug_exception_response_format = :api
-
 end
