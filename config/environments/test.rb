@@ -57,4 +57,10 @@ Rails.application.configure do
 
   # Annotate rendered view with file names.
   # config.action_view.annotate_rendered_view_with_filenames = true
+
+  # Avoid belongs_to required by defaults
+  config.active_record.belongs_to_required_by_default = false
+
+  # Avoid belongs_to required by defaults
+  config.active_record.belongs_to_required_by_default = false
 end

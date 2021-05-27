@@ -68,5 +68,5 @@ Rails.application.configure do
   config.debug_exception_response_format = :api
 
   # Avoid belongs_to required by defaults
-  Rails.application.config.active_record.belongs_to_required_by_default = false
+  config.active_record.belongs_to_required_by_default = false
 end
