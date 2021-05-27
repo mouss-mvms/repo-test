@@ -1,7 +1,7 @@
 module Dto
   module Category
     class Response
-      attr_accessor :id, :name
+      attr_reader :id, :name
 
       def initialize(**args)
         @id = args[:id]

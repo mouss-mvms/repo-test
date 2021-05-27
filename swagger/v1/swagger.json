@@ -359,7 +359,7 @@
         "tags": [
           "Products"
         ],
-        "description": "Update a single product from the given shop.",
+        "description": "Update a single product from the given shop. **You must provide all existing product attributes.**",
         "security": [
           {
             "authorization": [
@@ -545,7 +545,14 @@
                   }
                 },
                 "required": [
-                  "name"
+                  "name",
+                  "description",
+                  "categoryId",
+                  "brand",
+                  "status",
+                  "sellerAdvice",
+                  "isService",
+                  "variants"
                 ]
               }
             }

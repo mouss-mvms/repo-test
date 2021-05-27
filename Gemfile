@@ -29,13 +29,17 @@ gem 'bootsnap', '>= 1.4.4', require: false
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem 'rack-cors'
 
+# Upload to aws and image crop
+gem 'aws-sdk-s3'
+
 group :development, :test, :local do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
   gem 'pry-byebug'
   gem "rspec-rails"
   gem "rswag-specs"
-
+  gem "shoulda-matchers"
+  gem "factory_bot_rails"
 end
 
 gem 'listen', '~> 3.3'
@@ -58,7 +62,7 @@ gem 'rswag-ui'
 gem 'delayed_job_active_record'
 
 source 'https://gem.fury.io/mvms/' do
-  gem 'mvms-core', '2.4.20'
+  gem 'mvms-core', '2.5.23'
 end
 
 gem 'omniauth', '1.3.1'
