@@ -64,4 +64,7 @@ Rails.application.configure do
   # config.action_cable.disable_request_forgery_protection = true
 
   config.debug_exception_response_format = :api
+
+  # Avoid belongs_to required by defaults
+  config.active_record.belongs_to_required_by_default = false
 end
