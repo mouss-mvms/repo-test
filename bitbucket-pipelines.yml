@@ -11,12 +11,10 @@ pipelines:
       - step:
           name: Swagger
           script:
-            - export DATABASE_URL="postgres://ywawyfvtudfszr:bcaff794ea9e2e3329ae474c3a247bedc61c2726451a58997903cd21442ff66d@ec2-46-137-123-136.eu-west-1.compute.amazonaws.com:5432/d4qqi485bt0bg1"
             - export BASE_URL="https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
             - gem install bundler:2.2.16
             - bundle config https://gem.fury.io/mvms/ 1NRAu1-s5LftEnpweDkWewfASsrNMbVmaQ
             - bundle install
-            - rails db:environment:set RAILS_ENV=test
             - bundle exec rake rswag PATTERN="spec/swagger/**/*_spec.rb"
             - git add swagger/v1/swagger.json
             - git commit -m "[skip ci] Bitbucket pipelines - update swagger.json"
@@ -26,12 +24,10 @@ pipelines:
       - step:
           name: Swagger
           script:
-            - export DATABASE_URL="postgres://ywawyfvtudfszr:bcaff794ea9e2e3329ae474c3a247bedc61c2726451a58997903cd21442ff66d@ec2-46-137-123-136.eu-west-1.compute.amazonaws.com:5432/d4qqi485bt0bg1"
             - export BASE_URL="https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-staging"
             - gem install bundler:2.2.16
             - bundle config https://gem.fury.io/mvms/ 1NRAu1-s5LftEnpweDkWewfASsrNMbVmaQ
             - bundle install
-            - rails db:environment:set RAILS_ENV=test
             - bundle exec rake rswag PATTERN="spec/swagger/**/*_spec.rb"
             - git add swagger/v1/swagger.json
             - git commit -m "[skip ci] Bitbucket pipelines - update swagger.json"
@@ -41,12 +37,10 @@ pipelines:
       - step:
           name: Swagger
           script:
-            - export DATABASE_URL="postgres://ywawyfvtudfszr:bcaff794ea9e2e3329ae474c3a247bedc61c2726451a58997903cd21442ff66d@ec2-46-137-123-136.eu-west-1.compute.amazonaws.com:5432/d4qqi485bt0bg1"
             - export BASE_URL="https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-staging"
             - bundle config https://gem.fury.io/mvms/ 1NRAu1-s5LftEnpweDkWewfASsrNMbVmaQ
             - gem install bundler:2.2.16
             - bundle install
-            - rails db:environment:set RAILS_ENV=test
             - bundle exec rake rswag PATTERN="spec/swagger/**/*_spec.rb"
             - git add swagger/v1/swagger.json
             - git commit -m "[skip ci] Bitbucket pipelines - update swagger.json"
@@ -56,12 +50,10 @@ pipelines:
       - step:
           name: Swagger
           script:
-            - export DATABASE_URL="postgres://u673f92v2bceiv:p031efefa456f1845b4d0a88b77be90d9ebc6eba52be9250a7c4301a58fb06205@ec2-54-220-81-52.eu-west-1.compute.amazonaws.com:5432/d4omsse7rcam7v"
             - export BASE_URL="https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog"
             - gem install bundler:2.2.16
             - bundle config https://gem.fury.io/mvms/ 1NRAu1-s5LftEnpweDkWewfASsrNMbVmaQ
             - bundle install
-            - rails db:environment:set RAILS_ENV=test
             - bundle exec rake rswag PATTERN="spec/swagger/**/*_spec.rb"
             - git add swagger/v1/swagger.json
             - git commit -m "[skip ci] Bitbucket pipelines - update swagger.json"
