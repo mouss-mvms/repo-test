@@ -47,7 +47,7 @@ RSpec.describe 'api/shops/products', type: :request do
       consumes 'application/json'
       produces 'application/json'
       description 'Create a product in the given shop.'
-      security [{ apikey: [] }]
+      security [{ authorization: [] }]
 
       parameter name: :product, in: :body, schema: {
         type: 'object',
@@ -154,7 +154,7 @@ RSpec.describe 'api/shops/products', type: :request do
       tags 'Products'
       produces 'application/json'
       description 'Retrieve a single product from the given shop.'
-      security [{ apikey: [] }]
+      security [{ authorization: [] }]
 
       response(200, 'Successful') do
         schema type: :object,
@@ -193,8 +193,8 @@ RSpec.describe 'api/shops/products', type: :request do
       tags 'Products'
       consumes 'application/json'
       produces 'application/json'
-      description 'Update a single product from the given shop.'
-      security [{ apikey: [] }]
+      description 'Update a single product from the given shop. **You must provide all existing product attributes.**'
+      security [{ authorization: [] }]
 
       parameter name: :product, in: :body, schema: {
         type: 'object',
@@ -281,7 +281,7 @@ RSpec.describe 'api/shops/products', type: :request do
             }
           }
         },
-        required: %w[name]
+        required: %w[name description categoryId brand status sellerAdvice isService variants]
       }
       response(200, 'Successful') do
         schema type: :object,
@@ -327,7 +327,7 @@ RSpec.describe 'api/shops/products', type: :request do
     delete('delete product') do
       tags 'Products'
       description 'Delete a single product from the given shop.'
-      security [{ apikey: [] }]
+      security [{ authorization: [] }]
 
       response(204, 'Successful') do
         run_test!

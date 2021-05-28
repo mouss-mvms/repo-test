@@ -126,7 +126,7 @@
         "description": "Create a product in the given shop.",
         "security": [
           {
-            "apikey": [
+            "authorization": [
 
             ]
           }
@@ -286,7 +286,7 @@
         "description": "Retrieve a single product from the given shop.",
         "security": [
           {
-            "apikey": [
+            "authorization": [
 
             ]
           }
@@ -359,10 +359,10 @@
         "tags": [
           "Products"
         ],
-        "description": "Update a single product from the given shop.",
+        "description": "Update a single product from the given shop. **You must provide all existing product attributes.**",
         "security": [
           {
-            "apikey": [
+            "authorization": [
 
             ]
           }
@@ -545,7 +545,14 @@
                   }
                 },
                 "required": [
-                  "name"
+                  "name",
+                  "description",
+                  "categoryId",
+                  "brand",
+                  "status",
+                  "sellerAdvice",
+                  "isService",
+                  "variants"
                 ]
               }
             }
@@ -560,7 +567,7 @@
         "description": "Delete a single product from the given shop.",
         "security": [
           {
-            "apikey": [
+            "authorization": [
 
             ]
           }
