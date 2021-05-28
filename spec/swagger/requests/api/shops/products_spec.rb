@@ -194,7 +194,7 @@ RSpec.describe 'api/shops/products', type: :request do
       consumes 'application/json'
       produces 'application/json'
       description 'Update a single product from the given shop. **You must provide all existing product attributes.**'
-      security [{ apikey: [] }]
+      security [{ authorization: [] }]
 
       parameter name: :product, in: :body, schema: {
         type: 'object',
