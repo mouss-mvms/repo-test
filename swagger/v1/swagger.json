@@ -362,7 +362,7 @@
         "description": "Update a single product from the given shop. **You must provide all existing product attributes.**",
         "security": [
           {
-            "apikey": [
+            "authorization": [
 
             ]
           }
