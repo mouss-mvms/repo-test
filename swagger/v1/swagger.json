@@ -9,7 +9,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "https://dev.mavillemonshopping.fr/fr"
     }
   ],
   "components": {
