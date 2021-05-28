@@ -17,7 +17,7 @@ pipelines:
             - bundle config https://gem.fury.io/mvms/ 1NRAu1-s5LftEnpweDkWewfASsrNMbVmaQ
             - bundle install
             - rails db:environment:set RAILS_ENV=test
-            - bundle exec rake rswag
+            - bundle exec rake rswag PATTERN="spec/swagger/**/*_spec.rb"
             - git add swagger/v1/swagger.json
             - git commit -m "[skip ci] Bitbucket pipelines - update swagger.json"
             - git pull
@@ -32,7 +32,7 @@ pipelines:
             - bundle config https://gem.fury.io/mvms/ 1NRAu1-s5LftEnpweDkWewfASsrNMbVmaQ
             - bundle install
             - rails db:environment:set RAILS_ENV=test
-            - bundle exec rake rswag
+            - bundle exec rake rswag PATTERN="spec/swagger/**/*_spec.rb"
             - git add swagger/v1/swagger.json
             - git commit -m "[skip ci] Bitbucket pipelines - update swagger.json"
             - git pull
@@ -47,7 +47,7 @@ pipelines:
             - gem install bundler:2.2.16
             - bundle install
             - rails db:environment:set RAILS_ENV=test
-            - bundle exec rake rswag
+            - bundle exec rake rswag PATTERN="spec/swagger/**/*_spec.rb"
             - git add swagger/v1/swagger.json
             - git commit -m "[skip ci] Bitbucket pipelines - update swagger.json"
             - git pull
@@ -62,7 +62,7 @@ pipelines:
             - bundle config https://gem.fury.io/mvms/ 1NRAu1-s5LftEnpweDkWewfASsrNMbVmaQ
             - bundle install
             - rails db:environment:set RAILS_ENV=test
-            - bundle exec rake rswag
+            - bundle exec rake rswag PATTERN="spec/swagger/**/*_spec.rb"
             - git add swagger/v1/swagger.json
             - git commit -m "[skip ci] Bitbucket pipelines - update swagger.json"
             - git pull
