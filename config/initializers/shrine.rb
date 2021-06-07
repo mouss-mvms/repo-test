@@ -39,8 +39,9 @@ Shrine.plugin :presign_endpoint, presign_options: -> (request) {
                           }
                         }
 Shrine.plugin :derivatives
-Shrine.plugin :model
+Shrine.plugin :model, cache: false
 Shrine.plugin :url_options, old_store: -> (io, **) { { public: true } }
 Shrine.plugin :add_metadata
 Shrine.plugin :default_storage, store: :store
 Shrine.plugin :remote_url, max_size: 20*1024*1024
+Shrine.plugin :determine_mime_type

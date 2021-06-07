@@ -9,6 +9,13 @@ module Dto
 
       dto_product.variants.each do |dto_variant|
         sample = ::Sample.create!(name: dto_product.name, default: dto_variant.is_default, product_id: product.id)
+
+        unless dto_variant.image_urls.blank?
+          dto_variant.image_urls.each do |image_url|
+            set_image_on_sample(sample: sample, image_url: image_url)
+          end
+        end
+
         dto_good_deal = dto_variant.good_deal if dto_variant&.good_deal&.discount && dto_variant&.good_deal&.end_at && dto_variant&.good_deal&.start_at
         good_deal = nil
 
@@ -41,6 +48,15 @@ module Dto
     end
 
     private
+
+    def self.set_image_on_sample(sample:, image_url:)
+      begin
+        image = Shrine.remote_url(image_url)
+        sample.images.create(file: image)
+      rescue StandardError => e
+
+      end
+    end
 
     def self.create_product(dto_product:, dto_category:, shop_id:)
       ::Product.create!(

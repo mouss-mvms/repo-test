@@ -160,6 +160,7 @@ module Api
       end
 
       private
+
       def permitted_params_to_underscore(params)
         params.to_h.deep_transform_keys { |key| key.to_s.underscore.to_sym }
       end
@@ -180,6 +181,7 @@ module Api
             :basePrice,
             :weight,
             :quantity,
+            {:imageUrls => []},
             :isDefault,
             goodDeal: [
               :startAt,
