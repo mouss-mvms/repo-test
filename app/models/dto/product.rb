@@ -54,7 +54,8 @@ module Dto
         image = Shrine.remote_url(image_url)
         sample.images.create(file: image)
       rescue StandardError => e
-
+        Rails.logger.error(e)
+        Rails.logger.error(e.message)
       end
     end
 
