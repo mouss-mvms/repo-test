@@ -342,6 +342,110 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
     end
   end
 
+  # POST #update_offline
+  describe "PUT #update_offline" do
+    before(:each) do
+      @product = create(:product_with_category)
+      @update_params = {
+        name: "Lot de 4 tasses à café style rétro AOC",
+        categoryId: @product.category_id,
+        brand: "AOC",
+        status: "online",
+        isService: false,
+        sellerAdvice: "Les tasses donneront du style à votre pause café !",
+        description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+        variants: [
+          {
+            basePrice: 19.9,
+            weight: 0.24,
+            quantity: 4,
+            isDefault: true,
+            goodDeal: {
+              startAt: "17/05/2021",
+              endAt: "18/06/2021",
+              discount: 20
+            },
+            characteristics: [
+              {
+                name: "Taille unique",
+                type: "size"
+              },
+              {
+                name: "Rouge",
+                type: "color"
+              }
+            ]
+          }
+        ]
+      }
+    end
+
+    context "with valid params" do
+      it "Updates a product" do
+        put :update_offline, params: @update_params.merge(locale: I18n.locale, shop_id: @product.shop_id, id: @product.id)
+        should respond_with(200)
+        expect(JSON.parse(response.body)).to eq(
+          {
+            "product"=> {
+              "id"=>@product.id,
+              "name"=>"Lot de 4 tasses à café style rétro AOC",
+              "slug"=>"mystring",
+              "category"=>{"id"=>@product.category_id, "name"=>"Category"},
+              "brand"=>"AOC",
+              "status"=>"online",
+              "isService"=>false,
+              "sellerAdvice"=>"Les tasses donneront du style à votre pause café !",
+              "description"=>"Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              "variants"=>
+               [{"id"=>@product.references.first.id,
+                 "basePrice"=>19.9,
+                 "weight"=>0.24,
+                 "quantity"=>4,
+                 "isDefault"=>true,
+                 "goodDeal"=>{"startAt"=>"17/05/2021", "endAt"=>"18/06/2021", "discount"=>20.0},
+                 "characteristics"=>[{"name"=>"Rouge", "type"=>"color"}, {"name"=>"Taille unique", "type"=>"size"}]}]}
+
+            })
+      end
+    end
+
+    context "with invalid url" do
+      it "Returns 400 Bad Request if shop_id not a Numeric" do
+        put :update_offline, params: @update_params.merge(locale: I18n.locale, shop_id: 'ChuckNorris', id: @product.id)
+        should respond_with(400)
+        expect(JSON.parse(response.body)).to eq({"detail"=>"Shop_id is incorrect", "message"=>"Bad Request", "status"=>400})
+      end
+
+
+      it "Returns 400 Bad Request if id not a Numeric" do
+        put :update_offline, params: @update_params.merge(locale: I18n.locale, shop_id: @product.shop_id, id: 'Terminator')
+        should respond_with(400)
+        expect(JSON.parse(response.body)).to eq({"detail"=>"Id is incorrect", "message"=>"Bad Request", "status"=>400})
+      end
+    end
+
+    context "with invalid params" do
+      it "Returns 400 Bad Request if no params" do
+        put :update_offline, params: { shop_id: @product.shop_id, id: @product.id }
+        should respond_with(400)
+        expect(JSON.parse(response.body)).to eq({"detail"=>"The syntax of the query is incorrect: Can't update without relevant params", "message"=>"Bad Request", "status"=>400})
+      end
+
+      it "Returns 404 Not Found if category doesn't exists" do
+        @update_params[:categoryId] = 1
+        put :update_offline, params: @update_params.merge(locale: I18n.locale, shop_id: @product.shop_id, id: @product.id)
+        should respond_with(404)
+        expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Category with 'id'=#{@update_params[:categoryId]}", "message"=>"Not Found", "status"=>404})
+      end
+
+      it "Returns 404 Not Found if product doesn't exists" do
+        put :update_offline, params: @update_params.merge(locale: I18n.locale, shop_id: @product.shop_id, id: (@product.id + 1))
+        should respond_with(404)
+        expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Product with 'id'=#{@product.id + 1}", "message"=>"Not Found", "status"=>404})
+      end
+    end
+  end
+
   # DELETE #destroy
   describe "DELETE #destroy" do
     before(:each) do
@@ -362,25 +466,70 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
 
     context "with invalid params" do
       it "Returns 400 Bad Request if shop_id not a Numeric" do
-        get :show, params: { shop_id: 'Kowabunga', id: @product.id }
+        get :destroy, params: { shop_id: 'Kowabunga', id: @product.id }
         should respond_with(400)
         expect(JSON.parse(response.body)).to eq({"detail"=>"Shop_id is incorrect", "message"=>"Bad Request", "status"=>400})
       end
 
       it "Returns 400 Bad Request if id not a Numeric" do
-        get :show, params: { shop_id: @shop.id, id: '§§' }
+        get :destroy, params: { shop_id: @shop.id, id: '§§' }
         should respond_with(400)
         expect(JSON.parse(response.body)).to eq({"detail"=>"Id is incorrect", "message"=>"Bad Request", "status"=>400})
       end
 
       it "Returns 404 Not Found if shop doesn't exists" do
-        get :show, params: { shop_id: (@shop.id + 1), id: @product.id }
+        get :destroy, params: { shop_id: (@shop.id + 1), id: @product.id }
         should respond_with(404)
         expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Shop with 'id'=#{@shop.id + 1}", "message"=>"Not Found", "status"=>404})
       end
 
       it "Returns 404 Not Found if product doesn't exists" do
-        post :show, params: { shop_id: @product.shop_id, id: (@product.id + 1) }
+        post :destroy, params: { shop_id: @product.shop_id, id: (@product.id + 1) }
+        should respond_with(404)
+        expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Product with 'id'=#{@product.id + 1}", "message"=>"Not Found", "status"=>404})
+      end
+    end
+  end
+
+  # DELETE #destroy_offline
+  describe "DELETE #destroy_offline" do
+    before(:each) do
+      @product = create(:product)
+      @shop = create(:shop)
+      @product.update(shop_id: @shop.id)
+    end
+
+    context "with valid params" do
+      it "deletes a product" do
+        expect(Product.count).to eq(1)
+        delete :destroy_offline, params: { shop_id: @shop.id, id: @product.id }
+        should respond_with(204)
+
+        expect(Product.count).to be_zero
+      end
+    end
+
+    context "with invalid params" do
+      it "Returns 400 Bad Request if shop_id not a Numeric" do
+        get :destroy_offline, params: { shop_id: 'Kowabunga', id: @product.id }
+        should respond_with(400)
+        expect(JSON.parse(response.body)).to eq({"detail"=>"Shop_id is incorrect", "message"=>"Bad Request", "status"=>400})
+      end
+
+      it "Returns 400 Bad Request if id not a Numeric" do
+        get :destroy_offline, params: { shop_id: @shop.id, id: '§§' }
+        should respond_with(400)
+        expect(JSON.parse(response.body)).to eq({"detail"=>"Id is incorrect", "message"=>"Bad Request", "status"=>400})
+      end
+
+      it "Returns 404 Not Found if shop doesn't exists" do
+        get :destroy_offline, params: { shop_id: (@shop.id + 1), id: @product.id }
+        should respond_with(404)
+        expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Shop with 'id'=#{@shop.id + 1}", "message"=>"Not Found", "status"=>404})
+      end
+
+      it "Returns 404 Not Found if product doesn't exists" do
+        post :destroy_offline, params: { shop_id: @product.shop_id, id: (@product.id + 1) }
         should respond_with(404)
         expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Product with 'id'=#{@product.id + 1}", "message"=>"Not Found", "status"=>404})
       end
