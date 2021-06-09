@@ -10,7 +10,7 @@ module Dto
       dto_product.variants.each do |dto_variant|
         sample = ::Sample.create!(name: dto_product.name, default: dto_variant.is_default, product_id: product.id)
 
-        unless dto_variant.image_urls.blank?
+        if dto_variant.image_urls.present?
           dto_variant.image_urls.each do |image_url|
             set_image_on_sample(sample: sample, image_url: image_url)
           end
