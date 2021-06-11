@@ -203,7 +203,12 @@ module Api
           error = Dto::Errors::Forbidden.new
           return render json: error.to_h, status: error.status
         end
-        @uncrypted_token = JWT.decode(request.headers[:HTTP_X_CLIENT_ID], ENV["JWT_SECRET"], true, {algorithm: 'HS256'})
+        begin
+          @uncrypted_token = JWT.decode(request.headers[:HTTP_X_CLIENT_ID], ENV["JWT_SECRET"], true, {algorithm: 'HS256'})
+        rescue JWT::DecodeError
+          error = Dto::Errors::InternalError.new
+          return render json: error.to_h, status: error.status
+        end
       end
 
       def permitted_params_to_underscore(params)

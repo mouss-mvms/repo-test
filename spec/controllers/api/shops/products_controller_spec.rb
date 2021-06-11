@@ -398,27 +398,7 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
           request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
           put :update, params: @update_params.merge(shop_id: @product.shop_id, id: @product.id)
           should respond_with(200)
-          expect(JSON.parse(response.body)).to eq({
-                                                   "product"=> {
-                                                     "id"=>@product.id,
-                                                     "name"=>"Lot de 4 tasses à café style rétro AOC",
-                                                     "slug"=>"mystring",
-                                                     "category"=>{"id"=>@product.category_id, "name"=>"Category"},
-                                                     "brand"=>"AOC",
-                                                     "status"=>"online",
-                                                     "isService"=>false,
-                                                     "sellerAdvice"=>"Les tasses donneront du style à votre pause café !",
-                                                     "description"=>"Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
-                                                     "variants"=>
-                                                       [{"id"=>@product.references.first.id,
-                                                         "basePrice"=>19.9,
-                                                         "weight"=>0.24,
-                                                         "quantity"=>4,
-                                                         "isDefault"=>true,
-                                                         "goodDeal"=>{"startAt"=>"17/05/2021", "endAt"=>"18/06/2021", "discount"=>20.0},
-                                                         "characteristics"=>[{"name"=>"Rouge", "type"=>"color"}, {"name"=>"Taille unique", "type"=>"size"}]}]}
-
-                                                 })
+          expect(response.body).to eq(Dto::Product::Response.create(Product.first).to_h.to_json)
         end
       end
     end
