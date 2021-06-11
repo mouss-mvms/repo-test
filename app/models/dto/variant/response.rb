@@ -16,8 +16,8 @@ module Dto
 
       def self.create(reference)
         variant = Dto::Variant::Response.new(
-          id: reference.id, 
-          weight: reference.weight, 
+          id: reference.id,
+          weight: reference.weight,
           quantity: reference.quantity,
           image_urls: reference.sample.images.map(&:file_url),
           base_price: reference.base_price, 

@@ -384,7 +384,7 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
       it "Updates a product" do
         put :update_offline, params: @update_params.merge(locale: I18n.locale, shop_id: @product.shop_id, id: @product.id)
         should respond_with(200)
-        expect(response.body).to eq(Dto::Product::Response.create(Product.first).to_h.to_json)
+        expect(response.body).to eq(Dto::Product::Response.create(@product.reload).to_h.to_json)
       end
     end
 

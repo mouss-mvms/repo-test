@@ -129,7 +129,6 @@ module Api
           error = Dto::Errors::BadRequest.new('Shop_id is incorrect')
           return render json: error.to_h, status: :bad_request
         end
-
         if product_params.blank? && category_product_params.blank?
           error = Dto::Errors::BadRequest.new("The syntax of the query is incorrect: Can't update without relevant params")
           return render json: error.to_h, status: :bad_request
@@ -291,6 +290,7 @@ module Api
           :status,
           :sellerAdvice,
           :isService,
+          {:imageUrls => []},
           variants: [
             :basePrice,
             :weight,
