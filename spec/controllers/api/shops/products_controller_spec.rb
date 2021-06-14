@@ -179,9 +179,9 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
 
     context "with invalid params" do
       context 'x-client-id is missing' do
-        it 'should return 403 HTTP status' do
+        it 'should return 40& HTTP status' do
           post :create, params: @create_params.merge(shop_id: @shop.id)
-          should respond_with(403)
+          should respond_with(401)
         end
       end
 
@@ -426,16 +426,17 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
 
     context "with invalid params" do
       context 'x-client-id is missing' do
-        it 'should return 403 HTTP status' do
+        it 'should return 401 HTTP status' do
           put :update, params: { shop_id: @product.shop_id, id: @product.id }
-          should respond_with(403)
+          should respond_with(401)
         end
       end
 
       context 'User is not an admin' do
         let(:user) { create(:user) }
         it 'should return 403 HTTP status' do
-          generate_token(user)
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(user)
+
           put :update, params: @update_params.merge(shop_id: @product.shop_id, id: @product.id)
           should respond_with(403)
         end
@@ -609,9 +610,9 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
 
     context "with invalid params" do
       context 'x-client-id is missing' do
-        it 'should return 403 HTTP status' do
+        it 'should return 401 HTTP status' do
           delete :destroy, params: { shop_id: @shop.id, id: @product.id }
-          should respond_with(403)
+          should respond_with(401)
         end
       end
 

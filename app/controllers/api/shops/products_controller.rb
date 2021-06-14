@@ -187,7 +187,7 @@ module Api
 
       def uncrypt_token
         unless request.headers[:HTTP_X_CLIENT_ID] && request.headers[:HTTP_X_CLIENT_ID].present?
-          error = Dto::Errors::Forbidden.new
+          error = Dto::Errors::Unauthorized.new
           return render json: error.to_h, status: error.status
         end
         begin
