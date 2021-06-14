@@ -193,7 +193,7 @@ module Api
         begin
           @uncrypted_token = JWT.decode(request.headers[:HTTP_X_CLIENT_ID], ENV["JWT_SECRET"], true, {algorithm: 'HS256'})
         rescue JWT::DecodeError
-          error = Dto::Errors::InternalError.new
+          error = Dto::Errors::InternalServer.new
           return render json: error.to_h, status: error.status
         end
       end
