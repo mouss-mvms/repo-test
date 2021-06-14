@@ -160,7 +160,6 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
         it "creates a product" do
           request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
           post :create, params: @create_params.merge(shop_id: @shop.id)
-          puts response.body
           should respond_with(201)
           expect(response.body).to eq(Dto::Product::Response.create(Product.first).to_h.to_json)
         end
