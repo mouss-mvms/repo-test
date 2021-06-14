@@ -164,7 +164,7 @@ module Api
         end
 
         begin
-          @product = Product.find(route_params[:id])
+          @product = @shop.products.find(route_params[:id])
         rescue ActiveRecord::RecordNotFound => e
           error = Dto::Errors::NotFound.new("Couldn't find #{e.model} with 'id'=#{e.id}")
           return render json: error.to_h, status: error.status
