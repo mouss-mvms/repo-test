@@ -15,6 +15,7 @@ module Api
       categories << dto_category2
       categories << dto_category3
       render json: categories.to_json
+      
     end
   end
 end
