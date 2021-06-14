@@ -125,17 +125,6 @@ module Api
       end
 
       def destroy
-        unless @user.is_a_pro?
-          error = Dto::Errors::Forbidden.new
-          return render json: error.to_h, status: error.status
-        end
-
-        unless @user.is_an_admin?
-          if @shop.owner != @user.shop_employee
-            error = Dto::Errors::Forbidden.new
-            return render json: error.to_h, status: error.status
-          end
-        end
 
         @product.destroy if ProductsSpecifications::IsRemovable.new.is_satisfied_by?(@product)
 
@@ -162,11 +151,9 @@ module Api
           return render json: error.to_h, status: error.status
         end
 
-        unless @user.is_an_admin?
-          if @shop.owner != @user.shop_employee
-            error = Dto::Errors::Forbidden.new
-            return render json: error.to_h, status: error.status
-          end
+        unless @user.is_an_admin? || (@shop.owner == @user.shop_employee)
+          error = Dto::Errors::Forbidden.new
+          return render json: error.to_h, status: error.status
         end
       end
 
