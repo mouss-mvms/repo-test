@@ -35,7 +35,6 @@ module Api
             product = Dto::Product.build(dto_product: dto_product, dto_category: dto_category, shop_id: route_params[:shop_id].to_i)
             response = Dto::Product::Response.create(product).to_h
           rescue => e
-            puts e.message
             Rails.logger.error(e.message)
             error = Dto::Errors::InternalServer.new(e.message)
             return render json: error.to_h, status: error.status
@@ -193,8 +192,7 @@ module Api
         end
         begin
           @uncrypted_token = JWT.decode(request.headers[:HTTP_X_CLIENT_ID], ENV["JWT_SECRET"], true, {algorithm: 'HS256'})
-        rescue JWT::DecodeError => e
-          puts e.message
+        rescue JWT::DecodeError
           error = Dto::Errors::InternalServer.new
           return render json: error.to_h, status: error.status
         end
