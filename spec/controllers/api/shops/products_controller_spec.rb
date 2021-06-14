@@ -43,16 +43,20 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
     end
 
     context "with invalid params" do
-      it "Returns 400 Bad Request if shop_id not a Numeric" do
-        get :index, params: { shop_id: 'Xenomorph' }
-        should respond_with(400)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Shop_id is incorrect", "message"=>"Bad Request", "status"=>400})
+      context "shop_id not a Numeric" do
+        it "should returns 400 HTTP Status" do
+          get :index, params: { shop_id: 'Xenomorph' }
+          should respond_with(400)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Shop_id is incorrect", "message"=>"Bad Request", "status"=>400})
+        end
       end
 
-      it "Returns 404 Not Found if shop doesn't exists" do
-        get :index, params: { shop_id: (@shop.id + 1) }
-        should respond_with(404)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Shop with 'id'=#{@shop.id + 1}", "message"=>"Not Found", "status"=>404})
+      context "shop doesn't exists" do
+        it "should returns 404 HTTP Status" do
+          get :index, params: { shop_id: (@shop.id + 1) }
+          should respond_with(404)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Shop with 'id'=#{@shop.id + 1}", "message"=>"Not Found", "status"=>404})
+        end
       end
     end
   end
@@ -75,28 +79,36 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
     end
 
     context "with invalid params" do
-      it "Returns 400 Bad Request if shop_id not a Numeric" do
-        get :show, params: { shop_id: 'Kowabunga', id: @product.id }
-        should respond_with(400)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Shop_id is incorrect", "message"=>"Bad Request", "status"=>400})
+      context "shop_id not a Numeric" do
+        it "should returns 400 HTTP Status" do
+          get :show, params: { shop_id: 'Kowabunga', id: @product.id }
+          should respond_with(400)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Shop_id is incorrect", "message"=>"Bad Request", "status"=>400})
+        end
       end
 
-      it "Returns 400 Bad Request if id not a Numeric" do
-        get :show, params: { shop_id: @shop.id, id: '§§' }
-        should respond_with(400)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Id is incorrect", "message"=>"Bad Request", "status"=>400})
+      context "id not a Numeric" do
+        it "should returns 400 HTTP Status" do
+          get :show, params: { shop_id: @shop.id, id: '§§' }
+          should respond_with(400)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Id is incorrect", "message"=>"Bad Request", "status"=>400})
+        end
       end
 
-      it "Returns 404 Not Found if shop doesn't exists" do
-        get :show, params: { shop_id: (@shop.id + 1), id: @product.id }
-        should respond_with(404)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Shop with 'id'=#{@shop.id + 1}", "message"=>"Not Found", "status"=>404})
+      context "shop doesn't exists" do
+        it "should returns 404 HTTP Status" do
+          get :show, params: { shop_id: (@shop.id + 1), id: @product.id }
+          should respond_with(404)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Shop with 'id'=#{@shop.id + 1}", "message"=>"Not Found", "status"=>404})
+        end
       end
 
-      it "Returns 404 Not Found if product doesn't exists" do
-        post :show, params: { shop_id: @product.shop_id, id: (@product.id + 1) }
-        should respond_with(404)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Product with 'id'=#{@product.id + 1}", "message"=>"Not Found", "status"=>404})
+      context "product doesn't exists" do
+        it "should returns 404 HTTP Status" do
+          post :show, params: { shop_id: @product.shop_id, id: (@product.id + 1) }
+          should respond_with(404)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Product with 'id'=#{@product.id + 1}", "message"=>"Not Found", "status"=>404})
+        end
       end
     end
   end
@@ -143,39 +155,113 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
     end
 
     context "with valid params" do
-      it "creates a product" do
-        post :create, params: @create_params.merge(locale: I18n.locale, shop_id: @shop.id)
-        should respond_with(201)
-        expect(response.body).to eq(Dto::Product::Response.create(Product.first).to_h.to_json)
+      context "user is admin" do
+        let(:admin_user) { create(:admin_user) }
+        it "creates a product" do
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
+          post :create, params: @create_params.merge(shop_id: @shop.id)
+          should respond_with(201)
+          expect(response.body).to eq(Dto::Product::Response.create(Product.first).to_h.to_json)
+        end
+      end
+      context "user is owner of shop" do
+        let(:shop_employee_user) { create(:shop_employee_user) }
+        it "creates a product" do
+          @shop.owner = shop_employee_user.shop_employee
+          @shop.save
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
+          post :create, params: @create_params.merge(shop_id: @shop.id)
+          should respond_with(201)
+          expect(response.body).to eq(Dto::Product::Response.create(Product.first).to_h.to_json)
+        end
       end
     end
 
     context "with invalid params" do
-      it "Returns 400 Bad Request if shop_id not a Numeric" do
-        post :create, params: @create_params.merge(locale: I18n.locale, shop_id: "ErenJäger")
-        should respond_with(400)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Shop_id is incorrect", "message"=>"Bad Request", "status"=>400})
+      context 'x-client-id is missing' do
+        it 'should return 40& HTTP status' do
+          post :create, params: @create_params.merge(shop_id: @shop.id)
+          should respond_with(401)
+        end
       end
 
-      it "Returns 404 Not Found if category doesn't exists" do
-        @create_params[:categoryId] += 1
-        post :create, params: @create_params.merge(locale: I18n.locale, shop_id: @shop.id)
-        should respond_with(404)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Category with 'id'=#{@create_params[:categoryId]}", "message"=>"Not Found", "status"=>404})
+      context 'User is not found' do
+        let(:user) { create(:user) }
+        it 'should return 403 HTTP status' do
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(user)
+          post :create, params: @create_params.merge(shop_id: @shop.id)
+          should respond_with(403)
+        end
       end
 
-      it "Returns 400 Bad Request if name is not a present" do
-        @create_params.delete(:name)
-        post :create, params: @create_params.merge(locale: I18n.locale, shop_id: @shop.id)
-        should respond_with(400)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Name is incorrect", "message"=>"Bad Request", "status"=>400})
+      context 'User is not an admin' do
+        let(:user) { create(:user) }
+        it 'should return 403 HTTP status' do
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(user)
+          post :create, params: @create_params.merge(shop_id: @shop.id)
+          should respond_with(403)
+        end
       end
 
-      it "Returns 400 Bad Request if name is blank" do
-        @create_params[:name] = ""
-        post :create, params: @create_params.merge(locale: I18n.locale, shop_id: @shop.id)
-        should respond_with(400)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Name is incorrect", "message"=>"Bad Request", "status"=>400})
+      context 'User is a customer' do
+        let(:customer_user) { create(:customer_user) }
+        it 'should return 403 HTTP status' do
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(customer_user)
+          post :create, params: @create_params.merge(shop_id: @shop.id)
+          should respond_with(403)
+        end
+      end
+
+      context 'User is a shop_employee but the owner' do
+        let(:shop_employee_user) { create(:shop_employee_user) }
+        it 'should return 403 HTTP status' do
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
+          post :create, params: @create_params.merge(shop_id: @shop.id)
+          should respond_with(403)
+        end
+      end
+
+      context 'Shop Id is not a Numeric' do
+        let(:admin_user) { create(:admin_user) }
+        it "should returns 400 Bad Request" do
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
+          post :create, params: @create_params.merge(shop_id: "ErenJäger")
+          should respond_with(400)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Shop_id is incorrect", "message"=>"Bad Request", "status"=>400})
+        end
+      end
+
+      context "Category doesn't exists" do
+        let(:admin_user) { create(:admin_user) }
+        it "should returns 404 Not Found" do
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
+          @create_params[:categoryId] += 1
+          post :create, params: @create_params.merge(shop_id: @shop.id)
+          should respond_with(404)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Category with 'id'=#{@create_params[:categoryId]}", "message"=>"Not Found", "status"=>404})
+        end
+      end
+
+      context 'Name is not a present' do
+        let(:admin_user) { create(:admin_user) }
+        it "Returns 400 Bad Request" do
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
+          @create_params.delete(:name)
+          post :create, params: @create_params.merge(shop_id: @shop.id)
+          should respond_with(400)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Name is incorrect", "message"=>"Bad Request", "status"=>400})
+        end
+      end
+
+      context 'Name is blank' do
+        let(:admin_user) { create(:admin_user) }
+        it "Returns 400 Bad Request" do
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
+          @create_params[:name] = ""
+          post :create, params: @create_params.merge(shop_id: @shop.id)
+          should respond_with(400)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Name is incorrect", "message"=>"Bad Request", "status"=>400})
+        end
       end
     end
   end
@@ -229,31 +315,39 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
     end
 
     context "with invalid params" do
-      it "Returns 400 Bad Request if shop_id not a Numeric" do
-        post :create_offline, params: @create_params.merge(shop_id: "ErenJäger")
-        should respond_with(400)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Shop_id is incorrect", "message"=>"Bad Request", "status"=>400})
+      context "shop_id not a Numeric" do
+        it "should returns 400 HTTP Status" do
+          post :create_offline, params: @create_params.merge(shop_id: "ErenJäger")
+          should respond_with(400)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Shop_id is incorrect", "message"=>"Bad Request", "status"=>400})
+        end
       end
 
-      it "Returns 404 Not Found if category doesn't exists" do
-        @create_params[:categoryId] += 1
-        post :create_offline, params: @create_params.merge(shop_id: @shop.id)
-        should respond_with(404)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Category with 'id'=#{@create_params[:categoryId]}", "message"=>"Not Found", "status"=>404})
+      context "category doesn't exists" do
+        it "should returns 404 HTTP Status" do
+          @create_params[:categoryId] += 1
+          post :create_offline, params: @create_params.merge(shop_id: @shop.id)
+          should respond_with(404)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Category with 'id'=#{@create_params[:categoryId]}", "message"=>"Not Found", "status"=>404})
+        end
       end
 
-      it "Returns 400 Bad Request if name is not a present" do
-        @create_params.delete(:name)
-        post :create_offline, params: @create_params.merge(shop_id: @shop.id)
-        should respond_with(400)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Name is incorrect", "message"=>"Bad Request", "status"=>400})
+      context "name is not a present" do
+        it "should returns 400 HTTP Status" do
+          @create_params.delete(:name)
+          post :create_offline, params: @create_params.merge(shop_id: @shop.id)
+          should respond_with(400)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Name is incorrect", "message"=>"Bad Request", "status"=>400})
+        end
       end
 
-      it "Returns 400 Bad Request if name is blank" do
-        @create_params[:name] = ""
-        post :create_offline, params: @create_params.merge(shop_id: @shop.id)
-        should respond_with(400)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Name is incorrect", "message"=>"Bad Request", "status"=>400})
+      context "name is blank" do
+        it "should returns 400 HTTP Status" do
+          @create_params[:name] = ""
+          post :create_offline, params: @create_params.merge(shop_id: @shop.id)
+          should respond_with(400)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Name is incorrect", "message"=>"Bad Request", "status"=>400})
+        end
       end
     end
   end
@@ -298,46 +392,103 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
     end
 
     context "with valid params" do
-      it "Updates a product" do
-        put :update, params: @update_params.merge(locale: I18n.locale, shop_id: @product.shop_id, id: @product.id)
-        should respond_with(200)
-        expect(response.body).to eq(Dto::Product::Response.create(Product.first).to_h.to_json)
+      context "User is admin" do
+        let(:admin_user) { create(:admin_user) }
+        it "Updates a product" do
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
+          put :update, params: @update_params.merge(shop_id: @product.shop_id, id: @product.id)
+          should respond_with(200)
+          expect(response.body).to eq(Dto::Product::Response.create(Product.first).to_h.to_json)
+        end
       end
     end
 
     context "with invalid url" do
-      it "Returns 400 Bad Request if shop_id not a Numeric" do
-        put :update, params: @update_params.merge(locale: I18n.locale, shop_id: 'ChuckNorris', id: @product.id)
-        should respond_with(400)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Shop_id is incorrect", "message"=>"Bad Request", "status"=>400})
+      let(:admin_user) { create(:admin_user) }
+      context "shop_id not a Numeric" do
+        it "should returns 400 HTTP Status" do
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
+          put :update, params: @update_params.merge(shop_id: 'ChuckNorris', id: @product.id)
+          should respond_with(400)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Shop_id is incorrect", "message"=>"Bad Request", "status"=>400})
+        end
       end
 
-
-      it "Returns 400 Bad Request if id not a Numeric" do
-        put :update, params: @update_params.merge(locale: I18n.locale, shop_id: @product.shop_id, id: 'Terminator')
-        should respond_with(400)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Id is incorrect", "message"=>"Bad Request", "status"=>400})
+      context "id not a Numeric" do
+        it "should returns 400 HTTP Status" do
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
+          put :update, params: @update_params.merge(shop_id: @product.shop_id, id: 'Terminator')
+          should respond_with(400)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Id is incorrect", "message"=>"Bad Request", "status"=>400})
+        end
       end
     end
 
     context "with invalid params" do
-      it "Returns 400 Bad Request if no params" do
-        put :update, params: { shop_id: @product.shop_id, id: @product.id }
-        should respond_with(400)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"The syntax of the query is incorrect: Can't update without relevant params", "message"=>"Bad Request", "status"=>400})
+      context 'x-client-id is missing' do
+        it 'should return 401 HTTP status' do
+          put :update, params: { shop_id: @product.shop_id, id: @product.id }
+          should respond_with(401)
+        end
       end
 
-      it "Returns 404 Not Found if category doesn't exists" do
-        @update_params[:categoryId] = 1
-        put :update, params: @update_params.merge(locale: I18n.locale, shop_id: @product.shop_id, id: @product.id)
-        should respond_with(404)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Category with 'id'=#{@update_params[:categoryId]}", "message"=>"Not Found", "status"=>404})
+      context 'User is not an admin' do
+        let(:user) { create(:user) }
+        it 'should return 403 HTTP status' do
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(user)
+
+          put :update, params: @update_params.merge(shop_id: @product.shop_id, id: @product.id)
+          should respond_with(403)
+        end
       end
 
-      it "Returns 404 Not Found if product doesn't exists" do
-        put :update, params: @update_params.merge(locale: I18n.locale, shop_id: @product.shop_id, id: (@product.id + 1))
-        should respond_with(404)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Product with 'id'=#{@product.id + 1}", "message"=>"Not Found", "status"=>404})
+      context 'User is a customer' do
+        let(:customer_user) { create(:customer_user) }
+        it 'should return 403 HTTP status' do
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(customer_user)
+          put :update, params: @update_params.merge(shop_id: @product.shop_id, id: @product.id)
+          should respond_with(403)
+        end
+      end
+
+      context 'User is a shop_employee but the owner' do
+        let(:shop_employee_user) { create(:shop_employee_user) }
+        it 'should return 403 HTTP status' do
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
+          put :update, params: @update_params.merge(shop_id: @product.shop_id, id: @product.id)
+          should respond_with(403)
+        end
+      end
+
+      context "No params" do
+        let(:admin_user) { create(:admin_user) }
+        it "should returns 400 HTTP status" do
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
+          put :update, params: { shop_id: @product.shop_id, id: @product.id }
+          should respond_with(400)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"The syntax of the query is incorrect: Can't update without relevant params", "message"=>"Bad Request", "status"=>400})
+        end
+      end
+
+      context "Category doesn't exists" do
+        let(:admin_user) { create(:admin_user) }
+        it "should returns 404 HTTP status" do
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
+          @update_params[:categoryId] = 1
+          put :update, params: @update_params.merge(locale: I18n.locale, shop_id: @product.shop_id, id: @product.id)
+          should respond_with(404)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Category with 'id'=#{@update_params[:categoryId]}", "message"=>"Not Found", "status"=>404})
+        end
+      end
+
+      context "Product doesn't exists" do
+        let(:admin_user) { create(:admin_user) }
+        it "should returns 404 HTTP status" do
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
+          put :update, params: @update_params.merge(locale: I18n.locale, shop_id: @product.shop_id, id: (@product.id + 1))
+          should respond_with(404)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Product with 'id'=#{@product.id + 1}", "message"=>"Not Found", "status"=>404})
+        end
       end
     end
   end
@@ -382,46 +533,57 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
 
     context "with valid params" do
       it "Updates a product" do
-        put :update_offline, params: @update_params.merge(locale: I18n.locale, shop_id: @product.shop_id, id: @product.id)
+        put :update_offline, params: @update_params.merge(shop_id: @product.shop_id, id: @product.id)
         should respond_with(200)
         expect(response.body).to eq(Dto::Product::Response.create(Product.first).to_h.to_json)
       end
     end
 
     context "with invalid url" do
-      it "Returns 400 Bad Request if shop_id not a Numeric" do
-        put :update_offline, params: @update_params.merge(locale: I18n.locale, shop_id: 'ChuckNorris', id: @product.id)
-        should respond_with(400)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Shop_id is incorrect", "message"=>"Bad Request", "status"=>400})
+      context "shop_id not a Numeric" do
+        it "should returns 400 HTTP Status" do
+          put :update_offline, params: @update_params.merge(shop_id: 'ChuckNorris', id: @product.id)
+          should respond_with(400)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Shop_id is incorrect", "message"=>"Bad Request", "status"=>400})
+        end
       end
 
-
-      it "Returns 400 Bad Request if id not a Numeric" do
-        put :update_offline, params: @update_params.merge(locale: I18n.locale, shop_id: @product.shop_id, id: 'Terminator')
-        should respond_with(400)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Id is incorrect", "message"=>"Bad Request", "status"=>400})
+      context "id not a Numeric" do
+        it "should returns 400 HTTP Status" do
+          put :update_offline, params: @update_params.merge(shop_id: @product.shop_id, id: 'Terminator')
+          should respond_with(400)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Id is incorrect", "message"=>"Bad Request", "status"=>400})
+        end
       end
+
     end
 
     context "with invalid params" do
-      it "Returns 400 Bad Request if no params" do
-        put :update_offline, params: { shop_id: @product.shop_id, id: @product.id }
-        should respond_with(400)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"The syntax of the query is incorrect: Can't update without relevant params", "message"=>"Bad Request", "status"=>400})
+      context "no params" do
+        it "should returns 400 HTTP Status" do
+          put :update_offline, params: { shop_id: @product.shop_id, id: @product.id }
+          should respond_with(400)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"The syntax of the query is incorrect: Can't update without relevant params", "message"=>"Bad Request", "status"=>400})
+        end
       end
 
-      it "Returns 404 Not Found if category doesn't exists" do
-        @update_params[:categoryId] = 1
-        put :update_offline, params: @update_params.merge(locale: I18n.locale, shop_id: @product.shop_id, id: @product.id)
-        should respond_with(404)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Category with 'id'=#{@update_params[:categoryId]}", "message"=>"Not Found", "status"=>404})
+      context "Category doesn't exists" do
+        it "should returns 404 HTTP Status" do
+          @update_params[:categoryId] = 1
+          put :update_offline, params: @update_params.merge(shop_id: @product.shop_id, id: @product.id)
+          should respond_with(404)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Category with 'id'=#{@update_params[:categoryId]}", "message"=>"Not Found", "status"=>404})
+        end
       end
 
-      it "Returns 404 Not Found if product doesn't exists" do
-        put :update_offline, params: @update_params.merge(locale: I18n.locale, shop_id: @product.shop_id, id: (@product.id + 1))
-        should respond_with(404)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Product with 'id'=#{@product.id + 1}", "message"=>"Not Found", "status"=>404})
+      context "product doesn't exists" do
+        it "should returns 404 HTTP Status" do
+          put :update_offline, params: @update_params.merge(shop_id: @product.shop_id, id: (@product.id + 1))
+          should respond_with(404)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Product with 'id'=#{@product.id + 1}", "message"=>"Not Found", "status"=>404})
+        end
       end
+
     end
   end
 
@@ -434,7 +596,10 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
     end
 
     context "with valid params" do
+      let(:admin_user) { create(:admin_user) }
+
       it "deletes a product" do
+        request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
         expect(Product.count).to eq(1)
         delete :destroy, params: { shop_id: @shop.id, id: @product.id }
         should respond_with(204)
@@ -444,28 +609,84 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
     end
 
     context "with invalid params" do
-      it "Returns 400 Bad Request if shop_id not a Numeric" do
-        get :destroy, params: { shop_id: 'Kowabunga', id: @product.id }
-        should respond_with(400)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Shop_id is incorrect", "message"=>"Bad Request", "status"=>400})
+      context 'x-client-id is missing' do
+        it 'should return 401 HTTP status' do
+          delete :destroy, params: { shop_id: @shop.id, id: @product.id }
+          should respond_with(401)
+        end
       end
 
-      it "Returns 400 Bad Request if id not a Numeric" do
-        get :destroy, params: { shop_id: @shop.id, id: '§§' }
-        should respond_with(400)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Id is incorrect", "message"=>"Bad Request", "status"=>400})
+      context 'User is not an admin' do
+        let(:user) { create(:user) }
+        it 'should return 403 HTTP status' do
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(user)
+          delete :destroy, params: { shop_id: @shop.id, id: @product.id }
+          should respond_with(403)
+        end
       end
 
-      it "Returns 404 Not Found if shop doesn't exists" do
-        get :destroy, params: { shop_id: (@shop.id + 1), id: @product.id }
-        should respond_with(404)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Shop with 'id'=#{@shop.id + 1}", "message"=>"Not Found", "status"=>404})
+      context 'User is a customer' do
+        let(:customer_user) { create(:customer_user) }
+        it 'should return 403 HTTP status' do
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(customer_user)
+          delete :destroy, params: { shop_id: @shop.id, id: @product.id }
+
+          should respond_with(403)
+        end
       end
 
-      it "Returns 404 Not Found if product doesn't exists" do
-        post :destroy, params: { shop_id: @product.shop_id, id: (@product.id + 1) }
-        should respond_with(404)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Product with 'id'=#{@product.id + 1}", "message"=>"Not Found", "status"=>404})
+      context 'User is a shop_employee but the owner' do
+        let(:shop_employee_user) { create(:shop_employee_user) }
+        it 'should return 403 HTTP status' do
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
+          delete :destroy, params: { shop_id: @shop.id, id: @product.id }
+
+          should respond_with(403)
+        end
+      end
+
+      context "Shop_id not a Numeric" do
+        let(:admin_user) { create(:admin_user) }
+
+        it "should returns 400 Bad Request" do
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
+          delete :destroy, params: { shop_id: 'Kowabunga', id: @product.id }
+          should respond_with(400)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Shop_id is incorrect", "message"=>"Bad Request", "status"=>400})
+        end
+      end
+
+      context 'Id not a Numeric' do
+        let(:admin_user) { create(:admin_user) }
+
+        it "should returns 400 HTTP Status" do
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
+          delete :destroy, params: { shop_id: @shop.id, id: '§§' }
+          should respond_with(400)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Id is incorrect", "message"=>"Bad Request", "status"=>400})
+        end
+      end
+
+      context "Shop doesn't exists" do
+        let(:admin_user) { create(:admin_user) }
+
+        it "should returns 404 HTTP Status" do
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
+          delete :destroy, params: { shop_id: (@shop.id + 1), id: @product.id }
+          should respond_with(404)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Shop with 'id'=#{@shop.id + 1}", "message"=>"Not Found", "status"=>404})
+        end
+      end
+
+      context "Product doesn't exists" do
+        let(:admin_user) { create(:admin_user) }
+
+        it "should returns 404 HTTP Status" do
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
+          delete :destroy, params: { shop_id: @product.shop_id, id: (@product.id + 1) }
+          should respond_with(404)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Product with 'id'=#{@product.id + 1}", "message"=>"Not Found", "status"=>404})
+        end
       end
     end
   end
@@ -489,31 +710,44 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
     end
 
     context "with invalid params" do
-      it "Returns 400 Bad Request if shop_id not a Numeric" do
-        get :destroy_offline, params: { shop_id: 'Kowabunga', id: @product.id }
-        should respond_with(400)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Shop_id is incorrect", "message"=>"Bad Request", "status"=>400})
+      context "shop_id not a Numeric" do
+        it "should returns 400 HTTP Status" do
+          delete :destroy_offline, params: { shop_id: 'Kowabunga', id: @product.id }
+          should respond_with(400)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Shop_id is incorrect", "message"=>"Bad Request", "status"=>400})
+        end
       end
 
-      it "Returns 400 Bad Request if id not a Numeric" do
-        get :destroy_offline, params: { shop_id: @shop.id, id: '§§' }
-        should respond_with(400)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Id is incorrect", "message"=>"Bad Request", "status"=>400})
+      context "id not a Numeric" do
+        it "should returns 400 HTTP Status" do
+          delete :destroy_offline, params: { shop_id: @shop.id, id: '§§' }
+          should respond_with(400)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Id is incorrect", "message"=>"Bad Request", "status"=>400})
+        end
       end
 
-      it "Returns 404 Not Found if shop doesn't exists" do
-        get :destroy_offline, params: { shop_id: (@shop.id + 1), id: @product.id }
-        should respond_with(404)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Shop with 'id'=#{@shop.id + 1}", "message"=>"Not Found", "status"=>404})
+      context "shop doesn't exists" do
+        it "should returns 404 HTTP Status" do
+          delete :destroy_offline, params: { shop_id: (@shop.id + 1), id: @product.id }
+          should respond_with(404)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Shop with 'id'=#{@shop.id + 1}", "message"=>"Not Found", "status"=>404})
+        end
       end
 
-      it "Returns 404 Not Found if product doesn't exists" do
-        post :destroy_offline, params: { shop_id: @product.shop_id, id: (@product.id + 1) }
-        should respond_with(404)
-        expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Product with 'id'=#{@product.id + 1}", "message"=>"Not Found", "status"=>404})
+      context "product doesn't exists" do
+        it "should returns 404 HTTP Status" do
+          delete :destroy_offline, params: { shop_id: @product.shop_id, id: (@product.id + 1) }
+          should respond_with(404)
+          expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Product with 'id'=#{@product.id + 1}", "message"=>"Not Found", "status"=>404})
+        end
       end
     end
   end
+end
+
+def generate_token(user)
+  exp_payload = { id: user.id, exp: Time.now.to_i + 1 * 3600 * 24 }
+  JWT.encode exp_payload, ENV["JWT_SECRET"], 'HS256'
 end
 
 
