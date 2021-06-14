@@ -1,7 +1,7 @@
 GEM
   remote: https://gem.fury.io/mvms/
   specs:
-    mvms-core (2.5.46.7)
+    mvms-core (2.5.66)
       MailchimpMarketing (~> 3.0.34)
       activerecord (~> 5.2, >= 5.2.0)
       activerecord-sortable
@@ -459,6 +459,7 @@ PLATFORMS
   x86-mingw32
   x86-mswin32
   x86_64-darwin-19
+  x86_64-darwin-20
   x86_64-linux
 
 DEPENDENCIES
@@ -470,7 +471,7 @@ DEPENDENCIES
   factory_bot_rails
   figaro
   listen (~> 3.3)
-  mvms-core (= 2.5.46.7)!
+  mvms-core (= 2.5.66)!
   omniauth (= 1.3.1)
   pagy
   pg (~> 1.2, >= 1.2.3)
