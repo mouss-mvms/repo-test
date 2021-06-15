@@ -84,6 +84,18 @@ RSpec.describe 'api/shops/products', type: :request do
             example: 'Nettoyez votre mobilier à l’eau claire ou savonneuse sans détergent.',
             description: 'Seller advice of a product'
           },
+          imageUrls: {
+              type: 'array',
+              items: {
+                  type: 'string'
+              },
+              example: [
+                  'https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr',
+                  'https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg'
+              ],
+              default: [],
+              description: 'List of product images urls'
+          },
           isService: {
             type: 'boolean',
             example: false,
@@ -350,6 +362,15 @@ RSpec.describe 'api/shops/products', type: :request do
             example: 'Nettoyez votre mobilier à l’eau claire ou savonneuse sans détergent.',
             description: 'Seller advice of a product'
           },
+          imageUrls: {
+              type: 'array',
+              example: [
+                  'https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr',
+                  'https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg'
+              ],
+              default: [],
+              description: 'List of product images urls'
+          },
           isService: {
             type: 'boolean',
             example: false,
@@ -541,6 +562,15 @@ RSpec.describe 'api/shops/products', type: :request do
             example: 'Nettoyez votre mobilier à l’eau claire ou savonneuse sans détergent.',
             description: 'Seller advice of a product'
           },
+          imageUrls: {
+              type: 'array',
+              example: [
+                  'https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr',
+                  'https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg'
+              ],
+              default: [],
+              description: 'List of variant images urls'
+          },
           isService: {
             type: 'boolean',
             example: false,
@@ -569,6 +599,15 @@ RSpec.describe 'api/shops/products', type: :request do
                   type: 'integer',
                   example: 20,
                   description: 'Quantity in stock of a variant.'
+                },
+                imageUrls: {
+                    type: 'array',
+                    example: [
+                        'https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr',
+                        'https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg'
+                    ],
+                    default: [],
+                    description: 'List of variant images urls'
                 },
                 isDefault: {
                   type: 'boolean',
