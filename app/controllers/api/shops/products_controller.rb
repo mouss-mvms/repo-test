@@ -71,6 +71,15 @@ module Api
       end
 
       def update
+        unless route_params[:id].to_i > 0
+          error = Dto::Errors::BadRequest.new('Id is incorrect')
+          return render json: error.to_h, status: :bad_request
+        end
+
+        unless route_params[:shop_id].to_i > 0
+          error = Dto::Errors::BadRequest.new('Shop_id is incorrect')
+          return render json: error.to_h, status: :bad_request
+        end
         if product_params.blank? && category_product_params.blank?
           error = Dto::Errors::BadRequest.new("The syntax of the query is incorrect: Can't update without relevant params")
           return render json: error.to_h, status: error.status
@@ -164,7 +173,7 @@ module Api
         end
 
         begin
-          @product = Product.find(route_params[:id])
+          @product = @shop.products.find(route_params[:id])
         rescue ActiveRecord::RecordNotFound => e
           error = Dto::Errors::NotFound.new("Couldn't find #{e.model} with 'id'=#{e.id}")
           return render json: error.to_h, status: error.status
@@ -193,7 +202,7 @@ module Api
         begin
           @uncrypted_token = JWT.decode(request.headers[:HTTP_X_CLIENT_ID], ENV["JWT_SECRET"], true, {algorithm: 'HS256'})
         rescue JWT::DecodeError
-          error = Dto::Errors::InternalError.new
+          error = Dto::Errors::InternalServer.new
           return render json: error.to_h, status: error.status
         end
       end
@@ -214,6 +223,7 @@ module Api
           :status,
           :sellerAdvice,
           :isService,
+          {:imageUrls => []},
           variants: [
             :basePrice,
             :weight,

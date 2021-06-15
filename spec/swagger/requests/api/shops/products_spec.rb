@@ -49,6 +49,8 @@ RSpec.describe 'api/shops/products', type: :request do
       description 'Create a product in the given shop.'
       security [{ authorization: [] }]
 
+      parameter name: 'X-client-id', in: :header
+
       parameter name: :product, in: :body, schema: {
         type: 'object',
         properties: {
@@ -83,6 +85,18 @@ RSpec.describe 'api/shops/products', type: :request do
             type: 'string',
             example: 'Nettoyez votre mobilier à l’eau claire ou savonneuse sans détergent.',
             description: 'Seller advice of a product'
+          },
+          imageUrls: {
+              type: 'array',
+              items: {
+                  type: 'string'
+              },
+              example: [
+                  'https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr',
+                  'https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg'
+              ],
+              default: [],
+              description: 'List of product images urls'
           },
           isService: {
             type: 'boolean',
@@ -315,6 +329,8 @@ RSpec.describe 'api/shops/products', type: :request do
       description 'Update a single product from the given shop. **You must provide all existing product attributes.**'
       security [{ authorization: [] }]
 
+      parameter name: 'X-client-id', in: :header
+
       parameter name: :product, in: :body, schema: {
         type: 'object',
         properties: {
@@ -349,6 +365,15 @@ RSpec.describe 'api/shops/products', type: :request do
             type: 'string',
             example: 'Nettoyez votre mobilier à l’eau claire ou savonneuse sans détergent.',
             description: 'Seller advice of a product'
+          },
+          imageUrls: {
+              type: 'array',
+              example: [
+                  'https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr',
+                  'https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg'
+              ],
+              default: [],
+              description: 'List of product images urls'
           },
           isService: {
             type: 'boolean',
@@ -457,6 +482,8 @@ RSpec.describe 'api/shops/products', type: :request do
       description 'Delete a single product from the given shop.'
       security [{ authorization: [] }]
 
+      parameter name: 'X-client-id', in: :header
+
       response(204, 'Successful') do
         run_test!
       end
@@ -541,6 +568,15 @@ RSpec.describe 'api/shops/products', type: :request do
             example: 'Nettoyez votre mobilier à l’eau claire ou savonneuse sans détergent.',
             description: 'Seller advice of a product'
           },
+          imageUrls: {
+              type: 'array',
+              example: [
+                  'https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr',
+                  'https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg'
+              ],
+              default: [],
+              description: 'List of variant images urls'
+          },
           isService: {
             type: 'boolean',
             example: false,
@@ -569,6 +605,15 @@ RSpec.describe 'api/shops/products', type: :request do
                   type: 'integer',
                   example: 20,
                   description: 'Quantity in stock of a variant.'
+                },
+                imageUrls: {
+                    type: 'array',
+                    example: [
+                        'https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr',
+                        'https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg'
+                    ],
+                    default: [],
+                    description: 'List of variant images urls'
                 },
                 isDefault: {
                   type: 'boolean',
