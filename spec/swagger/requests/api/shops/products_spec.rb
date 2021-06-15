@@ -49,6 +49,8 @@ RSpec.describe 'api/shops/products', type: :request do
       description 'Create a product in the given shop.'
       security [{ authorization: [] }]
 
+      parameter name: 'X-client-id', in: :header
+
       parameter name: :product, in: :body, schema: {
         type: 'object',
         properties: {
@@ -327,6 +329,8 @@ RSpec.describe 'api/shops/products', type: :request do
       description 'Update a single product from the given shop. **You must provide all existing product attributes.**'
       security [{ authorization: [] }]
 
+      parameter name: 'X-client-id', in: :header
+
       parameter name: :product, in: :body, schema: {
         type: 'object',
         properties: {
@@ -477,6 +481,8 @@ RSpec.describe 'api/shops/products', type: :request do
       tags 'Products'
       description 'Delete a single product from the given shop.'
       security [{ authorization: [] }]
+
+      parameter name: 'X-client-id', in: :header
 
       response(204, 'Successful') do
         run_test!
