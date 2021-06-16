@@ -8,23 +8,25 @@ module Dto
         @base_price = args[:base_price]
         @weight = args[:weight]
         @quantity = args[:quantity]
+        @image_urls = args[:image_urls]
         @is_default = args[:is_default]
         @good_deal = args[:good_deal]
         @characteristics = args[:characteristics] || []
       end
-    
+
       def self.create(reference)
         variant = Dto::Variant::Response.new(
-          id: reference.id, 
-          weight: reference.weight, 
-          quantity: reference.quantity, 
+          id: reference.id,
+          weight: reference.weight,
+          quantity: reference.quantity,
+          image_urls: reference.sample.images.map(&:file_url),
           base_price: reference.base_price, 
           is_default: reference.sample.default,
           good_deal: Dto::GoodDeal::Response.create(reference&.good_deal)
         )
         variant.send(:create_characteristics, reference)
         variant
-      end    
+      end
 
       def to_h
         {
@@ -32,14 +34,15 @@ module Dto
           basePrice: @base_price,
           weight: @weight,
           quantity: @quantity,
+          imageUrls: @image_urls,
           isDefault: @is_default,
           goodDeal: @good_deal&.to_h,
           characteristics: @characteristics&.map { |characteristic| characteristic.to_h }
         }
       end
-    
+
       private
-    
+
       def create_characteristics(reference)
         self.characteristics << Dto::Characteristic::Response.new(name: reference.color.name, type: 'color') if reference.color
         self.characteristics << Dto::Characteristic::Response.new(name: reference.size.name, type: 'size') if reference.size

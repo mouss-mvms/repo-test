@@ -7,8 +7,19 @@ module Dto
                   create_product(dto_product: dto_product, dto_category: dto_category, shop_id: shop_id)
                 end
 
+      dto_product.image_urls.each do |image_url|
+        set_image(object: product, image_url: image_url)
+      end
+
       dto_product.variants.each do |dto_variant|
         sample = ::Sample.create!(name: dto_product.name, default: dto_variant.is_default, product_id: product.id)
+
+        if dto_variant.image_urls.present?
+          dto_variant.image_urls.each do |image_url|
+            set_image(object: sample, image_url: image_url)
+          end
+        end
+
         dto_good_deal = dto_variant.good_deal if dto_variant&.good_deal&.discount && dto_variant&.good_deal&.end_at && dto_variant&.good_deal&.start_at
         good_deal = nil
 
@@ -42,6 +53,16 @@ module Dto
 
     private
 
+    def self.set_image(object:, image_url:)
+      begin
+        image = Shrine.remote_url(image_url)
+        object.images.create(file: image)
+      rescue StandardError => e
+        Rails.logger.error(e)
+        Rails.logger.error(e.message)
+      end
+    end
+
     def self.create_product(dto_product:, dto_category:, shop_id:)
       ::Product.create!(
         name: dto_product.name,
@@ -74,6 +95,7 @@ module Dto
 
       ::Reference.where(product_id: product.id).destroy_all
       ::Sample.where(product_id: product.id).destroy_all
+      ::Image.where(product_id: product.id).destroy_all
 
       product
     end

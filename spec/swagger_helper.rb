@@ -113,6 +113,18 @@ RSpec.configure do |config|
                 example: false,
                 description: 'This product is a merchandise or a service.'
               },
+              imageUrls: {
+                  type: 'array',
+                  items: {
+                      type: 'string'
+                  },
+                  example: [
+                      'https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr',
+                      'https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg'
+                  ],
+                  default: [],
+                  description: 'List of product images urls'
+              },
               variants: {
                 type: 'array',
                 items: {
@@ -162,6 +174,18 @@ RSpec.configure do |config|
                 type: 'integer',
                 example: 20,
                 description: 'Quantity in stock of a variant.'
+              },
+              imageUrls: {
+                type: 'array',
+                items: {
+                  type: 'string'
+                },
+                example: [
+                  'https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr',
+                  'https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg'
+                ],
+                default: [],
+                description: 'List of variant images urls'
               },
               isDefault: {
                 type: 'boolean',
