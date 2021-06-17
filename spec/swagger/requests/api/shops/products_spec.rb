@@ -1,6 +1,6 @@
 require 'swagger_helper'
 
-RSpec.describe 'api/shops/products', type: :request do
+RSpec.describe 'api/auth/shops/products', type: :request do
 
   path '/api/shops/{shop_id}/products' do
     # You'll want to customize the parameter types...
@@ -522,7 +522,7 @@ RSpec.describe 'api/shops/products', type: :request do
     end
   end
 
-  path '/api/shops/{shop_id}/products/{id}/offline' do
+  path '/api/shops/{shop_id}/products/{id}' do
     parameter name: 'shop_id', in: :path, type: :string, description: 'Unique identifier of the desired shop.'
     parameter name: 'id', in: :path, type: :string, description: 'Unique identifier of the desired product.'
 
