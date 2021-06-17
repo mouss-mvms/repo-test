@@ -1,11 +1,12 @@
 module Dto
   module Category
     class Response
-      attr_accessor :id, :name, :children
+      attr_accessor :id, :name, :slug, :children
 
       def initialize(**args)
         @id = args[:id]
         @name = args[:name]
+        @slug = args[:slug]
         @children = []
       end
     
@@ -13,7 +14,8 @@ module Dto
         return unless product.category
         Dto::Category::Response.new(
           id: product.category.id, 
-          name: product.category.name
+          name: product.category.name,
+          slug: product.category.slug
         )
       end
 
