@@ -12,3 +12,5 @@ end
 namespace :shops do
   draw(:products)
 end
+
+get "shops/:id", to: "shops#show", as: nil
