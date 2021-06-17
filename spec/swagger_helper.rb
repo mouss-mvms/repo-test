@@ -146,6 +146,13 @@ RSpec.configure do |config|
                 type: 'string',
                 example: 'Mobilier extérieur',
                 description: 'Display name of a category.'
+              },
+              children: {
+                type: 'array',
+                items: {
+                  '$ref': '#/components/schemas/Category'
+                },
+                description: 'List of children category.'
               }
             }
           },

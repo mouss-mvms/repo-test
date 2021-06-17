@@ -1084,7 +1084,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {
@@ -1213,6 +1213,13 @@
             "type": "string",
             "example": "Mobilier extérieur",
             "description": "Display name of a category."
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Category"
+            },
+            "description": "List of children category."
           }
         }
       },
