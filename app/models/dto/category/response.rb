@@ -1,11 +1,12 @@
 module Dto
   module Category
     class Response
-      attr_accessor :id, :name
+      attr_accessor :id, :name, :children
 
       def initialize(**args)
         @id = args[:id]
         @name = args[:name]
+        @children = []
       end
     
       def self.create(product)
