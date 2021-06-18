@@ -5,6 +5,8 @@ RSpec.describe Api::ShopsController, type: :controller do
     context "All ok" do
       it 'should return shop information' do
         shop = create(:shop)
+        shop.address.addressable = shop
+        shop.save
 
         get :show, params: {id: shop.id}
 

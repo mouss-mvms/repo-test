@@ -10,5 +10,8 @@ FactoryBot.define do
     free_shipping_limit { 500 }
     categories {[create(:category)]}
     is_self_delivery { true }
+    after(:create) do |shop|
+      shop.addresses << create(:address, addressable: shop)
+    end
   end
 end
