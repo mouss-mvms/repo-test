@@ -9,6 +9,7 @@ RSpec.describe 'api/categories', type: :request do
       produces 'application/json'
       description 'Return the list of categories.'
       security [{ authorization: [] }]
+
       response(200, 'successful') do
         schema type: :object,
                properties: {
@@ -20,6 +21,7 @@ RSpec.describe 'api/categories', type: :request do
                  }
                }
         run_test!
+
       end
     end
   end
