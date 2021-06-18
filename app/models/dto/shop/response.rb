@@ -46,7 +46,7 @@ module Dto
           id: @id,
           name: @name,
           slug: @slug,
-          image_urls: @image_urls,
+          imageUrls: @image_urls,
           baseline: @baseline,
           description: @description,
           schedules: @schedules,
