@@ -36,7 +36,6 @@ module Dto
           longitude: @longitude
         }
       end
-
     end
   end
 end

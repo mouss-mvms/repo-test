@@ -65,6 +65,16 @@ RSpec.configure do |config|
                 example: "La description d'une boutique",
                 description: "Shop's description"
               },
+              siret: {
+                type: 'string',
+                example: "75409821800029",
+                description: "Shop's siret"
+              },
+              email: {
+                type: 'string',
+                example: "boutique@email.com",
+                description: "Shop's email"
+              },
               baseline: {
                 type: 'string',
                 example: "Ma boutique est top",
@@ -92,7 +102,7 @@ RSpec.configure do |config|
                 example: 'http://www.boutique.com/',
                 description: "Shop's website link"
               },
-            address: {
+              address: {
               '$ref': '#/components/schemas/Address',
               description: "Shop's address"
             }

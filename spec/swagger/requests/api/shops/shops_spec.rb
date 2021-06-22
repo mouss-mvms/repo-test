@@ -32,4 +32,97 @@ RSpec.describe 'api/shops', type: :request do
         end
     end
   end
+
+  path 'api/shops' do
+    post("Create Shop") do
+      produces 'application/json'
+      description 'Create a shop'
+      security [{authorization: []}]
+      parameter name: 'X-client-id', in: :header
+
+      parameter name: :shop, in: :body, schema: {
+        type: 'object',
+        properties: {
+          name: {
+            type: 'string',
+            example: 'Jardin Local',
+            description: 'Display name of a shop.'
+          },
+          image_urls: {
+            type: 'array',
+            example: ['http://www.image.com/image.jpg'],
+            description: 'Images of shop'
+          },
+          email: {
+            type: 'string',
+            example: "L'email d'une boutique",
+            description: "Shop's email"
+          },
+          description: {
+            type: 'string',
+            example: "La description d'une boutique",
+            description: "Shop's description"
+          },
+          baseline: {
+            type: 'string',
+            example: "Ma boutique est top",
+            description: "Shop's baseline"
+          },
+          siret: {
+            type: 'string',
+            example: "75409821800029",
+            description: "Shop's siret"
+          },
+          schedules: {
+            type: 'array',
+            items: {
+              '$ref': '#/components/schemas/Schedule'
+            },
+            description: "Shop's schedules"
+          },
+          category_ids: {
+            type: 'array',
+            items: { type: 'integer' },
+            description: "Shop's category ids"
+          },
+          facebook_link: {
+            type: 'string',
+            example: 'http://www.facebook.com/boutique',
+            description: "Shop's facebook link"
+          },
+          instagram_link: {
+            type: 'string',
+            example: 'http://www.instagram.com/boutique',
+            description: "Shop's instagram link"
+          },
+          website_link: {
+            type: 'string',
+            example: 'http://www.boutique.com/',
+            description: "Shop's website link"
+          },
+          address: {
+            '$ref': '#/components/schemas/Address',
+            description: "Shop's address"
+          }
+        },
+        required: %w[name, address, email, siret, category_ids]
+      }
+
+      response(201, 'Created') do
+        schema type: :object,
+               properties: {
+                 product: {'$ref': '#/components/schemas/Shop'}
+               }
+        run_test!
+      end
+
+      response(400, 'Bad request') do
+        schema type: :object,
+               properties: {
+                 error: {'$ref': '#/components/schemas/Error'}
+               }
+        run_test!
+      end
+    end
+  end
 end
