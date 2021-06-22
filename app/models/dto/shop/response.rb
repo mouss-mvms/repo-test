@@ -9,7 +9,7 @@ module Dto
         @slug = args[:slug]
         @image_urls = []
         args[:image_urls]&.each do |img_url|
-
+          @image_urls << img_url
         end
         @description = args[:description]
         @baseline = args[:baseline]
