@@ -13,11 +13,9 @@ RSpec.describe 'api/shops', type: :request do
         response(200, 'Successful') do
           schema type: :object,
                  properties: {
-                   products: {
-                     type: :array,
-                     items: {
-                       '$ref': '#/components/schemas/Shop'
-                     }
+                   shop: {
+                     type: :object,
+                     '$ref': '#/components/schemas/Shop'
                    }
                  }
           run_test!
@@ -33,8 +31,10 @@ RSpec.describe 'api/shops', type: :request do
     end
   end
 
-  path 'api/shops' do
+  path '/api/shops' do
     post("Create Shop") do
+      tags 'Shops'
+      consumes 'application/json'
       produces 'application/json'
       description 'Create a shop'
       security [{authorization: []}]
@@ -111,7 +111,7 @@ RSpec.describe 'api/shops', type: :request do
       response(201, 'Created') do
         schema type: :object,
                properties: {
-                 product: {'$ref': '#/components/schemas/Shop'}
+                 shop: {'$ref': '#/components/schemas/Shop'}
                }
         run_test!
       end
