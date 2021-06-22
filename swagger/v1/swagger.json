@@ -1197,7 +1197,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000/"
+      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
     }
   ],
   "components": {
@@ -1238,6 +1238,16 @@
             "type": "string",
             "example": "La description d'une boutique",
             "description": "Shop's description"
+          },
+          "siret": {
+            "type": "string",
+            "example": "75409821800029",
+            "description": "Shop's siret"
+          },
+          "email": {
+            "type": "string",
+            "example": "boutique@email.com",
+            "description": "Shop's email"
           },
           "baseline": {
             "type": "string",
