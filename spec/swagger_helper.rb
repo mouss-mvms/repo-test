@@ -80,13 +80,6 @@ RSpec.configure do |config|
                 example: "Ma boutique est top",
                 description: "Shop's baseline"
               },
-              schedules: {
-                type: 'array',
-                items: {
-                  '$ref': '#/components/schemas/Schedule'
-                },
-                description: "Shop's schedules"
-              },
               facebook_link: {
                 type: 'string',
                 example: 'http://www.facebook.com/boutique',
