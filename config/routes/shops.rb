@@ -14,3 +14,4 @@ namespace :shops do
 end
 
 get "shops/:id", to: "shops#show", as: nil
+post "shops", to: "shops#create", as: nil

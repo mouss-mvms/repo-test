@@ -9,13 +9,12 @@ module Dto
         @slug = args[:slug]
         @children = []
       end
-    
-      def self.create(product)
-        return unless product.category
+
+      def self.create(category)
         Dto::Category::Response.new(
-          id: product.category.id, 
-          name: product.category.name,
-          slug: product.category.slug
+          id: category.id,
+          name: category.name,
+          slug: category.slug
         )
       end
 
