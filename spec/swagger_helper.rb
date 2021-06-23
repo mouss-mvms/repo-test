@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+Dir["./spec/swagger/examples/*.rb"].each do |f|
+  require f
+end
+
 require 'rails_helper'
 
 RSpec.configure do |config|
@@ -37,70 +41,9 @@ RSpec.configure do |config|
           }
         },
         schemas: {
-          Shop: {
-            type: 'object',
-            properties: {
-              id: {
-                type: 'integer',
-                example: 1,
-                description: 'Unique identifier of a shop.'
-              },
-              name: {
-                type: 'string',
-                example: 'Jardin Local',
-                description: 'Display name of a shop.'
-              },
-              slug: {
-                type: 'string',
-                example: 'jardin-local',
-                description: 'Slug of a shop.'
-              },
-              image_urls: {
-                type: 'array',
-                example: ['http://www.image.com/image.jpg'],
-                description: 'Images of shop'
-              },
-              description: {
-                type: 'string',
-                example: "La description d'une boutique",
-                description: "Shop's description"
-              },
-              siret: {
-                type: 'string',
-                example: "75409821800029",
-                description: "Shop's siret"
-              },
-              email: {
-                type: 'string',
-                example: "boutique@email.com",
-                description: "Shop's email"
-              },
-              baseline: {
-                type: 'string',
-                example: "Ma boutique est top",
-                description: "Shop's baseline"
-              },
-              facebook_link: {
-                type: 'string',
-                example: 'http://www.facebook.com/boutique',
-                description: "Shop's facebook link"
-              },
-              instagram_link: {
-                type: 'string',
-                example: 'http://www.instagram.com/boutique',
-                description: "Shop's instagram link"
-              },
-              website_link: {
-                type: 'string',
-                example: 'http://www.boutique.com/',
-                description: "Shop's website link"
-              },
-              address: {
-                '$ref': '#/components/schemas/Address',
-                description: "Shop's address"
-              }
-            }
-          },
+          Shop: Examples::Shop.to_h,
+          Address: Examples::Address.to_h,
+          Schedule: Examples::Schedule.to_h,
           Product: {
             type: 'object',
             properties: {
@@ -290,76 +233,6 @@ RSpec.configure do |config|
               }
             },
             required: %w[startAt endAt discount]
-          },
-          Address: {
-            type: 'object',
-            properties: {
-              street_number: {
-                type: 'string',
-                example: "33",
-                description: "Address's street number"
-              },
-              route: {
-                type: 'string',
-                example: "Rue Georges Bonnac",
-                description: "Address's route"
-              },
-              locality: {
-                type: 'string',
-                example: "Bordeaux",
-                description: "Address's locality"
-              },
-              country: {
-                type: 'string',
-                example: "France",
-                description: "Address's country"
-              },
-              postalCode: {
-                type: 'string',
-                example: "33000",
-                description: "Address's postal code"
-              },
-              latitude: {
-                type: 'float',
-                example: 44.82408,
-                description: "Address's latitude"
-              },
-              longitude: {
-                type: 'float',
-                example: -0.62295,
-                description: "Address's longitude"
-              },
-            }
-          },
-          Schedule:{
-            type:'object',
-            properties: {
-              day: {
-                type: "string",
-                example: "Lundi",
-                description: "Day of week"
-              },
-              openMorning: {
-                type: "string",
-                example: "12h00",
-                description: "Time of opening morning"
-              },
-              closeMorning: {
-                type: "string",
-                example: "12h00",
-                description: "Time of closing morning"
-              },
-              openAfternoon: {
-                type: "string",
-                example: "12h00",
-                description: "Time of opening afternoon"
-              },
-              closeAftenoon: {
-                type: "string",
-                example: "12h00",
-                description: "Time of closing afternoon"
-              },
-            }
           },
           Error: {
             type: 'object',
