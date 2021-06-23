@@ -22,19 +22,6 @@ module Dto
           @category_ids << category_id
         end
       end
-
-      def build
-        shop = ::Shop.create!(
-          name: name,
-          email: email,
-          siret: siret,
-          category_ids: category_ids
-        )
-
-        address_request.addressable_id = shop.id
-        address_request.build
-        return shop
-      end
     end
   end
 end

@@ -15,21 +15,6 @@ module Dto
         @addressable_type = args[:addressable_type] || "Shop"
       end
 
-      def build
-        ::Address.create!({
-                          street_number: street_number,
-                          route: route,
-                          locality: locality,
-                          country: country,
-                          postal_code: postal_code,
-                          latitude: latitude,
-                          longitude: longitude,
-                          validate_firstname_lastname_phone: false,
-                          addressable_id: addressable_id,
-                          addressable_type: addressable_type
-                        })
-      end
-
     end
   end
 end

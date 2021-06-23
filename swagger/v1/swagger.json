@@ -1139,6 +1139,130 @@
             }
           }
         }
+      },
+      "put": {
+        "summary": "Update Shop",
+        "tags": [
+          "Shops"
+        ],
+        "description": "Update a shop",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-client-id",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "shop": {
+                      "$ref": "#/components/schemas/Shop"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "$ref": "#/components/schemas/Error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Jardin Local",
+                    "description": "Display name of a shop."
+                  },
+                  "image_urls": {
+                    "type": "array",
+                    "example": [
+                      "http://www.image.com/image.jpg"
+                    ],
+                    "description": "Images of shop"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "L'email d'une boutique",
+                    "description": "Shop's email"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "La description d'une boutique",
+                    "description": "Shop's description"
+                  },
+                  "baseline": {
+                    "type": "string",
+                    "example": "Ma boutique est top",
+                    "description": "Shop's baseline"
+                  },
+                  "siret": {
+                    "type": "string",
+                    "example": "75409821800029",
+                    "description": "Shop's siret"
+                  },
+                  "category_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "description": "Shop's category ids"
+                  },
+                  "facebook_link": {
+                    "type": "string",
+                    "example": "http://www.facebook.com/boutique",
+                    "description": "Shop's facebook link"
+                  },
+                  "instagram_link": {
+                    "type": "string",
+                    "example": "http://www.instagram.com/boutique",
+                    "description": "Shop's instagram link"
+                  },
+                  "website_link": {
+                    "type": "string",
+                    "example": "http://www.boutique.com/",
+                    "description": "Shop's website link"
+                  },
+                  "address": {
+                    "$ref": "#/components/schemas/Address",
+                    "description": "Shop's address"
+                  }
+                },
+                "required": [
+                  "id"
+                ]
+              }
+            }
+          }
+        }
       }
     },
     "/api/shops": {
@@ -1231,13 +1355,6 @@
                     "example": "75409821800029",
                     "description": "Shop's siret"
                   },
-                  "schedules": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/Schedule"
-                    },
-                    "description": "Shop's schedules"
-                  },
                   "category_ids": {
                     "type": "array",
                     "items": {
@@ -1281,7 +1398,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "https://dev.mavillemonshopping.fr/fr"
     }
   ],
   "components": {
@@ -1354,8 +1471,78 @@
             "description": "Shop's website link"
           },
           "address": {
-            "$ref": "#/components/schemas/Address",
+            "$ref": "#/components/schemas/examples/Address",
             "description": "Shop's address"
+          }
+        }
+      },
+      "Address": {
+        "type": "object",
+        "properties": {
+          "street_number": {
+            "type": "string",
+            "example": "33",
+            "description": "Address's street number"
+          },
+          "route": {
+            "type": "string",
+            "example": "Rue Georges Bonnac",
+            "description": "Address's route"
+          },
+          "locality": {
+            "type": "string",
+            "example": "Bordeaux",
+            "description": "Address's locality"
+          },
+          "country": {
+            "type": "string",
+            "example": "France",
+            "description": "Address's country"
+          },
+          "postalCode": {
+            "type": "string",
+            "example": "33000",
+            "description": "Address's postal code"
+          },
+          "latitude": {
+            "type": "float",
+            "example": 44.82408,
+            "description": "Address's latitude"
+          },
+          "longitude": {
+            "type": "float",
+            "example": -0.62295,
+            "description": "Address's longitude"
+          }
+        }
+      },
+      "Schedule": {
+        "type": "object",
+        "properties": {
+          "day": {
+            "type": "string",
+            "example": "Lundi",
+            "description": "Day of week"
+          },
+          "openMorning": {
+            "type": "string",
+            "example": "12h00",
+            "description": "Time of opening morning"
+          },
+          "closeMorning": {
+            "type": "string",
+            "example": "12h00",
+            "description": "Time of closing morning"
+          },
+          "openAfternoon": {
+            "type": "string",
+            "example": "12h00",
+            "description": "Time of opening afternoon"
+          },
+          "closeAftenoon": {
+            "type": "string",
+            "example": "12h00",
+            "description": "Time of closing afternoon"
           }
         }
       },
@@ -1568,76 +1755,6 @@
           "endAt",
           "discount"
         ]
-      },
-      "Address": {
-        "type": "object",
-        "properties": {
-          "street_number": {
-            "type": "string",
-            "example": "33",
-            "description": "Address's street number"
-          },
-          "route": {
-            "type": "string",
-            "example": "Rue Georges Bonnac",
-            "description": "Address's route"
-          },
-          "locality": {
-            "type": "string",
-            "example": "Bordeaux",
-            "description": "Address's locality"
-          },
-          "country": {
-            "type": "string",
-            "example": "France",
-            "description": "Address's country"
-          },
-          "postalCode": {
-            "type": "string",
-            "example": "33000",
-            "description": "Address's postal code"
-          },
-          "latitude": {
-            "type": "float",
-            "example": 44.82408,
-            "description": "Address's latitude"
-          },
-          "longitude": {
-            "type": "float",
-            "example": -0.62295,
-            "description": "Address's longitude"
-          }
-        }
-      },
-      "Schedule": {
-        "type": "object",
-        "properties": {
-          "day": {
-            "type": "string",
-            "example": "Lundi",
-            "description": "Day of week"
-          },
-          "openMorning": {
-            "type": "string",
-            "example": "12h00",
-            "description": "Time of opening morning"
-          },
-          "closeMorning": {
-            "type": "string",
-            "example": "12h00",
-            "description": "Time of closing morning"
-          },
-          "openAfternoon": {
-            "type": "string",
-            "example": "12h00",
-            "description": "Time of opening afternoon"
-          },
-          "closeAftenoon": {
-            "type": "string",
-            "example": "12h00",
-            "description": "Time of closing afternoon"
-          }
-        }
       },
       "Error": {
         "type": "object",

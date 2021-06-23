@@ -43,7 +43,7 @@ module Dto
                                   baseline: shop.french_baseline&.content,
                                   facebook_link: shop.facebook_url,
                                   instagram_link: shop.instagram_url,
-                                  website_url: shop.url,
+                                  website_link: shop.url,
                                   address: Dto::Address::Response.create(shop.address),
                                   siret: shop.siret,
                                   email: shop.email,

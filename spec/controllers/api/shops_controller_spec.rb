@@ -72,7 +72,12 @@ RSpec.describe Api::ShopsController, type: :controller do
           categoryIds: [
             @categories[0].id,
             @categories[1].id
-          ]
+          ],
+          description: "Test description",
+          baseline: "Test baseline",
+          facebookLink: "http://www.facebook.com",
+          instagramLink: "http://www.instagram.com",
+          websiteLink: "http://www.website.com",
         }
         request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
 
@@ -91,6 +96,11 @@ RSpec.describe Api::ShopsController, type: :controller do
         expect(shop_result["address"]["postalCode"]).to eq(@create_params[:address][:postalCode])
         expect(shop_result["address"]["longitude"]).to eq(@create_params[:address][:longitude])
         expect(shop_result["address"]["latitude"]).to eq(@create_params[:address][:latitude])
+        expect(shop_result["description"]).to eq(@create_params[:description])
+        expect(shop_result["baseline"]).to eq(@create_params[:baseline])
+        expect(shop_result["facebookLink"]).to eq(@create_params[:facebookLink])
+        expect(shop_result["instagramLink"]).to eq(@create_params[:instagramLink])
+        expect(shop_result["websiteLink"]).to eq(@create_params[:websiteLink])
         expect((Shop.find(shop_result["id"]).owner == @shop_employee_user.shop_employee)).to be_truthy
       end
     end
@@ -211,7 +221,7 @@ RSpec.describe Api::ShopsController, type: :controller do
       end
     end
 
-    context 'Authentification incorrect' do
+    context 'Authentication incorrect' do
       context "No user" do
         it "should return 401" do
           post :create
@@ -237,6 +247,241 @@ RSpec.describe Api::ShopsController, type: :controller do
         it "should return 403" do
           request.headers['HTTP_X_CLIENT_ID'] = generate_token(@admin_user)
           post :create
+          expect(response).to have_http_status(403)
+        end
+      end
+    end
+  end
+
+  describe "PUT #update" do
+    context "All ok" do
+      before(:each) do
+        @categories = []
+        @categories << create(:category)
+        @categories << create(:homme)
+        @shop_employee_user = create(:shop_employee_user)
+        @shop = create(:shop)
+        @shop_address = create(:address)
+        @shop_address.addressable_id = @shop.id
+        @shop_address.addressable_type = "Shop"
+        @shop_address.save
+        @shop.assign_ownership(@shop_employee_user)
+        @shop.save
+      end
+      it 'should return 200 HTTP status code with shop response object' do
+        @update_params = {
+          name: "Boutique Test",
+          email: @shop.email,
+          siret: @shop.siret,
+          address: {
+            streetNumber: @shop.address.street_number,
+            route: @shop.address.route,
+            locality: @shop.address.locality,
+            country: @shop.address.country,
+            postalCode: @shop.address.postal_code,
+            longitude: @shop.address.longitude,
+            latitude: @shop.address.latitude
+          },
+          categoryIds: @shop.category_ids,
+          facebookLink: "http://www.facebook.com",
+          instagramLink: "http://www.instagram.com",
+          websiteLink: "http://www.website.com"
+        }
+        request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+
+        put :update, params: @update_params.merge({id: @shop.id})
+
+        expect(response).to have_http_status(200)
+        shop_result = JSON.parse(response.body)
+        expect(shop_result["id"]).not_to be_nil
+        expect(shop_result["name"]).to eq(@update_params[:name])
+        expect(shop_result["siret"]).to eq(@shop.siret)
+        expect(shop_result["email"]).to eq(@shop.email)
+        expect(shop_result["address"]["streetNumber"]).to eq(@shop.address.street_number)
+        expect(shop_result["address"]["route"]).to eq(@shop.address.route)
+        expect(shop_result["address"]["locality"]).to eq(@shop.address.locality)
+        expect(shop_result["address"]["country"]).to eq(@shop.address.country)
+        expect(shop_result["address"]["postalCode"]).to eq(@shop.address.postal_code)
+        expect(shop_result["address"]["longitude"]).to eq(@shop.address.longitude)
+        expect(shop_result["address"]["latitude"]).to eq(@shop.address.latitude)
+        expect(shop_result["facebookLink"]).to eq(@update_params[:facebookLink])
+        expect(shop_result["instagramLink"]).to eq(@update_params[:instagramLink])
+        expect(shop_result["websiteLink"]).to eq(@update_params[:websiteLink])
+        expect((Shop.find(shop_result["id"]).owner == @shop_employee_user.shop_employee)).to be_truthy
+      end
+    end
+
+    context 'Shop not found' do
+      before(:each) do
+        @shop_employee_user = create(:shop_employee_user)
+      end
+      it 'Should return 404 HTTP status' do
+        request.headers["HTTP_X_CLIENT_ID"] = generate_token(@shop_employee_user)
+        put :update, params: {id: 26}
+
+        expect(response).to have_http_status(404)
+      end
+    end
+
+    context "Bad params" do
+      before(:each) do
+        @shop_employee_user = create(:shop_employee_user)
+        @shop = create(:shop)
+        @shop.assign_ownership(@shop_employee_user)
+        @shop.save
+      end
+      context "No Name" do
+        before(:each) do
+          @categories = []
+          @categories << create(:category)
+          @categories << create(:homme)
+        end
+        it "should return 400 HTTP status" do
+          @update_params = {
+            address: {
+              streetNumber: "52",
+              route: "Rue Georges Bonnac",
+              locality: "Bordeaux",
+              country: "France",
+              postalCode: "33000",
+              longitude: 44.8399608,
+              latitude: 0.5862431
+            },
+            email: "test@boutique.com",
+            siret: "75409821800029",
+            categoryIds: [
+              @categories[0].id,
+              @categories[1].id
+            ]
+          }
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+
+          put :update, params: @update_params.merge(id: @shop.id)
+
+          expect(response).to have_http_status(400)
+        end
+
+      end
+      context "No Siret" do
+        before(:each) do
+          @categories = []
+          @categories << create(:category)
+          @categories << create(:homme)
+        end
+        it "should return 400 HTTP status" do
+          @update_params = {
+            name: "Boutique test",
+            address: {
+              streetNumber: "52",
+              route: "Rue Georges Bonnac",
+              locality: "Bordeaux",
+              country: "France",
+              postalCode: "33000",
+              longitude: 44.8399608,
+              latitude: 0.5862431
+            },
+            email: "test@boutique.com",
+            categoryIds: [
+              @categories[0].id,
+              @categories[1].id
+            ]
+          }
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+
+          put :update, params: @update_params.merge(id: @shop.id)
+
+          expect(response).to have_http_status(400)
+        end
+
+      end
+      context "No Category" do
+        it "should return 400 HTTP status" do
+          @update_params = {
+            address: {
+              streetNumber: "52",
+              route: "Rue Georges Bonnac",
+              locality: "Bordeaux",
+              country: "France",
+              postalCode: "33000",
+              longitude: 44.8399608,
+              latitude: 0.5862431
+            },
+            email: "test@boutique.com",
+            siret: "75409821800029",
+          }
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+
+          put :update, params: @update_params.merge(id: @shop.id)
+
+          expect(response).to have_http_status(400)
+        end
+
+      end
+      context "No Address" do
+        before(:each) do
+          @categories = []
+          @categories << create(:category)
+          @categories << create(:homme)
+        end
+        it "should return 400 HTTP status" do
+          @update_params = {
+            email: "test@boutique.com",
+            siret: "75409821800029",
+            categoryIds: [
+              @categories[0].id,
+              @categories[1].id
+            ]
+          }
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+
+          put :update, params: @update_params.merge(id: @shop.id)
+
+          expect(response).to have_http_status(400)
+        end
+
+      end
+    end
+
+
+    context 'Authentication incorrect' do
+      context "No user" do
+        it "should return 401" do
+          put :update, params: {id: 33}
+          expect(response).to have_http_status(401)
+        end
+      end
+
+      context "User is not a pro" do
+        before(:each) do
+          @customer_user = create(:customer_user)
+        end
+        it "should return 403" do
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(@customer_user)
+          put :update, params: {id: 33}
+          expect(response).to have_http_status(403)
+        end
+      end
+
+      context "User is admin" do
+        before(:each) do
+          @admin_user = create(:admin_user)
+        end
+        it "should return 403" do
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(@admin_user)
+          put :update, params: {id: 33}
+          expect(response).to have_http_status(403)
+        end
+      end
+
+      context "User is not the owner of shop" do
+        before(:each) do
+          @shop_employee_user = create(:shop_employee_user)
+          @shop = create(:shop)
+        end
+        it "Should return 403 HTTP Status" do
+          request.headers["HTTP_X_CLIENT_ID"] = generate_token(@shop_employee_user)
+          put :update, params: {id: @shop.id}
+
           expect(response).to have_http_status(403)
         end
       end
