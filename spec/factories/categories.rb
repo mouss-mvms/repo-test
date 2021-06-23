@@ -8,4 +8,14 @@ FactoryBot.define do
     name { "ProductCategory" }
     payment_delay { 15 }
   end
+
+  factory :homme, class: Category  do
+    name { "Homme" }
+    payment_delay { 15 }
+  end
+
+  factory :femme, class: Category  do
+    name { "Femme" }
+    payment_delay { 15 }
+  end
 end
