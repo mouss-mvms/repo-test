@@ -96,9 +96,9 @@ RSpec.configure do |config|
                 description: "Shop's website link"
               },
               address: {
-              '$ref': '#/components/schemas/Address',
-              description: "Shop's address"
-            }
+                '$ref': '#/components/schemas/Address',
+                description: "Shop's address"
+              }
             }
           },
           Product: {

@@ -135,9 +135,7 @@ module Api
       end
 
       def destroy
-
         @product.destroy if ProductsSpecifications::IsRemovable.new.is_satisfied_by?(@product)
-
         head :no_content
       end
 
