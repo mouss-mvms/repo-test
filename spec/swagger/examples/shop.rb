@@ -60,7 +60,7 @@ module Examples
             description: "Shop's website link"
           },
           address: {
-            '$ref': '#/components/schemas/examples/Address',
+            '$ref': '#/components/schemas/Address',
             description: "Shop's address"
           }
         }

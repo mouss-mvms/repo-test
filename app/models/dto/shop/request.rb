@@ -1,7 +1,7 @@
 module Dto
   module Shop
     class Request
-      attr_accessor :name, :image_urls, :description, :baseline, :schedules, :facebook_link, :instagram_link, :website_link, :address_request, :email, :siret, :category_ids
+      attr_accessor :name, :image_urls, :description, :baseline, :schedules, :facebook_link, :instagram_link, :website_link, :address_request, :email, :siret
 
       def initialize(**args)
         @name = args[:name]
@@ -17,10 +17,6 @@ module Dto
         @website_link = args[:website_link]
         @address_request = Dto::Address::Request.new(args[:address])
         @siret = args[:siret]
-        @category_ids = []
-        args[:category_ids]&.each do |category_id|
-          @category_ids << category_id
-        end
       end
     end
   end

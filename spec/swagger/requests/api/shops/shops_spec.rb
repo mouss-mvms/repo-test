@@ -71,11 +71,6 @@ RSpec.describe 'api/shops', type: :request do
             example: "75409821800029",
             description: "Shop's siret"
           },
-          category_ids: {
-            type: 'array',
-            items: { type: 'integer' },
-            description: "Shop's category ids"
-          },
           facebook_link: {
             type: 'string',
             example: 'http://www.facebook.com/boutique',
@@ -160,11 +155,6 @@ RSpec.describe 'api/shops', type: :request do
             example: "75409821800029",
             description: "Shop's siret"
           },
-          category_ids: {
-            type: 'array',
-            items: { type: 'integer' },
-            description: "Shop's category ids"
-          },
           facebook_link: {
             type: 'string',
             example: 'http://www.facebook.com/boutique',
@@ -185,7 +175,7 @@ RSpec.describe 'api/shops', type: :request do
             description: "Shop's address"
           }
         },
-        required: %w[name, address, email, siret, category_ids]
+        required: %w[name, address, email, siret]
       }
 
       response(201, 'Created') do
