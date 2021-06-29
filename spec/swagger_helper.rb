@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+Dir["./spec/swagger/examples/*.rb"].each do |f|
+  require f
+end
+
 require 'rails_helper'
 
 RSpec.configure do |config|
@@ -37,33 +41,9 @@ RSpec.configure do |config|
           }
         },
         schemas: {
-          Shop: {
-            type: 'object',
-            properties: {
-              id: {
-                type: 'integer',
-                example: 1,
-                description: 'Unique identifier of a shop.'
-              },
-              name: {
-                type: 'string',
-                example: 'Jardin Local',
-                description: 'Display name of a shop.'
-              },
-              slug: {
-                type: 'string',
-                example: 'jardin-local',
-                description: 'Slug of a shop.'
-              },
-              products: {
-                type: 'array',
-                items: {
-                  '$ref': '#/components/schemas/Product'
-                },
-                description: 'List of products.',
-              }
-            }
-          },
+          Shop: Examples::Shop.to_h,
+          Address: Examples::Address.to_h,
+          Schedule: Examples::Schedule.to_h,
           Product: {
             type: 'object',
             properties: {
@@ -146,6 +126,13 @@ RSpec.configure do |config|
                 type: 'string',
                 example: 'Mobilier extérieur',
                 description: 'Display name of a category.'
+              },
+              children: {
+                type: 'array',
+                items: {
+                  '$ref': '#/components/schemas/Category'
+                },
+                description: 'List of children category.'
               }
             }
           },
@@ -210,14 +197,14 @@ RSpec.configure do |config|
             properties: {
               name: {
                 type: 'string',
-                example: 'blue',
-                description: 'Display name of a characteristic.'
-              },
-              type: {
-                type: 'string',
                 example: 'color',
                 enum: ['color', 'size'],
                 description: 'Type of a characteristic.'
+              },
+              value: {
+                type: 'string',
+                example: 'blue',
+                description: 'Display name of a characteristic.'
               }
             },
             required: %w[name type]

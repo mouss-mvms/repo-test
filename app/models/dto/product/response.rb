@@ -28,7 +28,7 @@ module Dto
           is_service: product.is_a_service,
           seller_advice: product.pro_advice,
           image_urls: product.images.map(&:file_url),
-          category: Dto::Category::Response.create(product),
+          category: Dto::Category::Response.create(product.category),
           variants: product.references&.map { |reference| Dto::Variant::Response.create(reference) }
         )
       end

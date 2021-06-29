@@ -5,6 +5,7 @@ module Api
       before_action :check_shop
       before_action :check_product, except: [:index, :create, :create_offline]
       before_action :retrieve_user, except: [:create_offline, :update_offline, :destroy_offline, :index, :show]
+      before_action :check_user, except: [:create_offline, :update_offline, :destroy_offline, :index, :show]
 
       def index
         products = @shop.products.includes(:category, :brand, references: [:sample, :color, :size, :good_deal]).actives
@@ -134,9 +135,7 @@ module Api
       end
 
       def destroy
-
         @product.destroy if ProductsSpecifications::IsRemovable.new.is_satisfied_by?(@product)
-
         head :no_content
       end
 
@@ -146,25 +145,6 @@ module Api
       end
 
       private
-
-      def retrieve_user
-        begin
-          @user = User.find(@uncrypted_token.first['id'])
-        rescue ActiveRecord::RecordNotFound
-          error = Dto::Errors::Forbidden.new
-          return render json: error.to_h, status: error.status
-        end
-
-        unless @user.is_a_pro?
-          error = Dto::Errors::Forbidden.new
-          return render json: error.to_h, status: error.status
-        end
-
-        unless @user.is_an_admin? || (@shop.owner == @user.shop_employee)
-          error = Dto::Errors::Forbidden.new
-          return render json: error.to_h, status: error.status
-        end
-      end
 
       def check_product
         unless route_params[:id].to_i > 0
@@ -190,19 +170,6 @@ module Api
           @shop = Shop.find(route_params[:shop_id])
         rescue ActiveRecord::RecordNotFound => e
           error = Dto::Errors::NotFound.new(e.message)
-          return render json: error.to_h, status: error.status
-        end
-      end
-
-      def uncrypt_token
-        unless request.headers[:HTTP_X_CLIENT_ID] && request.headers[:HTTP_X_CLIENT_ID].present?
-          error = Dto::Errors::Unauthorized.new
-          return render json: error.to_h, status: error.status
-        end
-        begin
-          @uncrypted_token = JWT.decode(request.headers[:HTTP_X_CLIENT_ID], ENV["JWT_SECRET"], true, {algorithm: 'HS256'})
-        rescue JWT::DecodeError
-          error = Dto::Errors::InternalServer.new
           return render json: error.to_h, status: error.status
         end
       end
@@ -245,6 +212,18 @@ module Api
 
       def category_product_params
         params.permit(:categoryId)
+      end
+
+      def check_user
+        unless @user.is_a_pro?
+          error = Dto::Errors::Forbidden.new
+          return render json: error.to_h, status: error.status
+        end
+
+        unless @user.is_an_admin? || (@shop.owner == @user.shop_employee)
+          error = Dto::Errors::Forbidden.new
+          return render json: error.to_h, status: error.status
+        end
       end
     end
   end

@@ -14,5 +14,4 @@ Rails.application.routes.draw do
     draw(:shops)
     get '/categories', to: 'categories#index'
   end
-
 end
