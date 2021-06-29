@@ -1146,7 +1146,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-staging"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {
@@ -1384,17 +1384,17 @@
         "properties": {
           "name": {
             "type": "string",
-            "example": "blue",
-            "description": "Display name of a characteristic."
-          },
-          "type": {
-            "type": "string",
             "example": "color",
             "enum": [
               "color",
               "size"
             ],
             "description": "Type of a characteristic."
+          },
+          "value": {
+            "type": "string",
+            "example": "blue",
+            "description": "Display name of a characteristic."
           }
         },
         "required": [

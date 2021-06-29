@@ -251,14 +251,14 @@ RSpec.configure do |config|
             properties: {
               name: {
                 type: 'string',
-                example: 'blue',
-                description: 'Display name of a characteristic.'
-              },
-              type: {
-                type: 'string',
                 example: 'color',
                 enum: ['color', 'size'],
                 description: 'Type of a characteristic.'
+              },
+              value: {
+                type: 'string',
+                example: 'blue',
+                description: 'Display name of a characteristic.'
               }
             },
             required: %w[name type]
