@@ -282,7 +282,6 @@ RSpec.describe Api::ShopsController, type: :controller do
             longitude: @shop.address.longitude,
             latitude: @shop.address.latitude
           },
-          categoryIds: @shop.category_ids,
           facebookLink: "http://www.facebook.com",
           instagramLink: "http://www.instagram.com",
           websiteLink: "http://www.website.com"
