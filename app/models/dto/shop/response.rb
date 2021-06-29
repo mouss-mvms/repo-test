@@ -1,7 +1,7 @@
 module Dto
   module Shop
     class Response
-      attr_accessor :id, :name, :slug, :image_urls, :description, :baseline, :facebook_link, :instagram_link, :website_link, :address, :siret, :email, :categories
+      attr_accessor :id, :name, :slug, :image_urls, :description, :baseline, :facebook_link, :instagram_link, :website_link, :address, :siret, :email
 
       def initialize(**args)
         @id = args[:id]
@@ -19,21 +19,14 @@ module Dto
         @address = args[:address] || Dto::Address::Response.new
         @siret = args[:siret]
         @email = args[:email]
-        @categories = []
-        args[:categories]&.each do |category|
-          @categories << category
-        end
       end
 
       def self.create(shop)
         image_urls = []
-        categories = []
         shop.images.each do |shop_image|
           image_urls << shop_image.file.url
         end
-        shop.categories.each do |shop_category|
-          categories << Dto::Category::Response.create(shop_category)
-        end
+
         return Dto::Shop::Response.new({
                                   id: shop.id,
                                   name: shop.name,
@@ -46,8 +39,7 @@ module Dto
                                   website_link: shop.url,
                                   address: Dto::Address::Response.create(shop.address),
                                   siret: shop.siret,
-                                  email: shop.email,
-                                  categories: categories
+                                  email: shop.email
                                 })
       end
 
@@ -65,8 +57,7 @@ module Dto
           websiteLink: @website_link,
           address: @address.to_h,
           siret: @siret,
-          email: @email,
-          categories: @categories,
+          email: @email
         }
       end
     end

@@ -11,7 +11,6 @@ module Dto
         name: dto_shop_request.name,
         email: dto_shop_request.email,
         siret: dto_shop_request.siret,
-        category_ids: dto_shop_request.category_ids,
         descriptions_attributes: [
           { lang: "fr", field: "description", content: dto_shop_request.description },
           { lang: "en", field: "description", content: "" }
@@ -34,7 +33,6 @@ module Dto
         name: dto_shop_request.name,
         email: dto_shop_request.email,
         siret: dto_shop_request.siret,
-        category_ids: dto_shop_request.category_ids,
         descriptions_attributes: [
           { lang: "fr", field: "description", content: dto_shop_request.description },
           { lang: "en", field: "description", content: "" }

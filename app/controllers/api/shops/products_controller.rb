@@ -11,7 +11,6 @@ module Api
         products = @shop.products.includes(:category, :brand, references: [:sample, :color, :size, :good_deal]).actives
         response = products.map {|product| Dto::Product::Response.create(product)}
         paginate json: response, per_page: 50
-        
       end
 
       def show
