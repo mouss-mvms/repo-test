@@ -4,7 +4,7 @@ module Examples
       {
         type: 'object',
         properties: {
-          street_number: {
+          streetNumber: {
             type: 'string',
             example: "33",
             description: "Address's street number"

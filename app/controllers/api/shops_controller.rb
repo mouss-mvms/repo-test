@@ -86,7 +86,6 @@ module Api
       shop_params[:name] = params.require(:name)
       shop_params[:email] = params.require(:email)
       shop_params[:siret] = params.require(:siret)
-      shop_params[:category_ids] = params.require(:categoryIds)
       shop_params[:description] = params[:description]
       shop_params[:baseline] = params[:baseline]
       shop_params[:facebook_link] = params[:facebookLink]
