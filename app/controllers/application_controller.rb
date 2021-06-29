@@ -6,8 +6,8 @@ class ApplicationController < ActionController::API
     end
     begin
       @uncrypted_token = JWT.decode(request.headers[:HTTP_X_CLIENT_ID], ENV["JWT_SECRET"], true, {algorithm: 'HS256'})
-    rescue JWT::DecodeError
-      error = Dto::Errors::InternalServer.new
+    rescue JWT::DecodeError => e
+      error = Dto::Errors::InternalServer.new("Enable to decrypt token")
       return render json: error.to_h, status: error.status
     end
   end
@@ -19,16 +19,5 @@ class ApplicationController < ActionController::API
       error = Dto::Errors::Forbidden.new
       return render json: error.to_h, status: error.status
     end
-
-    unless @user.is_a_pro?
-      error = Dto::Errors::Forbidden.new
-      return render json: error.to_h, status: error.status
-    end
-
-    unless @user.is_an_admin? || (@shop.owner == @user.shop_employee)
-      error = Dto::Errors::Forbidden.new
-      return render json: error.to_h, status: error.status
-    end
   end
-
 end
