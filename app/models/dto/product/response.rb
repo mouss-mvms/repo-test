@@ -1,7 +1,7 @@
 module Dto
   module Product
     class Response
-      attr_reader :id, :name, :slug, :category, :brand, :status, :seller_advice, :is_service, :description, :variants, :image_urls
+      attr_reader :id, :name, :slug, :category, :brand, :status, :seller_advice, :is_service, :description, :variants, :image_urls, :citizen_advice
 
       def initialize(**args)
         @id = args[:id]
@@ -14,7 +14,11 @@ module Dto
         @seller_advice = args[:seller_advice]
         @image_urls = args[:image_urls]
         @description = args[:description]
-        @variants = args[:variants] || []
+        @variants = []
+        args[:variants]&.each do |variant|
+          @variants << variant
+        end
+        @citizen_advice = args[:citizen_advice]
       end  
 
       def self.create(product)
@@ -29,12 +33,14 @@ module Dto
           seller_advice: product.pro_advice,
           image_urls: product.images.map(&:file_url),
           category: Dto::Category::Response.create(product.category),
-          variants: product.references&.map { |reference| Dto::Variant::Response.create(reference) }
+          variants: product.references&.map { |reference| Dto::Variant::Response.create(reference) },
+          citizen_advice: product.advice&.content
         )
       end
 
       def to_h
-        { product: {
+        {
+          product: {
             id: @id,
             name: @name,
             slug: @slug,
@@ -42,10 +48,11 @@ module Dto
             category: @category.to_h,
             brand: @brand,
             status: @status,
-            image_urls: @image_urls,
+            imageUrls: @image_urls,
             sellerAdvice: @seller_advice,
             isService: @is_service,
-            variants: @variants&.map { |variant| variant.to_h }
+            variants: @variants&.map { |variant| variant.to_h },
+            citizenAdvice: @citizen_advice
           }
         }
       end

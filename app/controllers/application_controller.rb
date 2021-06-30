@@ -1,4 +1,12 @@
 class ApplicationController < ActionController::API
+  rescue_from ActiveRecord::RecordNotFound, with: :render_record_not_found
+
+  def render_record_not_found(exception)
+    Rails.logger.error(exception)
+    error = Dto::Errors::NotFound.new(detail: exception.message)
+    render error.to_json, status: error.status
+  end
+
   def uncrypt_token
     unless request.headers[:HTTP_X_CLIENT_ID] && request.headers[:HTTP_X_CLIENT_ID].present?
       error = Dto::Errors::Unauthorized.new

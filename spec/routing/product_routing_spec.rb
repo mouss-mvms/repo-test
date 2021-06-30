@@ -9,4 +9,5 @@ RSpec.describe "routes for Products", :type => :routing do
   it { should route(:put, '/api/shops/26/products/47671').to(controller: 'api/shops/products', action: :update_offline, shop_id: 26, id: 47671) }
   it { should route(:delete, '/api/auth/shops/26/products/47671').to(controller: 'api/shops/products', action: :destroy, shop_id: 26, id: 47671) }
   it { should route(:delete, '/api/shops/26/products/47671').to(controller: 'api/shops/products', action: :destroy_offline, shop_id: 26, id: 47671) }
+  it { should route(:get, '/api/citizens/26/products/3432').to(controller: 'api/citizens/products', action: :show, id: 26, product_id: 3432) }
 end
