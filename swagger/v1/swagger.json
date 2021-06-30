@@ -1383,7 +1383,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "https://dev.mavillemonshopping.fr/fr"
     }
   ],
   "components": {
@@ -1606,6 +1606,11 @@
               "$ref": "#/components/schemas/Variant"
             },
             "description": "List of variants."
+          },
+          "citizenAdvice": {
+            "type": "string",
+            "example": "Très belle chaussure, confortable et indémodable ! Elle vous donnera un look sympa, idéal avec un jean slim. Attention de bien prévoir une taille au-dessus, chausse un peu petit.",
+            "description": "Citizen advice of a product"
           }
         }
       },

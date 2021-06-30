@@ -1,9 +1,3 @@
-class ActionDispatch::Routing::Mapper
-  def draw(routes_name)
-    instance_eval(File.read(Rails.root.join("config/routes/#{routes_name}.rb")))
-  end
-end
-
 Rails.application.routes.draw do
   mount Rswag::Api::Engine => '/api-docs'
   mount Rswag::Ui::Engine => '/api-docs'
@@ -11,7 +5,9 @@ Rails.application.routes.draw do
   get '/' => "rails/welcome#index"
 
   namespace :api do
-    draw(:shops)
+    instance_eval(File.read(Rails.root.join("config/routes/shops.rb")))
+    instance_eval(File.read(Rails.root.join("config/routes/citizens.rb")))
     get '/categories', to: 'categories#index'
   end
+
 end

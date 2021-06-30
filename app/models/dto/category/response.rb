@@ -21,7 +21,8 @@ module Dto
       def to_h
         {
           id: @id,
-          name: @name
+          name: @name,
+          slug: @slug
         }
       end
     end
