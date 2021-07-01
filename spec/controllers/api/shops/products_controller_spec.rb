@@ -141,12 +141,12 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
             },
             characteristics: [
               {
-                name: "coloris black",
-                type: "color"
+                value: "coloris black",
+                name: "color"
               },
               {
-                name: "S",
-                type: "size"
+                value: "S",
+                name: "size"
               }
             ]
           }
@@ -293,12 +293,12 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
             },
             characteristics: [
               {
-                name: "coloris black",
-                type: "color"
+                value: "coloris black",
+                name: "color"
               },
               {
-                name: "S",
-                type: "size"
+                value: "S",
+                name: "size"
               }
             ]
           }
@@ -378,12 +378,12 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
             },
             characteristics: [
               {
-                name: "Taille unique",
-                type: "size"
+                value: "coloris black",
+                name: "color"
               },
               {
-                name: "Rouge",
-                type: "color"
+                value: "S",
+                name: "size"
               }
             ]
           }
@@ -466,7 +466,6 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
           request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
           put :update, params: { shop_id: @product.shop_id, id: @product.id }
           should respond_with(400)
-          expect(JSON.parse(response.body)).to eq({"detail"=>"The syntax of the query is incorrect: Can't update without relevant params", "message"=>"Bad Request", "status"=>400})
         end
       end
 
@@ -477,7 +476,6 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
           @update_params[:categoryId] = 1
           put :update, params: @update_params.merge(locale: I18n.locale, shop_id: @product.shop_id, id: @product.id)
           should respond_with(404)
-          expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Category with 'id'=#{@update_params[:categoryId]}", "message"=>"Not Found", "status"=>404})
         end
       end
 
@@ -487,7 +485,6 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
           request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
           put :update, params: @update_params.merge(locale: I18n.locale, shop_id: @product.shop_id, id: (@product.id + 1))
           should respond_with(404)
-          expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Product with 'id'=#{@product.id + 1}", "message"=>"Not Found", "status"=>404})
         end
       end
     end
@@ -518,12 +515,12 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
             },
             characteristics: [
               {
-                name: "Taille unique",
-                type: "size"
+                value: "coloris black",
+                name: "color"
               },
               {
-                name: "Rouge",
-                type: "color"
+                value: "S",
+                name: "size"
               }
             ]
           }
@@ -563,7 +560,6 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
         it "should returns 400 HTTP Status" do
           put :update_offline, params: { shop_id: @product.shop_id, id: @product.id }
           should respond_with(400)
-          expect(JSON.parse(response.body)).to eq({"detail"=>"The syntax of the query is incorrect: Can't update without relevant params", "message"=>"Bad Request", "status"=>400})
         end
       end
 

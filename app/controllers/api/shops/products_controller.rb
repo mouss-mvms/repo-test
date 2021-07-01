@@ -24,15 +24,15 @@ module Api
           return render json: error.to_h, status: error.status
         end
 
-        unless ::Category.exists?(id: category_product_params[:categoryId])
-          error = Dto::Errors::NotFound.new("Couldn't find Category with 'id'=#{category_product_params[:categoryId]}")
+        unless ::Category.exists?(id: product_params[:category_id])
+          error = Dto::Errors::NotFound.new("Couldn't find Category with 'id'=#{product_params[:category_id]}")
           return render json: error.to_h, status: :not_found
         end
 
         ActiveRecord::Base.transaction do
           begin
-            dto_product = Dto::Product::Request.new(permitted_params_to_underscore(product_params))
-            dto_category = Dto::Category::Request.new(::Category.where(id: params[:categoryId]).select(:id, :name)&.first.as_json.symbolize_keys)
+            dto_product = Dto::Product::Request.new(product_params)
+            dto_category = Dto::Category::Request.new(::Category.where(id: product_params[:category_id]).select(:id, :name)&.first.as_json.symbolize_keys)
             product = Dto::Product.build(dto_product: dto_product, dto_category: dto_category, shop_id: route_params[:shop_id].to_i)
             response = Dto::Product::Response.create(product).to_h
           rescue => e
@@ -51,15 +51,15 @@ module Api
           return render json: error.to_h, status: error.status
         end
 
-        unless ::Category.exists?(id: category_product_params[:categoryId])
-          error = Dto::Errors::NotFound.new("Couldn't find Category with 'id'=#{category_product_params[:categoryId]}")
+        unless ::Category.exists?(id: product_params[:category_id])
+          error = Dto::Errors::NotFound.new("Couldn't find Category with 'id'=#{product_params[:category_id]}")
           return render json: error.to_h, status: :not_found
         end
 
         ActiveRecord::Base.transaction do
           begin
-            dto_product = Dto::Product::Request.new(permitted_params_to_underscore(product_params))
-            dto_category = Dto::Category::Request.new(::Category.where(id: params[:categoryId]).select(:id, :name)&.first.as_json.symbolize_keys)
+            dto_product = Dto::Product::Request.new(product_params)
+            dto_category = Dto::Category::Request.new(::Category.where(id: product_params[:category_id]).select(:id, :name)&.first.as_json.symbolize_keys)
             product = Dto::Product.build(dto_product: dto_product, dto_category: dto_category, shop_id: route_params[:shop_id].to_i)
             response = Dto::Product::Response.create(product).to_h
           rescue => e
@@ -81,20 +81,16 @@ module Api
           error = Dto::Errors::BadRequest.new('Shop_id is incorrect')
           return render json: error.to_h, status: :bad_request
         end
-        if product_params.blank? && category_product_params.blank?
-          error = Dto::Errors::BadRequest.new("The syntax of the query is incorrect: Can't update without relevant params")
-          return render json: error.to_h, status: error.status
-        end
 
-        unless ::Category.exists?(id: category_product_params[:categoryId])
-          error = Dto::Errors::NotFound.new("Couldn't find Category with 'id'=#{category_product_params[:categoryId]}")
+        unless ::Category.exists?(id: product_params[:category_id])
+          error = Dto::Errors::NotFound.new("Couldn't find Category with 'id'=#{product_params[:category_id]}")
           return render json: error.to_h, status: error.status
         end
 
         ActiveRecord::Base.transaction do
           begin
-            dto_product = Dto::Product::Request.new(permitted_params_to_underscore(product_params))
-            dto_category = Dto::Category::Request.new(::Category.where(id: category_product_params[:categoryId]).select(:id, :name)&.first.as_json.symbolize_keys)
+            dto_product = Dto::Product::Request.new(product_params)
+            dto_category = Dto::Category::Request.new(::Category.where(id: product_params[:category_id]).select(:id, :name)&.first.as_json.symbolize_keys)
             product = Dto::Product.build(shop_id: @product.shop_id, product: @product, dto_product: dto_product, dto_category: dto_category)
             response = Dto::Product::Response.create(product).to_h
           rescue => e
@@ -108,20 +104,20 @@ module Api
       end
 
       def update_offline
-        if product_params.blank? && category_product_params.blank?
+        if product_params.blank? && product_params[:category_id].blank?
           error = Dto::Errors::BadRequest.new("The syntax of the query is incorrect: Can't update without relevant params")
           return render json: error.to_h, status: error.status
         end
 
-        unless ::Category.exists?(id: category_product_params[:categoryId])
-          error = Dto::Errors::NotFound.new("Couldn't find Category with 'id'=#{category_product_params[:categoryId]}")
+        unless ::Category.exists?(id: product_params[:category_id])
+          error = Dto::Errors::NotFound.new("Couldn't find Category with 'id'=#{product_params[:category_id]}")
           return render json: error.to_h, status: error.status
         end
 
         ActiveRecord::Base.transaction do
           begin
-            dto_product = Dto::Product::Request.new(permitted_params_to_underscore(product_params))
-            dto_category = Dto::Category::Request.new(::Category.where(id: category_product_params[:categoryId]).select(:id, :name)&.first.as_json.symbolize_keys)
+            dto_product = Dto::Product::Request.new(product_params)
+            dto_category = Dto::Category::Request.new(::Category.where(id: product_params[:category_id]).select(:id, :name)&.first.as_json.symbolize_keys)
             product = Dto::Product.build(shop_id: @product.shop_id, product: @product, dto_product: dto_product, dto_category: dto_category)
             response = Dto::Product::Response.create(product).to_h
           rescue => e
@@ -174,44 +170,44 @@ module Api
         end
       end
 
-      def permitted_params_to_underscore(params)
-        params.to_h.deep_transform_keys { |key| key.to_s.underscore.to_sym }
-      end
-
       def route_params
         params.permit(:id, :shop_id)
       end
 
       def product_params
-        params.permit(
-          :name,
-          :description,
-          :brand,
-          :status,
-          :sellerAdvice,
-          :isService,
-          {:imageUrls => []},
-          variants: [
-            :basePrice,
-            :weight,
-            :quantity,
-            {:imageUrls => []},
-            :isDefault,
-            goodDeal: [
-              :startAt,
-              :endAt,
-              :discount
-            ],
-            characteristics: [
-              :name,
-              :type
-            ]
-          ]
-        )
-      end
-
-      def category_product_params
-        params.permit(:categoryId)
+        product_params = {}
+        product_params[:name] = params.require(:name)
+        product_params[:description] = params.require(:description)
+        product_params[:brand] = params.require(:brand)
+        product_params[:status] = params.require(:status)
+        product_params[:seller_advice] = params.require(:sellerAdvice)
+        product_params[:is_service] = params.require(:isService)
+        product_params[:citizen_advice] = params.permit(:citizenAdvice).values.first
+        product_params[:image_urls] = params.permit(:imageUrls)
+        product_params[:category_id] = params.require(:categoryId)
+        product_params[:variants] = []
+        params.require(:variants).each { |v|
+          hash = {}
+          hash[:base_price] = v.require(:basePrice)
+          hash[:weight] = v.require(:weight)
+          hash[:quantity] = v.require(:quantity)
+          hash[:is_default] = v.require(:isDefault)
+          if v[:goodDeal]
+            hash[:good_deal] = {}
+            hash[:good_deal][:start_at] = v[:goodDeal].require(:startAt)
+            hash[:good_deal][:end_at] = v[:goodDeal].require(:endAt)
+            hash[:good_deal][:discount] = v[:goodDeal].require(:discount)
+          end
+          hash[:characteristics] = []
+          v.require(:characteristics).each { |c|
+            characteristic = {}
+            characteristic[:name] = c.require(:name)
+            characteristic[:value] = c.require(:value)
+            hash[:characteristics] << characteristic
+          }
+          product_params[:variants] << hash
+        }
+        product_params
       end
 
       def check_user

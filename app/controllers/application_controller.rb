@@ -1,9 +1,16 @@
 class ApplicationController < ActionController::API
   rescue_from ActiveRecord::RecordNotFound, with: :render_record_not_found
+  rescue_from ActionController::ParameterMissing , with: :render_bad_request
 
   def render_record_not_found(exception)
     Rails.logger.error(exception)
     error = Dto::Errors::NotFound.new(detail: exception.message)
+    render error.to_json, status: error.status
+  end
+
+  def render_bad_request(exception)
+    Rails.logger.error(exception)
+    error = Dto::Errors::BadRequest.new(detail: exception.message)
     render error.to_json, status: error.status
   end
 
@@ -15,6 +22,7 @@ class ApplicationController < ActionController::API
     begin
       @uncrypted_token = JWT.decode(request.headers[:HTTP_X_CLIENT_ID], ENV["JWT_SECRET"], true, {algorithm: 'HS256'})
     rescue JWT::DecodeError => e
+      Rails.logger.error(e)
       error = Dto::Errors::InternalServer.new("Enable to decrypt token")
       return render json: error.to_h, status: error.status
     end
@@ -23,7 +31,8 @@ class ApplicationController < ActionController::API
   def retrieve_user
     begin
       @user = User.find(@uncrypted_token.first['id'])
-    rescue ActiveRecord::RecordNotFound
+    rescue ActiveRecord::RecordNotFound => e
+      Rails.logger.error(e)
       error = Dto::Errors::Forbidden.new
       return render json: error.to_h, status: error.status
     end

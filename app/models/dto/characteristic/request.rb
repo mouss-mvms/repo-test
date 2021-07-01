@@ -1,11 +1,11 @@
 module Dto
   module Characteristic
     class Request
-      attr_reader :name, :type
+      attr_reader :name, :value
 
       def initialize(**args)
         @name = args[:name]
-        @type = args[:type]
+        @value = args[:value]
       end
 
     end
