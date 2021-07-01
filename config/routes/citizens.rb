@@ -4,6 +4,12 @@ class ActionDispatch::Routing::Mapper
   end
 end
 
+scope :auth do
+  namespace :citizens do
+    draw(:auth_products)
+  end
+end
+
 namespace :citizens do
   draw(:products)
 end

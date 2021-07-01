@@ -1,11 +1,19 @@
 module Dto
   module Product
-    def self.build(dto_product:, dto_category:, shop_id:, product: nil)
+    def self.build(dto_product:, dto_category:, shop_id:, product: nil, citizen_id: nil)
       product = if product.present?
                   update_product(dto_product: dto_product, dto_category: dto_category, shop_id: shop_id, product: product)
                 else
                   create_product(dto_product: dto_product, dto_category: dto_category, shop_id: shop_id)
                 end
+
+      if dto_product.citizen_advice && citizen_id
+        ::Advice.create!(
+          content: dto_product.citizen_advice,
+          product_id: product.id,
+          citizen_id: citizen_id
+        )
+      end
 
       dto_product.image_urls.each do |image_url|
         set_image(object: product, image_url: image_url)
@@ -32,8 +40,8 @@ module Dto
           )
         end
 
-        color_characteristic = dto_variant.characteristics.detect { |char| char.type == "color" }
-        size_characteristic = dto_variant.characteristics.detect { |char| char.type == "size" }
+        color_characteristic = dto_variant.characteristics.detect { |char| char.name == "color" }
+        size_characteristic = dto_variant.characteristics.detect { |char| char.name == "size" }
 
         ::Reference.create!(
           weight: dto_variant.weight,
@@ -77,11 +85,13 @@ module Dto
           { lang: "en", field: "description", content: "" }
           ]
         )
+
     end
 
     def self.update_product(dto_product:, dto_category:, shop_id:, product:)
       product.update!(
         name: dto_product.name,
+        shop_id: shop_id,
         category_id: dto_category.id,
         brand_id: ::Brand.where(name: dto_product.brand).first_or_create.id,
         is_a_service: dto_product.is_service,
@@ -96,6 +106,7 @@ module Dto
       ::Reference.where(product_id: product.id).destroy_all
       ::Sample.where(product_id: product.id).destroy_all
       ::Image.where(product_id: product.id).destroy_all
+      ::Advice.where(product_id: product.id).destroy_all
 
       product
     end
