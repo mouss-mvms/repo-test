@@ -1,12 +1,13 @@
 GEM
   remote: https://gem.fury.io/mvms/
   specs:
-    mvms-core (2.5.105)
+    mvms-core (2.5.113)
       MailchimpMarketing (~> 3.0.34)
       activerecord (~> 5.2, >= 5.2.0)
       activerecord-sortable
       amoeba
       awesome_nested_set
+      aws-sdk-s3 (~> 1.94)
       data_migrate
       devise
       gdpr_rails (= 0.3.4)
@@ -21,7 +22,7 @@ GEM
 GEM
   remote: https://rubygems.org/
   specs:
-    MailchimpMarketing (3.0.51)
+    MailchimpMarketing (3.0.52)
       excon (~> 0.76.0)
       json (~> 2.1, >= 2.1.0)
     aasm (5.2.0)
@@ -70,23 +71,23 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
-    amoeba (3.1.0)
-      activerecord (>= 3.2.6)
+    amoeba (3.2.0)
+      activerecord (>= 4.2.0)
     api-pagination (4.8.2)
     arel (9.0.0)
     awesome_nested_set (3.4.0)
       activerecord (>= 4.0.0, < 7.0)
     aws-eventstream (1.1.1)
-    aws-partitions (1.451.0)
-    aws-sdk-core (3.114.0)
+    aws-partitions (1.473.0)
+    aws-sdk-core (3.115.0)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.239.0)
       aws-sigv4 (~> 1.1)
       jmespath (~> 1.0)
-    aws-sdk-kms (1.43.0)
+    aws-sdk-kms (1.44.0)
       aws-sdk-core (~> 3, >= 3.112.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-s3 (1.94.1)
+    aws-sdk-s3 (1.96.1)
       aws-sdk-core (~> 3, >= 3.112.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.1)
@@ -463,7 +464,6 @@ PLATFORMS
 
 DEPENDENCIES
   api-pagination
-  aws-sdk-s3
   bootsnap (>= 1.4.4)
   byebug
   delayed_job_active_record
@@ -471,7 +471,7 @@ DEPENDENCIES
   figaro
   jwt
   listen (~> 3.3)
-  mvms-core (= 2.5.105)!
+  mvms-core (= 2.5.113)!
   omniauth (= 1.3.1)
   pagy
   pg (~> 1.2, >= 1.2.3)
