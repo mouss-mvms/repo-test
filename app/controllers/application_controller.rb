@@ -1,6 +1,9 @@
 class ApplicationController < ActionController::API
+  Forbidden = Class.new(ActionController::ActionControllerError)
+
   rescue_from ActiveRecord::RecordNotFound, with: :render_record_not_found
   rescue_from ActionController::ParameterMissing , with: :render_bad_request
+  rescue_from ApplicationController::Forbidden, with: :render_forbidden
 
   def render_record_not_found(exception)
     Rails.logger.error(exception)
@@ -11,6 +14,12 @@ class ApplicationController < ActionController::API
   def render_bad_request(exception)
     Rails.logger.error(exception)
     error = Dto::Errors::BadRequest.new(detail: exception.message)
+    render error.to_json, status: error.status
+  end
+
+  def render_forbidden(exception)
+    Rails.logger.error(exception)
+    error = Dto::Errors::Forbidden.new(detail: exception.message)
     render error.to_json, status: error.status
   end
 
