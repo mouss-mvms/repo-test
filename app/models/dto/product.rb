@@ -1,26 +1,26 @@
 module Dto
   module Product
-    def self.build(dto_product:, dto_category:, shop_id:, product: nil, citizen_id: nil)
+    def self.build(dto_product_request:, dto_category: nil, shop_id: nil, product: nil, citizen_id: nil)
       product = if product.present?
-                  update_product(dto_product: dto_product, dto_category: dto_category, shop_id: shop_id, product: product)
+                  update(dto_product_request: dto_product_request, product: product)
                 else
-                  create_product(dto_product: dto_product, dto_category: dto_category, shop_id: shop_id)
+                  create_product(dto_product: dto_product_request, dto_category: dto_category, shop_id: shop_id)
                 end
 
-      if dto_product.citizen_advice && citizen_id
+      if dto_product_request.citizen_advice && citizen_id
         ::Advice.create!(
-          content: dto_product.citizen_advice,
+          content: dto_product_request.citizen_advice,
           product_id: product.id,
           citizen_id: citizen_id
         )
       end
 
-      dto_product.image_urls.each do |image_url|
+      dto_product_request.image_urls.each do |image_url|
         set_image(object: product, image_url: image_url)
       end
 
-      dto_product.variants.each do |dto_variant|
-        sample = ::Sample.create!(name: dto_product.name, default: dto_variant.is_default, product_id: product.id)
+      dto_product_request.variants.each do |dto_variant|
+        sample = ::Sample.create!(name: dto_product_request.name, default: dto_variant.is_default, product_id: product.id)
 
         if dto_variant.image_urls.present?
           dto_variant.image_urls.each do |image_url|
@@ -88,17 +88,16 @@ module Dto
 
     end
 
-    def self.update_product(dto_product:, dto_category:, shop_id:, product:)
+    def self.update(dto_product_request:, product:)
       product.update!(
-        name: dto_product.name,
-        shop_id: shop_id,
-        category_id: dto_category.id,
-        brand_id: ::Brand.where(name: dto_product.brand).first_or_create.id,
-        is_a_service: dto_product.is_service,
-        status: dto_product.status || 'offline',
-        pro_advice: dto_product.seller_advice,
+        name: dto_product_request.name,
+        category_id: dto_product_request.category_id,
+        brand_id: ::Brand.where(name: dto_product_request.brand).first_or_create.id,
+        is_a_service: dto_product_request.is_service,
+        status: dto_product_request.status || 'offline',
+        pro_advice: dto_product_request.seller_advice,
         fields_attributes: [
-          { lang: "fr", field: "description", content: dto_product.description },
+          { lang: "fr", field: "description", content: dto_product_request.description },
           { lang: "en", field: "description", content: "" }
         ]
       )

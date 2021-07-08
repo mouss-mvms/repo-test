@@ -68,7 +68,11 @@ RSpec.configure do |config|
                 description: 'Detail message of an error.'
               }
             }
-          }
+          },
+          Unauthorized: Examples::Errors::Unauthorized.new.error,
+          BadRequest: Examples::Errors::BadRequest.new.error,
+          InternalError: Examples::Errors::InternalError.new.error,
+          UnprocessableEntity: Examples::Errors::UnprocessableEntity.new.error
         }
       }
     }

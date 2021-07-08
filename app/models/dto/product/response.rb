@@ -27,7 +27,7 @@ module Dto
           name: product.name,
           description: product.description,
           slug: product.slug,
-          brand: product&.brand&.name,
+          brand: product.brand&.name,
           status: product.status, 
           is_service: product.is_a_service,
           seller_advice: product.pro_advice,
@@ -40,20 +40,18 @@ module Dto
 
       def to_h
         {
-          product: {
-            id: @id,
-            name: @name,
-            slug: @slug,
-            description: @description,
-            category: @category.to_h,
-            brand: @brand,
-            status: @status,
-            imageUrls: @image_urls,
-            sellerAdvice: @seller_advice,
-            isService: @is_service,
-            variants: @variants&.map { |variant| variant.to_h },
-            citizenAdvice: @citizen_advice
-          }
+          id: @id,
+          name: @name,
+          slug: @slug,
+          description: @description,
+          category: @category.to_h,
+          brand: @brand,
+          status: @status,
+          imageUrls: @image_urls,
+          sellerAdvice: @seller_advice,
+          isService: @is_service,
+          variants: @variants&.map { |variant| variant.to_h },
+          citizenAdvice: @citizen_advice
         }
       end
     end
