@@ -4,10 +4,13 @@ class ActionDispatch::Routing::Mapper
   end
 end
 
-namespace :shops do
-  draw(:products)
+scope :auth do
+  post "shops", to: "shops#create", as: nil
+  put "shops/:id", to: "shops#update", as: nil
 end
 
 get "shops/:id", to: "shops#show", as: nil
-post "shops", to: "shops#create", as: nil
-put "shops/:id", to: "shops#update", as: nil
+
+namespace :shops do
+  get ":id/products", to: "products#index"
+end

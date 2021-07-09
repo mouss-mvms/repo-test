@@ -30,7 +30,7 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
 
     context "with valid params" do
       it "get all products from shop" do
-        get :index, params: { shop_id: @shop.id }
+        get :index, params: { id: @shop.id }
         should respond_with(200)
 
         response_body = JSON.parse(response.body)
@@ -45,7 +45,7 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
     context "with invalid params" do
       context "shop_id not a Numeric" do
         it "should returns 400 HTTP Status" do
-          get :index, params: { shop_id: 'Xenomorph' }
+          get :index, params: { id: 'Xenomorph' }
           should respond_with(400)
           expect(JSON.parse(response.body)).to eq({"detail"=>"Shop_id is incorrect", "message"=>"Bad Request", "status"=>400})
         end
@@ -53,7 +53,7 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
 
       context "shop doesn't exists" do
         it "should returns 404 HTTP Status" do
-          get :index, params: { shop_id: (@shop.id + 1) }
+          get :index, params: { id: (@shop.id + 1) }
           should respond_with(404)
           expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Shop with 'id'=#{@shop.id + 1}", "message"=>"Not Found", "status"=>404})
         end

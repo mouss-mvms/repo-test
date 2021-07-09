@@ -1,2 +1,2 @@
-get ":shop_id/products", to: "products#index"
+get ":id/products", to: "products#index"
 

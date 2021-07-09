@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "routes for Products", :type => :routing do
-  it { should route(:get, '/api/shops/26/products').to(controller: 'api/shops/products', action: :index, shop_id: 26) }
+  it { should route(:get, '/api/shops/26/products').to(controller: 'api/shops/products', action: :index, id: 26) }
   it { should route(:get, '/api/products/47671').to(controller: 'api/products', action: :show, id: 47671) }
   it { should route(:post, '/api/auth/products').to(controller: 'api/products', action: :create) }
   it { should route(:post, '/api/products').to(controller: 'api/products', action: :create_offline) }
