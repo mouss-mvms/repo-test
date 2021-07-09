@@ -44,9 +44,16 @@ module Examples
         super(message_example: "Bad Request", status_example: 400, detail_example: "The syntax of the query is incorrect.")
       end
     end
+
     class UnprocessableEntity < Error
       def initialize
         super(message_example: "Unprocessable Entity", status_example: 422, detail_example: "Password or email invalid.")
+      end
+    end
+
+    class NotFound < Error
+      def initialize
+        super(message_example: "Not found", status_example: 404, detail_example: "Product not found")
       end
     end
   end

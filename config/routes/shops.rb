@@ -7,14 +7,10 @@ end
 scope :auth do
   post "shops", to: "shops#create", as: nil
   put "shops/:id", to: "shops#update", as: nil
-
-  namespace :shops do
-    draw(:auth_products)
-  end
-end
-
-namespace :shops do
-  draw(:products)
 end
 
 get "shops/:id", to: "shops#show", as: nil
+
+namespace :shops do
+  get ":id/products", to: "products#index"
+end
