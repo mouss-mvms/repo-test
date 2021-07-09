@@ -7,7 +7,6 @@ Rails.application.routes.draw do
   namespace :api do
     instance_eval(File.read(Rails.root.join("config/routes/shops.rb")))
     instance_eval(File.read(Rails.root.join("config/routes/products.rb")))
-    instance_eval(File.read(Rails.root.join("config/routes/citizens.rb")))
     get '/categories', to: 'categories#index'
   end
 
