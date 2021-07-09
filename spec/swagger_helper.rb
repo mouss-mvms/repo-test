@@ -72,7 +72,8 @@ RSpec.configure do |config|
           Unauthorized: Examples::Errors::Unauthorized.new.error,
           BadRequest: Examples::Errors::BadRequest.new.error,
           InternalError: Examples::Errors::InternalError.new.error,
-          UnprocessableEntity: Examples::Errors::UnprocessableEntity.new.error
+          UnprocessableEntity: Examples::Errors::UnprocessableEntity.new.error,
+          Forbidden: Examples::Errors::Forbidden.new.error
         }
       }
     }

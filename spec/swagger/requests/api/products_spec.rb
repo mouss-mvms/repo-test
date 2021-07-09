@@ -41,35 +41,6 @@ RSpec.describe 'api/categories', type: :request do
       end
     end
 
-    post('Create a product (offline)') do
-      tags 'Products'
-      produces 'application/json'
-      consumes 'application/json'
-      description 'Return the product created'
-      security [{ authorization: [] }]
-
-      response(201, 'Created') do
-        schema type: :object,
-               properties: {
-                 categories: {
-                   type: :array,
-                   items: {
-                     '$ref': '#/components/schemas/Product'
-                   }
-                 }
-               }
-        run_test!
-      end
-
-      response(400, 'Bad request') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/BadRequest'}
-               }
-        run_test!
-      end
-    end
-
     delete('Delete a product (offline)') do
       tags 'Products'
       produces 'application/json'
@@ -185,53 +156,6 @@ RSpec.describe 'api/categories', type: :request do
       end
     end
 
-    post('Create a product') do
-      tags 'Products'
-      produces 'application/json'
-      consumes 'application/json'
-      description 'Return the product created'
-      security [{ authorization: [] }]
-
-      parameter name: 'X-client-id', in: :header
-
-      response(201, 'Product created') do
-        schema type: :object,
-               properties: {
-                 categories: {
-                   type: :array,
-                   items: {
-                     '$ref': '#/components/schemas/Product'
-                   }
-                 }
-               }
-        run_test!
-      end
-
-      response(400, 'Bad request') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/Error'}
-               }
-        run_test!
-      end
-
-      response(401, 'Unauthorized') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/Unauthorized'}
-               }
-        run_test!
-      end
-
-      response(403, 'Forbidden') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/Forbidden'}
-               }
-        run_test!
-      end
-    end
-
     delete('Delete a product') do
       tags 'Products'
       produces 'application/json'
@@ -265,6 +189,86 @@ RSpec.describe 'api/categories', type: :request do
         schema type: :object,
                properties: {
                  error: {'$ref': '#/components/schemas/Forbidden'}
+               }
+        run_test!
+      end
+    end
+  end
+
+  path '/api/auth/products' do
+    post('Create a product') do
+      tags 'Products'
+      produces 'application/json'
+      consumes 'application/json'
+      description 'Return the product created'
+      security [{ authorization: [] }]
+
+      parameter name: 'X-client-id', in: :header
+
+      response(201, 'Product created') do
+        schema type: :object,
+               properties: {
+                 categories: {
+                   type: :array,
+                   items: {
+                     '$ref': '#/components/schemas/Product'
+                   }
+                 }
+               }
+        run_test!
+      end
+
+      response(400, 'Bad request') do
+        schema type: :object,
+               properties: {
+                 error: {'$ref': '#/components/schemas/BadRequest'}
+               }
+        run_test!
+      end
+
+      response(401, 'Unauthorized') do
+        schema type: :object,
+               properties: {
+                 error: {'$ref': '#/components/schemas/Unauthorized'}
+               }
+        run_test!
+      end
+
+      response(403, 'Forbidden') do
+        schema type: :object,
+               properties: {
+                 error: {'$ref': '#/components/schemas/Forbidden'}
+               }
+        run_test!
+      end
+    end
+  end
+
+  path '/api/products' do
+    post('Create a product (offline)') do
+      tags 'Products'
+      produces 'application/json'
+      consumes 'application/json'
+      description 'Return the product created'
+      security [{ authorization: [] }]
+
+      response(201, 'Created') do
+        schema type: :object,
+               properties: {
+                 categories: {
+                   type: :array,
+                   items: {
+                     '$ref': '#/components/schemas/Product'
+                   }
+                 }
+               }
+        run_test!
+      end
+
+      response(400, 'Bad request') do
+        schema type: :object,
+               properties: {
+                 error: {'$ref': '#/components/schemas/BadRequest'}
                }
         run_test!
       end
