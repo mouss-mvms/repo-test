@@ -958,7 +958,20 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/auth/shops/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of the desired shop.",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
       "put": {
         "summary": "Update Shop",
         "tags": [
@@ -1077,7 +1090,7 @@
         }
       }
     },
-    "/api/shops": {
+    "/api/auth/shops": {
       "post": {
         "summary": "Create Shop",
         "tags": [
@@ -1202,7 +1215,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {
