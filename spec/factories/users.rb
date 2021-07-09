@@ -39,7 +39,7 @@ FactoryBot.define do
   end
 
   factory :citizen_user, class: User do
-    email { 'customer@ecity.fr' }
+    email { 'citizen@ecity.fr' }
     password { 'Azerty123!' }
     password_confirmation { 'Azerty123!' }
     landline_phone_number { "0559352565" }

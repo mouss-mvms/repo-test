@@ -109,6 +109,9 @@ RSpec.describe Api::ShopsController, type: :controller do
       before(:each) do
         @shop_employee_user = create(:shop_employee_user)
       end
+      after(:each) do
+        @shop_employee_user.destroy
+      end
       context "No Name" do
         before(:each) do
           @categories = []

@@ -1,7 +1,7 @@
 module Dto
   module Product
     class Request
-      attr_reader :name, :slug, :category_id, :brand, :status, :seller_advice, :is_service, :description, :variants, :image_urls, :citizen_advice
+      attr_reader :name, :slug, :category_id, :brand, :status, :seller_advice, :is_service, :description, :variants, :image_urls, :citizen_advice, :shop_id
 
       def initialize(**args)
         @name = args[:name]
@@ -17,6 +17,7 @@ module Dto
         args[:variants]&.each { |v| @variants << Dto::Variant::Request.new(v)}
         @citizen_advice = args[:citizen_advice]
         @category_id = args[:category_id]
+        @shop_id = args[:shop_id]
       end
     end
   end

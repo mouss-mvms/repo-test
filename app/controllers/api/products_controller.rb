@@ -1,7 +1,7 @@
 module Api
   class ProductsController < ApplicationController
-    before_action :uncrypt_token, only: [:update]
-    before_action :retrieve_user, only: [:update]
+    before_action :uncrypt_token, only: [:update, :create, :destroy]
+    before_action :retrieve_user, only: [:update, :create, :destroy]
 
     def update_offline
       product = Product.find(product_params[:id])
@@ -42,11 +42,73 @@ module Api
       end
     end
 
+    def show
+      render json: Dto::Product::Response.create(Product.find(params[:id])).to_h, status: :ok
+    end
+
+    def create
+      raise ApplicationController::Forbidden unless @user.is_a_business_user? || @user.is_a_citizen?
+      dto_product_request = Dto::Product::Request.new(product_params)
+      raise ActionController::ParameterMissing.new(dto_product_request.shop_id) if dto_product_request.shop_id.blank?
+      Shop.find(dto_product_request.shop_id)
+      Category.find(dto_product_request.category_id)
+      if @user.is_a_business_user?
+        raise ApplicationController::Forbidden if @user.shop_employee.shops.to_a.find{ |s| s.id == dto_product_request.shop_id}.nil?
+      end
+      ActiveRecord::Base.transaction do
+        begin
+          product = Dto::Product.build(dto_product_request: dto_product_request)
+        rescue => e
+          Rails.logger.error(e.message)
+          error = Dto::Errors::InternalServer.new(e.message)
+          return render json: error.to_h, status: error.status
+        else
+          response = Dto::Product::Response.create(product).to_h
+          return render json: response, status: :created
+        end
+      end
+    end
+
+    def create_offline
+      dto_product_request = Dto::Product::Request.new(product_params)
+      raise ActionController::ParameterMissing.new(dto_product_request.shop_id) if dto_product_request.shop_id.blank?
+      Shop.find(dto_product_request.shop_id)
+      Category.find(dto_product_request.category_id)
+      ActiveRecord::Base.transaction do
+        begin
+          product = Dto::Product.build(dto_product_request: dto_product_request)
+        rescue => e
+          Rails.logger.error(e.message)
+          error = Dto::Errors::InternalServer.new(e.message)
+          return render json: error.to_h, status: error.status
+        else
+          response = Dto::Product::Response.create(product).to_h
+          return render json: response, status: :created
+        end
+      end
+    end
+
+    def destroy_offline
+      Product.destroy(params[:id])
+    end
+
+    def destroy
+      raise ApplicationController::Forbidden unless @user.is_a_citizen? || @user.is_a_business_user?
+      product = Product.find(params[:id])
+      if @user.is_a_citizen?
+        raise ApplicationController::Forbidden if @user.citizen.products.to_a.find{ |p| p.id == product.id }.nil?
+      end
+      if @user.is_a_business_user?
+        raise ApplicationController::Forbidden if @user.shop_employee.shops.to_a.find{ |s| s.id == product.shop.id}.nil?
+      end
+      product.destroy
+    end
+
     private
 
     def product_params
       product_params = {}
-      product_params[:id] = params.require(:id)
+      product_params[:id] = params[:id]
       product_params[:name] = params.require(:name)
       product_params[:description] = params.require(:description)
       product_params[:brand] = params.require(:brand)
@@ -56,6 +118,7 @@ module Api
       product_params[:citizen_advice] = params.permit(:citizenAdvice).values.first
       product_params[:image_urls] = params.permit(:imageUrls)
       product_params[:category_id] = params.require(:categoryId)
+      product_params[:shop_id] = params[:shopId].to_i if params[:shopId]
       product_params[:variants] = []
       params.require(:variants).each { |v|
         hash = {}
