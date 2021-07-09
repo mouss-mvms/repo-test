@@ -39,6 +39,12 @@ module Examples
       end
     end
 
+    class Forbidden < Error
+      def initialize
+        super(message_example: "Forbidden", status_example: 403, detail_example: "")
+      end
+    end
+
     class BadRequest < Error
       def initialize
         super(message_example: "Bad Request", status_example: 400, detail_example: "The syntax of the query is incorrect.")

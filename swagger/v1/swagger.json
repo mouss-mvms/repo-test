@@ -118,55 +118,6 @@
           }
         }
       },
-      "post": {
-        "summary": "Create a product (offline)",
-        "tags": [
-          "Products"
-        ],
-        "description": "Return the product created",
-        "security": [
-          {
-            "authorization": [
-
-            ]
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "categories": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Product"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
       "delete": {
         "summary": "Delete a product (offline)",
         "tags": [
@@ -378,91 +329,6 @@
           }
         }
       },
-      "post": {
-        "summary": "Create a product",
-        "tags": [
-          "Products"
-        ],
-        "description": "Return the product created",
-        "security": [
-          {
-            "authorization": [
-
-            ]
-          }
-        ],
-        "parameters": [
-          {
-            "name": "X-client-id",
-            "in": "header"
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Product created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "categories": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Product"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "$ref": "#/components/schemas/Error"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "$ref": "#/components/schemas/Unauthorized"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "$ref": "#/components/schemas/Forbidden"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
       "delete": {
         "summary": "Delete a product",
         "tags": [
@@ -525,6 +391,144 @@
                   "properties": {
                     "error": {
                       "$ref": "#/components/schemas/Forbidden"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/products": {
+      "post": {
+        "summary": "Create a product",
+        "tags": [
+          "Products"
+        ],
+        "description": "Return the product created",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-client-id",
+            "in": "header"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Product created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "categories": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Product"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "$ref": "#/components/schemas/BadRequest"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "$ref": "#/components/schemas/Unauthorized"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/products": {
+      "post": {
+        "summary": "Create a product (offline)",
+        "tags": [
+          "Products"
+        ],
+        "description": "Return the product created",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "categories": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Product"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "$ref": "#/components/schemas/BadRequest"
                     }
                   }
                 }
@@ -926,7 +930,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "https://dev.mavillemonshopping.fr/fr"
     }
   ],
   "components": {
@@ -1385,6 +1389,26 @@
           "status": {
             "type": "integer",
             "example": 422,
+            "description": "Status of an error."
+          }
+        }
+      },
+      "Forbidden": {
+        "type": "object",
+        "properties": {
+          "detail": {
+            "type": "string",
+            "example": "",
+            "description": "Message of an error."
+          },
+          "message": {
+            "type": "string",
+            "example": "Forbidden",
+            "description": "Display description error."
+          },
+          "status": {
+            "type": "integer",
+            "example": 403,
             "description": "Status of an error."
           }
         }
