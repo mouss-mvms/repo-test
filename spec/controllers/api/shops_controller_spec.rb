@@ -53,7 +53,6 @@ RSpec.describe Api::ShopsController, type: :controller do
         @categories = []
         @categories << create(:category)
         @categories << create(:homme)
-        @shop_employee_user = create(:shop_employee_user)
       end
       it 'should return 201 HTTP status code with shop response object' do
         @create_params = {
@@ -79,7 +78,8 @@ RSpec.describe Api::ShopsController, type: :controller do
           instagramLink: "http://www.instagram.com",
           websiteLink: "http://www.website.com",
         }
-        request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+        shop_employee_user = create(:shop_employee_user, email: 'shop.employee789@ecity.fr')
+        request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
 
         post :create, params: @create_params
 
@@ -101,17 +101,11 @@ RSpec.describe Api::ShopsController, type: :controller do
         expect(shop_result["facebookLink"]).to eq(@create_params[:facebookLink])
         expect(shop_result["instagramLink"]).to eq(@create_params[:instagramLink])
         expect(shop_result["websiteLink"]).to eq(@create_params[:websiteLink])
-        expect((Shop.find(shop_result["id"]).owner == @shop_employee_user.shop_employee)).to be_truthy
+        expect((Shop.find(shop_result["id"]).owner == shop_employee_user.shop_employee)).to be_truthy
       end
     end
 
     context "Bad params" do
-      before(:each) do
-        @shop_employee_user = create(:shop_employee_user)
-      end
-      after(:each) do
-        @shop_employee_user.destroy
-      end
       context "No Name" do
         before(:each) do
           @categories = []
@@ -136,7 +130,9 @@ RSpec.describe Api::ShopsController, type: :controller do
               @categories[1].id
             ]
           }
-          request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+          shop_employee_user = create(:shop_employee_user, email: 'shop.employee876@ecity.fr')
+
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
 
           post :create, params: @create_params
 
@@ -168,7 +164,8 @@ RSpec.describe Api::ShopsController, type: :controller do
               @categories[1].id
             ]
           }
-          request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+          shop_employee_user = create(:shop_employee_user, email: 'shop.employee877@ecity.fr')
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
 
           post :create, params: @create_params
 
@@ -191,7 +188,8 @@ RSpec.describe Api::ShopsController, type: :controller do
             email: "test@boutique.com",
             siret: "75409821800029",
           }
-          request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+          shop_employee_user = create(:shop_employee_user, email: 'shop.employee878@ecity.fr')
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
 
           post :create, params: @create_params
 
@@ -214,7 +212,8 @@ RSpec.describe Api::ShopsController, type: :controller do
               @categories[1].id
             ]
           }
-          request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+          shop_employee_user = create(:shop_employee_user, email: 'shop.employee878@ecity.fr')
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
 
           post :create, params: @create_params
 
@@ -233,11 +232,9 @@ RSpec.describe Api::ShopsController, type: :controller do
       end
 
       context "User is not a pro" do
-        before(:each) do
-          @customer_user = create(:customer_user)
-        end
         it "should return 403" do
-          request.headers['HTTP_X_CLIENT_ID'] = generate_token(@customer_user)
+          customer_user = create(:customer_user, email: 'customer678@ecity.fr')
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(customer_user)
           post :create
           expect(response).to have_http_status(403)
         end
@@ -262,14 +259,11 @@ RSpec.describe Api::ShopsController, type: :controller do
         @categories = []
         @categories << create(:category)
         @categories << create(:homme)
-        @shop_employee_user = create(:shop_employee_user)
         @shop = create(:shop)
         @shop_address = create(:address)
         @shop_address.addressable_id = @shop.id
         @shop_address.addressable_type = "Shop"
         @shop_address.save
-        @shop.assign_ownership(@shop_employee_user)
-        @shop.save
       end
       it 'should return 200 HTTP status code with shop response object' do
         @update_params = {
@@ -289,7 +283,10 @@ RSpec.describe Api::ShopsController, type: :controller do
           instagramLink: "http://www.instagram.com",
           websiteLink: "http://www.website.com"
         }
-        request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+        shop_employee_user = create(:shop_employee_user, email: 'shop.employee78@ecity.fr')
+        @shop.assign_ownership(shop_employee_user)
+        @shop.save
+        request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
 
         put :update, params: @update_params.merge({id: @shop.id})
 
@@ -309,16 +306,15 @@ RSpec.describe Api::ShopsController, type: :controller do
         expect(shop_result["facebookLink"]).to eq(@update_params[:facebookLink])
         expect(shop_result["instagramLink"]).to eq(@update_params[:instagramLink])
         expect(shop_result["websiteLink"]).to eq(@update_params[:websiteLink])
-        expect((Shop.find(shop_result["id"]).owner == @shop_employee_user.shop_employee)).to be_truthy
+        expect((Shop.find(shop_result["id"]).owner == shop_employee_user.shop_employee)).to be_truthy
       end
     end
 
     context 'Shop not found' do
-      before(:each) do
-        @shop_employee_user = create(:shop_employee_user)
-      end
       it 'Should return 404 HTTP status' do
-        request.headers["HTTP_X_CLIENT_ID"] = generate_token(@shop_employee_user)
+        shop_employee_user = create(:shop_employee_user, email: 'shop.employee5678@ecity.fr')
+
+        request.headers["HTTP_X_CLIENT_ID"] = generate_token(shop_employee_user)
         put :update, params: {id: 26}
 
         expect(response).to have_http_status(404)
@@ -326,12 +322,6 @@ RSpec.describe Api::ShopsController, type: :controller do
     end
 
     context "Bad params" do
-      before(:each) do
-        @shop_employee_user = create(:shop_employee_user)
-        @shop = create(:shop)
-        @shop.assign_ownership(@shop_employee_user)
-        @shop.save
-      end
       context "No Name" do
         before(:each) do
           @categories = []
@@ -356,9 +346,14 @@ RSpec.describe Api::ShopsController, type: :controller do
               @categories[1].id
             ]
           }
-          request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+          shop_employee_user = create(:shop_employee_user, email: 'shop.employee5678@ecity.fr')
+          shop = create(:shop)
+          shop.assign_ownership(shop_employee_user)
+          shop.save
 
-          put :update, params: @update_params.merge(id: @shop.id)
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
+
+          put :update, params: @update_params.merge(id: shop.id)
 
           expect(response).to have_http_status(400)
         end
@@ -388,9 +383,13 @@ RSpec.describe Api::ShopsController, type: :controller do
               @categories[1].id
             ]
           }
-          request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+          shop_employee_user = create(:shop_employee_user, email: 'shop.employee5679@ecity.fr')
+          shop = create(:shop)
+          shop.assign_ownership(shop_employee_user)
+          shop.save
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
 
-          put :update, params: @update_params.merge(id: @shop.id)
+          put :update, params: @update_params.merge(id: shop.id)
 
           expect(response).to have_http_status(400)
         end
@@ -411,9 +410,13 @@ RSpec.describe Api::ShopsController, type: :controller do
             email: "test@boutique.com",
             siret: "75409821800029",
           }
-          request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+          shop_employee_user = create(:shop_employee_user, email: 'shop.employee5680@ecity.fr')
+          shop = create(:shop)
+          shop.assign_ownership(shop_employee_user)
+          shop.save
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
 
-          put :update, params: @update_params.merge(id: @shop.id)
+          put :update, params: @update_params.merge(id: shop.id)
 
           expect(response).to have_http_status(400)
         end
@@ -434,16 +437,20 @@ RSpec.describe Api::ShopsController, type: :controller do
               @categories[1].id
             ]
           }
-          request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+          shop_employee_user = create(:shop_employee_user, email: 'shop.employee5681@ecity.fr')
+          shop = create(:shop)
+          shop.assign_ownership(shop_employee_user)
+          shop.save
 
-          put :update, params: @update_params.merge(id: @shop.id)
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
+
+          put :update, params: @update_params.merge(id: shop.id)
 
           expect(response).to have_http_status(400)
         end
 
       end
     end
-
 
     context 'Authentication incorrect' do
       context "No user" do
@@ -454,11 +461,9 @@ RSpec.describe Api::ShopsController, type: :controller do
       end
 
       context "User is not a pro" do
-        before(:each) do
-          @customer_user = create(:customer_user)
-        end
         it "should return 403" do
-          request.headers['HTTP_X_CLIENT_ID'] = generate_token(@customer_user)
+          customer_user = create(:customer_user, email: 'customer5678@ecity.fr')
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(customer_user)
           put :update, params: {id: 33}
           expect(response).to have_http_status(403)
         end
@@ -476,12 +481,10 @@ RSpec.describe Api::ShopsController, type: :controller do
       end
 
       context "User is not the owner of shop" do
-        before(:each) do
-          @shop_employee_user = create(:shop_employee_user)
-          @shop = create(:shop)
-        end
         it "Should return 403 HTTP Status" do
-          request.headers["HTTP_X_CLIENT_ID"] = generate_token(@shop_employee_user)
+          shop_employee_user = create(:shop_employee_user, email: 'shop.employee536@ecity.fr')
+          @shop = create(:shop)
+          request.headers["HTTP_X_CLIENT_ID"] = generate_token(shop_employee_user)
           put :update, params: {id: @shop.id}
 
           expect(response).to have_http_status(403)

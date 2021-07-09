@@ -1,31 +1,12 @@
 module Api
   module Shops
     class ProductsController < ApplicationController
-      before_action :uncrypt_token, except: [:destroy_offline, :index, :show]
       before_action :check_shop
-      before_action :check_product, except: [:index]
-      before_action :retrieve_user, except: [:destroy_offline, :index, :show]
-      before_action :check_user, except: [:destroy_offline, :index, :show]
 
       def index
         products = @shop.products.includes(:category, :brand, references: [:sample, :color, :size, :good_deal]).actives
         response = products.map {|product| Dto::Product::Response.create(product)}
         paginate json: response, per_page: 50
-      end
-
-      def show
-        response = Dto::Product::Response.create(@product).to_h
-        render json: response
-      end
-
-      def destroy
-        @product.destroy if ProductsSpecifications::IsRemovable.new.is_satisfied_by?(@product)
-        head :no_content
-      end
-
-      def destroy_offline
-        @product.destroy if ProductsSpecifications::IsRemovable.new.is_satisfied_by?(@product)
-        head :no_content
       end
 
       private
