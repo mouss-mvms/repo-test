@@ -1064,6 +1064,7 @@ RSpec.describe Api::ProductsController, type: :controller do
         expect(result["isService"]).to eq(create_params[:isService])
         expect(result["sellerAdvice"]).to eq(create_params[:sellerAdvice])
         expect(result["description"]).to eq(create_params[:description])
+        expect(user_citizen.citizen.products.to_a.find{ |p| p.id == result["id"]}).not_to be_nil
       end
       end
 
@@ -1414,6 +1415,7 @@ RSpec.describe Api::ProductsController, type: :controller do
           expect(result["isService"]).to eq(create_params[:isService])
           expect(result["sellerAdvice"]).to eq(create_params[:sellerAdvice])
           expect(result["description"]).to eq(create_params[:description])
+          expect(shop.products.to_a.find{ |p| p.id == result["id"]}).not_to be_nil
         end
       end
 
@@ -1697,53 +1699,6 @@ RSpec.describe Api::ProductsController, type: :controller do
             user_customer_user = create(:customer_user, email: 'shop.employee3@ecity.fr')
 
             request.headers['x-client-id'] = generate_token(user_customer_user)
-
-            post :create, params: create_params
-
-            should respond_with(403)
-          end
-        end
-
-        context "User is a shop employee but not the owner of the product's shop" do
-          it 'should return 403 HTTP status' do
-            create_params = {
-              name: "manteau MAC",
-              slug: "manteau-mac",
-              categoryId: create(:category).id,
-              brand: "3sixteen",
-              status: "online",
-              isService: true,
-              sellerAdvice: "pouet",
-              shopId: create(:shop).id,
-              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
-              variants: [
-                {
-                  basePrice: 379,
-                  weight: 1,
-                  quantity: 0,
-                  imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
-                  isDefault: false,
-                  goodDeal: {
-                    startAt: "17/05/2021",
-                    endAt: "18/06/2021",
-                    discount: 20
-                  },
-                  characteristics: [
-                    {
-                      value: "coloris black",
-                      name: "color"
-                    },
-                    {
-                      value: "S",
-                      name: "size"
-                    }
-                  ]
-                }
-              ]
-            }
-            user_shop_employee = create(:shop_employee_user, email: 'shop.employee11@ecity.fr')
-
-            request.headers['x-client-id'] = generate_token(user_shop_employee)
 
             post :create, params: create_params
 

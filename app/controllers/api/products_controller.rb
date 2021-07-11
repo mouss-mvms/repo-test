@@ -52,12 +52,9 @@ module Api
       raise ActionController::ParameterMissing.new(dto_product_request.shop_id) if dto_product_request.shop_id.blank?
       Shop.find(dto_product_request.shop_id)
       Category.find(dto_product_request.category_id)
-      if @user.is_a_business_user?
-        raise ApplicationController::Forbidden if @user.shop_employee.shops.to_a.find{ |s| s.id == dto_product_request.shop_id}.nil?
-      end
       ActiveRecord::Base.transaction do
         begin
-          product = Dto::Product.build(dto_product_request: dto_product_request)
+          product = Dto::Product.build(dto_product_request: dto_product_request, citizen_id: @user.is_a_citizen? ? @user.citizen.id : nil)
         rescue => e
           Rails.logger.error(e.message)
           error = Dto::Errors::InternalServer.new(e.message)

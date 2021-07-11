@@ -5,12 +5,17 @@ module Dto
                   update(dto_product_request: dto_product_request, product: product) :
                   create(dto_product_request: dto_product_request)
 
-      if dto_product_request.citizen_advice && citizen_id
-        ::Advice.create!(
-          content: dto_product_request.citizen_advice,
-          product_id: product.id,
-          citizen_id: citizen_id
-        )
+      if citizen_id
+        citizen = Citizen.find(citizen_id)
+        citizen.products << product
+        citizen.save
+        if dto_product_request.citizen_advice
+          ::Advice.create!(
+            content: dto_product_request.citizen_advice,
+            product_id: product.id,
+            citizen_id: citizen_id
+          )
+        end
       end
 
       dto_product_request.image_urls.each do |image_url|
