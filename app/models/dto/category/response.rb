@@ -11,6 +11,8 @@ module Dto
       end
 
       def self.create(category)
+        return nil if category.nil?
+
         Dto::Category::Response.new(
           id: category.id,
           name: category.name,
