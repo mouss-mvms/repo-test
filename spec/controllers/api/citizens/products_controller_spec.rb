@@ -29,9 +29,13 @@ RSpec.describe Api::Citizens::ProductsController, type: :controller do
         end
       end
 
-      context "citiyzen doesn't exists" do
+      context "citizen doesn't exists" do
         it "should returns 404 HTTP Status" do
-          Citizen.destroy_all
+          User.where.not(citizen_id: nil).each do |user|
+            user.citizen_id = nil
+            user.save
+          end
+          Citizen.delete_all
           get :index, params: { id: 1 }
           should respond_with(404)
         end

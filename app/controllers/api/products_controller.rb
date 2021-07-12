@@ -49,7 +49,7 @@ module Api
     def create
       raise ApplicationController::Forbidden unless @user.is_a_business_user? || @user.is_a_citizen?
       dto_product_request = Dto::Product::Request.new(product_params)
-      raise ActionController::ParameterMissing.new(dto_product_request.shop_id) if dto_product_request.shop_id.blank?
+      raise ActionController::ParameterMissing.new('shopId') if dto_product_request.shop_id.blank?
       Shop.find(dto_product_request.shop_id)
       Category.find(dto_product_request.category_id)
       ActiveRecord::Base.transaction do
@@ -57,7 +57,7 @@ module Api
           product = Dto::Product.build(dto_product_request: dto_product_request, citizen_id: @user.is_a_citizen? ? @user.citizen.id : nil)
         rescue => e
           Rails.logger.error(e.message)
-          error = Dto::Errors::InternalServer.new(e.message)
+          error = Dto::Errors::InternalServer.new(detail: e.message)
           return render json: error.to_h, status: error.status
         else
           response = Dto::Product::Response.create(product).to_h
@@ -76,7 +76,7 @@ module Api
           product = Dto::Product.build(dto_product_request: dto_product_request)
         rescue => e
           Rails.logger.error(e.message)
-          error = Dto::Errors::InternalServer.new(e.message)
+          error = Dto::Errors::InternalServer.new(detail: e.message)
           return render json: error.to_h, status: error.status
         else
           response = Dto::Product::Response.create(product).to_h
