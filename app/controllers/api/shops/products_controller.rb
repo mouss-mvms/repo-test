@@ -13,14 +13,14 @@ module Api
 
       def check_shop
         unless route_params[:id].to_i > 0
-          error = Dto::Errors::BadRequest.new('Shop_id is incorrect')
+          error = Dto::Errors::BadRequest.new(detail: 'Shop_id is incorrect')
           return render json: error.to_h, status: error.status
         end
 
         begin
           @shop = Shop.find(route_params[:id])
         rescue ActiveRecord::RecordNotFound => e
-          error = Dto::Errors::NotFound.new(e.message)
+          error = Dto::Errors::NotFound.new(detail: e.message)
           return render json: error.to_h, status: error.status
         end
       end
