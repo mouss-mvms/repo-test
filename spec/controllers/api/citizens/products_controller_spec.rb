@@ -26,7 +26,6 @@ RSpec.describe Api::Citizens::ProductsController, type: :controller do
         it "should returns 400 HTTP Status" do
           get :index, params: { id: 'Xenomorph' }
           should respond_with(400)
-          expect(JSON.parse(response.body)).to eq({"detail"=>"Shop_id is incorrect", "message"=>"Bad Request", "status"=>400})
         end
       end
 

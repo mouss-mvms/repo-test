@@ -12,11 +12,8 @@ module Api
       private
 
       def check_citizen
-        unless params[:id].to_i > 0
-          Rails.logger.error("check_citizen: Shop_id is incorrect")
-          error = Dto::Errors::BadRequest.new('Shop_id is incorrect')
-          return render json: error.to_h, status: error.status
-        end
+        raise ApplicationController::UnpermittedParameter unless params[:id].to_i > 0
+
         @citizen = Citizen.find(params[:id])
       end
     end
