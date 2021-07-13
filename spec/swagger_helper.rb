@@ -73,7 +73,8 @@ RSpec.configure do |config|
           BadRequest: Examples::Errors::BadRequest.new.error,
           InternalError: Examples::Errors::InternalError.new.error,
           UnprocessableEntity: Examples::Errors::UnprocessableEntity.new.error,
-          Forbidden: Examples::Errors::Forbidden.new.error
+          Forbidden: Examples::Errors::Forbidden.new.error,
+          NotFound: Examples::Errors::NotFound.new.error
         }
       }
     }
