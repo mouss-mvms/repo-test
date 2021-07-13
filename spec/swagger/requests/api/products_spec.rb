@@ -11,6 +11,55 @@ RSpec.describe 'api/categories', type: :request do
       description 'Return the product updated'
       security [{ authorization: [] }]
 
+      parameter name: :product, in: :body, schema: {
+        type: :object,
+        properties: {
+          id: {type: :integer, example: 3, description: 'Id of product'},
+          name: {type: :string, example: "Air jordan", description: 'Name of product'},
+          description: {type: :string, example: "Chaussures trop bien", description: 'Description of product'},
+          brand: {type: :string, example: "Chaussures trop bien", description: 'Description of product'},
+          status: {type: :string, example: "online", description: 'Status of product'},
+          sellerAdvice: {type: :string, example: "Taille petite, prendre une demi pointure au dessus", description: 'Advice from seller of product'},
+          isService: {type: :boolean, example: false, description: 'Tell if the product is a service'},
+          citizenAdvice: {type: :string, example: 'Produit trouvé un commercant trop sympa', description: 'Advice from citizen of product'},
+          categoryId: {type: :integer, example: 4, description: 'Category id of product'},
+          variants: {
+            type: :array,
+            items: {
+              type: :object,
+              properties: {
+                basePrice: {type: :float, example: 44.99, description: "Price of product's variant"},
+                weight: {type: :float, example: 0.56, description: "Weight of product's variant (in Kg)"},
+                quantity: {type: :integer, example: 9, description: "Stock of product's variant"},
+                isDefault: {type: :boolean, example: true, description: "Tell if this variant is the product's default variant"},
+                goodDeal: {
+                  type: :object,
+                  properties: {
+                    startAt: {type: :string, example: "20/07/2021", description: "Date of start of good deal"},
+                    endAt: {type: :string, example: "27/07/2021", description: "Date of end of good deal"},
+                    discount: {type: :integer, example: 45, description: "Amount of discount (in %)"}
+                  },
+                  required: %w[startAt, endAt, discount]
+                },
+                characteristic: {
+                  type: :array,
+                  items: {
+                    type: :object,
+                    properties: {
+                      name: {type: :string, example: 'color', description: 'Name of characteristic'},
+                      value: {type: :string, example: 'Bleu', description: 'Value of characteristic'}
+                    },
+                    required: %w[name, value]
+                  }
+                }
+              },
+              required: %w[basePrice, weight, quantity, isDefault]
+            }
+          }
+        },
+        required: %w[id, name, description, brand, status, sellerAdvice, isService, categoryId, variants, characteristics]
+      }
+
       response(200, 'successful') do
         schema type: :object,
                properties: {
@@ -109,6 +158,54 @@ RSpec.describe 'api/categories', type: :request do
       security [{ authorization: [] }]
 
       parameter name: 'X-client-id', in: :header
+      parameter name: :product, in: :body, schema: {
+        type: :object,
+        properties: {
+          id: {type: :integer, example: 3, description: 'Id of product'},
+          name: {type: :string, example: "Air jordan", description: 'Name of product'},
+          description: {type: :string, example: "Chaussures trop bien", description: 'Description of product'},
+          brand: {type: :string, example: "Chaussures trop bien", description: 'Description of product'},
+          status: {type: :string, example: "online", description: 'Status of product'},
+          sellerAdvice: {type: :string, example: "Taille petite, prendre une demi pointure au dessus", description: 'Advice from seller of product'},
+          isService: {type: :boolean, example: false, description: 'Tell if the product is a service'},
+          citizenAdvice: {type: :string, example: 'Produit trouvé un commercant trop sympa', description: 'Advice from citizen of product'},
+          categoryId: {type: :integer, example: 4, description: 'Category id of product'},
+          variants: {
+            type: :array,
+            items: {
+              type: :object,
+              properties: {
+                basePrice: {type: :float, example: 44.99, description: "Price of product's variant"},
+                weight: {type: :float, example: 0.56, description: "Weight of product's variant (in Kg)"},
+                quantity: {type: :integer, example: 9, description: "Stock of product's variant"},
+                isDefault: {type: :boolean, example: true, description: "Tell if this variant is the product's default variant"},
+                goodDeal: {
+                  type: :object,
+                  properties: {
+                    startAt: {type: :string, example: "20/07/2021", description: "Date of start of good deal"},
+                    endAt: {type: :string, example: "27/07/2021", description: "Date of end of good deal"},
+                    discount: {type: :integer, example: 45, description: "Amount of discount (in %)"}
+                  },
+                  required: %w[startAt, endAt, discount]
+                },
+                characteristic: {
+                  type: :array,
+                  items: {
+                    type: :object,
+                    properties: {
+                      name: {type: :string, example: 'color', description: 'Name of characteristic'},
+                      value: {type: :string, example: 'Bleu', description: 'Value of characteristic'}
+                    },
+                    required: %w[name, value]
+                  }
+                }
+              },
+              required: %w[basePrice, weight, quantity, isDefault]
+            }
+          }
+        },
+        required: %w[id, name, description, brand, status, sellerAdvice, isService, categoryId, variants, characteristics]
+      }
 
       response(200, 'Successful') do
         schema type: :object,
@@ -204,6 +301,54 @@ RSpec.describe 'api/categories', type: :request do
       security [{ authorization: [] }]
 
       parameter name: 'X-client-id', in: :header
+      parameter name: :product, in: :body, schema: {
+        type: :object,
+        properties: {
+          name: {type: :string, example: "Air jordan", description: 'Name of product'},
+          description: {type: :string, example: "Chaussures trop bien", description: 'Description of product'},
+          brand: {type: :string, example: "Chaussures trop bien", description: 'Description of product'},
+          status: {type: :string, example: "online", description: 'Status of product'},
+          sellerAdvice: {type: :string, example: "Taille petite, prendre une demi pointure au dessus", description: 'Advice from seller of product'},
+          isService: {type: :boolean, example: false, description: 'Tell if the product is a service'},
+          citizenAdvice: {type: :string, example: 'Produit trouvé un commercant trop sympa', description: 'Advice from citizen of product'},
+          categoryId: {type: :integer, example: 4, description: 'Category id of product'},
+          shopId: {type: :integer, example: 453, description: 'Shop id of product'},
+          variants: {
+            type: :array,
+            items: {
+              type: :object,
+              properties: {
+                basePrice: {type: :float, example: 44.99, description: "Price of product's variant"},
+                weight: {type: :float, example: 0.56, description: "Weight of product's variant (in Kg)"},
+                quantity: {type: :integer, example: 9, description: "Stock of product's variant"},
+                isDefault: {type: :boolean, example: true, description: "Tell if this variant is the product's default variant"},
+                goodDeal: {
+                  type: :object,
+                  properties: {
+                    startAt: {type: :string, example: "20/07/2021", description: "Date of start of good deal"},
+                    endAt: {type: :string, example: "27/07/2021", description: "Date of end of good deal"},
+                    discount: {type: :integer, example: 45, description: "Amount of discount (in %)"}
+                  },
+                  required: %w[startAt, endAt, discount]
+                },
+                characteristic: {
+                  type: :array,
+                  items: {
+                    type: :object,
+                    properties: {
+                      name: {type: :string, example: 'color', description: 'Name of characteristic'},
+                      value: {type: :string, example: 'Bleu', description: 'Value of characteristic'}
+                    },
+                    required: %w[name, value]
+                  }
+                }
+              },
+              required: %w[basePrice, weight, quantity, isDefault]
+            }
+          }
+        },
+        required: %w[id, name, description, brand, status, sellerAdvice, isService, categoryId, variants, characteristics]
+      }
 
       response(201, 'Product created') do
         schema type: :object,
@@ -251,6 +396,55 @@ RSpec.describe 'api/categories', type: :request do
       consumes 'application/json'
       description 'Return the product created'
       security [{ authorization: [] }]
+
+      parameter name: :product, in: :body, schema: {
+        type: :object,
+        properties: {
+          name: {type: :string, example: "Air jordan", description: 'Name of product'},
+          description: {type: :string, example: "Chaussures trop bien", description: 'Description of product'},
+          brand: {type: :string, example: "Chaussures trop bien", description: 'Description of product'},
+          status: {type: :string, example: "online", description: 'Status of product'},
+          sellerAdvice: {type: :string, example: "Taille petite, prendre une demi pointure au dessus", description: 'Advice from seller of product'},
+          isService: {type: :boolean, example: false, description: 'Tell if the product is a service'},
+          citizenAdvice: {type: :string, example: 'Produit trouvé un commercant trop sympa', description: 'Advice from citizen of product'},
+          categoryId: {type: :integer, example: 4, description: 'Category id of product'},
+          shopId: {type: :integer, example: 453, description: 'Shop id of product'},
+          variants: {
+            type: :array,
+            items: {
+              type: :object,
+              properties: {
+                basePrice: {type: :float, example: 44.99, description: "Price of product's variant"},
+                weight: {type: :float, example: 0.56, description: "Weight of product's variant (in Kg)"},
+                quantity: {type: :integer, example: 9, description: "Stock of product's variant"},
+                isDefault: {type: :boolean, example: true, description: "Tell if this variant is the product's default variant"},
+                goodDeal: {
+                  type: :object,
+                  properties: {
+                    startAt: {type: :string, example: "20/07/2021", description: "Date of start of good deal"},
+                    endAt: {type: :string, example: "27/07/2021", description: "Date of end of good deal"},
+                    discount: {type: :integer, example: 45, description: "Amount of discount (in %)"}
+                  },
+                  required: %w[startAt, endAt, discount]
+                },
+                characteristic: {
+                  type: :array,
+                  items: {
+                    type: :object,
+                    properties: {
+                      name: {type: :string, example: 'color', description: 'Name of characteristic'},
+                      value: {type: :string, example: 'Bleu', description: 'Value of characteristic'}
+                    },
+                    required: %w[name, value]
+                  }
+                }
+              },
+              required: %w[basePrice, weight, quantity, isDefault]
+            }
+          }
+        },
+        required: %w[id, name, description, brand, status, sellerAdvice, isService, categoryId, variants, characteristics]
+      }
 
       response(201, 'Created') do
         schema type: :object,
