@@ -14,7 +14,6 @@ RSpec.describe 'api/categories', type: :request do
       parameter name: :product, in: :body, schema: {
         type: :object,
         properties: {
-          id: {type: :integer, example: 3, description: 'Id of product'},
           name: {type: :string, example: "Air jordan", description: 'Name of product'},
           description: {type: :string, example: "Chaussures trop bien", description: 'Description of product'},
           brand: {type: :string, example: "Chaussures trop bien", description: 'Description of product'},
@@ -161,7 +160,6 @@ RSpec.describe 'api/categories', type: :request do
       parameter name: :product, in: :body, schema: {
         type: :object,
         properties: {
-          id: {type: :integer, example: 3, description: 'Id of product'},
           name: {type: :string, example: "Air jordan", description: 'Name of product'},
           description: {type: :string, example: "Chaussures trop bien", description: 'Description of product'},
           brand: {type: :string, example: "Chaussures trop bien", description: 'Description of product'},
