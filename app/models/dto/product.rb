@@ -5,7 +5,7 @@ module Dto
                   update(dto_product_request: dto_product_request, product: product) :
                   create(dto_product_request: dto_product_request)
 
-      if citizen_id
+      if citizen_id.present?
         citizen = Citizen.find(citizen_id)
         citizen.products << product
         citizen.save
@@ -31,34 +31,31 @@ module Dto
           end
         end
 
-        dto_good_deal = dto_variant.good_deal if dto_variant.good_deal&.discount && dto_variant.good_deal&.end_at && dto_variant.good_deal&.start_at
-        good_deal = nil
-
-        if dto_good_deal&.start_at && dto_good_deal.end_at
-          good_deal = ::GoodDeal.create!(
-            starts_at: date_from_string(date_string: dto_good_deal.start_at),
-            ends_at: date_from_string(date_string: dto_good_deal.end_at),
-            discount: dto_good_deal.discount,
-            kind: "percentage"
-          )
-        end
-
         color_characteristic = dto_variant.characteristics.detect { |char| char.name == "color" }
         size_characteristic = dto_variant.characteristics.detect { |char| char.name == "size" }
 
-        ::Reference.create!(
+        reference = ::Reference.create!(
           weight: dto_variant.weight,
           quantity: dto_variant.quantity,
           base_price: dto_variant.base_price,
           product_id: product.id,
           sample_id: sample.id,
           shop_id: product.shop.id,
-          good_deal_id: good_deal&.id,
           color_id: color_characteristic ? ::Color.where(name: color_characteristic.name).first_or_create.id : nil,
           size_id: size_characteristic ? ::Size.where(name: size_characteristic.name).first_or_create.id : nil
         )
-      end
 
+        dto_good_deal = dto_variant.good_deal if dto_variant.good_deal&.discount && dto_variant.good_deal&.end_at && dto_variant.good_deal&.start_at
+
+        if dto_good_deal.present?
+          reference.good_deal = ::GoodDeal.new
+          reference.good_deal.starts_at = date_from_string(date_string: dto_good_deal.start_at)
+          reference.good_deal.ends_at = date_from_string(date_string: dto_good_deal.end_at)
+          reference.good_deal.discount = dto_good_deal.discount
+          reference.good_deal.kind = "percentage"
+          reference.good_deal.save!
+        end
+      end
       return product
     end
 
