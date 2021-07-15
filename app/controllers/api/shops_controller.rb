@@ -8,19 +8,20 @@ module Api
 
     def show
       unless params[:id].to_i > 0
-        error = Dto::Errors::BadRequest.new("#{params[:id]} is not an id valid")
+        error = Dto::Errors::BadRequest.new(detail: "#{params[:id]} is not an id valid")
         return render json: error.to_h, status: error.status
       end
 
       begin
         shop = Shop.find(params[:id].to_i)
-        response = Dto::Shop::Response.create(shop)
       rescue ActiveRecord::RecordNotFound => e
-        error = Dto::Errors::NotFound.new("Couldn't find #{e.model} with 'id'=#{e.id}")
+        error = Dto::Errors::NotFound.new(detail: "Couldn't find #{e.model} with 'id'=#{e.id}")
         return render json: error.to_h, status: error.status
+      else
+        response = Dto::Shop::Response.create(shop)
+        render json: response.to_h, status: :ok
       end
 
-      render json: response.to_h
     end
 
     def create
@@ -30,16 +31,16 @@ module Api
           shop = Dto::Shop.build(dto_shop_request: shop_request)
           shop.assign_ownership(@user)
           shop.save!
-          response = Dto::Shop::Response.create(shop).to_h
         rescue ActionController::ParameterMissing => e
           Rails.logger.error(e.message)
-          error = Dto::Errors::BadRequest.new(e.message)
+          error = Dto::Errors::BadRequest.new(detail: e.message)
           return render json: error.to_h, status: error.status
         rescue => e
           Rails.logger.error(e.message)
-          error = Dto::Errors::InternalServer.new(e.message)
+          error = Dto::Errors::InternalServer.new(detail: e.message)
           return render json: error.to_h, status: error.status
         else
+          response = Dto::Shop::Response.create(shop).to_h
           return render json: response.to_h, status: :created
         end
       end
@@ -50,7 +51,6 @@ module Api
         begin
           shop_request = Dto::Shop::Request.new(shop_params)
           shop = Dto::Shop.build(dto_shop_request: shop_request, shop: @shop)
-          response = Dto::Shop::Response.create(shop).to_h
         rescue ActionController::ParameterMissing => e
           Rails.logger.error(e.message)
           error = Dto::Errors::BadRequest.new(e.message)
@@ -60,6 +60,7 @@ module Api
           error = Dto::Errors::InternalServer.new
           return render json: error.to_h, status: error.status
         else
+          response = Dto::Shop::Response.create(shop).to_h
           return render json: response.to_h, status: :ok
         end
       end
@@ -69,14 +70,14 @@ module Api
 
     def retrieve_shop
       unless params[:id].to_i > 0
-        error = Dto::Errors::BadRequest.new('Shop_id is incorrect')
+        error = Dto::Errors::BadRequest.new(detial: 'Shop_id is incorrect')
         return render json: error.to_h, status: error.status
       end
 
       begin
         @shop = Shop.find(params[:id])
       rescue ActiveRecord::RecordNotFound => e
-        error = Dto::Errors::NotFound.new(e.message)
+        error = Dto::Errors::NotFound.new(detail: e.message)
         return render json: error.to_h, status: error.status
       end
     end

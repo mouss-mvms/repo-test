@@ -5,14 +5,12 @@ class ActionDispatch::Routing::Mapper
 end
 
 scope :auth do
-  namespace :shops do
-    draw(:auth_products)
-  end
-end
-namespace :shops do
-  draw(:products)
+  post "shops", to: "shops#create", as: nil
+  put "shops/:id", to: "shops#update", as: nil
 end
 
 get "shops/:id", to: "shops#show", as: nil
-post "shops", to: "shops#create", as: nil
-put "shops/:id", to: "shops#update", as: nil
+
+namespace :shops do
+  get ":id/products", to: "products#index"
+end

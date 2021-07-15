@@ -4,33 +4,37 @@ RSpec.describe 'api/shops', type: :request do
   path '/api/shops/{id}' do
     parameter name: 'id', in: :path, type: :string, description: 'Unique identifier of the desired shop.'
 
-      get("shop informations") do
-        tags 'Shops'
-        produces 'application/json'
-        description 'Retrieve shop informations'
-        security [{authorization: []}]
+    get("shop informations") do
+      tags 'Shops'
+      produces 'application/json'
+      description 'Retrieve shop informations'
+      security [{authorization: []}]
 
-        response(200, 'Successful') do
-          schema type: :object,
-                 properties: {
-                   shop: {
-                     type: :object,
-                     '$ref': '#/components/schemas/Shop'
-                   }
-                 }
-          run_test!
-        end
-
-        response(404, 'Not found') do
-          schema type: :object,
-                 properties: {
-                   error: {'$ref': '#/components/schemas/Error'}
-                 }
-          run_test!
-        end
+      response(200, 'Successful') do
+        schema type: :object,
+                properties: {
+                  shop: {
+                    type: :object,
+                    '$ref': '#/components/schemas/Shop'
+                  }
+                }
+        run_test!
       end
 
-      put("Update Shop") do
+      response(404, 'Not found') do
+        schema type: :object,
+                properties: {
+                  error: {'$ref': '#/components/schemas/Error'}
+                }
+        run_test!
+      end
+    end
+  end
+
+  path '/api/auth/shops/{id}' do
+    parameter name: 'id', in: :path, type: :string, description: 'Unique identifier of the desired shop.'
+
+    put("Update Shop") do
       tags 'Shops'
       consumes 'application/json'
       produces 'application/json'
@@ -96,24 +100,23 @@ RSpec.describe 'api/shops', type: :request do
 
       response(201, 'Created') do
         schema type: :object,
-               properties: {
-                 shop: {'$ref': '#/components/schemas/Shop'}
-               }
+                properties: {
+                  shop: {'$ref': '#/components/schemas/Shop'}
+                }
         run_test!
       end
 
       response(400, 'Bad request') do
         schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/Error'}
-               }
+                properties: {
+                  error: {'$ref': '#/components/schemas/Error'}
+                }
         run_test!
       end
     end
-
   end
 
-  path '/api/shops' do
+  path '/api/auth/shops' do
     post("Create Shop") do
       tags 'Shops'
       consumes 'application/json'

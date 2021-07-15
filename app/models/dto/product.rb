@@ -1,18 +1,29 @@
 module Dto
   module Product
-    def self.build(dto_product:, dto_category:, shop_id:, product: nil)
-      product = if product.present?
-                  update_product(dto_product: dto_product, dto_category: dto_category, shop_id: shop_id, product: product)
-                else
-                  create_product(dto_product: dto_product, dto_category: dto_category, shop_id: shop_id)
-                end
+    def self.build(dto_product_request:, product: nil, citizen_id: nil)
+      product = product.present? ?
+                  update(dto_product_request: dto_product_request, product: product) :
+                  create(dto_product_request: dto_product_request)
 
-      dto_product.image_urls.each do |image_url|
+      if citizen_id.present?
+        citizen = Citizen.find(citizen_id)
+        citizen.products << product
+        citizen.save
+        if dto_product_request.citizen_advice
+          ::Advice.create!(
+            content: dto_product_request.citizen_advice,
+            product_id: product.id,
+            citizen_id: citizen_id
+          )
+        end
+      end
+
+      dto_product_request.image_urls.each do |image_url|
         set_image(object: product, image_url: image_url)
       end
 
-      dto_product.variants.each do |dto_variant|
-        sample = ::Sample.create!(name: dto_product.name, default: dto_variant.is_default, product_id: product.id)
+      dto_product_request.variants.each do |dto_variant|
+        sample = ::Sample.create!(name: dto_product_request.name, default: dto_variant.is_default, product_id: product.id)
 
         if dto_variant.image_urls.present?
           dto_variant.image_urls.each do |image_url|
@@ -20,34 +31,31 @@ module Dto
           end
         end
 
-        dto_good_deal = dto_variant.good_deal if dto_variant&.good_deal&.discount && dto_variant&.good_deal&.end_at && dto_variant&.good_deal&.start_at
-        good_deal = nil
+        color_characteristic = dto_variant.characteristics.detect { |char| char.name == "color" }
+        size_characteristic = dto_variant.characteristics.detect { |char| char.name == "size" }
 
-        if dto_good_deal && dto_good_deal.start_at && dto_good_deal.end_at
-          good_deal = ::GoodDeal.create!(
-            starts_at: date_from_string(date_string: dto_good_deal.start_at),
-            ends_at: date_from_string(date_string: dto_good_deal.end_at),
-            discount: dto_good_deal.discount,
-            kind: "percentage"
-          )
-        end
-
-        color_characteristic = dto_variant.characteristics.detect { |char| char.type == "color" }
-        size_characteristic = dto_variant.characteristics.detect { |char| char.type == "size" }
-
-        ::Reference.create!(
+        reference = ::Reference.create!(
           weight: dto_variant.weight,
           quantity: dto_variant.quantity,
           base_price: dto_variant.base_price,
           product_id: product.id,
           sample_id: sample.id,
-          shop_id: shop_id,
-          good_deal_id: good_deal&.id,
+          shop_id: product.shop.id,
           color_id: color_characteristic ? ::Color.where(name: color_characteristic.name).first_or_create.id : nil,
           size_id: size_characteristic ? ::Size.where(name: size_characteristic.name).first_or_create.id : nil
         )
-      end
 
+        dto_good_deal = dto_variant.good_deal if dto_variant.good_deal&.discount && dto_variant.good_deal&.end_at && dto_variant.good_deal&.start_at
+
+        if dto_good_deal.present?
+          reference.good_deal = ::GoodDeal.new
+          reference.good_deal.starts_at = date_from_string(date_string: dto_good_deal.start_at)
+          reference.good_deal.ends_at = date_from_string(date_string: dto_good_deal.end_at)
+          reference.good_deal.discount = dto_good_deal.discount
+          reference.good_deal.kind = "percentage"
+          reference.good_deal.save!
+        end
+      end
       return product
     end
 
@@ -63,32 +71,32 @@ module Dto
       end
     end
 
-    def self.create_product(dto_product:, dto_category:, shop_id:)
+    def self.create(dto_product_request:)
       ::Product.create!(
-        name: dto_product.name,
-        shop_id: shop_id,
-        category_id: dto_category.id,
-        brand_id: ::Brand.where(name: dto_product.brand).first_or_create.id,
-        is_a_service: dto_product.is_service,
-        status: dto_product.status || 'offline',
-        pro_advice: dto_product.seller_advice,
+        name: dto_product_request.name,
+        shop_id: dto_product_request.shop_id,
+        category_id: dto_product_request.category_id,
+        brand_id: ::Brand.where(name: dto_product_request.brand).first_or_create.id,
+        is_a_service: dto_product_request.is_service,
+        status: dto_product_request.status || 'offline',
+        pro_advice: dto_product_request.seller_advice,
         fields_attributes: [
-          { lang: "fr", field: "description", content: dto_product.description },
+          { lang: "fr", field: "description", content: dto_product_request.description },
           { lang: "en", field: "description", content: "" }
           ]
         )
     end
 
-    def self.update_product(dto_product:, dto_category:, shop_id:, product:)
+    def self.update(dto_product_request:, product:)
       product.update!(
-        name: dto_product.name,
-        category_id: dto_category.id,
-        brand_id: ::Brand.where(name: dto_product.brand).first_or_create.id,
-        is_a_service: dto_product.is_service,
-        status: dto_product.status || 'offline',
-        pro_advice: dto_product.seller_advice,
+        name: dto_product_request.name,
+        category_id: dto_product_request.category_id,
+        brand_id: ::Brand.where(name: dto_product_request.brand).first_or_create.id,
+        is_a_service: dto_product_request.is_service,
+        status: dto_product_request.status || 'offline',
+        pro_advice: dto_product_request.seller_advice,
         fields_attributes: [
-          { lang: "fr", field: "description", content: dto_product.description },
+          { lang: "fr", field: "description", content: dto_product_request.description },
           { lang: "en", field: "description", content: "" }
         ]
       )
@@ -96,6 +104,7 @@ module Dto
       ::Reference.where(product_id: product.id).destroy_all
       ::Sample.where(product_id: product.id).destroy_all
       ::Image.where(product_id: product.id).destroy_all
+      ::Advice.where(product_id: product.id).destroy_all
 
       product
     end

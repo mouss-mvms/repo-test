@@ -11,6 +11,8 @@ module Dto
       end
 
       def self.create(category)
+        return nil if category.nil?
+
         Dto::Category::Response.new(
           id: category.id,
           name: category.name,
@@ -21,7 +23,8 @@ module Dto
       def to_h
         {
           id: @id,
-          name: @name
+          name: @name,
+          slug: @slug
         }
       end
     end
