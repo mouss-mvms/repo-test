@@ -67,4 +67,6 @@ Rails.application.configure do
 
   # Avoid belongs_to required by defaults
   config.active_record.belongs_to_required_by_default = false
+
+  config.active_job.queue_adapter = :resque
 end
