@@ -466,6 +466,10 @@
           "schema": {
             "type": "integer"
           }
+        },
+        {
+          "name": "X-client-id",
+          "in": "header"
         }
       ],
       "put": {
@@ -482,10 +486,7 @@
           }
         ],
         "parameters": [
-          {
-            "name": "X-client-id",
-            "in": "header"
-          }
+
         ],
         "responses": {
           "200": {
@@ -738,12 +739,6 @@
             "authorization": [
 
             ]
-          }
-        ],
-        "parameters": [
-          {
-            "name": "X-client-id",
-            "in": "header"
           }
         ],
         "responses": {
