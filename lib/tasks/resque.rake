@@ -5,7 +5,7 @@ namespace :resque do
     require 'resque'
     ENV['QUEUE'] = '*'
 
-    Resque.redis = ENV['REDIS_URL']
+    Resque.redis = ENV['REDISTOGO_URL']
   end
 end
 

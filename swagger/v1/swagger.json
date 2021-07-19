@@ -820,22 +820,7 @@
         ],
         "responses": {
           "201": {
-            "description": "Product created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "categories": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Product"
-                      }
-                    }
-                  }
-                }
-              }
-            }
+            "description": "Product created"
           },
           "400": {
             "description": "Bad request",
@@ -1659,7 +1644,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {

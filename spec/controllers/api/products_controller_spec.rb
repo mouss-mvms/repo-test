@@ -1040,16 +1040,6 @@ RSpec.describe Api::ProductsController, type: :controller do
         post :create, params: create_params
 
         should respond_with(201)
-        result = JSON.parse(response.body)
-        expect(result["id"]).not_to be_nil
-        expect(result["name"]).to eq(create_params[:name])
-        expect(result["category"]["id"]).to eq(create_params[:categoryId])
-        expect(result["brand"]).to eq(create_params[:brand])
-        expect(result["status"]).to eq(create_params[:status])
-        expect(result["isService"]).to eq(create_params[:isService])
-        expect(result["sellerAdvice"]).to eq(create_params[:sellerAdvice])
-        expect(result["description"]).to eq(create_params[:description])
-        expect(user_citizen.citizen.products.to_a.find{ |p| p.id == result["id"]}).not_to be_nil
       end
       end
 

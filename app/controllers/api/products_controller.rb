@@ -62,14 +62,13 @@ module Api
       raise ActionController::BadRequest.new('allergens is required') if Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
       ActiveRecord::Base.transaction do
         begin
-          product = Dto::Product.build(dto_product_request: dto_product_request, citizen_id: @user.is_a_citizen? ? @user.citizen.id : nil)
+          job = ProductCreateAndUpdateJob.perform_later(serialized_dto_product_request: dto_product_request.to_json, citizen_id: @user.is_a_citizen? ? @user.citizen.id : nil)
         rescue => e
           Rails.logger.error(e.message)
           error = Dto::Errors::InternalServer.new(detail: e.message)
           return render json: error.to_h, status: error.status
         else
-          response = Dto::Product::Response.create(product).to_h
-          return render json: response, status: :created
+          return render json: '', status: :created
         end
       end
     end
