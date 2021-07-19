@@ -5117,7 +5117,6 @@ RSpec.describe Api::ProductsController, type: :controller do
         end
       end
 
-
       context 'Bad authentication' do
         context 'x-client-id is missing' do
           it 'should return 401 HTTP status' do
