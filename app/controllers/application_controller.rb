@@ -3,7 +3,7 @@ class ApplicationController < ActionController::API
   UnpermittedParameter = Class.new(ActionController::ActionControllerError)
 
   rescue_from ActiveRecord::RecordNotFound, with: :render_record_not_found
-  rescue_from ActionController::ParameterMissing, ApplicationController::UnpermittedParameter , with: :render_bad_request
+  rescue_from ActionController::ParameterMissing, ApplicationController::UnpermittedParameter, ActionController::BadRequest , with: :render_bad_request
   rescue_from ApplicationController::Forbidden, with: :render_forbidden
 
   def render_record_not_found(exception)

@@ -73,7 +73,22 @@ module Examples
             type: 'string',
             example: 'Très belle chaussure, confortable et indémodable ! Elle vous donnera un look sympa, idéal avec un jean slim. Attention de bien prévoir une taille au-dessus, chausse un peu petit.',
             description: 'Citizen advice of a product'
-          }
+          },
+          origin: {
+            type: 'string',
+            example: 'France',
+            description: 'Origin of product.'
+          },
+          allergens: {
+            type: 'string',
+            example: 'Contient des traces de fruit à coques',
+            description: 'Advice of potencial allergens.'
+          },
+          composition: {
+            type: 'string',
+            example: 'Oeuf, sucre',
+            description: 'Composition of product.'
+          },
         }
       }
     end

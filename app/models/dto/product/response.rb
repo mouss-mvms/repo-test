@@ -1,7 +1,7 @@
 module Dto
   module Product
     class Response
-      attr_reader :id, :name, :slug, :category, :brand, :status, :seller_advice, :is_service, :description, :variants, :image_urls, :citizen_advice
+      attr_reader :id, :name, :slug, :category, :brand, :status, :seller_advice, :is_service, :description, :variants, :image_urls, :citizen_advice, :origin, :allergens, :composition
 
       def initialize(**args)
         @id = args[:id]
