@@ -469,7 +469,10 @@
         },
         {
           "name": "X-client-id",
-          "in": "header"
+          "in": "header",
+          "schema": {
+            "type": "string"
+          }
         }
       ],
       "put": {
@@ -794,6 +797,15 @@
       }
     },
     "/api/auth/products": {
+      "parameters": [
+        {
+          "name": "X-client-id",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
       "post": {
         "summary": "Create a product",
         "tags": [
@@ -808,10 +820,7 @@
           }
         ],
         "parameters": [
-          {
-            "name": "X-client-id",
-            "in": "header"
-          }
+
         ],
         "responses": {
           "201": {
