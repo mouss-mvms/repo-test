@@ -151,7 +151,7 @@ RSpec.describe 'api/categories', type: :request do
 
   path '/api/auth/products/{id}' do
     parameter name: 'id', in: :path, type: :integer, description: 'Unique identifier of the product.'
-    parameter name: 'X-client-id', in: :header
+    parameter name: 'X-client-id', in: :header, type: :string
 
     put('Update a product') do
       tags 'Products'
@@ -295,14 +295,14 @@ RSpec.describe 'api/categories', type: :request do
   end
 
   path '/api/auth/products' do
+    parameter name: 'X-client-id', in: :header, type: :string
+
     post('Create a product') do
       tags 'Products'
       produces 'application/json'
       consumes 'application/json'
       description 'Return the product created'
       security [{ authorization: [] }]
-
-      parameter name: 'X-client-id', in: :header
 
       parameter name: :product, in: :body, schema: {
         type: :object,
