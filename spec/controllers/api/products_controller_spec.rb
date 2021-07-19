@@ -53,6 +53,9 @@ RSpec.describe Api::ProductsController, type: :controller do
         expect(result["isService"]).to eq(update_params[:isService])
         expect(result["sellerAdvice"]).to eq(update_params[:sellerAdvice])
         expect(result["description"]).to eq(update_params[:description])
+        expect(result["origin"]).to eq(update_params[:origin])
+        expect(result["allergens"]).to eq(update_params[:allergens])
+        expect(result["composition"]).to eq(update_params[:composition])
       end
     end
 
@@ -1170,6 +1173,9 @@ RSpec.describe Api::ProductsController, type: :controller do
           expect(result["isService"]).to eq(update_params[:isService])
           expect(result["sellerAdvice"]).to eq(update_params[:sellerAdvice])
           expect(result["description"]).to eq(update_params[:description])
+          expect(result["origin"]).to eq(update_params[:origin])
+          expect(result["allergens"]).to eq(update_params[:allergens])
+          expect(result["composition"]).to eq(update_params[:composition])
         end
       end
 
@@ -2541,6 +2547,9 @@ RSpec.describe Api::ProductsController, type: :controller do
           expect(result["isService"]).to eq(update_params[:isService])
           expect(result["sellerAdvice"]).to eq(update_params[:sellerAdvice])
           expect(result["description"]).to eq(update_params[:description])
+          expect(result["origin"]).to eq(update_params[:origin])
+          expect(result["allergens"]).to eq(update_params[:allergens])
+          expect(result["composition"]).to eq(update_params[:composition])
         end
       end
 
@@ -3964,6 +3973,9 @@ RSpec.describe Api::ProductsController, type: :controller do
         expect(result["sellerAdvice"]).to eq(create_params[:sellerAdvice])
         expect(result["description"]).to eq(create_params[:description])
         expect(user_citizen.citizen.products.to_a.find{ |p| p.id == result["id"]}).not_to be_nil
+        expect(result["origin"]).to eq(create_params[:origin])
+        expect(result["allergens"]).to eq(create_params[:allergens])
+        expect(result["composition"]).to eq(create_params[:composition])
       end
       end
 
@@ -5269,6 +5281,9 @@ RSpec.describe Api::ProductsController, type: :controller do
           expect(result["sellerAdvice"]).to eq(create_params[:sellerAdvice])
           expect(result["description"]).to eq(create_params[:description])
           expect(shop.products.to_a.find{ |p| p.id == result["id"]}).not_to be_nil
+          expect(result["origin"]).to eq(create_params[:origin])
+          expect(result["allergens"]).to eq(create_params[:allergens])
+          expect(result["composition"]).to eq(create_params[:composition])
         end
       end
 
@@ -6613,6 +6628,9 @@ RSpec.describe Api::ProductsController, type: :controller do
         expect(result["isService"]).to eq(create_params[:isService])
         expect(result["sellerAdvice"]).to eq(create_params[:sellerAdvice])
         expect(result["description"]).to eq(create_params[:description])
+        expect(result["origin"]).to eq(create_params[:origin])
+        expect(result["allergens"]).to eq(create_params[:allergens])
+        expect(result["composition"]).to eq(create_params[:composition])
       end
     end
 

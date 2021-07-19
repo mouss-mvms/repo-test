@@ -126,7 +126,6 @@ module Api
       product_params[:image_urls] = params.permit(:imageUrls)
       product_params[:category_id] = params.require(:categoryId)
       product_params[:shop_id] = params[:shopId].to_i if params[:shopId]
-      product_params[:origin] = params[:origin].to_i if params[:origin]
       product_params[:allergens] = params.permit(:allergens)
       product_params[:origin] = params.permit(:origin)
       product_params[:composition] = params.permit(:composition)
