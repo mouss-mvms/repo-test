@@ -53,6 +53,9 @@ RSpec.describe Api::ProductsController, type: :controller do
         expect(result["isService"]).to eq(update_params[:isService])
         expect(result["sellerAdvice"]).to eq(update_params[:sellerAdvice])
         expect(result["description"]).to eq(update_params[:description])
+        expect(result["origin"]).to eq(update_params[:origin])
+        expect(result["allergens"]).to eq(update_params[:allergens])
+        expect(result["composition"]).to eq(update_params[:composition])
       end
     end
 
@@ -176,10 +179,937 @@ RSpec.describe Api::ProductsController, type: :controller do
               }
             ]
           }
+          i = 1
+          Category.all.each do |category|
+            break if category.id != i
+            i = i + 1
+          end
+          update_params[:categoryId] = i
 
           put :update_offline, params: update_params.merge(id: product.id)
 
-          should respond_with(400)
+          should respond_with(404)
+        end
+      end
+
+      context 'Category is dry-fresh group' do
+        let(:product) { create(:product) }
+        let(:category) { create(:category, group: 'dry-food')}
+
+        context 'Origin of product is missing' do
+          it 'should return 400 HTTP Status' do
+
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            put :update_offline, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('origin and composition is required')
+          end
+        end
+
+        context 'Composition of product is missing' do
+          it 'should return 400 HTTP Status' do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: 'France',
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            put :update_offline, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('origin and composition is required')
+          end
+        end
+
+        context 'Allergens of product is missing' do
+          it 'should return 400 HTTP Status' do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: 'France',
+              composition: 'Avec de la matière',
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            put :update_offline, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('allergens is required')
+          end
+        end
+      end
+
+      context 'Category is fresh-food group' do
+        let(:product) { create(:product) }
+        let(:category) { create(:category, group: 'fresh-food')}
+
+        context 'Origin of product is missing' do
+          it 'should return 400 HTTP Status' do
+
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            put :update_offline, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('origin and composition is required')
+          end
+        end
+
+        context 'Composition of product is missing' do
+          it 'should return 400 HTTP Status' do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: 'France',
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            put :update_offline, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('origin and composition is required')
+          end
+        end
+
+        context 'Allergens of product is missing' do
+          it 'should return 400 HTTP Status' do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: 'France',
+              composition: 'Avec de la matière',
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            put :update_offline, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('allergens is required')
+          end
+        end
+      end
+
+      context 'Category is frozen-food group' do
+        let(:product) { create(:product) }
+        let(:category) { create(:category, group: 'frozen-food')}
+
+        context 'Origin of product is missing' do
+          it 'should return 400 HTTP Status' do
+
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            put :update_offline, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('origin and composition is required')
+          end
+        end
+
+        context 'Composition of product is missing' do
+          it 'should return 400 HTTP Status' do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: 'France',
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            put :update_offline, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('origin and composition is required')
+          end
+        end
+
+        context 'Allergens of product is missing' do
+          it 'should return 400 HTTP Status' do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: 'France',
+              composition: 'Avec de la matière',
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            put :update_offline, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('allergens is required')
+          end
+        end
+      end
+
+      context 'Category is alcohol group' do
+        let(:product) { create(:product) }
+        let(:category) { create(:category, group: 'alcohol')}
+
+        context 'Origin of product is missing' do
+          it 'should return 400 HTTP Status' do
+
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            put :update_offline, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('origin and composition is required')
+          end
+        end
+
+        context 'Composition of product is missing' do
+          it 'should return 400 HTTP Status' do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: 'France',
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            put :update_offline, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('origin and composition is required')
+          end
+        end
+
+        context 'Allergens of product is missing' do
+          it 'should return 400 HTTP Status' do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: 'France',
+              composition: 'Avec de la matière',
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            put :update_offline, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('allergens is required')
+          end
+        end
+      end
+
+      context 'Category is cosmetic group' do
+        let(:product) { create(:product) }
+        let(:category) { create(:category, group: 'cosmetic')}
+
+        context 'Origin of product is missing' do
+          it 'should return 400 HTTP Status' do
+
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            put :update_offline, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('origin and composition is required')
+          end
+        end
+
+        context 'Composition of product is missing' do
+          it 'should return 400 HTTP Status' do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: 'France',
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            put :update_offline, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('origin and composition is required')
+          end
+        end
+
+        context 'Allergens of product is missing' do
+          it 'should return 400 HTTP Status' do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: 'France',
+              composition: 'Avec de la matière',
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            put :update_offline, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('allergens is required')
+          end
+        end
+      end
+
+      context 'Category is food group' do
+        let(:product) { create(:product) }
+        let(:category) { create(:category, group: 'food')}
+
+        context 'Origin of product is missing' do
+          it 'should return 400 HTTP Status' do
+
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            put :update_offline, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('origin and composition is required')
+          end
+        end
+
+        context 'Composition of product is missing' do
+          it 'should return 400 HTTP Status' do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: 'France',
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            put :update_offline, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('origin and composition is required')
+          end
+        end
+
+        context 'Allergens of product is missing' do
+          it 'should return 400 HTTP Status' do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: 'France',
+              composition: 'Avec de la matière',
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            put :update_offline, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('allergens is required')
+          end
+        end
+      end
+
+      context 'Category is clothing group' do
+        let(:product) { create(:product) }
+        let(:category) { create(:category, group: 'clothing')}
+
+        context 'Origin of product is missing' do
+          it 'should return 400 HTTP Status' do
+
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            put :update_offline, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('origin and composition is required')
+          end
+        end
+
+        context 'Composition of product is missing' do
+          it 'should return 400 HTTP Status' do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: 'France',
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            put :update_offline, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('origin and composition is required')
+          end
         end
       end
     end
@@ -189,7 +1119,7 @@ RSpec.describe Api::ProductsController, type: :controller do
     context "For a citizen's product" do
       context 'All ok' do
         it 'should return 200 HTTP Status with product updated' do
-          user_citizen = create(:citizen_user)
+          user_citizen = create(:citizen_user, email: 'citizen3@ecity.fr')
           product = create(:product)
           user_citizen.citizen.products << product
           user_citizen.citizen.save
@@ -243,13 +1173,16 @@ RSpec.describe Api::ProductsController, type: :controller do
           expect(result["isService"]).to eq(update_params[:isService])
           expect(result["sellerAdvice"]).to eq(update_params[:sellerAdvice])
           expect(result["description"]).to eq(update_params[:description])
+          expect(result["origin"]).to eq(update_params[:origin])
+          expect(result["allergens"]).to eq(update_params[:allergens])
+          expect(result["composition"]).to eq(update_params[:composition])
         end
       end
 
       context 'Incorrect Params' do
+        let(:user_citizen) { create(:citizen_user, email: 'citizen2@ecity.fr') }
         context 'Product not found' do
           it 'should return 404 HTTP Status' do
-            user_citizen = create(:citizen_user)
             product = create(:product)
             user_citizen.citizen.products << product
             user_citizen.citizen.save
@@ -297,7 +1230,6 @@ RSpec.describe Api::ProductsController, type: :controller do
 
         context 'Category id is missing' do
           it 'should return 400 HTTP status' do
-            user_citizen = create(:citizen_user)
             product = create(:product)
             user_citizen.citizen.products << product
             user_citizen.citizen.save
@@ -343,7 +1275,6 @@ RSpec.describe Api::ProductsController, type: :controller do
 
         context 'Category not found' do
           it 'should return 404 HTTP status' do
-            user_citizen = create(:citizen_user)
             product = create(:product)
             user_citizen.citizen.products << product
             user_citizen.citizen.save
@@ -380,12 +1311,995 @@ RSpec.describe Api::ProductsController, type: :controller do
               ]
             }
             request.headers['x-client-id'] = generate_token(user_citizen)
+            i = 1
+            Category.all.each do |category|
+              break if category.id != i
+              i = i + 1
+            end
+            update_params[:categoryId] = i
 
             put :update, params: update_params.merge(id: product.id)
 
-            should respond_with(400)
+            should respond_with(404)
           end
         end
+
+        context 'Category is dry-fresh group' do
+          let(:product) { create(:product) }
+          let(:category) { create(:category, group: 'dry-food')}
+
+          context 'Origin of product is missing' do
+            it 'should return 400 HTTP Status' do
+              user_citizen.citizen.products << product
+              user_citizen.citizen.save
+
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Composition of product is missing' do
+            it 'should return 400 HTTP Status' do
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                origin: 'France',
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Allergens of product is missing' do
+            it 'should return 400 HTTP Status' do
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                origin: 'France',
+                composition: 'Avec de la matière',
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('allergens is required')
+            end
+          end
+        end
+
+        context 'Category is fresh-food group' do
+          let(:product) { create(:product) }
+          let(:category) { create(:category, group: 'fresh-food')}
+
+          context 'Origin of product is missing' do
+            it 'should return 400 HTTP Status' do
+              user_citizen.citizen.products << product
+              user_citizen.citizen.save
+
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Composition of product is missing' do
+            it 'should return 400 HTTP Status' do
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                origin: 'France',
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Allergens of product is missing' do
+            it 'should return 400 HTTP Status' do
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                origin: 'France',
+                composition: 'Avec de la matière',
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('allergens is required')
+            end
+          end
+        end
+
+        context 'Category is frozen-food group' do
+          let(:product) { create(:product) }
+          let(:category) { create(:category, group: 'frozen-food')}
+
+          context 'Origin of product is missing' do
+            it 'should return 400 HTTP Status' do
+              user_citizen.citizen.products << product
+              user_citizen.citizen.save
+
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Composition of product is missing' do
+            it 'should return 400 HTTP Status' do
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                origin: 'France',
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Allergens of product is missing' do
+            it 'should return 400 HTTP Status' do
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                origin: 'France',
+                composition: 'Avec de la matière',
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('allergens is required')
+            end
+          end
+        end
+
+        context 'Category is alcohol group' do
+          let(:product) { create(:product) }
+          let(:category) { create(:category, group: 'alcohol')}
+
+          context 'Origin of product is missing' do
+            it 'should return 400 HTTP Status' do
+              user_citizen.citizen.products << product
+              user_citizen.citizen.save
+
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Composition of product is missing' do
+            it 'should return 400 HTTP Status' do
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                origin: 'France',
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Allergens of product is missing' do
+            it 'should return 400 HTTP Status' do
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                origin: 'France',
+                composition: 'Avec de la matière',
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('allergens is required')
+            end
+          end
+        end
+
+        context 'Category is cosmetic group' do
+          let(:product) { create(:product) }
+          let(:category) { create(:category, group: 'cosmetic')}
+
+          context 'Origin of product is missing' do
+            it 'should return 400 HTTP Status' do
+              user_citizen.citizen.products << product
+              user_citizen.citizen.save
+
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Composition of product is missing' do
+            it 'should return 400 HTTP Status' do
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                origin: 'France',
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Allergens of product is missing' do
+            it 'should return 400 HTTP Status' do
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                origin: 'France',
+                composition: 'Avec de la matière',
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('allergens is required')
+            end
+          end
+        end
+
+        context 'Category is food group' do
+          let(:product) { create(:product) }
+          let(:category) { create(:category, group: 'food')}
+
+          context 'Origin of product is missing' do
+            it 'should return 400 HTTP Status' do
+              user_citizen.citizen.products << product
+              user_citizen.citizen.save
+
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Composition of product is missing' do
+            it 'should return 400 HTTP Status' do
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                origin: 'France',
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Allergens of product is missing' do
+            it 'should return 400 HTTP Status' do
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                origin: 'France',
+                composition: 'Avec de la matière',
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('allergens is required')
+            end
+          end
+        end
+
+        context 'Category is clothing group' do
+          let(:product) { create(:product) }
+          let(:category) { create(:category, group: 'clothing')}
+
+          context 'Origin of product is missing' do
+            it 'should return 400 HTTP Status' do
+              user_citizen.citizen.products << product
+              user_citizen.citizen.save
+
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Composition of product is missing' do
+            it 'should return 400 HTTP Status' do
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                origin: 'France',
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+        end
+
       end
 
       context 'Bad authentication' do
@@ -433,7 +2347,7 @@ RSpec.describe Api::ProductsController, type: :controller do
 
         context 'User not found' do
           it 'should return 403 HTTP Status' do
-            user_citizen = create(:citizen_user)
+            user_citizen = create(:citizen_user, email: 'citizen3@ecity.fr')
             product = create(:product)
             user_citizen.citizen.products << product
             user_citizen.citizen.save
@@ -482,7 +2396,7 @@ RSpec.describe Api::ProductsController, type: :controller do
 
         context 'User is not a citizen' do
           it 'should return 403 HTTP Status' do
-            user_citizen = create(:citizen_user)
+            user_citizen = create(:citizen_user, email: 'citizen4@ecity.fr')
             product = create(:product)
             user_citizen.citizen.products << product
             user_citizen.citizen.save
@@ -531,7 +2445,7 @@ RSpec.describe Api::ProductsController, type: :controller do
 
         context 'User is a citizen but not the owner of the product' do
           it 'should return 403 HTTP Status' do
-            user_citizen = create(:citizen_user)
+            user_citizen = create(:citizen_user, email: 'citizen5@ecity.fr')
             product = create(:product)
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
@@ -633,6 +2547,9 @@ RSpec.describe Api::ProductsController, type: :controller do
           expect(result["isService"]).to eq(update_params[:isService])
           expect(result["sellerAdvice"]).to eq(update_params[:sellerAdvice])
           expect(result["description"]).to eq(update_params[:description])
+          expect(result["origin"]).to eq(update_params[:origin])
+          expect(result["allergens"]).to eq(update_params[:allergens])
+          expect(result["composition"]).to eq(update_params[:composition])
         end
       end
 
@@ -681,10 +2598,10 @@ RSpec.describe Api::ProductsController, type: :controller do
 
         context 'User not found' do
           it 'should return 403 HTTP Status' do
-            user_citizen = create(:citizen_user)
+            user_shop_employee = create(:shop_employee_user, email: 'shop.employee10@ecity.fr')
             product = create(:product)
-            user_citizen.citizen.products << product
-            user_citizen.citizen.save
+            user_shop_employee.shop_employee.shops << product.shop
+            user_shop_employee.shop_employee.save
 
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
@@ -719,7 +2636,7 @@ RSpec.describe Api::ProductsController, type: :controller do
               ]
             }
 
-            request.headers['x-client-id'] = generate_token(user_citizen)
+            request.headers['x-client-id'] = generate_token(user_shop_employee)
             User.delete_all
 
             put :update, params: update_params.merge(id: product.id)
@@ -730,7 +2647,7 @@ RSpec.describe Api::ProductsController, type: :controller do
 
         context 'User is not a shop employee' do
           it 'should return 403 HTTP Status' do
-            user_shop_employee = create(:shop_employee_user, email: 'shop.employee4@ecity.fr')
+            user_shop_employee = create(:shop_employee_user, email: 'shop.employee90@ecity.fr')
             product = create(:product)
             user_shop_employee.shop_employee.shops << product.shop
             user_shop_employee.shop_employee.save
@@ -767,7 +2684,7 @@ RSpec.describe Api::ProductsController, type: :controller do
               ]
             }
 
-            user_citizen = create(:citizen_user)
+            user_citizen = create(:citizen_user, email: 'citizen756@ecity.fr')
             request.headers['x-client-id'] = generate_token(user_citizen)
 
             put :update, params: update_params.merge(id: product.id)
@@ -823,9 +2740,10 @@ RSpec.describe Api::ProductsController, type: :controller do
       end
 
       context 'Incorrect Params' do
+        let(:user_shop_employee) {create(:shop_employee_user, email: 'shop.employee5@ecity.fr')}
+
         context 'Product not found' do
           it 'should return 404 HTTP Status' do
-            user_shop_employee = create(:shop_employee_user, email: 'shop.employee5@ecity.fr')
             product = create(:product)
             user_shop_employee.shop_employee.shops << product.shop
             user_shop_employee.shop_employee.save
@@ -873,7 +2791,6 @@ RSpec.describe Api::ProductsController, type: :controller do
 
         context 'Category id is missing' do
           it 'should return 400 HTTP status' do
-            user_shop_employee = create(:shop_employee_user, email: 'shop.employee6@ecity.fr')
             product = create(:product)
             user_shop_employee.shop_employee.shops << product.shop
             user_shop_employee.shop_employee.save
@@ -919,7 +2836,6 @@ RSpec.describe Api::ProductsController, type: :controller do
 
         context 'Category not found' do
           it 'should return 404 HTTP status' do
-            user_shop_employee = create(:shop_employee_user, email: 'shop.employee7@ecity.fr')
             product = create(:product)
             user_shop_employee.shop_employee.shops << product.shop
             user_shop_employee.shop_employee.save
@@ -956,10 +2872,1017 @@ RSpec.describe Api::ProductsController, type: :controller do
               ]
             }
             request.headers['x-client-id'] = generate_token(user_shop_employee)
+            i = 1
+            Category.all.each do |category|
+              break if category.id != i
+              i = i + 1
+            end
+            update_params[:categoryId] = i
 
             put :update, params: update_params.merge(id: product.id)
 
             should respond_with(404)
+          end
+        end
+
+        context 'Category is dry-fresh group' do
+          let(:product) { create(:product) }
+          let(:category) { create(:category, group: 'dry-food')}
+
+          context 'Origin of product is missing' do
+            it 'should return 400 HTTP Status' do
+              user_shop_employee.shop_employee.shops << product.shop
+              user_shop_employee.shop_employee.save
+
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Composition of product is missing' do
+            it 'should return 400 HTTP Status' do
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                origin: 'France',
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+              user_shop_employee.shop_employee.shops << product.shop
+              user_shop_employee.shop_employee.save
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Allergens of product is missing' do
+            it 'should return 400 HTTP Status' do
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                origin: 'France',
+                composition: 'Avec de la matière',
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+              user_shop_employee.shop_employee.shops << product.shop
+              user_shop_employee.shop_employee.save
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('allergens is required')
+            end
+          end
+        end
+
+        context 'Category is fresh-food group' do
+          let(:product) { create(:product) }
+          let(:category) { create(:category, group: 'fresh-food')}
+
+          context 'Origin of product is missing' do
+            it 'should return 400 HTTP Status' do
+              user_shop_employee.shop_employee.shops << product.shop
+              user_shop_employee.shop_employee.save
+
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Composition of product is missing' do
+            it 'should return 400 HTTP Status' do
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                origin: 'France',
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+              user_shop_employee.shop_employee.shops << product.shop
+              user_shop_employee.shop_employee.save
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Allergens of product is missing' do
+            it 'should return 400 HTTP Status' do
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                origin: 'France',
+                composition: 'Avec de la matière',
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+              user_shop_employee.shop_employee.shops << product.shop
+              user_shop_employee.shop_employee.save
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('allergens is required')
+            end
+          end
+        end
+
+        context 'Category is frozen-food group' do
+          let(:product) { create(:product) }
+          let(:category) { create(:category, group: 'frozen-food')}
+
+          context 'Origin of product is missing' do
+            it 'should return 400 HTTP Status' do
+              user_shop_employee.shop_employee.shops << product.shop
+              user_shop_employee.shop_employee.save
+
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Composition of product is missing' do
+            it 'should return 400 HTTP Status' do
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                origin: 'France',
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+              user_shop_employee.shop_employee.shops << product.shop
+              user_shop_employee.shop_employee.save
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Allergens of product is missing' do
+            it 'should return 400 HTTP Status' do
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                origin: 'France',
+                composition: 'Avec de la matière',
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+              user_shop_employee.shop_employee.shops << product.shop
+              user_shop_employee.shop_employee.save
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('allergens is required')
+            end
+          end
+        end
+
+        context 'Category is alcohol group' do
+          let(:product) { create(:product) }
+          let(:category) { create(:category, group: 'alcohol')}
+
+          context 'Origin of product is missing' do
+            it 'should return 400 HTTP Status' do
+              user_shop_employee.shop_employee.shops << product.shop
+              user_shop_employee.shop_employee.save
+
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Composition of product is missing' do
+            it 'should return 400 HTTP Status' do
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                origin: 'France',
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+              user_shop_employee.shop_employee.shops << product.shop
+              user_shop_employee.shop_employee.save
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Allergens of product is missing' do
+            it 'should return 400 HTTP Status' do
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                origin: 'France',
+                composition: 'Avec de la matière',
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+              user_shop_employee.shop_employee.shops << product.shop
+              user_shop_employee.shop_employee.save
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('allergens is required')
+            end
+          end
+        end
+
+        context 'Category is cosmetic group' do
+          let(:product) { create(:product) }
+          let(:category) { create(:category, group: 'cosmetic')}
+
+          context 'Origin of product is missing' do
+            it 'should return 400 HTTP Status' do
+              user_shop_employee.shop_employee.shops << product.shop
+              user_shop_employee.shop_employee.save
+
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Composition of product is missing' do
+            it 'should return 400 HTTP Status' do
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                origin: 'France',
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+              user_shop_employee.shop_employee.shops << product.shop
+              user_shop_employee.shop_employee.save
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Allergens of product is missing' do
+            it 'should return 400 HTTP Status' do
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                origin: 'France',
+                composition: 'Avec de la matière',
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+              user_shop_employee.shop_employee.shops << product.shop
+              user_shop_employee.shop_employee.save
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('allergens is required')
+            end
+          end
+        end
+
+        context 'Category is food group' do
+          let(:product) { create(:product) }
+          let(:category) { create(:category, group: 'food')}
+
+          context 'Origin of product is missing' do
+            it 'should return 400 HTTP Status' do
+              user_shop_employee.shop_employee.shops << product.shop
+              user_shop_employee.shop_employee.save
+
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Composition of product is missing' do
+            it 'should return 400 HTTP Status' do
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                origin: 'France',
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+              user_shop_employee.shop_employee.shops << product.shop
+              user_shop_employee.shop_employee.save
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Allergens of product is missing' do
+            it 'should return 400 HTTP Status' do
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                origin: 'France',
+                composition: 'Avec de la matière',
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+              user_shop_employee.shop_employee.shops << product.shop
+              user_shop_employee.shop_employee.save
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('allergens is required')
+            end
+          end
+        end
+
+        context 'Category is clothing group' do
+          let(:product) { create(:product) }
+          let(:category) { create(:category, group: 'clothing')}
+
+          context 'Origin of product is missing' do
+            it 'should return 400 HTTP Status' do
+              user_shop_employee.shop_employee.shops << product.shop
+              user_shop_employee.shop_employee.save
+
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Composition of product is missing' do
+            it 'should return 400 HTTP Status' do
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: category.id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                origin: 'France',
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  {
+                    basePrice: 19.9,
+                    weight: 0.24,
+                    quantity: 4,
+                    isDefault: true,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+              user_shop_employee.shop_employee.shops << product.shop
+              user_shop_employee.shop_employee.save
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              put :update, params: update_params.merge(id: product.id)
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
           end
         end
       end
@@ -997,7 +3920,7 @@ RSpec.describe Api::ProductsController, type: :controller do
     context "For a citizen's product" do
       context 'All ok' do
       it 'should return 201 HTTP Status with product created' do
-        user_citizen = create(:citizen_user)
+        user_citizen = create(:citizen_user, email: "citizen0@ecity.fr")
 
         create_params = {
           name: "manteau MAC",
@@ -1044,10 +3967,10 @@ RSpec.describe Api::ProductsController, type: :controller do
       end
 
       context 'Param incorrect' do
+        let(:user_citizen) { create(:citizen_user, email: 'citizen1@ecity.fr') }
+
         context 'Shop id is missing' do
           it 'should return 400 HTTP status' do
-            user_citizen = create(:citizen_user)
-
             create_params = {
               name: "manteau MAC",
               slug: "manteau-mac",
@@ -1082,7 +4005,6 @@ RSpec.describe Api::ProductsController, type: :controller do
                 }
               ]
             }
-
             request.headers['x-client-id'] = generate_token(user_citizen)
 
             post :create, params: create_params
@@ -1091,59 +4013,8 @@ RSpec.describe Api::ProductsController, type: :controller do
           end
         end
 
-        context 'Shop not found' do
-          it 'should return 404 HTTP status' do
-            user_citizen = create(:citizen_user)
-
-            create_params = {
-              name: "manteau MAC",
-              slug: "manteau-mac",
-              categoryId: create(:category).id,
-              brand: "3sixteen",
-              status: "online",
-              isService: true,
-              sellerAdvice: "pouet",
-              shopId: create(:shop).id,
-              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
-              variants: [
-                {
-                  basePrice: 379,
-                  weight: 1,
-                  quantity: 0,
-                  imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
-                  isDefault: false,
-                  goodDeal: {
-                    startAt: "17/05/2021",
-                    endAt: "18/06/2021",
-                    discount: 20
-                  },
-                  characteristics: [
-                    {
-                      value: "coloris black",
-                      name: "color"
-                    },
-                    {
-                      value: "S",
-                      name: "size"
-                    }
-                  ]
-                }
-              ]
-            }
-            Shop.destroy_all
-
-            request.headers['x-client-id'] = generate_token(user_citizen)
-
-            post :create, params: create_params
-
-            should respond_with(404)
-          end
-        end
-
         context 'Category id is missing' do
           it 'should return 400 HTTP status' do
-            user_citizen = create(:citizen_user)
-
             create_params = {
               name: "manteau MAC",
               slug: "manteau-mac",
@@ -1189,8 +4060,6 @@ RSpec.describe Api::ProductsController, type: :controller do
 
         context 'Category not found' do
           it 'should return 404 HTTP Status' do
-            user_citizen = create(:citizen_user)
-
             create_params = {
               name: "manteau MAC",
               slug: "manteau-mac",
@@ -1239,7 +4108,1015 @@ RSpec.describe Api::ProductsController, type: :controller do
             should respond_with(404)
           end
         end
+
+        context 'Category is dry-fresh group' do
+          let(:category) {create(:category, group: "dry-food")}
+          context 'Origin of product is missing' do
+            it 'should return 400 HTTP Status' do
+              category = create(:category)
+              category.group = "dry-food"
+              category.save
+
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Composition of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Allergens of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                composition: "Tissu",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('allergens is required')
+            end
+          end
+        end
+
+        context 'Category is fresh-food group' do
+          let(:category) { create(:category, group: "fresh-food") }
+          context 'Origin of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Composition of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Allergens of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                composition: "Tissu",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('allergens is required')
+            end
+          end
+        end
+
+        context 'Category is frozen-food group' do
+          let(:category) { create(:category, group: "frozen-food") }
+          context 'Origin of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Composition of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Allergens of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                composition: "Tissu",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('allergens is required')
+            end
+          end
+        end
+
+        context 'Category is alcohol group' do
+          let(:category) {create(:category, group: "alcohol")}
+
+          context 'Origin of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Composition of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Allergens of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                composition: "Tissu",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('allergens is required')
+            end
+          end
+        end
+
+        context 'Category is cosmetic group' do
+          let(:category) { create(:category, group: "cosmetic") }
+
+          context 'Origin of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Composition of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Allergens of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                composition: "Tissu",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('allergens is required')
+            end
+          end
+        end
+
+        context 'Category is food group' do
+          let(:category) { create(:category, group: "food") }
+          context 'Origin of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Composition of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Allergens of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                composition: "Tissu",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('allergens is required')
+            end
+          end
+        end
+
+        context 'Category is clothing group' do
+          let(:category) { create(:category, group: "clothing") }
+
+          context 'Origin of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Composition of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_citizen)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+        end
       end
+
 
       context 'Bad authentication' do
         context 'x-client-id is missing' do
@@ -1385,6 +5262,8 @@ RSpec.describe Api::ProductsController, type: :controller do
       end
 
       context 'Param incorrect' do
+        let(:user_shop_employee) { create(:shop_employee_user, email: 'shop.employee7@ecity.fr') }
+
         context 'Shop id is missing' do
           it 'should return 400 HTTP status' do
             create_params = {
@@ -1421,8 +5300,6 @@ RSpec.describe Api::ProductsController, type: :controller do
                 }
               ]
             }
-            user_shop_employee = create(:shop_employee_user, email: 'shop.employee3@ecity.fr')
-
             request.headers['x-client-id'] = generate_token(user_shop_employee)
 
             post :create, params: create_params
@@ -1469,7 +5346,6 @@ RSpec.describe Api::ProductsController, type: :controller do
                 }
               ]
             }
-            user_shop_employee = create(:shop_employee_user, email: 'shop.employee4@ecity.fr')
             user_shop_employee.shop_employee.shops << shop
             user_shop_employee.shop_employee.save
             Shop.destroy_all
@@ -1518,7 +5394,6 @@ RSpec.describe Api::ProductsController, type: :controller do
                 }
               ]
             }
-            user_shop_employee = create(:shop_employee_user, email: 'shop.employee5@ecity.fr')
 
             request.headers['x-client-id'] = generate_token(user_shop_employee)
 
@@ -1570,13 +5445,1015 @@ RSpec.describe Api::ProductsController, type: :controller do
               p.save
             end
             Category.delete_all
-            user_shop_employee = create(:shop_employee_user, email: 'shop.employee6@ecity.fr')
 
             request.headers['x-client-id'] = generate_token(user_shop_employee)
 
             post :create, params: create_params
 
             should respond_with(404)
+          end
+        end
+
+        context 'Category is dry-fresh group' do
+          let(:category) {create(:category, group: "dry-food")}
+          context 'Origin of product is missing' do
+            it 'should return 400 HTTP Status' do
+              category = create(:category)
+              category.group = "dry-food"
+              category.save
+
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Composition of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Allergens of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                composition: "Tissu",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('allergens is required')
+            end
+          end
+        end
+        context 'Category is fresh-food group' do
+          let(:category) { create(:category, group: "fresh-food") }
+          context 'Origin of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Composition of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Allergens of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                composition: "Tissu",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('allergens is required')
+            end
+          end
+        end
+        context 'Category is frozen-food group' do
+          let(:category) { create(:category, group: "frozen-food") }
+          context 'Origin of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Composition of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Allergens of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                composition: "Tissu",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('allergens is required')
+            end
+          end
+        end
+        context 'Category is alcohol group' do
+          let(:category) {create(:category, group: "alcohol")}
+
+          context 'Origin of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Composition of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Allergens of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                composition: "Tissu",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('allergens is required')
+            end
+          end
+        end
+
+        context 'Category is cosmetic group' do
+          let(:category) { create(:category, group: "cosmetic") }
+
+          context 'Origin of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Composition of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Allergens of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                composition: "Tissu",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('allergens is required')
+            end
+          end
+        end
+        context 'Category is food group' do
+          let(:category) { create(:category, group: "food") }
+          context 'Origin of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Composition of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Allergens of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                composition: "Tissu",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('allergens is required')
+            end
+          end
+        end
+
+        context 'Category is clothing group' do
+          let(:category) { create(:category, group: "clothing") }
+
+          context 'Origin of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
+          end
+
+          context 'Composition of product is missing' do
+            it 'should return 400 HTTP Status' do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color"
+                      },
+                      {
+                        value: "S",
+                        name: "size"
+                      }
+                    ]
+                  }
+                ]
+              }
+
+              request.headers['x-client-id'] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result['detail']).to eq('origin and composition is required')
+            end
           end
         end
       end
@@ -1725,6 +6602,9 @@ RSpec.describe Api::ProductsController, type: :controller do
         expect(result["isService"]).to eq(create_params[:isService])
         expect(result["sellerAdvice"]).to eq(create_params[:sellerAdvice])
         expect(result["description"]).to eq(create_params[:description])
+        expect(result["origin"]).to eq(create_params[:origin])
+        expect(result["allergens"]).to eq(create_params[:allergens])
+        expect(result["composition"]).to eq(create_params[:composition])
       end
     end
 
@@ -1908,6 +6788,1039 @@ RSpec.describe Api::ProductsController, type: :controller do
           should respond_with(404)
         end
       end
+
+      context 'Category is dry-fresh group' do
+        context 'Origin of product is missing' do
+          it 'should return 400 HTTP Status' do
+            category = create(:category)
+            category.group = "dry-food"
+            category.save
+
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: category.id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              shopId: create(:shop).id,
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            post :create_offline, params: create_params
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('origin and composition is required')
+          end
+        end
+
+        context 'Composition of product is missing' do
+          it 'should return 400 HTTP Status' do
+            category = create(:category)
+            category.group = "dry-food"
+            category.save
+
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: category.id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              shopId: create(:shop).id,
+              origin: "France",
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            post :create_offline, params: create_params
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('origin and composition is required')
+          end
+        end
+
+        context 'Allergens of product is missing' do
+          it 'should return 400 HTTP Status' do
+            category = create(:category)
+            category.group = "dry-food"
+            category.save
+
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: category.id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              shopId: create(:shop).id,
+              origin: "France",
+              composition: "Tissu",
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            post :create_offline, params: create_params
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('allergens is required')
+          end
+        end
+      end
+
+      context 'Category is fresh-food group' do
+        context 'Origin of product is missing' do
+          it 'should return 400 HTTP Status' do
+            category = create(:category)
+            category.group = "fresh-food"
+            category.save
+
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: category.id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              shopId: create(:shop).id,
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            post :create_offline, params: create_params
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('origin and composition is required')
+          end
+        end
+
+        context 'Composition of product is missing' do
+          it 'should return 400 HTTP Status' do
+            category = create(:category)
+            category.group = "fresh-food"
+            category.save
+
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: category.id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              shopId: create(:shop).id,
+              origin: "France",
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            post :create_offline, params: create_params
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('origin and composition is required')
+          end
+        end
+
+        context 'Allergens of product is missing' do
+          it 'should return 400 HTTP Status' do
+            category = create(:category)
+            category.group = "fresh-food"
+            category.save
+
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: category.id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              shopId: create(:shop).id,
+              origin: "France",
+              composition: "Tissu",
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            post :create_offline, params: create_params
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('allergens is required')
+          end
+        end
+      end
+
+      context 'Category is frozen-food group' do
+        context 'Origin of product is missing' do
+          it 'should return 400 HTTP Status' do
+            category = create(:category)
+            category.group = "frozen-food"
+            category.save
+
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: category.id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              shopId: create(:shop).id,
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            post :create_offline, params: create_params
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('origin and composition is required')
+          end
+        end
+
+        context 'Composition of product is missing' do
+          it 'should return 400 HTTP Status' do
+            category = create(:category)
+            category.group = "frozen-food"
+            category.save
+
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: category.id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              shopId: create(:shop).id,
+              origin: "France",
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            post :create_offline, params: create_params
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('origin and composition is required')
+          end
+        end
+
+        context 'Allergens of product is missing' do
+          it 'should return 400 HTTP Status' do
+            category = create(:category)
+            category.group = "frozen-food"
+            category.save
+
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: category.id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              shopId: create(:shop).id,
+              origin: "France",
+              composition: "Tissu",
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            post :create_offline, params: create_params
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('allergens is required')
+          end
+        end
+      end
+
+      context 'Category is alcohol group' do
+        context 'Origin of product is missing' do
+          it 'should return 400 HTTP Status' do
+            category = create(:category)
+            category.group = "alcohol"
+            category.save
+
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: category.id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              shopId: create(:shop).id,
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            post :create_offline, params: create_params
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('origin and composition is required')
+          end
+        end
+
+        context 'Composition of product is missing' do
+          it 'should return 400 HTTP Status' do
+            category = create(:category)
+            category.group = "alcohol"
+            category.save
+
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: category.id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              shopId: create(:shop).id,
+              origin: "France",
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            post :create_offline, params: create_params
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('origin and composition is required')
+          end
+        end
+
+        context 'Allergens of product is missing' do
+          it 'should return 400 HTTP Status' do
+            category = create(:category)
+            category.group = "alcohol"
+            category.save
+
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: category.id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              shopId: create(:shop).id,
+              origin: "France",
+              composition: "Tissu",
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            post :create_offline, params: create_params
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('allergens is required')
+          end
+        end
+      end
+
+      context 'Category is cosmetic group' do
+        context 'Origin of product is missing' do
+          it 'should return 400 HTTP Status' do
+            category = create(:category)
+            category.group = "cosmetic"
+            category.save
+
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: category.id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              shopId: create(:shop).id,
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            post :create_offline, params: create_params
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('origin and composition is required')
+          end
+        end
+
+        context 'Composition of product is missing' do
+          it 'should return 400 HTTP Status' do
+            category = create(:category)
+            category.group = "cosmetic"
+            category.save
+
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: category.id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              shopId: create(:shop).id,
+              origin: "France",
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            post :create_offline, params: create_params
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('origin and composition is required')
+          end
+        end
+
+        context 'Allergens of product is missing' do
+          it 'should return 400 HTTP Status' do
+            category = create(:category)
+            category.group = "cosmetic"
+            category.save
+
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: category.id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              shopId: create(:shop).id,
+              origin: "France",
+              composition: "Tissu",
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            post :create_offline, params: create_params
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('allergens is required')
+          end
+        end
+      end
+
+      context 'Category is food group' do
+        context 'Origin of product is missing' do
+          it 'should return 400 HTTP Status' do
+            category = create(:category)
+            category.group = "food"
+            category.save
+
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: category.id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              shopId: create(:shop).id,
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            post :create_offline, params: create_params
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('origin and composition is required')
+          end
+        end
+
+        context 'Composition of product is missing' do
+          it 'should return 400 HTTP Status' do
+            category = create(:category)
+            category.group = "food"
+            category.save
+
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: category.id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              shopId: create(:shop).id,
+              origin: "France",
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            post :create_offline, params: create_params
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('origin and composition is required')
+          end
+        end
+
+        context 'Allergens of product is missing' do
+          it 'should return 400 HTTP Status' do
+            category = create(:category)
+            category.group = "food"
+            category.save
+
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: category.id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              shopId: create(:shop).id,
+              origin: "France",
+              composition: "Tissu",
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            post :create_offline, params: create_params
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('allergens is required')
+          end
+        end
+      end
+
+      context 'Category is clothing group' do
+        context 'Origin of product is missing' do
+          it 'should return 400 HTTP Status' do
+            category = create(:category)
+            category.group = "clothing"
+            category.save
+
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: category.id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              shopId: create(:shop).id,
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            post :create_offline, params: create_params
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('origin and composition is required')
+          end
+        end
+
+        context 'Composition of product is missing' do
+          it 'should return 400 HTTP Status' do
+            category = create(:category)
+            category.group = "clothing"
+            category.save
+
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: category.id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              shopId: create(:shop).id,
+              origin: "France",
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageUrls: ['https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg'],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color"
+                    },
+                    {
+                      value: "S",
+                      name: "size"
+                    }
+                  ]
+                }
+              ]
+            }
+
+            post :create_offline, params: create_params
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result['detail']).to eq('origin and composition is required')
+          end
+        end
+      end
     end
   end
 
@@ -1915,7 +7828,7 @@ RSpec.describe Api::ProductsController, type: :controller do
     context "For a citizen's product" do
       context 'All ok' do
         it 'should return 204 HTTP status' do
-          user_citizen = create(:citizen_user)
+          user_citizen = create(:citizen_user, email: 'citizen6@ecity.fr')
           product = create(:product)
           user_citizen.citizen.products << product
           user_citizen.citizen.save
@@ -1931,7 +7844,7 @@ RSpec.describe Api::ProductsController, type: :controller do
       context 'Incorrect param' do
         context 'Product not found' do
           it 'should return 404 HTTP status' do
-            user_citizen = create(:citizen_user)
+            user_citizen = create(:citizen_user, email: 'citizen5@ecity.fr')
             product = create(:product)
             user_citizen.citizen.products << product
             user_citizen.citizen.save
