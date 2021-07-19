@@ -151,6 +151,7 @@ RSpec.describe 'api/categories', type: :request do
 
   path '/api/auth/products/{id}' do
     parameter name: 'id', in: :path, type: :integer, description: 'Unique identifier of the product.'
+    parameter name: 'X-client-id', in: :header
 
     put('Update a product') do
       tags 'Products'
@@ -159,7 +160,6 @@ RSpec.describe 'api/categories', type: :request do
       description 'Return the product updated'
       security [{ authorization: [] }]
 
-      parameter name: 'X-client-id', in: :header
       parameter name: :product, in: :body, schema: {
         type: :object,
         properties: {
@@ -264,8 +264,6 @@ RSpec.describe 'api/categories', type: :request do
       description 'Delete a product'
       security [{ authorization: [] }]
 
-      parameter name: 'X-client-id', in: :header
-
       response(204, 'Product deleted') do
         run_test!
       end
@@ -305,6 +303,7 @@ RSpec.describe 'api/categories', type: :request do
       security [{ authorization: [] }]
 
       parameter name: 'X-client-id', in: :header
+
       parameter name: :product, in: :body, schema: {
         type: :object,
         properties: {
