@@ -12,7 +12,6 @@ class Rack::Attack
   end
 
   safelist("allow access swagger path") do |req|
-    req.get? && "/api-docs" == req.path
-    req.get? && "/api-docs/index.html" == req.path
+    req.get? && req.path.start_with?("/api-docs")
   end
 end
