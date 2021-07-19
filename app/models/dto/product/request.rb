@@ -1,7 +1,7 @@
 module Dto
   module Product
     class Request
-      attr_reader :name, :slug, :category_id, :brand, :status, :seller_advice, :is_service, :description, :variants, :image_urls, :citizen_advice, :shop_id
+      attr_reader :name, :slug, :category_id, :brand, :status, :seller_advice, :is_service, :description, :variants, :image_urls, :citizen_advice, :shop_id, :origin, :composition, :allergens
 
       def initialize(**args)
         @name = args[:name]
@@ -18,6 +18,9 @@ module Dto
         @citizen_advice = args[:citizen_advice]
         @category_id = args[:category_id]
         @shop_id = args[:shop_id]
+        @origin = args[:origin]
+        @allergens = args[:allergens]
+        @composition = args[:composition]
       end
     end
   end
