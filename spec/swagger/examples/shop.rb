@@ -19,7 +19,7 @@ module Examples
             example: 'jardin-local',
             description: 'Slug of a shop.'
           },
-          image_urls: {
+          imageUrls: {
             type: 'array',
             example: ['http://www.image.com/image.jpg'],
             description: 'Images of shop'
@@ -44,17 +44,17 @@ module Examples
             example: "Ma boutique est top",
             description: "Shop's baseline"
           },
-          facebook_link: {
+          facebookLink: {
             type: 'string',
             example: 'http://www.facebook.com/boutique',
             description: "Shop's facebook link"
           },
-          instagram_link: {
+          instagramLink: {
             type: 'string',
             example: 'http://www.instagram.com/boutique',
             description: "Shop's instagram link"
           },
-          website_link: {
+          websiteLink: {
             type: 'string',
             example: 'http://www.boutique.com/',
             description: "Shop's website link"
