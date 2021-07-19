@@ -3968,7 +3968,7 @@ RSpec.describe Api::ProductsController, type: :controller do
         expect(result["name"]).to eq(create_params[:name])
         expect(result["category"]["id"]).to eq(create_params[:categoryId])
         expect(result["brand"]).to eq(create_params[:brand])
-        expect(result["status"]).to eq(create_params[:status])
+        expect(result["status"]).to eq('submitted')
         expect(result["isService"]).to eq(create_params[:isService])
         expect(result["sellerAdvice"]).to eq(create_params[:sellerAdvice])
         expect(result["description"]).to eq(create_params[:description])
@@ -5129,7 +5129,6 @@ RSpec.describe Api::ProductsController, type: :controller do
           end
         end
       end
-
 
       context 'Bad authentication' do
         context 'x-client-id is missing' do

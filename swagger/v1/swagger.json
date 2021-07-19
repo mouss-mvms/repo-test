@@ -466,6 +466,13 @@
           "schema": {
             "type": "integer"
           }
+        },
+        {
+          "name": "X-client-id",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          }
         }
       ],
       "put": {
@@ -482,10 +489,7 @@
           }
         ],
         "parameters": [
-          {
-            "name": "X-client-id",
-            "in": "header"
-          }
+
         ],
         "responses": {
           "200": {
@@ -740,12 +744,6 @@
             ]
           }
         ],
-        "parameters": [
-          {
-            "name": "X-client-id",
-            "in": "header"
-          }
-        ],
         "responses": {
           "204": {
             "description": "Product deleted"
@@ -799,6 +797,15 @@
       }
     },
     "/api/auth/products": {
+      "parameters": [
+        {
+          "name": "X-client-id",
+          "in": "header",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
       "post": {
         "summary": "Create a product",
         "tags": [
@@ -813,10 +820,7 @@
           }
         ],
         "parameters": [
-          {
-            "name": "X-client-id",
-            "in": "header"
-          }
+
         ],
         "responses": {
           "201": {
