@@ -4,10 +4,14 @@ class Rack::Attack
   end
 
   safelist("allow access root path") do |req|
-    req.path == "/" && req.get?
+    req.get? && "/"  == req.path
   end
 
   safelist("allow from localhost") do |req|
     "127.0.0.1" == req.ip || "::1" == req.ip
+  end
+
+  safelist("allow access swagger path") do |req|
+    req.get? && req.path.start_with?("/api-docs")
   end
 end
