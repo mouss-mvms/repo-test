@@ -84,7 +84,7 @@
                   "type": "object",
                   "oneOf": [
                     {
-                      "$ref": "#/components/schemas/Error"
+                      "$ref": "#/components/schemas/BadRequest"
                     }
                   ]
                 }
@@ -99,7 +99,7 @@
                   "type": "object",
                   "oneOf": [
                     {
-                      "$ref": "#/components/schemas/Error"
+                      "$ref": "#/components/schemas/NotFound"
                     }
                   ]
                 }
@@ -499,7 +499,7 @@
                   "type": "object",
                   "oneOf": [
                     {
-                      "$ref": "#/components/schemas/Error"
+                      "$ref": "#/components/schemas/BadRequest"
                     }
                   ]
                 }
@@ -1281,7 +1281,7 @@
                   "type": "object",
                   "oneOf": [
                     {
-                      "$ref": "#/components/schemas/Error"
+                      "$ref": "#/components/schemas/BadRequest"
                     }
                   ]
                 }
@@ -1296,7 +1296,7 @@
                   "type": "object",
                   "oneOf": [
                     {
-                      "$ref": "#/components/schemas/Error"
+                      "$ref": "#/components/schemas/Unauthorized"
                     }
                   ]
                 }
@@ -1355,7 +1355,7 @@
                   "type": "object",
                   "oneOf": [
                     {
-                      "$ref": "#/components/schemas/Error"
+                      "$ref": "#/components/schemas/NotFound"
                     }
                   ]
                 }
@@ -1423,7 +1423,7 @@
                   "type": "object",
                   "oneOf": [
                     {
-                      "$ref": "#/components/schemas/Error"
+                      "$ref": "#/components/schemas/BadRequest"
                     }
                   ]
                 }
@@ -1546,7 +1546,7 @@
                   "type": "object",
                   "oneOf": [
                     {
-                      "$ref": "#/components/schemas/Error"
+                      "$ref": "#/components/schemas/BadRequest"
                     }
                   ]
                 }
@@ -2067,26 +2067,6 @@
           "endAt",
           "discount"
         ]
-      },
-      "Error": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "integer",
-            "example": 400,
-            "description": "Status of an error."
-          },
-          "message": {
-            "type": "string",
-            "example": "Bad Request",
-            "description": "Message of an error."
-          },
-          "detail": {
-            "type": "string",
-            "example": "The syntax of the query is incorrect.",
-            "description": "Detail message of an error."
-          }
-        }
       },
       "Unauthorized": {
         "type": "object",

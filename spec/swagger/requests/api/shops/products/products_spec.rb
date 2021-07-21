@@ -18,12 +18,12 @@ RSpec.describe 'api/shops/products', type: :request do
       end
 
       response(400, 'Bad request') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Error'}]
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
         run_test!
       end
 
       response(401, 'Unauthorized') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Error'}]
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Unauthorized'}]
         run_test!
       end
     end
