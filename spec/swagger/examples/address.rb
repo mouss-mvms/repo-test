@@ -30,12 +30,12 @@ module Examples
             description: "Address's postal code"
           },
           latitude: {
-            type: 'float',
+            type: 'number',
             example: 44.82408,
             description: "Address's latitude"
           },
           longitude: {
-            type: 'float',
+            type: 'number',
             example: -0.62295,
             description: "Address's longitude"
           },

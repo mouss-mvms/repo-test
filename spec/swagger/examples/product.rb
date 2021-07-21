@@ -12,7 +12,10 @@ module Examples
           sellerAdvice: {type: :string, example: "Taille petite, prendre une demi pointure au dessus", description: 'Advice from seller of product'},
           isService: {type: :boolean, example: false, description: 'Tell if the product is a service'},
           citizenAdvice: {type: :string, example: 'Produit trouvé un commercant trop sympa', description: 'Advice from citizen of product'},
-          categoryId: {type: :integer, example: 4, description: 'Category id of product'},
+          category: {
+            '$ref': '#/components/schemas/Category',
+            description: 'Category of a product'
+          },
           imageUrls: {
             type: 'array',
             items: {
@@ -30,8 +33,8 @@ module Examples
             items: {
               type: :object,
               properties: {
-                basePrice: {type: :float, example: 44.99, description: "Price of product's variant"},
-                weight: {type: :float, example: 0.56, description: "Weight of product's variant (in Kg)"},
+                basePrice: {type: :number, example: 44.99, description: "Price of product's variant"},
+                weight: {type: :number, example: 0.56, description: "Weight of product's variant (in Kg)"},
                 quantity: {type: :integer, example: 9, description: "Stock of product's variant"},
                 isDefault: {type: :boolean, example: true, description: "Tell if this variant is the product's default variant"},
                 goodDeal: {
@@ -43,7 +46,7 @@ module Examples
                   },
                   required: %w[startAt, endAt, discount]
                 },
-                characteristic: {
+                characteristics: {
                   type: :array,
                   items: {
                     type: :object,

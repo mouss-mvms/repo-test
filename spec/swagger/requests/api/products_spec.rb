@@ -27,8 +27,8 @@ RSpec.describe 'api/categories', type: :request do
             items: {
               type: :object,
               properties: {
-                basePrice: {type: :float, example: 44.99, description: "Price of product's variant"},
-                weight: {type: :float, example: 0.56, description: "Weight of product's variant (in Kg)"},
+                basePrice: {type: :number, example: 44.99, description: "Price of product's variant"},
+                weight: {type: :number, example: 0.56, description: "Weight of product's variant (in Kg)"},
                 quantity: {type: :integer, example: 9, description: "Stock of product's variant"},
                 isDefault: {type: :boolean, example: true, description: "Tell if this variant is the product's default variant"},
                 goodDeal: {
@@ -40,7 +40,7 @@ RSpec.describe 'api/categories', type: :request do
                   },
                   required: %w[startAt, endAt, discount]
                 },
-                characteristic: {
+                characteristics: {
                   type: :array,
                   items: {
                     type: :object,
@@ -63,26 +63,17 @@ RSpec.describe 'api/categories', type: :request do
       }
 
       response(200, 'successful') do
-        schema type: :object,
-               properties: {
-                 product: {'$ref': '#/components/schemas/Product'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Product'}]
         run_test!
       end
 
       response(400, 'Bad request') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/BadRequest'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
         run_test!
       end
 
       response(404, 'Product not found') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/NotFound'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/NotFound'}]
         run_test!
       end
     end
@@ -99,18 +90,12 @@ RSpec.describe 'api/categories', type: :request do
       end
 
       response(400, 'Bad request') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/BadRequest'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
         run_test!
       end
 
       response(404, 'Product not found') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/NotFound'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/NotFound'}]
         run_test!
       end
     end
@@ -122,20 +107,12 @@ RSpec.describe 'api/categories', type: :request do
       security [{ authorization: [] }]
 
       response(200, 'Successful') do
-        schema type: :object,
-               properties: {
-                  product: {
-                    '$ref': '#/components/schemas/Product'
-                  }
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Product'}]
         run_test!
       end
 
       response(404, 'Product not found') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/NotFound'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/NotFound'}]
         run_test!
       end
     end
@@ -168,8 +145,8 @@ RSpec.describe 'api/categories', type: :request do
             items: {
               type: :object,
               properties: {
-                basePrice: {type: :float, example: 44.99, description: "Price of product's variant"},
-                weight: {type: :float, example: 0.56, description: "Weight of product's variant (in Kg)"},
+                basePrice: {type: :number, example: 44.99, description: "Price of product's variant"},
+                weight: {type: :number, example: 0.56, description: "Weight of product's variant (in Kg)"},
                 quantity: {type: :integer, example: 9, description: "Stock of product's variant"},
                 isDefault: {type: :boolean, example: true, description: "Tell if this variant is the product's default variant"},
                 goodDeal: {
@@ -181,7 +158,7 @@ RSpec.describe 'api/categories', type: :request do
                   },
                   required: %w[startAt, endAt, discount]
                 },
-                characteristic: {
+                characteristics: {
                   type: :array,
                   items: {
                     type: :object,
@@ -204,44 +181,27 @@ RSpec.describe 'api/categories', type: :request do
       }
 
       response(200, 'Successful') do
-        schema type: :object,
-               properties: {
-                  product: {
-                    '$ref': '#/components/schemas/Product'
-                  }
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Product'}]
         run_test!
       end
 
       response(400, 'Bad request') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/Error'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Error'}]
         run_test!
       end
 
       response(401, 'Unauthorized') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/Unauthorized'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Unauthorized'}]
         run_test!
       end
 
       response(403, 'Forbidden') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/Forbidden'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Forbidden'}]
         run_test!
       end
 
       response(404, 'Product not found') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/NotFound'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/NotFound'}]
         run_test!
       end
     end
@@ -258,26 +218,17 @@ RSpec.describe 'api/categories', type: :request do
       end
 
       response(400, 'Bad request') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/BadRequest'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
         run_test!
       end
 
       response(401, 'Unauthorized') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/Unauthorized'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Unauthorized'}]
         run_test!
       end
 
       response(403, 'Forbidden') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/Forbidden'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Forbidden'}]
         run_test!
       end
     end
@@ -310,8 +261,8 @@ RSpec.describe 'api/categories', type: :request do
             items: {
               type: :object,
               properties: {
-                basePrice: {type: :float, example: 44.99, description: "Price of product's variant"},
-                weight: {type: :float, example: 0.56, description: "Weight of product's variant (in Kg)"},
+                basePrice: {type: :number, example: 44.99, description: "Price of product's variant"},
+                weight: {type: :number, example: 0.56, description: "Weight of product's variant (in Kg)"},
                 quantity: {type: :integer, example: 9, description: "Stock of product's variant"},
                 isDefault: {type: :boolean, example: true, description: "Tell if this variant is the product's default variant"},
                 goodDeal: {
@@ -323,7 +274,7 @@ RSpec.describe 'api/categories', type: :request do
                   },
                   required: %w[startAt, endAt, discount]
                 },
-                characteristic: {
+                characteristics: {
                   type: :array,
                   items: {
                     type: :object,
@@ -350,26 +301,17 @@ RSpec.describe 'api/categories', type: :request do
       end
 
       response(400, 'Bad request') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/BadRequest'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
         run_test!
       end
 
       response(401, 'Unauthorized') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/Unauthorized'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Unauthorized'}]
         run_test!
       end
 
       response(403, 'Forbidden') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/Forbidden'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Forbidden'}]
         run_test!
       end
     end
@@ -400,8 +342,8 @@ RSpec.describe 'api/categories', type: :request do
             items: {
               type: :object,
               properties: {
-                basePrice: {type: :float, example: 44.99, description: "Price of product's variant"},
-                weight: {type: :float, example: 0.56, description: "Weight of product's variant (in Kg)"},
+                basePrice: {type: :number, example: 44.99, description: "Price of product's variant"},
+                weight: {type: :number, example: 0.56, description: "Weight of product's variant (in Kg)"},
                 quantity: {type: :integer, example: 9, description: "Stock of product's variant"},
                 isDefault: {type: :boolean, example: true, description: "Tell if this variant is the product's default variant"},
                 goodDeal: {
@@ -413,7 +355,7 @@ RSpec.describe 'api/categories', type: :request do
                   },
                   required: %w[startAt, endAt, discount]
                 },
-                characteristic: {
+                characteristics: {
                   type: :array,
                   items: {
                     type: :object,
@@ -436,20 +378,12 @@ RSpec.describe 'api/categories', type: :request do
       }
 
       response(201, 'Created') do
-        schema type: :object,
-               properties: {
-                  product: {
-                    '$ref': '#/components/schemas/Product'
-                  }
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Product'}]
         run_test!
       end
 
       response(400, 'Bad request') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/BadRequest'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
         run_test!
       end
     end

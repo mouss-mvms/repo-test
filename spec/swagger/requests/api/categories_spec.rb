@@ -11,17 +11,8 @@ RSpec.describe 'api/categories', type: :request do
       security [{ authorization: [] }]
 
       response(200, 'successful') do
-        schema type: :object,
-               properties: {
-                 categories: {
-                   type: :array,
-                   items: {
-                     '$ref': '#/components/schemas/Category'
-                   }
-                 }
-               }
+        schema type: :array, items: {'$ref': '#/components/schemas/Category'}
         run_test!
-
       end
     end
   end

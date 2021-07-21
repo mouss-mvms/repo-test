@@ -20,9 +20,12 @@ module Examples
             description: 'Slug of a shop.'
           },
           imageUrls: {
-            type: 'array',
-            example: ['http://www.image.com/image.jpg'],
-            description: 'Images of shop'
+            type: :array,
+            items: {
+              type: :string,
+              example: 'http://www.image.com/image.jpg'
+            },
+            description: 'Images of a shop'
           },
           description: {
             type: 'string',

@@ -13,31 +13,17 @@ RSpec.describe 'api/shops/products', type: :request do
       security [{authorization: []}]
 
       response(200, 'Successful') do
-        schema type: :object,
-               properties: {
-                   products: {
-                       type: :array,
-                       items: {
-                           '$ref': '#/components/schemas/Product'
-                       }
-                   }
-               }
+        schema type: :array, items: {'$ref': '#/components/schemas/Product'}
         run_test!
       end
 
       response(400, 'Bad request') do
-        schema type: :object,
-               properties: {
-                   error: {'$ref': '#/components/schemas/Error'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Error'}]
         run_test!
       end
 
       response(401, 'Unauthorized') do
-        schema type: :object,
-               properties: {
-                   error: {'$ref': '#/components/schemas/Error'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Error'}]
         run_test!
       end
     end
