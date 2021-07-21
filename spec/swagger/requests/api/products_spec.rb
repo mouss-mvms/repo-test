@@ -65,12 +65,7 @@ RSpec.describe 'api/categories', type: :request do
       response(200, 'successful') do
         schema type: :object,
                properties: {
-                 categories: {
-                   type: :array,
-                   items: {
-                     '$ref': '#/components/schemas/Product'
-                   }
-                 }
+                 product: {'$ref': '#/components/schemas/Product'}
                }
         run_test!
       end
@@ -129,12 +124,9 @@ RSpec.describe 'api/categories', type: :request do
       response(200, 'Successful') do
         schema type: :object,
                properties: {
-                 categories: {
-                   type: :array,
-                   items: {
-                     '$ref': '#/components/schemas/Product'
-                   }
-                 }
+                  product: {
+                    '$ref': '#/components/schemas/Product'
+                  }
                }
         run_test!
       end
@@ -214,12 +206,9 @@ RSpec.describe 'api/categories', type: :request do
       response(200, 'Successful') do
         schema type: :object,
                properties: {
-                 categories: {
-                   type: :array,
-                   items: {
-                     '$ref': '#/components/schemas/Product'
-                   }
-                 }
+                  product: {
+                    '$ref': '#/components/schemas/Product'
+                  }
                }
         run_test!
       end
@@ -359,12 +348,9 @@ RSpec.describe 'api/categories', type: :request do
       response(201, 'Product created') do
         schema type: :object,
                properties: {
-                 categories: {
-                   type: :array,
-                   items: {
-                     '$ref': '#/components/schemas/Product'
-                   }
-                 }
+                  product: {
+                    '$ref': '#/components/schemas/Product'
+                  }
                }
         run_test!
       end
@@ -458,12 +444,9 @@ RSpec.describe 'api/categories', type: :request do
       response(201, 'Created') do
         schema type: :object,
                properties: {
-                 categories: {
-                   type: :array,
-                   items: {
-                     '$ref': '#/components/schemas/Product'
-                   }
-                 }
+                  product: {
+                    '$ref': '#/components/schemas/Product'
+                  }
                }
         run_test!
       end

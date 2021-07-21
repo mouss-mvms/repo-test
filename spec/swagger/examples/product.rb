@@ -2,54 +2,17 @@ module Examples
   class Product
     def self.to_h
       {
-        type: 'object',
+        type: :object,
         properties: {
-          id: {
-            type: 'integer',
-            example: 1,
-            description: 'Unique identifier of a product.'
-          },
-          name: {
-            type: 'string',
-            example: 'Chaise longue',
-            description: 'Display name of a product.'
-          },
-          slug: {
-            type: 'string',
-            example: 'chaise-longue',
-            description: 'Slug of a product.'
-          },
-          description: {
-            type: 'string',
-            example: 'Chaise longue pour jardin extérieur.',
-            description: 'Description of a product.'
-          },
-          category: {
-            '$ref': '#/components/schemas/Category',
-            description: 'Category of a product.'
-          },
-          brand: {
-            type: 'string',
-            example: 'Lafuma',
-            description: 'Brand of a product.'
-          },
-          status: {
-            type: 'string',
-            example: 'online',
-            default: 'not_online',
-            enum: ['not_online', 'online', 'draft_cityzen', 'submitted', 'refused'],
-            description: 'Status of a product.'
-          },
-          sellerAdvice: {
-            type: 'string',
-            example: 'Nettoyez votre mobilier à l’eau claire ou savonneuse sans détergent.',
-            description: 'Seller advice of a product'
-          },
-          isService: {
-            type: 'boolean',
-            example: false,
-            description: 'This product is a merchandise or a service.'
-          },
+          id: {type: :integer, example: 1, description: 'Unique identifier of a shop'},
+          name: {type: :string, example: "Air jordan", description: 'Name of product'},
+          description: {type: :string, example: "Chaussures trop bien", description: 'Description of product'},
+          brand: {type: :string, example: "Chaussures trop bien", description: 'Description of product'},
+          status: {type: :string, example: "online", description: 'Status of product'},
+          sellerAdvice: {type: :string, example: "Taille petite, prendre une demi pointure au dessus", description: 'Advice from seller of product'},
+          isService: {type: :boolean, example: false, description: 'Tell if the product is a service'},
+          citizenAdvice: {type: :string, example: 'Produit trouvé un commercant trop sympa', description: 'Advice from citizen of product'},
+          categoryId: {type: :integer, example: 4, description: 'Category id of product'},
           imageUrls: {
             type: 'array',
             items: {
@@ -63,33 +26,42 @@ module Examples
             description: 'List of product images urls'
           },
           variants: {
-            type: 'array',
+            type: :array,
             items: {
-              '$ref': '#/components/schemas/Variant'
-            },
-            description: 'List of variants.'
+              type: :object,
+              properties: {
+                basePrice: {type: :float, example: 44.99, description: "Price of product's variant"},
+                weight: {type: :float, example: 0.56, description: "Weight of product's variant (in Kg)"},
+                quantity: {type: :integer, example: 9, description: "Stock of product's variant"},
+                isDefault: {type: :boolean, example: true, description: "Tell if this variant is the product's default variant"},
+                goodDeal: {
+                  type: :object,
+                  properties: {
+                    startAt: {type: :string, example: "20/07/2021", description: "Date of start of good deal"},
+                    endAt: {type: :string, example: "27/07/2021", description: "Date of end of good deal"},
+                    discount: {type: :integer, example: 45, description: "Amount of discount (in %)"}
+                  },
+                  required: %w[startAt, endAt, discount]
+                },
+                characteristic: {
+                  type: :array,
+                  items: {
+                    type: :object,
+                    properties: {
+                      name: {type: :string, example: 'color', description: 'Name of characteristic'},
+                      value: {type: :string, example: 'Bleu', description: 'Value of characteristic'}
+                    },
+                    required: %w[name, value]
+                  }
+                }
+              },
+              required: %w[basePrice, weight, quantity, isDefault]
+            }
           },
-          citizenAdvice: {
-            type: 'string',
-            example: 'Très belle chaussure, confortable et indémodable ! Elle vous donnera un look sympa, idéal avec un jean slim. Attention de bien prévoir une taille au-dessus, chausse un peu petit.',
-            description: 'Citizen advice of a product'
-          },
-          origin: {
-            type: 'string',
-            example: 'France',
-            description: 'Origin of product.'
-          },
-          allergens: {
-            type: 'string',
-            example: 'Contient des traces de fruit à coques',
-            description: 'Advice of potencial allergens.'
-          },
-          composition: {
-            type: 'string',
-            example: 'Oeuf, sucre',
-            description: 'Composition of product.'
-          },
-        }
+          origin: {type: :string, example: 'France', description: 'Origin of product. (This field is mandatory for some categories)'},
+          allergens: {type: :string, example: 'Contient des traces de fruit à coques', description: 'Advice of potencial allergens. (This field is mandatory for some categories)'},
+          composition: {type: :string, example: 'Oeuf, sucre', description: 'Composition of product. (This field is mandatory for some categories)'}
+        },
       }
     end
   end
