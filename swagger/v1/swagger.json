@@ -26,14 +26,9 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "categories": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Category"
-                      }
-                    }
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Category"
                   }
                 }
               }
@@ -73,14 +68,9 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "products": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Product"
-                      }
-                    }
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Product"
                   }
                 }
               }
@@ -92,11 +82,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "error": {
-                      "$ref": "#/components/schemas/Error"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/BadRequest"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -107,11 +97,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "error": {
-                      "$ref": "#/components/schemas/Error"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/NotFound"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -154,14 +144,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "categories": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Product"
-                      }
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Product"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -172,11 +159,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "error": {
+                  "oneOf": [
+                    {
                       "$ref": "#/components/schemas/BadRequest"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -187,11 +174,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "error": {
+                  "oneOf": [
+                    {
                       "$ref": "#/components/schemas/NotFound"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -249,12 +236,12 @@
                       "type": "object",
                       "properties": {
                         "basePrice": {
-                          "type": "float",
+                          "type": "number",
                           "example": 44.99,
                           "description": "Price of product's variant"
                         },
                         "weight": {
-                          "type": "float",
+                          "type": "number",
                           "example": 0.56,
                           "description": "Weight of product's variant (in Kg)"
                         },
@@ -293,7 +280,7 @@
                             "discount"
                           ]
                         },
-                        "characteristic": {
+                        "characteristics": {
                           "type": "array",
                           "items": {
                             "type": "object",
@@ -380,11 +367,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "error": {
+                  "oneOf": [
+                    {
                       "$ref": "#/components/schemas/BadRequest"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -395,11 +382,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "error": {
+                  "oneOf": [
+                    {
                       "$ref": "#/components/schemas/NotFound"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -426,14 +413,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "categories": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Product"
-                      }
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Product"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -444,11 +428,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "error": {
+                  "oneOf": [
+                    {
                       "$ref": "#/components/schemas/NotFound"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -498,14 +482,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "categories": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Product"
-                      }
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Product"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -516,11 +497,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "error": {
-                      "$ref": "#/components/schemas/Error"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/BadRequest"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -531,11 +512,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "error": {
+                  "oneOf": [
+                    {
                       "$ref": "#/components/schemas/Unauthorized"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -546,11 +527,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "error": {
+                  "oneOf": [
+                    {
                       "$ref": "#/components/schemas/Forbidden"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -561,11 +542,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "error": {
+                  "oneOf": [
+                    {
                       "$ref": "#/components/schemas/NotFound"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -623,12 +604,12 @@
                       "type": "object",
                       "properties": {
                         "basePrice": {
-                          "type": "float",
+                          "type": "number",
                           "example": 44.99,
                           "description": "Price of product's variant"
                         },
                         "weight": {
-                          "type": "float",
+                          "type": "number",
                           "example": 0.56,
                           "description": "Weight of product's variant (in Kg)"
                         },
@@ -667,7 +648,7 @@
                             "discount"
                           ]
                         },
-                        "characteristic": {
+                        "characteristics": {
                           "type": "array",
                           "items": {
                             "type": "object",
@@ -754,11 +735,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "error": {
+                  "oneOf": [
+                    {
                       "$ref": "#/components/schemas/BadRequest"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -769,11 +750,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "error": {
+                  "oneOf": [
+                    {
                       "$ref": "#/components/schemas/Unauthorized"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -784,11 +765,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "error": {
+                  "oneOf": [
+                    {
                       "$ref": "#/components/schemas/Forbidden"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -832,11 +813,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "error": {
+                  "oneOf": [
+                    {
                       "$ref": "#/components/schemas/BadRequest"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -847,11 +828,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "error": {
+                  "oneOf": [
+                    {
                       "$ref": "#/components/schemas/Unauthorized"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -862,11 +843,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "error": {
+                  "oneOf": [
+                    {
                       "$ref": "#/components/schemas/Forbidden"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -929,12 +910,12 @@
                       "type": "object",
                       "properties": {
                         "basePrice": {
-                          "type": "float",
+                          "type": "number",
                           "example": 44.99,
                           "description": "Price of product's variant"
                         },
                         "weight": {
-                          "type": "float",
+                          "type": "number",
                           "example": 0.56,
                           "description": "Weight of product's variant (in Kg)"
                         },
@@ -973,7 +954,7 @@
                             "discount"
                           ]
                         },
-                        "characteristic": {
+                        "characteristics": {
                           "type": "array",
                           "items": {
                             "type": "object",
@@ -1062,14 +1043,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "categories": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Product"
-                      }
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Product"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -1080,11 +1058,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "error": {
+                  "oneOf": [
+                    {
                       "$ref": "#/components/schemas/BadRequest"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -1147,12 +1125,12 @@
                       "type": "object",
                       "properties": {
                         "basePrice": {
-                          "type": "float",
+                          "type": "number",
                           "example": 44.99,
                           "description": "Price of product's variant"
                         },
                         "weight": {
-                          "type": "float",
+                          "type": "number",
                           "example": 0.56,
                           "description": "Weight of product's variant (in Kg)"
                         },
@@ -1191,7 +1169,7 @@
                             "discount"
                           ]
                         },
-                        "characteristic": {
+                        "characteristics": {
                           "type": "array",
                           "items": {
                             "type": "object",
@@ -1287,14 +1265,9 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "products": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Product"
-                      }
-                    }
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Product"
                   }
                 }
               }
@@ -1306,11 +1279,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "error": {
-                      "$ref": "#/components/schemas/Error"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/BadRequest"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -1321,11 +1294,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "error": {
-                      "$ref": "#/components/schemas/Error"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Unauthorized"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -1365,12 +1338,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "shop": {
-                      "type": "object",
+                  "oneOf": [
+                    {
                       "$ref": "#/components/schemas/Shop"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -1381,11 +1353,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "error": {
-                      "$ref": "#/components/schemas/Error"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/NotFound"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -1421,7 +1393,10 @@
         "parameters": [
           {
             "name": "X-client-id",
-            "in": "header"
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -1431,11 +1406,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "shop": {
+                  "oneOf": [
+                    {
                       "$ref": "#/components/schemas/Shop"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -1446,11 +1421,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "error": {
-                      "$ref": "#/components/schemas/Error"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/BadRequest"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -1469,10 +1444,11 @@
                   },
                   "imageUrls": {
                     "type": "array",
-                    "example": [
-                      "http://www.image.com/image.jpg"
-                    ],
-                    "description": "Images of shop"
+                    "items": {
+                      "type": "string",
+                      "example": "http://www.image.com/image.jpg"
+                    },
+                    "description": "Images of a shop"
                   },
                   "email": {
                     "type": "string",
@@ -1540,7 +1516,10 @@
         "parameters": [
           {
             "name": "X-client-id",
-            "in": "header"
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -1550,11 +1529,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "shop": {
+                  "oneOf": [
+                    {
                       "$ref": "#/components/schemas/Shop"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -1565,11 +1544,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "error": {
-                      "$ref": "#/components/schemas/Error"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/BadRequest"
                     }
-                  }
+                  ]
                 }
               }
             }
@@ -1588,10 +1567,11 @@
                   },
                   "imageUrls": {
                     "type": "array",
-                    "example": [
-                      "http://www.image.com/image.jpg"
-                    ],
-                    "description": "Images of shop"
+                    "items": {
+                      "type": "string",
+                      "example": "http://www.image.com/image.jpg"
+                    },
+                    "description": "Images of a shop"
                   },
                   "email": {
                     "type": "string",
@@ -1648,7 +1628,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {
@@ -1680,10 +1660,11 @@
           },
           "imageUrls": {
             "type": "array",
-            "example": [
-              "http://www.image.com/image.jpg"
-            ],
-            "description": "Images of shop"
+            "items": {
+              "type": "string",
+              "example": "http://www.image.com/image.jpg"
+            },
+            "description": "Images of a shop"
           },
           "description": {
             "type": "string",
@@ -1755,12 +1736,12 @@
             "description": "Address's postal code"
           },
           "latitude": {
-            "type": "float",
+            "type": "number",
             "example": 44.82408,
             "description": "Address's latitude"
           },
           "longitude": {
-            "type": "float",
+            "type": "number",
             "example": -0.62295,
             "description": "Address's longitude"
           }
@@ -1802,54 +1783,46 @@
           "id": {
             "type": "integer",
             "example": 1,
-            "description": "Unique identifier of a product."
+            "description": "Unique identifier of a shop"
           },
           "name": {
             "type": "string",
-            "example": "Chaise longue",
-            "description": "Display name of a product."
-          },
-          "slug": {
-            "type": "string",
-            "example": "chaise-longue",
-            "description": "Slug of a product."
+            "example": "Air jordan",
+            "description": "Name of product"
           },
           "description": {
             "type": "string",
-            "example": "Chaise longue pour jardin extérieur.",
-            "description": "Description of a product."
-          },
-          "category": {
-            "$ref": "#/components/schemas/Category",
-            "description": "Category of a product."
+            "example": "Chaussures trop bien",
+            "description": "Description of product"
           },
           "brand": {
             "type": "string",
-            "example": "Lafuma",
-            "description": "Brand of a product."
+            "example": "Chaussures trop bien",
+            "description": "Description of product"
           },
           "status": {
             "type": "string",
             "example": "online",
-            "default": "not_online",
-            "enum": [
-              "not_online",
-              "online",
-              "draft_cityzen",
-              "submitted",
-              "refused"
-            ],
-            "description": "Status of a product."
+            "description": "Status of product"
           },
           "sellerAdvice": {
             "type": "string",
-            "example": "Nettoyez votre mobilier à l’eau claire ou savonneuse sans détergent.",
-            "description": "Seller advice of a product"
+            "example": "Taille petite, prendre une demi pointure au dessus",
+            "description": "Advice from seller of product"
           },
           "isService": {
             "type": "boolean",
             "example": false,
-            "description": "This product is a merchandise or a service."
+            "description": "Tell if the product is a service"
+          },
+          "citizenAdvice": {
+            "type": "string",
+            "example": "Produit trouvé un commercant trop sympa",
+            "description": "Advice from citizen of product"
+          },
+          "category": {
+            "$ref": "#/components/schemas/Category",
+            "description": "Category of a product"
           },
           "imageUrls": {
             "type": "array",
@@ -1868,29 +1841,98 @@
           "variants": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Variant"
-            },
-            "description": "List of variants."
-          },
-          "citizenAdvice": {
-            "type": "string",
-            "example": "Très belle chaussure, confortable et indémodable ! Elle vous donnera un look sympa, idéal avec un jean slim. Attention de bien prévoir une taille au-dessus, chausse un peu petit.",
-            "description": "Citizen advice of a product"
+              "type": "object",
+              "properties": {
+                "basePrice": {
+                  "type": "number",
+                  "example": 44.99,
+                  "description": "Price of product's variant"
+                },
+                "weight": {
+                  "type": "number",
+                  "example": 0.56,
+                  "description": "Weight of product's variant (in Kg)"
+                },
+                "quantity": {
+                  "type": "integer",
+                  "example": 9,
+                  "description": "Stock of product's variant"
+                },
+                "isDefault": {
+                  "type": "boolean",
+                  "example": true,
+                  "description": "Tell if this variant is the product's default variant"
+                },
+                "goodDeal": {
+                  "type": "object",
+                  "properties": {
+                    "startAt": {
+                      "type": "string",
+                      "example": "20/07/2021",
+                      "description": "Date of start of good deal"
+                    },
+                    "endAt": {
+                      "type": "string",
+                      "example": "27/07/2021",
+                      "description": "Date of end of good deal"
+                    },
+                    "discount": {
+                      "type": "integer",
+                      "example": 45,
+                      "description": "Amount of discount (in %)"
+                    }
+                  },
+                  "required": [
+                    "startAt,",
+                    "endAt,",
+                    "discount"
+                  ]
+                },
+                "characteristics": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "example": "color",
+                        "description": "Name of characteristic"
+                      },
+                      "value": {
+                        "type": "string",
+                        "example": "Bleu",
+                        "description": "Value of characteristic"
+                      }
+                    },
+                    "required": [
+                      "name,",
+                      "value"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "basePrice,",
+                "weight,",
+                "quantity,",
+                "isDefault"
+              ]
+            }
           },
           "origin": {
             "type": "string",
             "example": "France",
-            "description": "Origin of product."
+            "description": "Origin of product. (This field is mandatory for some categories)"
           },
           "allergens": {
             "type": "string",
             "example": "Contient des traces de fruit à coques",
-            "description": "Advice of potencial allergens."
+            "description": "Advice of potencial allergens. (This field is mandatory for some categories)"
           },
           "composition": {
             "type": "string",
             "example": "Oeuf, sucre",
-            "description": "Composition of product."
+            "description": "Composition of product. (This field is mandatory for some categories)"
           }
         }
       },
@@ -2025,26 +2067,6 @@
           "endAt",
           "discount"
         ]
-      },
-      "Error": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "integer",
-            "example": 400,
-            "description": "Status of an error."
-          },
-          "message": {
-            "type": "string",
-            "example": "Bad Request",
-            "description": "Message of an error."
-          },
-          "detail": {
-            "type": "string",
-            "example": "The syntax of the query is incorrect.",
-            "description": "Detail message of an error."
-          }
-        }
       },
       "Unauthorized": {
         "type": "object",
