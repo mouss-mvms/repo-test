@@ -49,26 +49,6 @@ RSpec.configure do |config|
           Variant: Examples::Variant.to_h,
           Characteristic: Examples::Characteristics.to_h,
           GoodDeal: Examples::GoodDeal.to_h,
-          Error: {
-            type: 'object',
-            properties: {
-              status: {
-                type: 'integer',
-                example: 400,
-                description: 'Status of an error.'
-              },
-              message: {
-                type: 'string',
-                example: 'Bad Request',
-                description: 'Message of an error.'
-              },
-              detail: {
-                type: 'string',
-                example: 'The syntax of the query is incorrect.',
-                description: 'Detail message of an error.'
-              }
-            }
-          },
           Unauthorized: Examples::Errors::Unauthorized.new.error,
           BadRequest: Examples::Errors::BadRequest.new.error,
           InternalError: Examples::Errors::InternalError.new.error,

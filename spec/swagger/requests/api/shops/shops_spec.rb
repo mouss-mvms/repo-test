@@ -11,21 +11,12 @@ RSpec.describe 'api/shops', type: :request do
       security [{authorization: []}]
 
       response(200, 'Successful') do
-        schema type: :object,
-                properties: {
-                  shop: {
-                    type: :object,
-                    '$ref': '#/components/schemas/Shop'
-                  }
-                }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Shop'}]
         run_test!
       end
 
       response(404, 'Not found') do
-        schema type: :object,
-                properties: {
-                  error: {'$ref': '#/components/schemas/Error'}
-                }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/NotFound'}]
         run_test!
       end
     end
@@ -40,7 +31,7 @@ RSpec.describe 'api/shops', type: :request do
       produces 'application/json'
       description 'Update a shop'
       security [{authorization: []}]
-      parameter name: 'X-client-id', in: :header
+      parameter name: 'X-client-id', in: :header, type: :string
 
       parameter name: :shop, in: :body, schema: {
         type: 'object',
@@ -50,10 +41,13 @@ RSpec.describe 'api/shops', type: :request do
             example: 'Jardin Local',
             description: 'Display name of a shop.'
           },
-          image_urls: {
-            type: 'array',
-            example: ['http://www.image.com/image.jpg'],
-            description: 'Images of shop'
+          imageUrls: {
+            type: :array,
+            items: {
+              type: :string,
+              example: 'http://www.image.com/image.jpg'
+            },
+            description: 'Images of a shop'
           },
           email: {
             type: 'string',
@@ -75,17 +69,17 @@ RSpec.describe 'api/shops', type: :request do
             example: "75409821800029",
             description: "Shop's siret"
           },
-          facebook_link: {
+          facebookLink: {
             type: 'string',
             example: 'http://www.facebook.com/boutique',
             description: "Shop's facebook link"
           },
-          instagram_link: {
+          instagramLink: {
             type: 'string',
             example: 'http://www.instagram.com/boutique',
             description: "Shop's instagram link"
           },
-          website_link: {
+          websiteLink: {
             type: 'string',
             example: 'http://www.boutique.com/',
             description: "Shop's website link"
@@ -99,18 +93,12 @@ RSpec.describe 'api/shops', type: :request do
       }
 
       response(201, 'Created') do
-        schema type: :object,
-                properties: {
-                  shop: {'$ref': '#/components/schemas/Shop'}
-                }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Shop'}]
         run_test!
       end
 
       response(400, 'Bad request') do
-        schema type: :object,
-                properties: {
-                  error: {'$ref': '#/components/schemas/Error'}
-                }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
         run_test!
       end
     end
@@ -123,7 +111,7 @@ RSpec.describe 'api/shops', type: :request do
       produces 'application/json'
       description 'Create a shop'
       security [{authorization: []}]
-      parameter name: 'X-client-id', in: :header
+      parameter name: 'X-client-id', in: :header, type: :string
 
       parameter name: :shop, in: :body, schema: {
         type: 'object',
@@ -133,10 +121,13 @@ RSpec.describe 'api/shops', type: :request do
             example: 'Jardin Local',
             description: 'Display name of a shop.'
           },
-          image_urls: {
-            type: 'array',
-            example: ['http://www.image.com/image.jpg'],
-            description: 'Images of shop'
+          imageUrls: {
+            type: :array,
+            items: {
+              type: :string,
+              example: 'http://www.image.com/image.jpg'
+            },
+            description: 'Images of a shop'
           },
           email: {
             type: 'string',
@@ -158,17 +149,17 @@ RSpec.describe 'api/shops', type: :request do
             example: "75409821800029",
             description: "Shop's siret"
           },
-          facebook_link: {
+          facebookLink: {
             type: 'string',
             example: 'http://www.facebook.com/boutique',
             description: "Shop's facebook link"
           },
-          instagram_link: {
+          instagramLink: {
             type: 'string',
             example: 'http://www.instagram.com/boutique',
             description: "Shop's instagram link"
           },
-          website_link: {
+          websiteLink: {
             type: 'string',
             example: 'http://www.boutique.com/',
             description: "Shop's website link"
@@ -182,18 +173,12 @@ RSpec.describe 'api/shops', type: :request do
       }
 
       response(201, 'Created') do
-        schema type: :object,
-               properties: {
-                 shop: {'$ref': '#/components/schemas/Shop'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Shop'}]
         run_test!
       end
 
       response(400, 'Bad request') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/Error'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
         run_test!
       end
     end
