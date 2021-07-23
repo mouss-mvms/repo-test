@@ -36,5 +36,6 @@ module MvmsApi
     config.i18n.default_locale = :fr
     config.autoload_paths += Dir["#{config.root}/app/**/*.rb"]
     config.api_only = true
+    config.active_job.queue_adapter = :sidekiq
   end
 end

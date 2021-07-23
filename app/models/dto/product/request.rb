@@ -22,6 +22,26 @@ module Dto
         @allergens = args[:allergens]
         @composition = args[:composition]
       end
+
+      def to_h
+        {
+          name: @name,
+          slug: @slug,
+          shop_id: @shop_id,
+          description: @description,
+          category_id: @category_id,
+          brand: @brand,
+          status: @status,
+          image_urls: @image_urls,
+          seller_advice: @seller_advice,
+          is_service: @is_service,
+          variants: @variants&.map { |variant| variant.to_h },
+          citizen_advice: @citizen_advice,
+          origin: @origin,
+          allergens: @allergens,
+          composition: @composition
+        }
+      end
     end
   end
 end

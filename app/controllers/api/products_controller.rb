@@ -63,7 +63,8 @@ module Api
       dto_product_request.status = 'submitted' if @user.is_a_citizen?
       ActiveRecord::Base.transaction do
         begin
-          job = ProductCreateAndUpdateJob.perform_later(serialized_dto_product_request: dto_product_request.to_json, citizen_id: @user.is_a_citizen? ? @user.citizen.id : nil)
+          product_job_params = dto_product_request.to_h.merge(citizen_id: @user.is_a_citizen? ? @user.citizen.id : nil)
+          Dao::Product.create_async(product_job_params)
         rescue => e
           Rails.logger.error(e.message)
           error = Dto::Errors::InternalServer.new(detail: e.message)
@@ -126,9 +127,9 @@ module Api
       product_params[:image_urls] = params.permit(:imageUrls)
       product_params[:category_id] = params.require(:categoryId)
       product_params[:shop_id] = params[:shopId].to_i if params[:shopId]
-      product_params[:allergens] = params.permit(:allergens)
-      product_params[:origin] = params.permit(:origin)
-      product_params[:composition] = params.permit(:composition)
+      product_params[:allergens] = params.permit(:allergens)[:allergens]
+      product_params[:origin] = params.permit(:origin)[:origin]
+      product_params[:composition] = params.permit(:composition)[:composition]
       product_params[:variants] = []
       params.require(:variants).each { |v|
         hash = {}
