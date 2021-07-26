@@ -20,7 +20,6 @@ FactoryBot.define do
   end
 
   factory :others_fresh_desserts, class: Category  do
-    id { 2288 }
     name { "Autres desserts frais" }
     payment_delay { 15 }
     position { 0 }

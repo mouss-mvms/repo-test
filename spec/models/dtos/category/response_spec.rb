@@ -11,7 +11,7 @@ RSpec.describe Dto::Category::Response do
         expect(result.id).to eq(category.id)
         expect(result.name).to eq(category.name)
         expect(result.slug).to eq(category.slug)
-        expect(result.children).to eq([])
+        expect(result.children).to eq(category.children)
       end
     end
   end
@@ -27,6 +27,7 @@ RSpec.describe Dto::Category::Response do
         expect(dto_hash[:id]).to eq(dto.id)
         expect(dto_hash[:name]).to eq(dto.name)
         expect(dto_hash[:slug]).to eq(dto.slug)
+        expect(dto_hash[:children]).to eq(dto.children)
       end
     end
   end

@@ -5223,7 +5223,7 @@ RSpec.describe Api::ProductsController, type: :controller do
               isService:false,
               citizenAdvice:"Produit trouvé un commercant trop sympa",
               categoryId: category_others_fresh_desserts.id,
-              shopId:create(:shop, id: 7224).id,
+              shopId: create(:shop).id,
               variants:[ 
                 {
                   basePrice:44.99,
