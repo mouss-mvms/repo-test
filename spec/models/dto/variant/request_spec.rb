@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe Dto::Variant::Request do
-  describe 'create' do
+  describe 'new' do
     context 'All ok' do
       it 'should return a Dto::Variant::Request' do
         variant = create(:variant)
@@ -26,8 +26,11 @@ RSpec.describe Dto::Variant::Request do
         expect(result.quantity).to eq(variant.quantity)
         expect(result.is_default).to eq(variant.is_default)
         expect(result.good_deal).to be_instance_of(Dto::GoodDeal::Request)
-        expect(result.characteristics).to be_instance_of(Array)
-        expect(result.characteristics.first).to be_instance_of(Dto::Characteristic::Request)
+        expect(result.characteristics.count).to eq(variant.characteristics.count)
+        result.characteristics.each do |c|
+          expect(c).to be_instance_of(Dto::Characteristic::Request)
+        end
+
       end
     end
   end
@@ -58,9 +61,7 @@ RSpec.describe Dto::Variant::Request do
         expect(dto_hash[:is_default]).to eq(variant.is_default)
         expect(dto_hash[:good_deal]).to be_instance_of(Hash)
         expect(dto_hash[:good_deal]).to eq(variant_params[:good_deal])
-        expect(dto_hash[:characteristics]).to be_instance_of(Array)
-        expect(dto_hash[:characteristics].first).to be_instance_of(Hash)
-        expect(dto_hash[:characteristics].first).to eq(variant_params[:characteristics].first)
+        expect(dto_hash[:characteristics].count).to eq(variant_params[:characteristics].count)
       end
     end
   end
