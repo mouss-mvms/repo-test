@@ -59,7 +59,7 @@ module Api
       Shop.find(dto_product_request.shop_id)
       category = Category.find(dto_product_request.category_id)
       raise ActionController::BadRequest.new('origin and composition is required') if Products::CategoriesSpecifications::MustHaveLabelling.new.is_satisfied_by?(category) && (dto_product_request.origin.blank? || dto_product_request.composition.blank?)
-      raise ActionController::BadRequest.new('allergens is required') if Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens["allergens"].blank?
+      raise ActionController::BadRequest.new('allergens is required') if Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
       dto_product_request.status = 'submitted' if @user.is_a_citizen?
       ActiveRecord::Base.transaction do
         begin
@@ -80,7 +80,7 @@ module Api
       Shop.find(dto_product_request.shop_id)
       category = Category.find(dto_product_request.category_id)
       raise ActionController::BadRequest.new('origin and composition is required') if Products::CategoriesSpecifications::MustHaveLabelling.new.is_satisfied_by?(category) && (dto_product_request.origin.blank? || dto_product_request.composition.blank?)
-      raise ActionController::BadRequest.new('allergens is required') if Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens["allergens"].blank?
+      raise ActionController::BadRequest.new('allergens is required') if Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
       ActiveRecord::Base.transaction do
         begin
           product = Dto::Product.build(dto_product_request: dto_product_request)
@@ -126,7 +126,7 @@ module Api
       product_params[:image_urls] = params.permit(:imageUrls)
       product_params[:category_id] = params.require(:categoryId)
       product_params[:shop_id] = params[:shopId].to_i if params[:shopId]
-      product_params[:allergens] = params.permit(:allergens)
+      product_params[:allergens] = params[:allergens]
       product_params[:origin] = params.permit(:origin)
       product_params[:composition] = params.permit(:composition)
       product_params[:variants] = []
