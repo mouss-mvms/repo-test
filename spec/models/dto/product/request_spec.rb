@@ -4,7 +4,7 @@ RSpec.describe Dto::Product::Response do
 
   describe 'new' do
     context 'All ok' do
-      it 'should return a Dto::Product::request' do
+      it 'should return a Dto::Product::Request' do
         product_params = {
           name: "TEST Job create with sidekiq de ses morts",
           shop_id: 26,
@@ -62,7 +62,7 @@ RSpec.describe Dto::Product::Response do
 
   describe 'to_h' do
     context 'All ok' do
-      it 'should a hash representation of Dto::Product::Response' do
+      it 'should a hash representation of Dto::Product::Request' do
         product_params = {
           name: "TEST Job create with sidekiq de ses morts",
           shop_id: 26,
