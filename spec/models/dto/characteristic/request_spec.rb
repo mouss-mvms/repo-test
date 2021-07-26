@@ -1,20 +1,19 @@
 require "rails_helper"
 
 RSpec.describe Dto::Characteristic::Request do
-  describe 'create' do
+  describe 'new' do
     context 'All ok' do
       it 'should return a Dto::Characteristic::Request' do
-        characteristic = create(:characteristic)
         characteristic_params = {
-          name: characteristic.name,
-          value: characteristic.value
+          name: "color",
+          value: "blue"
         }
 
-        result = Dto::Characteristic::Request.new(characteristic_params)
+        dto_characteristic = Dto::Characteristic::Request.new(characteristic_params)
 
-        expect(result).to be_instance_of(Dto::Characteristic::Request)
-        expect(result.name).to eq(characteristic.name)
-        expect(result.value).to eq(characteristic.value)
+        expect(dto_characteristic).to be_instance_of(Dto::Characteristic::Request)
+        expect(dto_characteristic.name).to eq(characteristic_params[:name])
+        expect(dto_characteristic.value).to eq(characteristic_params[:value])
       end
     end
   end
@@ -22,17 +21,17 @@ RSpec.describe Dto::Characteristic::Request do
   describe 'to_h' do
     context 'All ok' do
       it 'should a hash representation of Dto::Characteristic::Request' do
-        characteristic = create(:characteristic)
         characteristic_params = {
-          name: characteristic.name,
-          value: characteristic.value
+          name: "color",
+          value: "blue"
         }
 
-        dto_hash = Dto::Characteristic::Request.new(characteristic_params).to_h
+        dto_characteristic = Dto::Characteristic::Request.new(characteristic_params)
+        dto_hash = dto_characteristic.to_h
 
         expect(dto_hash).to be_instance_of(Hash)
-        expect(dto_hash[:name]).to eq(characteristic.name)
-        expect(dto_hash[:value]).to eq(characteristic.value)
+        expect(dto_hash[:name]).to eq(dto_characteristic.name)
+        expect(dto_hash[:value]).to eq(dto_characteristic.value)
       end
     end
   end

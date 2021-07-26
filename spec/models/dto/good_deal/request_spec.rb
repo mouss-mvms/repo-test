@@ -1,22 +1,21 @@
 require "rails_helper"
 
 RSpec.describe Dto::GoodDeal::Request do
-  describe 'create' do
+  describe 'new' do
     context 'All ok' do
       it 'should return a Dto::Characteristic::Request' do
-        good_deal = create(:good_deal)
         good_deal_params = {
-          start_at: good_deal.starts_at,
-          end_at: good_deal.ends_at,
-          discount: good_deal.discount,
+          start_at: "20/01/2021",
+          end_at: "16/02/2021",
+          discount: "20"
         }
 
-        result = Dto::GoodDeal::Request.new(good_deal_params)
+        dto_good_deal = Dto::GoodDeal::Request.new(good_deal_params)
 
-        expect(result).to be_instance_of(Dto::GoodDeal::Request)
-        expect(result.start_at).to eq(good_deal.starts_at)
-        expect(result.end_at).to eq(good_deal.ends_at)
-        expect(result.discount).to eq(good_deal.discount)
+        expect(dto_good_deal).to be_instance_of(Dto::GoodDeal::Request)
+        expect(dto_good_deal.start_at).to eq(good_deal_params[:start_at])
+        expect(dto_good_deal.end_at).to eq(good_deal_params[:end_at])
+        expect(dto_good_deal.discount).to eq(good_deal_params[:discount])
       end
     end
   end
@@ -24,19 +23,19 @@ RSpec.describe Dto::GoodDeal::Request do
   describe 'to_h' do
     context 'All ok' do
       it 'should a hash representation of Dto::GoodDeal::Request' do
-        good_deal = create(:good_deal)
         good_deal_params = {
-          start_at: good_deal.starts_at,
-          end_at: good_deal.ends_at,
-          discount: good_deal.discount,
+          start_at: "20/01/2021",
+          end_at: "16/02/2021",
+          discount: "20"
         }
 
-        dto_hash = Dto::GoodDeal::Request.new(good_deal_params).to_h
+        dto_good_deal = Dto::GoodDeal::Request.new(good_deal_params)
+        dto_hash = dto_good_deal.to_h
 
         expect(dto_hash).to be_instance_of(Hash)
-        expect(dto_hash[:start_at]).to eq(good_deal.starts_at)
-        expect(dto_hash[:end_at]).to eq(good_deal.ends_at)
-        expect(dto_hash[:discount]).to eq(good_deal.discount)
+        expect(dto_hash[:start_at]).to eq(dto_good_deal.start_at)
+        expect(dto_hash[:end_at]).to eq(dto_good_deal.end_at)
+        expect(dto_hash[:discount]).to eq(dto_good_deal.discount)
       end
     end
   end
