@@ -1,7 +1,7 @@
 module Dto
   module Product
     class Request
-      attr_accessor :name, :slug, :category_id, :brand, :status, :seller_advice, :is_service, :description, :variants, :image_urls, :citizen_advice, :shop_id, :origin, :composition, :allergens
+      attr_accessor :name, :slug, :category_id, :brand, :status, :seller_advice, :is_service, :description, :variants, :image_urls, :citizen_advice, :citizen_id, :shop_id, :origin, :composition, :allergens
 
       def initialize(**args)
         @name = args[:name]
@@ -16,6 +16,7 @@ module Dto
         @variants = []
         args[:variants]&.each { |v| @variants << Dto::Variant::Request.new(v)}
         @citizen_advice = args[:citizen_advice]
+        @citizen_id = args[:citizen_id] || nil
         @category_id = args[:category_id]
         @shop_id = args[:shop_id]
         @origin = args[:origin]
@@ -37,6 +38,7 @@ module Dto
           is_service: @is_service,
           variants: @variants&.map { |variant| variant.to_h },
           citizen_advice: @citizen_advice,
+          citizen_id: @citizen_id,
           origin: @origin,
           allergens: @allergens,
           composition: @composition

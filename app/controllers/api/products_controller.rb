@@ -63,8 +63,7 @@ module Api
       dto_product_request.status = 'submitted' if @user.is_a_citizen?
       ActiveRecord::Base.transaction do
         begin
-          product_job_params = dto_product_request.to_h.merge(citizen_id: @user.is_a_citizen? ? @user.citizen.id : nil)
-          Dao::Product.create_async(product_job_params)
+          Dao::Product.create_async(product_params.merge(citizen_id: @user.is_a_citizen? ? @user.citizen.id : nil))
         rescue => e
           Rails.logger.error(e.message)
           error = Dto::Errors::InternalServer.new(detail: e.message)
