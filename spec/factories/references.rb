@@ -27,61 +27,11 @@ FactoryBot.define do
     is_visible { false }
     weight { 1.5 }
     shop
+    color
+    size
     association :product, factory: :product
     shipping_cost
     sample
-    good_deal { nil }
-    after :create do |reference|
-      reference.services << Service.all.first || FactoryBot.create(:service)
-    end
-  end
-
-  factory :reference_service_2, class: Reference do
-    base_price { 100 }
-    quantity { 10 }
-    is_visible { false }
-    weight { 1.5 }
-    shop
-    product
-    shipping_cost
-    good_deal { nil }
-    after :create do |reference|
-      reference.services << Service.all.second || FactoryBot.create(:service2)
-    end
-  end
-  factory :reference_without_services, class: Reference do
-    base_price { 10 }
-    quantity { 10 }
-    is_visible { false }
-    weight { 1.5 }
-    shop
-    product
-    shipping_cost
-    good_deal { nil }
-  end
-  factory :reference_without_services2, class: Reference do
-    base_price { 100 }
-    quantity { 10 }
-    is_visible { false }
-    weight { 1.5 }
-    shop
-    product
-    shipping_cost
-    good_deal { nil }
-  end
-
-  factory :reference_with_fresh, class: Reference do
-    base_price { 100 }
-    quantity { 10 }
-    is_visible { false }
-    weight { 1.5 }
-    shop
-    association :product, factory: :product_with_category
-    shipping_cost
-    sample
-    good_deal { nil }
-    after :create do |reference|
-      reference.services << Service.all.first || FactoryBot.create(:service)
-    end
+    good_deal
   end
 end
