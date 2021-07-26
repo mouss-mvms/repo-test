@@ -5208,6 +5208,53 @@ RSpec.describe Api::ProductsController, type: :controller do
           end
         end
       end
+
+      context 'Bugs' do
+        context 'ae3xu0' do
+          let(:user_citizen) { create(:citizen_user, email: 'citizen3@ecity.fr') }
+          let(:category_others_fresh_desserts) { create(:others_fresh_desserts) }
+          it "should return HTTP status 400" do           
+            create_params = {
+              name:"Air jordan api 3",
+              description:"Chaussures trop bien",
+              brand:"Chaussures trop bien",
+              status:"online",
+              sellerAdvice:"Taille petite, prendre une demi pointure au dessus",
+              isService:false,
+              citizenAdvice:"Produit trouvé un commercant trop sympa",
+              categoryId: category_others_fresh_desserts.id,
+              shopId:create(:shop, id: 7224).id,
+              variants:[ 
+                {
+                  basePrice:44.99,
+                  weight:0.56,
+                  quantity:9,
+                  isDefault:true,
+                  goodDeal:{
+                    startAt:"20/07/2021",
+                    endAt:"27/07/2021",
+                    discount:45
+                },
+                characteristics:[
+                  {
+                    name:"color",
+                    value:"Bleu"
+                  }
+                ]
+              }
+              ],
+              origin:"",
+              allergens:"",
+              composition:"Oeuf, sucre"
+            }
+            request.headers['x-client-id'] = generate_token(user_citizen)
+
+            post :create, params: create_params
+
+            should respond_with(400)
+          end
+        end
+      end
     end
 
     context "For a shop's product" do
