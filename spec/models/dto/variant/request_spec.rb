@@ -52,15 +52,15 @@ RSpec.describe Dto::Variant::Request do
           characteristics: variant.characteristics.map { |char| { name: char.name, value: char.value } }
         }
 
-        dto_hash = Dto::Variant::Request.new(variant_params).to_h
+        dto_variant = Dto::Variant::Request.new(variant_params)
+        dto_hash = dto_variant.to_h
 
         expect(dto_hash).to be_instance_of(Hash)
         expect(dto_hash[:base_price]).to eq(variant.base_price)
         expect(dto_hash[:weight]).to eq(variant.weight)
         expect(dto_hash[:quantity]).to eq(variant.quantity)
         expect(dto_hash[:is_default]).to eq(variant.is_default)
-        expect(dto_hash[:good_deal]).to be_instance_of(Hash)
-        expect(dto_hash[:good_deal]).to eq(variant_params[:good_deal])
+        expect(dto_hash[:good_deal]).to eq(dto_variant.good_deal.to_h)
         expect(dto_hash[:characteristics].count).to eq(variant_params[:characteristics].count)
       end
     end
