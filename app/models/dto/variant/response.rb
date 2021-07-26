@@ -1,7 +1,7 @@
 module Dto
   module Variant
     class Response
-      attr_reader :id, :base_price, :weight, :quantity, :is_default, :good_deal, :characteristics
+      attr_reader :id, :base_price, :weight, :quantity, :is_default, :good_deal, :characteristics, :image_urls
 
       def initialize(**args)
         @id = args[:id]

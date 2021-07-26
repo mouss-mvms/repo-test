@@ -7,7 +7,7 @@ module Dto
         @id = args[:id]
         @name = args[:name]
         @slug = args[:slug]
-        @children = []
+        @children = args[:children]
       end
 
       def self.create(category)
@@ -16,7 +16,8 @@ module Dto
         Dto::Category::Response.new(
           id: category.id,
           name: category.name,
-          slug: category.slug
+          slug: category.slug,
+          children: category.children
         )
       end
 
@@ -24,7 +25,8 @@ module Dto
         {
           id: @id,
           name: @name,
-          slug: @slug
+          slug: @slug,
+          children: children
         }
       end
     end
