@@ -59,7 +59,7 @@ gem 'rswag-ui'
 gem 'delayed_job_active_record'
 
 source 'https://gem.fury.io/mvms/' do
-  gem 'mvms-core', '2.5.133'
+  gem 'mvms-core', '2.5.138'
 end
 
 gem 'omniauth', '1.3.1'
