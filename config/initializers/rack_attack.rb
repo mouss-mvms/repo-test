@@ -16,6 +16,6 @@ class Rack::Attack
   end
 
   safelist("allow access sidekiq web") do |req|
-    raq.get? && req.path.start_with?("/jobs")
+    req.get? && req.path.start_with?("/jobs")
   end
 end
