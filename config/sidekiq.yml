@@ -1,0 +1,17 @@
+---
+:concurrency: 1
+staging:
+  :concurrency: 1
+production:
+  :concurrency: 1
+:queues:
+  - critical
+  - very-high
+  - high
+  - mailers
+  - medium-hight
+  - medium
+  - medium-low
+  - default
+  - low
+  - very-low

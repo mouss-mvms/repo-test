@@ -1,6 +1,9 @@
+require 'sidekiq/web'
+
 Rails.application.routes.draw do
   mount Rswag::Api::Engine => '/api-docs'
   mount Rswag::Ui::Engine => '/api-docs'
+  mount Sidekiq::Web.new, at: "/jobs"
 
   get '/' => "rails/welcome#index"
 
@@ -10,5 +13,4 @@ Rails.application.routes.draw do
     get '/citizens/:id/products', to: 'citizens/products#index'
     get '/categories', to: 'categories#index'
   end
-
 end

@@ -27,8 +27,8 @@ RSpec.describe 'api/categories', type: :request do
             items: {
               type: :object,
               properties: {
-                basePrice: {type: :float, example: 44.99, description: "Price of product's variant"},
-                weight: {type: :float, example: 0.56, description: "Weight of product's variant (in Kg)"},
+                basePrice: {type: :number, example: 44.99, description: "Price of product's variant"},
+                weight: {type: :number, example: 0.56, description: "Weight of product's variant (in Kg)"},
                 quantity: {type: :integer, example: 9, description: "Stock of product's variant"},
                 isDefault: {type: :boolean, example: true, description: "Tell if this variant is the product's default variant"},
                 goodDeal: {
@@ -40,7 +40,7 @@ RSpec.describe 'api/categories', type: :request do
                   },
                   required: %w[startAt, endAt, discount]
                 },
-                characteristic: {
+                characteristics: {
                   type: :array,
                   items: {
                     type: :object,
@@ -54,37 +54,26 @@ RSpec.describe 'api/categories', type: :request do
               },
               required: %w[basePrice, weight, quantity, isDefault]
             }
-          }
+          },
+          origin: {type: :string, example: 'France', description: 'Origin of product. (This field is mandatory for some categories)'},
+          allergens: {type: :string, example: 'Contient des traces de fruit à coques', description: 'Advice of potencial allergens. (This field is mandatory for some categories)'},
+          composition: {type: :string, example: 'Oeuf, sucre', description: 'Composition of product. (This field is mandatory for some categories)'}
         },
         required: %w[id, name, description, brand, status, sellerAdvice, isService, categoryId, variants, characteristics]
       }
 
       response(200, 'successful') do
-        schema type: :object,
-               properties: {
-                 categories: {
-                   type: :array,
-                   items: {
-                     '$ref': '#/components/schemas/Product'
-                   }
-                 }
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Product'}]
         run_test!
       end
 
       response(400, 'Bad request') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/BadRequest'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
         run_test!
       end
 
       response(404, 'Product not found') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/NotFound'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/NotFound'}]
         run_test!
       end
     end
@@ -101,18 +90,12 @@ RSpec.describe 'api/categories', type: :request do
       end
 
       response(400, 'Bad request') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/BadRequest'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
         run_test!
       end
 
       response(404, 'Product not found') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/NotFound'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/NotFound'}]
         run_test!
       end
     end
@@ -124,23 +107,12 @@ RSpec.describe 'api/categories', type: :request do
       security [{ authorization: [] }]
 
       response(200, 'Successful') do
-        schema type: :object,
-               properties: {
-                 categories: {
-                   type: :array,
-                   items: {
-                     '$ref': '#/components/schemas/Product'
-                   }
-                 }
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Product'}]
         run_test!
       end
 
       response(404, 'Product not found') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/NotFound'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/NotFound'}]
         run_test!
       end
     end
@@ -148,6 +120,7 @@ RSpec.describe 'api/categories', type: :request do
 
   path '/api/auth/products/{id}' do
     parameter name: 'id', in: :path, type: :integer, description: 'Unique identifier of the product.'
+    parameter name: 'X-client-id', in: :header, type: :string
 
     put('Update a product') do
       tags 'Products'
@@ -156,7 +129,6 @@ RSpec.describe 'api/categories', type: :request do
       description 'Return the product updated'
       security [{ authorization: [] }]
 
-      parameter name: 'X-client-id', in: :header
       parameter name: :product, in: :body, schema: {
         type: :object,
         properties: {
@@ -173,8 +145,8 @@ RSpec.describe 'api/categories', type: :request do
             items: {
               type: :object,
               properties: {
-                basePrice: {type: :float, example: 44.99, description: "Price of product's variant"},
-                weight: {type: :float, example: 0.56, description: "Weight of product's variant (in Kg)"},
+                basePrice: {type: :number, example: 44.99, description: "Price of product's variant"},
+                weight: {type: :number, example: 0.56, description: "Weight of product's variant (in Kg)"},
                 quantity: {type: :integer, example: 9, description: "Stock of product's variant"},
                 isDefault: {type: :boolean, example: true, description: "Tell if this variant is the product's default variant"},
                 goodDeal: {
@@ -186,7 +158,7 @@ RSpec.describe 'api/categories', type: :request do
                   },
                   required: %w[startAt, endAt, discount]
                 },
-                characteristic: {
+                characteristics: {
                   type: :array,
                   items: {
                     type: :object,
@@ -200,53 +172,36 @@ RSpec.describe 'api/categories', type: :request do
               },
               required: %w[basePrice, weight, quantity, isDefault]
             }
-          }
+          },
+          origin: {type: :string, example: 'France', description: 'Origin of product. (This field is mandatory for some categories)'},
+          allergens: {type: :string, example: 'Contient des traces de fruit à coques', description: 'Advice of potencial allergens. (This field is mandatory for some categories)'},
+          composition: {type: :string, example: 'Oeuf, sucre', description: 'Composition of product. (This field is mandatory for some categories)'}
         },
         required: %w[id, name, description, brand, status, sellerAdvice, isService, categoryId, variants, characteristics]
       }
 
       response(200, 'Successful') do
-        schema type: :object,
-               properties: {
-                 categories: {
-                   type: :array,
-                   items: {
-                     '$ref': '#/components/schemas/Product'
-                   }
-                 }
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Product'}]
         run_test!
       end
 
       response(400, 'Bad request') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/Error'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
         run_test!
       end
 
       response(401, 'Unauthorized') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/Unauthorized'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Unauthorized'}]
         run_test!
       end
 
       response(403, 'Forbidden') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/Forbidden'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Forbidden'}]
         run_test!
       end
 
       response(404, 'Product not found') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/NotFound'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/NotFound'}]
         run_test!
       end
     end
@@ -258,39 +213,30 @@ RSpec.describe 'api/categories', type: :request do
       description 'Delete a product'
       security [{ authorization: [] }]
 
-      parameter name: 'X-client-id', in: :header
-
       response(204, 'Product deleted') do
         run_test!
       end
 
       response(400, 'Bad request') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/BadRequest'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
         run_test!
       end
 
       response(401, 'Unauthorized') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/Unauthorized'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Unauthorized'}]
         run_test!
       end
 
       response(403, 'Forbidden') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/Forbidden'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Forbidden'}]
         run_test!
       end
     end
   end
 
   path '/api/auth/products' do
+    parameter name: 'X-client-id', in: :header, type: :string
+
     post('Create a product') do
       tags 'Products'
       produces 'application/json'
@@ -298,7 +244,6 @@ RSpec.describe 'api/categories', type: :request do
       description 'Return the product created'
       security [{ authorization: [] }]
 
-      parameter name: 'X-client-id', in: :header
       parameter name: :product, in: :body, schema: {
         type: :object,
         properties: {
@@ -316,8 +261,8 @@ RSpec.describe 'api/categories', type: :request do
             items: {
               type: :object,
               properties: {
-                basePrice: {type: :float, example: 44.99, description: "Price of product's variant"},
-                weight: {type: :float, example: 0.56, description: "Weight of product's variant (in Kg)"},
+                basePrice: {type: :number, example: 44.99, description: "Price of product's variant"},
+                weight: {type: :number, example: 0.56, description: "Weight of product's variant (in Kg)"},
                 quantity: {type: :integer, example: 9, description: "Stock of product's variant"},
                 isDefault: {type: :boolean, example: true, description: "Tell if this variant is the product's default variant"},
                 goodDeal: {
@@ -329,7 +274,7 @@ RSpec.describe 'api/categories', type: :request do
                   },
                   required: %w[startAt, endAt, discount]
                 },
-                characteristic: {
+                characteristics: {
                   type: :array,
                   items: {
                     type: :object,
@@ -343,45 +288,30 @@ RSpec.describe 'api/categories', type: :request do
               },
               required: %w[basePrice, weight, quantity, isDefault]
             }
-          }
+          },
+          origin: {type: :string, example: 'France', description: 'Origin of product. (This field is mandatory for some categories)'},
+          allergens: {type: :string, example: 'Contient des traces de fruit à coques', description: 'Advice of potencial allergens. (This field is mandatory for some categories)'},
+          composition: {type: :string, example: 'Oeuf, sucre', description: 'Composition of product. (This field is mandatory for some categories)'}
         },
         required: %w[id, name, description, brand, status, sellerAdvice, isService, categoryId, variants, characteristics]
       }
 
       response(201, 'Product created') do
-        schema type: :object,
-               properties: {
-                 categories: {
-                   type: :array,
-                   items: {
-                     '$ref': '#/components/schemas/Product'
-                   }
-                 }
-               }
         run_test!
       end
 
       response(400, 'Bad request') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/BadRequest'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
         run_test!
       end
 
       response(401, 'Unauthorized') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/Unauthorized'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Unauthorized'}]
         run_test!
       end
 
       response(403, 'Forbidden') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/Forbidden'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Forbidden'}]
         run_test!
       end
     end
@@ -412,8 +342,8 @@ RSpec.describe 'api/categories', type: :request do
             items: {
               type: :object,
               properties: {
-                basePrice: {type: :float, example: 44.99, description: "Price of product's variant"},
-                weight: {type: :float, example: 0.56, description: "Weight of product's variant (in Kg)"},
+                basePrice: {type: :number, example: 44.99, description: "Price of product's variant"},
+                weight: {type: :number, example: 0.56, description: "Weight of product's variant (in Kg)"},
                 quantity: {type: :integer, example: 9, description: "Stock of product's variant"},
                 isDefault: {type: :boolean, example: true, description: "Tell if this variant is the product's default variant"},
                 goodDeal: {
@@ -425,7 +355,7 @@ RSpec.describe 'api/categories', type: :request do
                   },
                   required: %w[startAt, endAt, discount]
                 },
-                characteristic: {
+                characteristics: {
                   type: :array,
                   items: {
                     type: :object,
@@ -439,29 +369,21 @@ RSpec.describe 'api/categories', type: :request do
               },
               required: %w[basePrice, weight, quantity, isDefault]
             }
-          }
+          },
+          origin: {type: :string, example: 'France', description: 'Origin of product. (This field is mandatory for some categories)'},
+          allergens: {type: :string, example: 'Contient des traces de fruit à coques', description: 'Advice of potencial allergens. (This field is mandatory for some categories)'},
+          composition: {type: :string, example: 'Oeuf, sucre', description: 'Composition of product. (This field is mandatory for some categories)'}
         },
         required: %w[id, name, description, brand, status, sellerAdvice, isService, categoryId, variants, characteristics]
       }
 
       response(201, 'Created') do
-        schema type: :object,
-               properties: {
-                 categories: {
-                   type: :array,
-                   items: {
-                     '$ref': '#/components/schemas/Product'
-                   }
-                 }
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Product'}]
         run_test!
       end
 
       response(400, 'Bad request') do
-        schema type: :object,
-               properties: {
-                 error: {'$ref': '#/components/schemas/BadRequest'}
-               }
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
         run_test!
       end
     end

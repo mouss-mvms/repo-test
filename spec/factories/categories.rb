@@ -18,4 +18,15 @@ FactoryBot.define do
     name { "Femme" }
     payment_delay { 15 }
   end
+
+  factory :others_fresh_desserts, class: Category  do
+    name { "Autres desserts frais" }
+    payment_delay { 15 }
+    position { 0 }
+    slug { "alimentation/cremerie/autres-desserts-frais" }
+    fresh_state { nil }
+    g_shopping_acceptance { true}
+    explicit  { nil }
+    group { "food" }
+  end
 end

@@ -8,6 +8,12 @@ module Dto
         @value = args[:value]
       end
 
+      def to_h
+        {
+          name: @name,
+          value: @value
+        }
+      end
     end
   end
 end

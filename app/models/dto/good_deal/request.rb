@@ -8,6 +8,14 @@ module Dto
         @end_at = args[:end_at] || nil
         @discount = args[:discount] || 0.0
       end
+
+      def to_h
+        {
+          start_at: start_at,
+          end_at: end_at,
+          discount: discount
+        }
+      end
     end
   end
 end

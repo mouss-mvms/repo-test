@@ -14,6 +14,18 @@ module Dto
         @characteristics = []
         args[:characteristics]&.each { |c| @characteristics << Dto::Characteristic::Request.new(**c) }
       end
+
+      def to_h
+        {
+          base_price: @base_price,
+          weight: @weight,
+          quantity: @quantity,
+          image_urls: @image_urls,
+          is_default: @is_default,
+          good_deal: @good_deal.to_h,
+          characteristics: @characteristics&.map { |characteristic| characteristic.to_h }
+        }
+      end
     end
   end
 end
