@@ -14,4 +14,8 @@ class Rack::Attack
   safelist("allow access swagger path") do |req|
     req.get? && req.path.start_with?("/api-docs")
   end
+
+  safelist("allow access sidekiq web") do |req|
+    req.get? && req.path.start_with?("/jobs")
+  end
 end
