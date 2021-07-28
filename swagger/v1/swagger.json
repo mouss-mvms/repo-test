@@ -47,6 +47,67 @@
           "schema": {
             "type": "string"
           }
+        },
+        {
+          "name": "city",
+          "in": "query",
+          "description": "City or Territory slug",
+          "example": "bordeaux",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "category",
+          "in": "query",
+          "description": "Category slug",
+          "example": "vin-et-spiritueux/aperitif-et-spiritueux/rhum",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "perimeter",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "none",
+              "around_me",
+              "all"
+            ],
+            "description": "Search perimeter"
+          }
+        },
+        {
+          "name": "price",
+          "in": "query",
+          "description": "Prices range",
+          "example": "4__19",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "services",
+          "in": "query",
+          "example": "livraison-par-la-poste__click-collect",
+          "description": "Service slugs concatened with double \"_\" if more than one. (livraison-par-la-poste, livraison-france-metropolitaine, livraison-de-proximite, click-collect, e-reservation, livraison-par-colissimo, livraison-express-par-stuart, livraison-par-le-commercant, retrait-drive)",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "sort_by",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "price-asc",
+              "price-desc",
+              "newest"
+            ]
+          }
         }
       ],
       "get": {
@@ -1244,6 +1305,67 @@
           "schema": {
             "type": "string"
           }
+        },
+        {
+          "name": "city",
+          "in": "query",
+          "description": "City or Territory slug",
+          "example": "bordeaux",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "category",
+          "in": "query",
+          "description": "Category slug",
+          "example": "vin-et-spiritueux/aperitif-et-spiritueux/rhum",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "perimeter",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "none",
+              "around_me",
+              "all"
+            ],
+            "description": "Search perimeter"
+          }
+        },
+        {
+          "name": "price",
+          "in": "query",
+          "description": "Prices range",
+          "example": "4__19",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "services",
+          "in": "query",
+          "example": "livraison-par-la-poste__click-collect",
+          "description": "Service slugs concatened with double \"_\" if more than one. (livraison-par-la-poste, livraison-france-metropolitaine, livraison-de-proximite, click-collect, e-reservation, livraison-par-colissimo, livraison-express-par-stuart, livraison-par-le-commercant, retrait-drive)",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "sort_by",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "price-asc",
+              "price-desc",
+              "newest"
+            ]
+          }
         }
       ],
       "get": {
@@ -1628,7 +1750,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {
