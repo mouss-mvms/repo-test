@@ -2,8 +2,13 @@ module Examples
   class Schedule
     def self.to_h
       {
-        type:'object',
+        type: 'object',
         properties: {
+          id: {
+            type: "integer",
+            example: 3,
+            description: "Id of schedules"
+          },
           day: {
             type: "string",
             example: "Lundi",

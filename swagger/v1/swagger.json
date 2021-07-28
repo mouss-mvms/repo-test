@@ -1306,6 +1306,63 @@
         }
       }
     },
+    "/api/shops/{id}/schedules": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of the desired shop.",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "get shop's schedules",
+        "tags": [
+          "Schedules"
+        ],
+        "description": "Retrieve schedules from the given shop.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Schedule"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/NotFound"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/shops/{id}": {
       "parameters": [
         {
@@ -1628,7 +1685,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {
@@ -1750,6 +1807,11 @@
       "Schedule": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "integer",
+            "example": 3,
+            "description": "Id of schedules"
+          },
           "day": {
             "type": "string",
             "example": "Lundi",

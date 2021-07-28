@@ -5,7 +5,7 @@ module Api
 
       def index
         products = @shop.products.includes(:category, :brand, references: [:sample, :color, :size, :good_deal]).actives
-        response = products.map {|product| Dto::Product::Response.create(product)}
+        response = products.map { |product| Dto::Product::Response.create(product) }
         paginate json: response, per_page: 50
       end
 
@@ -20,7 +20,7 @@ module Api
         begin
           @shop = Shop.find(route_params[:id])
         rescue ActiveRecord::RecordNotFound => e
-          error = Dto::Errors::NotFound.new(detail: e.message)
+          error = Dto::Errors::NotFound.new(e.message)
           return render json: error.to_h, status: error.status
         end
       end
