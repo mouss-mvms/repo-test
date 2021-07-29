@@ -16,18 +16,18 @@ module Dao
         fields_attributes: [
           { lang: "fr", field: "description", content: product_params.description },
           { lang: "en", field: "description", content: "" }
-          ]
-        )
+        ]
+      )
 
       if product_params.citizen_id.present?
-        citizen = Citizen.find(citizen_id)
+        citizen = Citizen.find(product_params.citizen_id)
         citizen.products << product
         citizen.save
         if product_params.citizen_advice
           ::Advice.create!(
             content: product_params.citizen_advice,
             product_id: product.id,
-            citizen_id: citizen_id
+            citizen_id: product_params.citizen_id
           )
         end
       end
