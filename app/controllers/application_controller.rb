@@ -8,20 +8,19 @@ class ApplicationController < ActionController::API
 
   def render_record_not_found(exception)
     Rails.logger.error(exception)
-    error = Dto::Errors::NotFound.new(
-      exception.message)
+    error = Dto::Errors::NotFound.new(exception.message)
     return render json: error.to_h, status: error.status
   end
 
   def render_bad_request(exception)
     Rails.logger.error(exception)
-    error = Dto::Errors::BadRequest.new(detail: exception.message)
+    error = Dto::Errors::BadRequest.new(exception.message)
     return render json: error.to_h, status: error.status
   end
 
   def render_forbidden(exception)
     Rails.logger.error(exception)
-    error = Dto::Errors::Forbidden.new(detail: exception.message)
+    error = Dto::Errors::Forbidden.new(exception.message)
     return render json: error.to_h, status: error.status
   end
 

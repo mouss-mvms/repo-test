@@ -10,10 +10,10 @@ RSpec.describe Dto::Schedule::Response do
         expect(result).to be_instance_of(Dto::Schedule::Response)
         expect(result.id).to eq(schedule.id)
         expect(result.day).to eq(Dto::Schedule::Response.int_to_day(schedule.day))
-        expect(result.open_afternoon).to eq(schedule.pm_open&.strftime("%Hh%M"))
-        expect(result.open_morning).to eq(schedule.am_open&.strftime("%Hh%M"))
-        expect(result.close_morning).to eq(schedule.am_close&.strftime("%Hh%M"))
-        expect(result.close_afternoon).to eq(schedule.pm_close&.strftime("%Hh%M"))
+        expect(result.open_afternoon).to eq(schedule.pm_open&.strftime("%H:%M"))
+        expect(result.open_morning).to eq(schedule.am_open&.strftime("%H:%M"))
+        expect(result.close_morning).to eq(schedule.am_close&.strftime("%H:%M"))
+        expect(result.close_afternoon).to eq(schedule.pm_close&.strftime("%H:%M"))
       end
     end
   end

@@ -16,10 +16,10 @@ module Dto
         return Dto::Schedule::Response.new({
                                              id: schedule.id,
                                              day: int_to_day(schedule.day),
-                                             open_morning: schedule.am_open&.strftime("%Hh%M") || nil,
-                                             open_afternoon: schedule.pm_open&.strftime("%Hh%M") || nil,
-                                             close_morning: schedule.am_close&.strftime("%Hh%M") || nil,
-                                             close_afternoon: schedule.pm_close&.strftime("%Hh%M") || nil
+                                             open_morning: schedule.am_open&.strftime("%H:%M") || nil,
+                                             open_afternoon: schedule.pm_open&.strftime("%H:%M") || nil,
+                                             close_morning: schedule.am_close&.strftime("%H:%M") || nil,
+                                             close_afternoon: schedule.pm_close&.strftime("%H:%M") || nil
                                            })
       end
 
