@@ -47,25 +47,25 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
         it "should returns 400 HTTP Status" do
           get :index, params: { id: 'Xenomorph' }
           should respond_with(400)
-          expect(JSON.parse(response.body)).to eq({"detail"=>"Shop_id is incorrect", "message"=>"Bad Request", "status"=>400})
+          expect(response.body).to eq(Dto::Errors::BadRequest.new('Shop_id is incorrect').to_h.to_json)
         end
       end
 
       context "shop doesn't exists" do
         it "should returns 404 HTTP Status" do
-          get :index, params: { id: (@shop.id + 1) }
+          id = 1
+          Shop.all.each do |shop|
+            break if shop.id != id
+            id = id + 1
+          end
+          get :index, params: { id: id }
           should respond_with(404)
-          expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Shop with 'id'=#{@shop.id + 1}", "message"=>"Not Found", "status"=>404})
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Shop with 'id'=#{id}").to_h.to_json)
         end
       end
     end
   end
 
-end
-
-def generate_token(user)
-  exp_payload = { id: user.id, exp: Time.now.to_i + 1 * 3600 * 24 }
-  JWT.encode exp_payload, ENV["JWT_SECRET"], 'HS256'
 end
 
 

@@ -1,9 +1,10 @@
 module Dto
   module Schedule
     class Response
-      attr_accessor :day, :open_morning, :close_morning, :open_afternoon, :close_afternoon
+      attr_accessor :id, :day, :open_morning, :close_morning, :open_afternoon, :close_afternoon
 
       def initialize(**args)
+        @id = args[:id]
         @day = args[:day]
         @open_morning = args[:open_morning]
         @open_afternoon = args[:open_afternoon]
@@ -13,16 +14,18 @@ module Dto
 
       def self.create(schedule)
         return Dto::Schedule::Response.new({
-                                                   day: int_to_day(schedule.day),
-                                                   open_morning: schedule.am_open&.strftime("%Hh%M") || nil,
-                                                   open_afternoon: schedule.pm_open&.strftime("%Hh%M") || nil,
-                                                   close_morning: schedule.am_close&.strftime("%Hh%M") || nil,
-                                                   close_afternoon: schedule.pm_close&.strftime("%Hh%M") || nil
-                                                 })
+                                             id: schedule.id,
+                                             day: int_to_day(schedule.day),
+                                             open_morning: schedule.am_open&.strftime("%H:%M") || nil,
+                                             open_afternoon: schedule.pm_open&.strftime("%H:%M") || nil,
+                                             close_morning: schedule.am_close&.strftime("%H:%M") || nil,
+                                             close_afternoon: schedule.pm_close&.strftime("%H:%M") || nil
+                                           })
       end
 
       def to_h
         {
+          id: @id,
           day: @day,
           openMorning: @open_morning,
           openAfternoon: @open_afternoon,
@@ -30,8 +33,6 @@ module Dto
           closeAfternoon: @close_afternoon
         }
       end
-
-      private
 
       def self.int_to_day(int)
         case int

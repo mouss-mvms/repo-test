@@ -1306,6 +1306,215 @@
         }
       }
     },
+    "/api/shops/{id}/schedules": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of the desired shop.",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "get shop's schedules",
+        "tags": [
+          "Schedules"
+        ],
+        "description": "Retrieve schedules from the given shop.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Schedule"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/NotFound"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/shops/{id}/schedules": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of the desired shop.",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-client-id",
+          "in": "header",
+          "description": "Auth token of user",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "put": {
+        "summary": "Update shop's schedules",
+        "tags": [
+          "Schedules"
+        ],
+        "description": "Update schedules from the given shop.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Schedule"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/BadRequest"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Unauthorized"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/NotFound"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "example": 3,
+                      "description": "Id of schedule that you want to update"
+                    },
+                    "openMorning": {
+                      "type": "string",
+                      "example": "10:00",
+                      "description": "Open morning time"
+                    },
+                    "openAfternoon": {
+                      "type": "string",
+                      "example": "13:00",
+                      "description": "Close morning time"
+                    },
+                    "closeMorning": {
+                      "type": "string",
+                      "example": "14:00",
+                      "description": "Open afternoon time"
+                    },
+                    "closeAfternoon": {
+                      "type": "string",
+                      "example": "20:00",
+                      "description": "Close afternoon time"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/shops/{id}": {
       "parameters": [
         {
@@ -1750,6 +1959,11 @@
       "Schedule": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "integer",
+            "example": 3,
+            "description": "Id of schedules"
+          },
           "day": {
             "type": "string",
             "example": "Lundi",
@@ -1757,22 +1971,22 @@
           },
           "openMorning": {
             "type": "string",
-            "example": "12h00",
+            "example": "09:00",
             "description": "Time of opening morning"
           },
           "closeMorning": {
             "type": "string",
-            "example": "12h00",
+            "example": "12:00",
             "description": "Time of closing morning"
           },
           "openAfternoon": {
             "type": "string",
-            "example": "12h00",
+            "example": "14:00",
             "description": "Time of opening afternoon"
           },
           "closeAftenoon": {
             "type": "string",
-            "example": "12h00",
+            "example": "19:00",
             "description": "Time of closing afternoon"
           }
         }
