@@ -5,7 +5,7 @@ module Api
 
       def index
         products = @shop.products.includes(:category, :brand, references: [:sample, :color, :size, :good_deal]).actives
-        response = products.map {|product| Dto::Product::Response.create(product)}
+        response = products.map { |product| Dto::Product::Response.create(product) }
         paginate json: response, per_page: 50
       end
 
@@ -13,16 +13,10 @@ module Api
 
       def check_shop
         unless route_params[:id].to_i > 0
-          error = Dto::Errors::BadRequest.new(detail: 'Shop_id is incorrect')
+          error = Dto::Errors::BadRequest.new('Shop_id is incorrect')
           return render json: error.to_h, status: error.status
         end
-
-        begin
-          @shop = Shop.find(route_params[:id])
-        rescue ActiveRecord::RecordNotFound => e
-          error = Dto::Errors::NotFound.new(detail: e.message)
-          return render json: error.to_h, status: error.status
-        end
+        @shop = Shop.find(route_params[:id])
       end
 
       def route_params
