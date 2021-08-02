@@ -49,38 +49,16 @@
           }
         },
         {
-          "name": "city",
+          "name": "categories_slugs",
           "in": "query",
-          "description": "City or Territory slug",
-          "example": "bordeaux",
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
-          "name": "category",
-          "in": "query",
-          "description": "Category slug",
+          "description": "Categories slugs",
           "example": "vin-et-spiritueux/aperitif-et-spiritueux/rhum",
           "schema": {
             "type": "string"
           }
         },
         {
-          "name": "perimeter",
-          "in": "query",
-          "schema": {
-            "type": "string",
-            "enum": [
-              "none",
-              "around_me",
-              "all"
-            ],
-            "description": "Search perimeter"
-          }
-        },
-        {
-          "name": "price",
+          "name": "prices",
           "in": "query",
           "description": "Prices range",
           "example": "4__19",
@@ -1307,38 +1285,16 @@
           }
         },
         {
-          "name": "city",
+          "name": "categories_slugs",
           "in": "query",
-          "description": "City or Territory slug",
-          "example": "bordeaux",
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
-          "name": "category",
-          "in": "query",
-          "description": "Category slug",
+          "description": "Categories slugs",
           "example": "vin-et-spiritueux/aperitif-et-spiritueux/rhum",
           "schema": {
             "type": "string"
           }
         },
         {
-          "name": "perimeter",
-          "in": "query",
-          "schema": {
-            "type": "string",
-            "enum": [
-              "none",
-              "around_me",
-              "all"
-            ],
-            "description": "Search perimeter"
-          }
-        },
-        {
-          "name": "price",
+          "name": "prices",
           "in": "query",
           "description": "Prices range",
           "example": "4__19",
@@ -1365,6 +1321,14 @@
               "price-desc",
               "newest"
             ]
+          }
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "description": "Number of the researches page",
+          "schema": {
+            "type": "string"
           }
         }
       ],

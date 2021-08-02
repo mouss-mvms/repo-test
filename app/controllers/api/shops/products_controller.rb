@@ -8,8 +8,8 @@ module Api
       def index
         search_criterias = ::Criterias::Composite.new(::Criterias::Products::FromShop.new(@shop.id))
                                                  .and(::Criterias::Products::Online)
-        if params[:categories]
-          category_ids = Category.where(slug: params[:categories].split('__')).pluck(:id).uniq
+        if params[:categories_slugs]
+          category_ids = Category.where(slug: params[:categories_slugs].split('__')).pluck(:id).uniq
           search_criterias = search_criterias.and(::Criterias::InCategories.new(category_ids))
         end
 
@@ -19,7 +19,7 @@ module Api
 
         products = Product.search('*', where: search_criterias.create, order: sort_params, page: params[:page], per_page: PER_PAGE)
         response = products.map {|product| Dto::Product::Response.create(product)}
-        render json: response
+        render json: response, per_page: PER_PAGE
       end
 
       private
