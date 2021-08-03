@@ -49,38 +49,10 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
 
         it 'handles pagination' do
           shop = create(:shop)
-          products = [
-            create(:product, status: "online", shop_id: shop.id),
-            create(:product, status: "online", shop_id: shop.id),
-            create(:product, status: "online", shop_id: shop.id),
-            create(:product, status: "online", shop_id: shop.id),
-            create(:product, status: "online", shop_id: shop.id),
-            create(:product, status: "online", shop_id: shop.id),
-            create(:product, status: "online", shop_id: shop.id),
-            create(:product, status: "online", shop_id: shop.id),
-            create(:product, status: "online", shop_id: shop.id),
-            create(:product, status: "online", shop_id: shop.id),
-            create(:product, status: "online", shop_id: shop.id),
-            create(:product, status: "online", shop_id: shop.id),
-            create(:product, status: "online", shop_id: shop.id),
-            create(:product, status: "online", shop_id: shop.id),
-            create(:product, status: "online", shop_id: shop.id),
-            create(:product, status: "online", shop_id: shop.id),
-            create(:product, status: "online", shop_id: shop.id),
-            create(:product, status: "online", shop_id: shop.id),
-            create(:product, status: "online", shop_id: shop.id),
-            create(:product, status: "online", shop_id: shop.id),
-            create(:product, status: "online", shop_id: shop.id),
-            create(:product, status: "online", shop_id: shop.id),
-            create(:product, status: "online", shop_id: shop.id),
-            create(:product, status: "online", shop_id: shop.id),
-            create(:product, status: "online", shop_id: shop.id),
-            create(:product, status: "online", shop_id: shop.id),
-            create(:product, status: "online", shop_id: shop.id),
-            create(:product, status: "online", shop_id: shop.id),
-            create(:product, status: "online", shop_id: shop.id),
-            create(:product, status: "online", shop_id: shop.id)
-          ]
+          products = []
+          30.times do
+            products << create(:product, status: "online", shop_id: shop.id)
+          end
 
           products_to_return = products.dup.last(15)
 
