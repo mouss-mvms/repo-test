@@ -1239,8 +1239,55 @@
         {
           "name": "shop_id",
           "in": "path",
-          "description": "Unique identifier of the desired shop.",
+          "description": "Unique identifier of the citizen.",
           "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "categories",
+          "in": "query",
+          "description": "Categories slugs concatened with double \"_\" if more than one.",
+          "example": "vin-et-spiritueux/aperitif-et-spiritueux/rhum__maison-et-bricolage/cuisine",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "prices",
+          "in": "query",
+          "description": "Prices range",
+          "example": "4__19",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "services",
+          "in": "query",
+          "example": "livraison-par-la-poste__click-collect",
+          "description": "Service slugs concatened with double \"_\" if more than one.",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "sort_by",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "price-asc",
+              "price-desc",
+              "newest"
+            ]
+          }
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "description": "Number of the researches page",
           "schema": {
             "type": "string"
           }
@@ -1837,7 +1884,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {

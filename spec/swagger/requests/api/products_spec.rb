@@ -1,6 +1,6 @@
 require 'swagger_helper'
 
-RSpec.describe 'api/categories', type: :request do
+RSpec.describe 'api/products', type: :request do
   path '/api/products/{id}' do
     parameter name: 'id', in: :path, type: :integer, description: 'Unique identifier of the product.'
 
