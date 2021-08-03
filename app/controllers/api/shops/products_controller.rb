@@ -8,11 +8,10 @@ module Api
       def index
         search_criterias = ::Criterias::Composite.new(::Criterias::Products::FromShop.new(@shop.id))
                                                  .and(::Criterias::Products::Online)
-        if params[:categories_slugs]
-          category_ids = Category.where(slug: params[:categories_slugs].split('__')).pluck(:id).uniq
+        if params[:categories]
+          category_ids = Category.where(slug: params[:categories].split('__')).pluck(:id).uniq
           search_criterias = search_criterias.and(::Criterias::InCategories.new(category_ids))
         end
-
 
         search_criterias = filter_by(search_criterias)
         sort_params = params[:sort_by] ? Requests::ProductSearches.new.sort_by(params[:sort_by]) : nil

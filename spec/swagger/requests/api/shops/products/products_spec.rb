@@ -4,10 +4,10 @@ RSpec.describe 'api/shops/products', type: :request do
 
   path '/api/shops/{shop_id}/products' do
     # You'll want to customize the parameter types...
-    parameter name: :shop_id, in: :path, type: :string, description: 'Unique identifier of the desired shop.'
-    parameter name: :categories_slugs, in: :query, type: :string, description: 'Categories slugs', example: "vin-et-spiritueux/aperitif-et-spiritueux/rhum"
+    parameter name: :shop_id, in: :path, type: :integer, description: 'Unique identifier of the citizen.'
+    parameter name: :categories, in: :query, type: :string, description: 'Categories slugs concatened with double "_" if more than one.', example: "vin-et-spiritueux/aperitif-et-spiritueux/rhum__maison-et-bricolage/cuisine"
     parameter name: :prices, in: :query, type: :string, description: 'Prices range', example: '4__19'
-    parameter name: :services, in: :query,type: :string, example: "livraison-par-la-poste__click-collect", description: 'Service slugs concatened with double "_" if more than one. (livraison-par-la-poste, livraison-france-metropolitaine, livraison-de-proximite, click-collect, e-reservation, livraison-par-colissimo, livraison-express-par-stuart, livraison-par-le-commercant, retrait-drive)'
+    parameter name: :services, in: :query,type: :string, example: "livraison-par-la-poste__click-collect", description: 'Service slugs concatened with double "_" if more than one.'
     parameter name: :sort_by, in: :query, schema: {
       type: :string,
       enum: [
