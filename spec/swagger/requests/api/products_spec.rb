@@ -296,7 +296,8 @@ RSpec.describe 'api/products', type: :request do
         required: %w[id, name, description, brand, status, sellerAdvice, isService, categoryId, variants, characteristics]
       }
 
-      response(201, 'Product created') do
+      response(202, 'Accepted') do
+        schema type: :object, properties: { url: { type: 'string', example: "https://exempleurl/api/products/status/10aad2e35138aa982e0d848a", description: "Url polling" } }
         run_test!
       end
 
@@ -377,13 +378,44 @@ RSpec.describe 'api/products', type: :request do
         required: %w[id, name, description, brand, status, sellerAdvice, isService, categoryId, variants, characteristics]
       }
 
-      response(201, 'Created') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Product'}]
+      response(202, 'Accepted') do
+        schema type: :object, properties: { url: { type: 'string', example: "https://exempleurl/api/products/status/10aad2e35138aa982e0d848a", description: "Url polling" } }
         run_test!
       end
 
       response(400, 'Bad request') do
         schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
+        run_test!
+      end
+    end
+  end
+
+  path '/api/product-jobs/{id}' do
+    parameter name: 'id', in: :path, type: :string, description: 'Unique identifier of product job.'
+    get('Get job product informations') do
+      tags 'Products'
+      produces 'application/json'
+      description 'Return the job product status'
+      security [{ authorization: [] }]
+
+      response(200, 'Successful') do
+        schema type: :object, properties: {
+          status: {
+            type: 'string',
+            enum: ['queued', 'working', 'complete', 'failed', 'interrupted'],
+            description: "Job status"
+          },
+          product_id: {
+            type: 'integer',
+            example: 1,
+            description: "Unique identifier of a product"
+          }
+        }
+        run_test!
+      end
+
+      response(404, 'Job not found') do
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/NotFound'}]
         run_test!
       end
     end

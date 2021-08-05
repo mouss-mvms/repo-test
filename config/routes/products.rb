@@ -5,3 +5,4 @@ post '/auth/products', to: 'products#create'
 post '/products', to: 'products#create_offline'
 delete '/auth/products/:id', to: 'products#destroy'
 delete '/products/:id', to: 'products#destroy_offline'
+get '/product-jobs/:id', to: 'products/jobs#show', as: :product_job_status
