@@ -24,16 +24,16 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
   describe "GET #index" do
     context "with valid params" do
       context 'without filters' do
-        it "get all products from shop" do
+        it "get all products from shop by position default" do
           products = [
-            create(:product, status: "online"),
-            create(:product, status: "online"),
+            create(:product, status: "online", position: 1),
+            create(:product, status: "online", position: 2),
             create(:product, status: "offline")
           ]
           shop = create(:shop)
           products.each { |prod| prod.update(shop_id: shop.id) }
 
-          online_products = Product.where(status: "online")
+          online_products = Product.where(status: "online").sort_by(&:position)
 
           allow(Product).to receive(:search).and_return(online_products)
           get :index, params: { id: shop.id }
@@ -45,6 +45,30 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
 
           product_ids = response_body.map { |p| p.symbolize_keys[:id] }
           expect(Product.where(id: product_ids).to_a).to eq(online_products)
+        end
+
+        it 'get products matching query' do
+          products = [
+            create(:available_product, name: 'patator', status: "online"),
+            create(:available_product, name: 'koup-koup', status: "online"),
+            create(:available_product, name: 'tromblon', status: "online"),
+            create(:available_product, name: 'coutelas', status: "online"),
+            create(:available_product, name: 'coutelas de loup de mer', status: "online"),
+            create(:available_product, name: 'coutelas de flibustier', status: "online")
+          ]
+          shop = create(:shop)
+          products.each { |prod| prod.update(shop_id: shop.id) }
+
+          products_to_return = Product.where('name like ?', '%coutelas%')
+
+          allow(Product).to receive(:search).and_return(products_to_return)
+          get :index, params: { id: shop.id, query: 'coutelas' }
+          should respond_with(200)
+
+          response_body = JSON.parse(response.body)
+          expect(response_body).to be_an_instance_of(Array)
+          expect(response_body.count).to eq(3)
+          expect(response_body.pluck('name')).to eq(["coutelas", "coutelas de loup de mer", "coutelas de flibustier"])
         end
 
         it 'handles pagination' do
