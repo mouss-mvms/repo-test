@@ -77,7 +77,7 @@ module Api
     end
 
     def create
-      ActiveRecord::base.transaction do
+      ActiveRecord::Base.transaction do
         begin
           shop_request = Dto::Shop::Request.new(shop_params)
           shop = Dto::Shop.build(dto_shop_request: shop_request)
