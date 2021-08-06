@@ -1246,6 +1246,15 @@
           }
         },
         {
+          "name": "search_query",
+          "in": "query",
+          "description": "Query for search.",
+          "example": "Air jordan",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
           "name": "categories",
           "in": "query",
           "description": "Categories slugs concatened with double \"_\" if more than one.",

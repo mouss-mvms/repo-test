@@ -4,19 +4,22 @@ module Api
       before_action :check_shop
       DEFAULT_FILTERS_PRODUCTS = [:prices, :brands, :colors, :sizes, :services]
       PER_PAGE = 15
+      QUERY_ALL = '*'
 
       def index
         search_criterias = ::Criterias::Composite.new(::Criterias::Products::FromShop.new(@shop.id))
                                                  .and(::Criterias::Products::Online)
-        if params[:categories]
-          category_ids = Category.where(slug: params[:categories].split('__')).pluck(:id).uniq
+        if search_params[:categories]
+          category_ids = Category.where(slug: search_params[:categories].split('__')).pluck(:id).uniq
           search_criterias = search_criterias.and(::Criterias::InCategories.new(category_ids))
         end
 
         search_criterias = filter_by(search_criterias)
-        sort_params = params[:sort_by] ? Requests::ProductSearches.new.sort_by(params[:sort_by]) : nil
+        sort_by = search_params[:sort_by] ? search_params[:sort_by] : 'position'
+        sort_by = Requests::ProductSearches.new.sort_by(sort_by)
+        query = search_params[:search_query] ? search_params[:search_query] : QUERY_ALL
 
-        products = Product.search('*', where: search_criterias.create, order: sort_params, page: params[:page], per_page: PER_PAGE)
+        products = Product.search(query, where: search_criterias.create, order: sort_by, page: search_params[:page], per_page: PER_PAGE)
         response = products.map {|product| Dto::Product::Response.create(product)}
         render json: response, per_page: PER_PAGE
       end
@@ -33,6 +36,10 @@ module Api
 
       def route_params
         params.permit(:id)
+      end
+
+      def search_params
+        params.permit(:search_query, :categories, :prices, :services, :sort_by, :page)
       end
 
       def filter_by(search_criterias)
