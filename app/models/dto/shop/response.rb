@@ -43,6 +43,17 @@ module Dto
                                 })
       end
 
+      def self.from_searchkick(shop)
+        return Dto::Shop::Response.new({
+                                         id: shop['id'],
+                                         name: shop['name'],
+                                         slug: shop['slug'],
+                                         image_urls: [shop['image_url']],
+                                         description: shop['description'],
+                                         baseline: shop['baseline']
+                                       })
+      end
+
       def to_h
         {
           id: @id,
