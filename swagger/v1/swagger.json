@@ -1901,7 +1901,7 @@
           {
             "name": "city",
             "in": "query",
-            "description": "City or territory",
+            "description": "City or territory slug",
             "schema": {
               "type": "string"
             }
@@ -1918,6 +1918,7 @@
           {
             "name": "perimeter",
             "in": "query",
+            "description": " 'around_me' : dans mon département, 'all' : dans toute la France",
             "schema": {
               "type": "string"
             }
@@ -1960,7 +1961,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000/"
+      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
     }
   ],
   "components": {
