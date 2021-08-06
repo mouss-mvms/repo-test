@@ -492,6 +492,25 @@ RSpec.describe Api::ShopsController, type: :controller do
       end
     end
   end
+
+  describe "GET #index" do
+    context 'All ok' do
+      it 'should return 200 HTTP status with list of shops' do
+        shops = []
+        10.times.each do
+          shops << create(:shop)
+        end
+
+        allow(Shop).to receive(:search).and_return(shops)
+
+        get :index
+
+        expect(response).to have_http_status(:ok)
+        result = JSON.parse(response.body)
+        expect(result.count).to eq(Shop.count)
+      end
+    end
+  end
 end
 
 def generate_token(user)

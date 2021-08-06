@@ -1,8 +1,9 @@
 GEM
   remote: https://gem.fury.io/mvms/
   specs:
-    mvms-core (2.5.158)
+    mvms-core (2.5.175)
       MailchimpMarketing (~> 3.0.34)
+      active_model_otp
       activerecord (~> 5.2, >= 5.2.0)
       activerecord-sortable
       amoeba
@@ -10,13 +11,14 @@ GEM
       aws-sdk-s3 (~> 1.94)
       data_migrate
       devise
+      elasticsearch (= 7.13.3)
       gdpr_rails (= 0.3.4)
       google-api-client (~> 0.11)
       image_processing (~> 1.12, >= 1.12.1)
       pg_search
       redis (>= 3.3.5, < 4.2)
       rest-client
-      searchkick
+      searchkick (= 4.5.0)
       shrine (~> 3.3)
       sidekiq (~> 5.2.9)
       spreadsheet
@@ -52,6 +54,9 @@ GEM
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.0, >= 1.0.3)
+    active_model_otp (2.3.0)
+      activemodel
+      rotp (~> 6.2.0)
     activejob (5.2.6)
       activesupport (= 5.2.6)
       globalid (>= 0.3.6)
@@ -80,7 +85,7 @@ GEM
     awesome_nested_set (3.4.0)
       activerecord (>= 4.0.0, < 7.0)
     aws-eventstream (1.1.1)
-    aws-partitions (1.482.0)
+    aws-partitions (1.483.0)
     aws-sdk-core (3.119.0)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.239.0)
@@ -377,6 +382,7 @@ GEM
       netrc (~> 0.8)
     retriable (3.1.2)
     rexml (3.2.5)
+    rotp (6.2.0)
     rspec-core (3.10.1)
       rspec-support (~> 3.10.0)
     rspec-expectations (3.10.1)
@@ -488,7 +494,7 @@ DEPENDENCIES
   figaro
   jwt
   listen (~> 3.3)
-  mvms-core (= 2.5.158)!
+  mvms-core (= 2.5.175)!
   omniauth (= 1.3.1)
   pagy
   pg (~> 1.2, >= 1.2.3)

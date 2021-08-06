@@ -7,6 +7,7 @@ scope :auth do
 end
 
 get "shops/:id", to: "shops#show", as: nil
+get "shops", to: "shops#index", as: nil
 
 namespace :shops do
   get ":id/products", to: "products#index"
