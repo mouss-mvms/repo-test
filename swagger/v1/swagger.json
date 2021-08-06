@@ -1239,8 +1239,64 @@
         {
           "name": "shop_id",
           "in": "path",
-          "description": "Unique identifier of the desired shop.",
+          "description": "Unique identifier of the citizen.",
           "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "search_query",
+          "in": "query",
+          "description": "Query for search.",
+          "example": "Air jordan",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "categories",
+          "in": "query",
+          "description": "Categories slugs concatened with double \"_\" if more than one.",
+          "example": "vin-et-spiritueux/aperitif-et-spiritueux/rhum__maison-et-bricolage/cuisine",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "prices",
+          "in": "query",
+          "description": "Prices range",
+          "example": "4__19",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "services",
+          "in": "query",
+          "example": "livraison-par-la-poste__click-collect",
+          "description": "Service slugs concatened with double \"_\" if more than one.",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "sort_by",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "price-asc",
+              "price-desc",
+              "newest"
+            ]
+          }
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "description": "Number of the researches page",
           "schema": {
             "type": "string"
           }
@@ -1282,21 +1338,6 @@
                   "oneOf": [
                     {
                       "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Unauthorized"
                     }
                   ]
                 }
@@ -1828,6 +1869,89 @@
                   "email,",
                   "siret"
                 ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/shops": {
+      "get": {
+        "summary": "get shops",
+        "tags": [
+          "Shops"
+        ],
+        "description": "Get a list of shops",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Search query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "city",
+            "in": "query",
+            "description": "City or territory slug",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "categories",
+            "in": "query",
+            "description": "Categories slugs concatened with double \"_\" if more than one.",
+            "example": "vin-et-spiritueux/aperitif-et-spiritueux/rhum__maison-et-bricolage/cuisine",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "perimeter",
+            "in": "query",
+            "description": " 'around_me' : dans mon département, 'all' : dans toute la France",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "services",
+            "in": "query",
+            "example": "livraison-par-la-poste__click-collect",
+            "description": "Service slugs concatened with double \"_\" if more than one.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Number of the researches page",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Shop"
+                  }
+                }
               }
             }
           }
