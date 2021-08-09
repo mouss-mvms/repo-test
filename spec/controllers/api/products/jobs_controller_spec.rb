@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe Api::Products::JobsController, type: :controller do
     describe "GET #show" do
         context "When it all ok" do
+            let(:id) {"10aad2e35138aa982e0d848b" }
             it "should return HTTP status 200 - ok" do
                 shop = create(:shop)
                 category = create(:category)
@@ -43,15 +44,19 @@ RSpec.describe Api::Products::JobsController, type: :controller do
                 ]
                     }
                 serialized_params = JSON.dump(Dto::Product::Request.new(create_params).to_h)
-                job_id = CreateProductJob.perform_async(serialized_params)
-                get :show, params: { id: job_id }
+                allow(Sidekiq::Status).to receive(:status).and_return("completed")
+                allow(Sidekiq::Status).to receive(:get).and_return("12")
+                get :show, params: { id: id }
                 should respond_with(200)
             end
         end
 
         context "With inexisting id" do
+            let(:id) {"10bbd2e35138bb982e0d848a" }
             it "should return HTTP status 404 - not_found" do
-                get :show, params: { id: "10aad2e35138aa982e0d848a" }
+                allow(Sidekiq::Status).to receive(:status).and_return(nil)
+                allow(Sidekiq::Status).to receive(:get).and_return(nil)
+                get :show, params: { id: id }
                 should respond_with(404)
             end
         end
