@@ -22,23 +22,271 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
 
   # GET #index
   describe "GET #index" do
-    before(:each) do
-      @products = [create(:product), create(:product), create(:product)]
-      @shop = create(:shop)
-      @products.each { |prod| prod.update(shop_id: @shop.id) }
-    end
-
     context "with valid params" do
-      it "get all products from shop" do
-        get :index, params: { id: @shop.id }
-        should respond_with(200)
+      context 'without filters' do
+        it "get all products from shop by position default" do
+          products = [
+            create(:product, status: "online", position: 1),
+            create(:product, status: "online", position: 2),
+            create(:product, status: "offline")
+          ]
+          shop = create(:shop)
+          products.each { |prod| prod.update(shop_id: shop.id) }
 
-        response_body = JSON.parse(response.body)
-        expect(response_body).to be_an_instance_of(Array)
-        expect(response_body.count).to eq(3)
+          online_products = Product.where(status: "online").sort_by(&:position)
 
-        product_ids = response_body.map { |p| p.symbolize_keys[:id] }
-        expect(Product.where(id: product_ids).actives.to_a).to eq(@products)
+          allow(Product).to receive(:search).and_return(online_products)
+          get :index, params: { id: shop.id }
+          should respond_with(200)
+
+          response_body = JSON.parse(response.body)
+          expect(response_body).to be_an_instance_of(Array)
+          expect(response_body.count).to eq(2)
+
+          product_ids = response_body.map { |p| p.symbolize_keys[:id] }
+          expect(Product.where(id: product_ids).to_a).to eq(online_products)
+        end
+
+        it 'get products matching query' do
+          products = [
+            create(:available_product, name: 'patator', status: "online"),
+            create(:available_product, name: 'koup-koup', status: "online"),
+            create(:available_product, name: 'tromblon', status: "online"),
+            create(:available_product, name: 'coutelas', status: "online"),
+            create(:available_product, name: 'coutelas de loup de mer', status: "online"),
+            create(:available_product, name: 'coutelas de flibustier', status: "online")
+          ]
+          shop = create(:shop)
+          products.each { |prod| prod.update(shop_id: shop.id) }
+
+          products_to_return = Product.where('name like ?', '%coutelas%')
+
+          allow(Product).to receive(:search).and_return(products_to_return)
+          get :index, params: { id: shop.id, query: 'coutelas' }
+          should respond_with(200)
+
+          response_body = JSON.parse(response.body)
+          expect(response_body).to be_an_instance_of(Array)
+          expect(response_body.count).to eq(3)
+          expect(response_body.pluck('name')).to eq(["coutelas", "coutelas de loup de mer", "coutelas de flibustier"])
+        end
+
+        it 'handles pagination' do
+          shop = create(:shop)
+          products = []
+          30.times do
+            products << create(:product, status: "online", shop_id: shop.id)
+          end
+
+          products_to_return = products.dup.last(15)
+
+          allow(Product).to receive(:search).and_return(products_to_return.to_a)
+
+          get :index, params: { id: shop.id, page: 2}
+          should respond_with(200)
+          response_body = JSON.parse(response.body)
+          expect(response_body).to be_an_instance_of(Array)
+          expect(response_body.count).to eq(15)
+          expect(response_body.pluck('id')).not_to eq(products.first(15).map(&:id))
+        end
+      end
+
+      context 'with categories filters' do
+        context 'with one category slug' do
+          it 'return array of products with the relevant category' do
+            weapon_cat = create(:category, name: 'Arme')
+            long_range_cat = create(:category, name: 'Longue portée', parent_id: weapon_cat.id)
+            veggie_cat = create(:category, name: 'Végétarienne', parent_id: long_range_cat.id)
+            products = [
+              create(:product, name: 'patator', status: "online", category_id: veggie_cat.id),
+              create(:product, status: "online", ),
+              create(:product, status: "offline")
+            ]
+            shop = create(:shop)
+            products.each { |prod| prod.update(shop_id: shop.id) }
+            product_to_return = Product.where(status: "online", name: 'patator', category_id: veggie_cat.id)
+
+            allow(Product).to receive(:search).and_return(product_to_return.to_a)
+
+            get :index, params: { id: shop.id, categories: veggie_cat.slug }
+            should respond_with(200)
+            response_body = JSON.parse(response.body)
+            expect(response_body).to be_an_instance_of(Array)
+            expect(response_body.count).to eq(1)
+          end
+        end
+
+        context 'with several category slugs' do
+          it 'return array of products with the relevant category' do
+            weapon_cat = create(:category, name: 'Arme')
+            long_range_cat = create(:category, name: 'Longue portée', parent_id: weapon_cat.id)
+            short_range_cat = create(:category, name: 'Courte portée', parent_id: weapon_cat.id)
+            veggie_cat = create(:category, name: 'Végétarienne', parent_id: long_range_cat.id)
+            meatty_cat = create(:category, name: 'Carnivore', parent_id: short_range_cat.id)
+
+            products = [
+              create(:product, name: 'patator', status: "online", category_id: veggie_cat.id),
+              create(:product, name: 'koup-koup', status: "online", category_id: meatty_cat.id),
+              create(:product, status: "online")
+            ]
+            shop = create(:shop)
+            products.each { |prod| prod.update(shop_id: shop.id) }
+            products_to_return = Product.where(name: ["patator", "koup-koup"])
+
+            allow(Product).to receive(:search).and_return(products_to_return.to_a)
+
+            get :index, params: { id: shop.id, categories: "#{veggie_cat.slug}__#{meatty_cat.slug}" }
+            should respond_with(200)
+            response_body = JSON.parse(response.body)
+            expect(response_body).to be_an_instance_of(Array)
+            expect(response_body.count).to eq(2)
+          end
+        end
+      end
+
+      context 'with prices filters' do
+        it 'returns array of products with prices inside params range' do
+          products = [
+            create(:available_product, name: 'patator', status: "online"),
+            create(:available_product, name: 'koup-koup', status: "online"),
+            create(:available_product, name: 'tromblon', status: "online"),
+            create(:available_product, name: 'coutelas', status: "online")
+          ]
+          shop = create(:shop)
+          products.each { |prod| prod.update(shop_id: shop.id) }
+          products_to_return = products.first(2).each { |prod| prod.references.first.update(base_price: rand(101..2000))}
+          products.last.references.first.update(base_price: 3000)
+
+          allow(Product).to receive(:search).and_return(products_to_return.to_a)
+          get :index, params: { id: shop.id, prices: '101__2000' }
+          should respond_with(200)
+          response_body = JSON.parse(response.body)
+          expect(response_body).to be_an_instance_of(Array)
+          expect(response_body.count).to eq(2)
+        end
+      end
+
+      context 'with sort_by filters' do
+        context 'highest-score' do
+          it 'returns array of products by score' do
+            products = [
+              create(:available_product, name: 'patator', status: "online", score: 8),
+              create(:available_product, name: 'koup-koup', status: "online", score: 8),
+              create(:available_product, name: 'tromblon', status: "online", score: 8),
+              create(:available_product, name: 'coutelas', status: "online", score: 8),
+              create(:available_product, name: 'coutelas', status: "online", score: 8),
+              create(:available_product, name: 'coutelas', status: "online", score: 8),
+              create(:available_product, name: 'coutelas', status: "online", score: 8),
+              create(:available_product, name: 'coutelas', status: "online", score: 8),
+              create(:available_product, name: 'coutelas', status: "online", score: 0),
+              create(:available_product, name: 'coutelas', status: "online", score: 2),
+              create(:available_product, name: 'coutelas', status: "online", score: 1),
+              create(:available_product, name: 'coutelas', status: "online", score: 4),
+              create(:available_product, name: 'coutelas', status: "online", score: 2),
+              create(:available_product, name: 'coutelas', status: "online", score: 4),
+              create(:available_product, name: 'coutelas', status: "online", score: 7),
+            ]
+            shop = create(:shop)
+            products.each { |prod| prod.update(shop_id: shop.id) }
+            products_to_return = products.sort_by!(&:score)
+
+            allow(Product).to receive(:search).and_return(products_to_return.to_a)
+            get :index, params: { id: shop.id, sort_by: 'highest-score' }
+            should respond_with(200)
+            response_body = JSON.parse(response.body)
+            expect(response_body).to be_an_instance_of(Array)
+            expect(response_body.count).to eq(15)
+            expect(response_body.pluck('id')).to eq(products_to_return.pluck(:id))
+          end
+        end
+        context 'price-asc' do
+          it 'returns array of products by price asc' do
+            products = [
+              create(:available_product, name: 'patator', status: "online", score: 5),
+              create(:available_product, name: 'koup-koup', status: "online", score: 5),
+              create(:available_product, name: 'tromblon', status: "online", score: 2),
+              create(:available_product, name: 'coutelas', status: "online", score: 1)
+            ]
+            shop = create(:shop)
+            products.each { |prod| prod.update(shop_id: shop.id) }
+            products.each_with_index { |p, i| p.references.first.update(base_price: i + 1) }
+            products_to_return = products.sort_by! { |p| p.references.first.base_price }
+
+            allow(Product).to receive(:search).and_return(products_to_return.to_a)
+            get :index, params: { id: shop.id, sort_by: 'price-asc' }
+            should respond_with(200)
+            response_body = JSON.parse(response.body)
+            expect(response_body).to be_an_instance_of(Array)
+            expect(response_body.count).to eq(4)
+            expect(response_body.pluck('id')).to eq(products_to_return.pluck(:id))
+          end
+        end
+        context 'price-desc' do
+          it 'returns array of products by price desc' do
+            products = [
+              create(:available_product, name: 'patator', status: "online", score: 5),
+              create(:available_product, name: 'koup-koup', status: "online", score: 5),
+              create(:available_product, name: 'tromblon', status: "online", score: 2),
+              create(:available_product, name: 'coutelas', status: "online", score: 1)
+            ]
+            shop = create(:shop)
+            products.each { |prod| prod.update(shop_id: shop.id) }
+            products.each_with_index { |p, i| p.references.first.update(base_price: i + 1) }
+            products_to_return = products.sort_by! { |p| p.references.first.base_price }.reverse!
+
+            allow(Product).to receive(:search).and_return(products_to_return.to_a)
+            get :index, params: { id: shop.id, sort_by: 'price-asc' }
+            should respond_with(200)
+            response_body = JSON.parse(response.body)
+            expect(response_body).to be_an_instance_of(Array)
+            expect(response_body.count).to eq(4)
+            expect(response_body.pluck('id')).to eq(products_to_return.pluck(:id))
+          end
+        end
+
+        context 'newest' do
+          it 'returns array of products sorted by created_at' do
+            products = [
+              create(:available_product, name: 'patator', status: "online"),
+              create(:available_product, name: 'koup-koup', status: "online"),
+              create(:available_product, name: 'tromblon', status: "online"),
+              create(:available_product, name: 'coutelas', status: "online")
+            ]
+            shop = create(:shop)
+            products.each { |prod| prod.update(shop_id: shop.id) }
+            products_to_return = products.each_with_index { |p, i| p.update(created_at: p.created_at - i.days) }
+
+            allow(Product).to receive(:search).and_return(products_to_return.to_a)
+            get :index, params: { id: shop.id, sort_by: 'newest' }
+            should respond_with(200)
+            response_body = JSON.parse(response.body)
+            expect(response_body).to be_an_instance_of(Array)
+            expect(response_body.count).to eq(4)
+            expect(response_body.pluck('id')).to eq(products_to_return.pluck(:id))
+          end
+        end
+
+        context 'position' do
+          it 'returns array of products sorted by position asc' do
+            products = [
+              create(:available_product, name: 'patator', status: "online", position: 1),
+              create(:available_product, name: 'koup-koup', status: "online", position: 2),
+              create(:available_product, name: 'tromblon', status: "online", position: 3),
+              create(:available_product, name: 'coutelas', status: "online", position: 4)
+            ]
+            shop = create(:shop)
+            products.each { |prod| prod.update(shop_id: shop.id) }
+            products_to_return = products.sort_by!(&:position)
+
+            allow(Product).to receive(:search).and_return(products_to_return.to_a)
+            get :index, params: { id: shop.id, sort_by: 'position' }
+            should respond_with(200)
+            response_body = JSON.parse(response.body)
+            expect(response_body).to be_an_instance_of(Array)
+            expect(response_body.count).to eq(4)
+            expect(response_body.pluck('id')).to eq(products_to_return.pluck(:id))
+          end
+        end
       end
     end
 
@@ -47,25 +295,24 @@ RSpec.describe Api::Shops::ProductsController, type: :controller do
         it "should returns 400 HTTP Status" do
           get :index, params: { id: 'Xenomorph' }
           should respond_with(400)
-          expect(JSON.parse(response.body)).to eq({"detail"=>"Shop_id is incorrect", "message"=>"Bad Request", "status"=>400})
+          expect(response.body).to eq(Dto::Errors::BadRequest.new('Shop_id is incorrect').to_h.to_json)
         end
       end
 
       context "shop doesn't exists" do
         it "should returns 404 HTTP Status" do
-          get :index, params: { id: (@shop.id + 1) }
+          id = 1
+          Shop.all.each do |shop|
+            break if shop.id != id
+            id = id + 1
+          end
+          get :index, params: { id: id }
           should respond_with(404)
-          expect(JSON.parse(response.body)).to eq({"detail"=>"Couldn't find Shop with 'id'=#{@shop.id + 1}", "message"=>"Not Found", "status"=>404})
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Shop with 'id'=#{id}").to_h.to_json)
         end
       end
     end
   end
-
-end
-
-def generate_token(user)
-  exp_payload = { id: user.id, exp: Time.now.to_i + 1 * 3600 * 24 }
-  JWT.encode exp_payload, ENV["JWT_SECRET"], 'HS256'
 end
 
 

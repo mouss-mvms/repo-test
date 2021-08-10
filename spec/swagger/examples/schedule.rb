@@ -2,8 +2,13 @@ module Examples
   class Schedule
     def self.to_h
       {
-        type:'object',
+        type: 'object',
         properties: {
+          id: {
+            type: "integer",
+            example: 3,
+            description: "Id of schedules"
+          },
           day: {
             type: "string",
             example: "Lundi",
@@ -11,22 +16,22 @@ module Examples
           },
           openMorning: {
             type: "string",
-            example: "12h00",
+            example: "09:00",
             description: "Time of opening morning"
           },
           closeMorning: {
             type: "string",
-            example: "12h00",
+            example: "12:00",
             description: "Time of closing morning"
           },
           openAfternoon: {
             type: "string",
-            example: "12h00",
+            example: "14:00",
             description: "Time of opening afternoon"
           },
           closeAftenoon: {
             type: "string",
-            example: "12h00",
+            example: "19:00",
             description: "Time of closing afternoon"
           },
         }

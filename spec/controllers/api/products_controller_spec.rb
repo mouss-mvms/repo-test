@@ -3919,7 +3919,7 @@ RSpec.describe Api::ProductsController, type: :controller do
   describe 'POST #create' do
     context "For a citizen's product" do
       context 'All ok' do
-        it 'should return 201 HTTP Status with product created' do
+        it 'should return 202 HTTP Status' do
           user_citizen = create(:citizen_user, email: "citizen0@ecity.fr")
 
           create_params = {
@@ -3962,11 +3962,12 @@ RSpec.describe Api::ProductsController, type: :controller do
           }
 
           request.headers['x-client-id'] = generate_token(user_citizen)
-
+          job_id = "10aad2e35138aa982e0d848a"
+          allow(Dao::Product).to receive(:create_async).and_return(job_id)
           expect(Dao::Product).to receive(:create_async)
           post :create, params: create_params
-
-          should respond_with(201)
+          should respond_with(202)
+          expect(JSON.parse(response.body)["url"]).to eq(ENV["BASE_URL"] + api_product_job_status_path(job_id))
         end
       end
 
@@ -5263,7 +5264,7 @@ RSpec.describe Api::ProductsController, type: :controller do
 
     context "For a shop's product" do
       context 'All ok' do
-        it 'should return 201 HTTP Status with product created' do
+        it 'should return 202 HTTP Status with product created' do
           shop = create(:shop)
           create_params = {
             name: "manteau MAC",
@@ -5304,11 +5305,12 @@ RSpec.describe Api::ProductsController, type: :controller do
           user_shop_employee.shop_employee.shops << shop
           user_shop_employee.shop_employee.save
           request.headers['x-client-id'] = generate_token(user_shop_employee)
-
+          job_id = "10aad2e35138aa982e0d848a"
+          allow(Dao::Product).to receive(:create_async).and_return(job_id)
           expect(Dao::Product).to receive(:create_async)
           post :create, params: create_params
-
-          should respond_with(201)
+          should respond_with(202)
+          expect(JSON.parse(response.body)["url"]).to eq(ENV["BASE_URL"] + api_product_job_status_path(job_id))
         end
       end
 
@@ -6604,7 +6606,7 @@ RSpec.describe Api::ProductsController, type: :controller do
 
   describe 'POST #create_offline' do
     context 'All ok' do
-      it 'should return 201 HTTP Status with product created' do
+      it 'should return2 HTTP Status' do
         create_params = {
           name: "manteau MAC",
           slug: "manteau-mac",
@@ -6640,22 +6642,12 @@ RSpec.describe Api::ProductsController, type: :controller do
             }
           ]
         }
-
+        job_id = "10aad2e35138aa982e0d848a"
+        allow(Dao::Product).to receive(:create_async).and_return(job_id)
+        expect(Dao::Product).to receive(:create_async)
         post :create_offline, params: create_params
-
-        should respond_with(201)
-        result = JSON.parse(response.body)
-        expect(result["id"]).not_to be_nil
-        expect(result["name"]).to eq(create_params[:name])
-        expect(result["category"]["id"]).to eq(create_params[:categoryId])
-        expect(result["brand"]).to eq(create_params[:brand])
-        expect(result["status"]).to eq(create_params[:status])
-        expect(result["isService"]).to eq(create_params[:isService])
-        expect(result["sellerAdvice"]).to eq(create_params[:sellerAdvice])
-        expect(result["description"]).to eq(create_params[:description])
-        expect(result["origin"]).to eq(create_params[:origin])
-        expect(result["allergens"]).to eq(create_params[:allergens])
-        expect(result["composition"]).to eq(create_params[:composition])
+        should respond_with(202)
+        expect(JSON.parse(response.body)["url"]).to eq(ENV["BASE_URL"] + api_product_job_status_path(job_id))
       end
     end
 

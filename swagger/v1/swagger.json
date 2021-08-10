@@ -804,8 +804,22 @@
 
         ],
         "responses": {
-          "201": {
-            "description": "Product created"
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "example": "https://exempleurl/api/products/status/10aad2e35138aa982e0d848a",
+                      "description": "Url polling"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad request",
@@ -1037,17 +1051,19 @@
 
         ],
         "responses": {
-          "201": {
-            "description": "Created",
+          "202": {
+            "description": "Accepted",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Product"
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "example": "https://exempleurl/api/products/status/10aad2e35138aa982e0d848a",
+                      "description": "Url polling"
                     }
-                  ]
+                  }
                 }
               }
             }
@@ -1234,13 +1250,141 @@
         }
       }
     },
+    "/api/product-jobs/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of product job.",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get job product informations",
+        "tags": [
+          "Products"
+        ],
+        "description": "Return the job product status",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "queued",
+                        "working",
+                        "complete",
+                        "failed",
+                        "interrupted"
+                      ],
+                      "description": "Job status"
+                    },
+                    "product_id": {
+                      "type": "integer",
+                      "example": 1,
+                      "description": "Unique identifier of a product"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Job not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/NotFound"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/shops/{shop_id}/products": {
       "parameters": [
         {
           "name": "shop_id",
           "in": "path",
-          "description": "Unique identifier of the desired shop.",
+          "description": "Unique identifier of the citizen.",
           "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "search_query",
+          "in": "query",
+          "description": "Query for search.",
+          "example": "Air jordan",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "categories",
+          "in": "query",
+          "description": "Categories slugs concatened with double \"_\" if more than one.",
+          "example": "vin-et-spiritueux/aperitif-et-spiritueux/rhum__maison-et-bricolage/cuisine",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "prices",
+          "in": "query",
+          "description": "Prices range",
+          "example": "4__19",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "services",
+          "in": "query",
+          "example": "livraison-par-la-poste__click-collect",
+          "description": "Service slugs concatened with double \"_\" if more than one.",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "sort_by",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "price-asc",
+              "price-desc",
+              "newest"
+            ]
+          }
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "description": "Number of the researches page",
           "schema": {
             "type": "string"
           }
@@ -1287,6 +1431,131 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/shops/{id}/schedules": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of the desired shop.",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "get shop's schedules",
+        "tags": [
+          "Schedules"
+        ],
+        "description": "Retrieve schedules from the given shop.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Schedule"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/NotFound"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/shops/{id}/schedules": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of the desired shop.",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "x-client-id",
+          "in": "header",
+          "description": "Auth token of user",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "put": {
+        "summary": "Update shop's schedules",
+        "tags": [
+          "Schedules"
+        ],
+        "description": "Update schedules from the given shop.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Schedule"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/BadRequest"
+                    }
+                  ]
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized",
@@ -1299,6 +1568,75 @@
                       "$ref": "#/components/schemas/Unauthorized"
                     }
                   ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/NotFound"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "example": 3,
+                      "description": "Id of schedule that you want to update"
+                    },
+                    "openMorning": {
+                      "type": "string",
+                      "example": "10:00",
+                      "description": "Open morning time"
+                    },
+                    "openAfternoon": {
+                      "type": "string",
+                      "example": "13:00",
+                      "description": "Close morning time"
+                    },
+                    "closeMorning": {
+                      "type": "string",
+                      "example": "14:00",
+                      "description": "Open afternoon time"
+                    },
+                    "closeAfternoon": {
+                      "type": "string",
+                      "example": "20:00",
+                      "description": "Close afternoon time"
+                    }
+                  }
                 }
               }
             }
@@ -1624,11 +1962,94 @@
           }
         }
       }
+    },
+    "/api/shops": {
+      "get": {
+        "summary": "get shops",
+        "tags": [
+          "Shops"
+        ],
+        "description": "Get a list of shops",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Search query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "city",
+            "in": "query",
+            "description": "City or territory slug",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "categories",
+            "in": "query",
+            "description": "Categories slugs concatened with double \"_\" if more than one.",
+            "example": "vin-et-spiritueux/aperitif-et-spiritueux/rhum__maison-et-bricolage/cuisine",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "perimeter",
+            "in": "query",
+            "description": " 'around_me' : dans mon département, 'all' : dans toute la France",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "services",
+            "in": "query",
+            "example": "livraison-par-la-poste__click-collect",
+            "description": "Service slugs concatened with double \"_\" if more than one.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Number of the researches page",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Shop"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog"
+      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-staging"
     }
   ],
   "components": {
@@ -1750,6 +2171,11 @@
       "Schedule": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "integer",
+            "example": 3,
+            "description": "Id of schedules"
+          },
           "day": {
             "type": "string",
             "example": "Lundi",
@@ -1757,22 +2183,22 @@
           },
           "openMorning": {
             "type": "string",
-            "example": "12h00",
+            "example": "09:00",
             "description": "Time of opening morning"
           },
           "closeMorning": {
             "type": "string",
-            "example": "12h00",
+            "example": "12:00",
             "description": "Time of closing morning"
           },
           "openAfternoon": {
             "type": "string",
-            "example": "12h00",
+            "example": "14:00",
             "description": "Time of opening afternoon"
           },
           "closeAftenoon": {
             "type": "string",
-            "example": "12h00",
+            "example": "19:00",
             "description": "Time of closing afternoon"
           }
         }

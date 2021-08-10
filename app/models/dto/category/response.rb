@@ -7,7 +7,7 @@ module Dto
         @id = args[:id]
         @name = args[:name]
         @slug = args[:slug]
-        @children = args[:children]
+        @children = []
       end
 
       def self.create(category)

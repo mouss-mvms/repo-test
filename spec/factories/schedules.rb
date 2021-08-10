@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :monday_schedule, class: Schedule do
+  factory :schedule do
     day { 1 }
     open { true }
     am_open { "09:00:00" }
