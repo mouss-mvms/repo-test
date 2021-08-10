@@ -3967,7 +3967,7 @@ RSpec.describe Api::ProductsController, type: :controller do
           expect(Dao::Product).to receive(:create_async)
           post :create, params: create_params
           should respond_with(202)
-          expect(JSON.parse(response.body)["url"]).to eq(api_product_job_status_url(job_id))
+          expect(JSON.parse(response.body)["url"]).to eq(ENV["BASE_URL"] + api_product_job_status_path(job_id))
         end
       end
 
@@ -5310,7 +5310,7 @@ RSpec.describe Api::ProductsController, type: :controller do
           expect(Dao::Product).to receive(:create_async)
           post :create, params: create_params
           should respond_with(202)
-          expect(JSON.parse(response.body)["url"]).to eq(api_product_job_status_url(job_id))
+          expect(JSON.parse(response.body)["url"]).to eq(ENV["BASE_URL"] + api_product_job_status_path(job_id))
         end
       end
 
@@ -6647,7 +6647,7 @@ RSpec.describe Api::ProductsController, type: :controller do
         expect(Dao::Product).to receive(:create_async)
         post :create_offline, params: create_params
         should respond_with(202)
-        expect(JSON.parse(response.body)["url"]).to eq(api_product_job_status_url(job_id))
+        expect(JSON.parse(response.body)["url"]).to eq(ENV["BASE_URL"] + api_product_job_status_path(job_id))
       end
     end
 
