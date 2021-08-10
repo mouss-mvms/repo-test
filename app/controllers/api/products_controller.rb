@@ -7,8 +7,8 @@ module Api
       dto_product_request = Dto::Product::Request.new(product_params)
       product = Product.find(product_params[:id])
       category = Category.find(dto_product_request.category_id)
-      raise ActionController::BadRequest.new('origin and composition is required') if Products::CategoriesSpecifications::MustHaveLabelling.new.is_satisfied_by?(category) && (dto_product_request.origin.blank? || dto_product_request.composition.blank?)
-      raise ActionController::BadRequest.new('allergens is required') if Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
+      raise ActionController::BadRequest.new('origin and composition is required') if ::Products::CategoriesSpecifications::MustHaveLabelling.new.is_satisfied_by?(category) && (dto_product_request.origin.blank? || dto_product_request.composition.blank?)
+      raise ActionController::BadRequest.new('allergens is required') if ::Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
       begin
         product = Dto::Product.build(dto_product_request: dto_product_request, product: product)
       rescue => e
@@ -26,8 +26,8 @@ module Api
       dto_product_request = Dto::Product::Request.new(product_params)
       product = Product.find(product_params[:id])
       category = Category.find(dto_product_request.category_id)
-      raise ActionController::BadRequest.new('origin and composition is required') if Products::CategoriesSpecifications::MustHaveLabelling.new.is_satisfied_by?(category) && (dto_product_request.origin.blank? || dto_product_request.composition.blank?)
-      raise ActionController::BadRequest.new('allergens is required') if Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
+      raise ActionController::BadRequest.new('origin and composition is required') if ::Products::CategoriesSpecifications::MustHaveLabelling.new.is_satisfied_by?(category) && (dto_product_request.origin.blank? || dto_product_request.composition.blank?)
+      raise ActionController::BadRequest.new('allergens is required') if ::Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
 
       if @user.is_a_citizen?
         raise ApplicationController::Forbidden if @user.citizen.products.to_a.find{ |p| p.id == product.id}.nil?
@@ -58,21 +58,21 @@ module Api
       raise ActionController::ParameterMissing.new('shopId') if dto_product_request.shop_id.blank?
       Shop.find(dto_product_request.shop_id)
       category = Category.find(dto_product_request.category_id)
-      raise ActionController::BadRequest.new('origin and composition is required') if Products::CategoriesSpecifications::MustHaveLabelling.new.is_satisfied_by?(category) && (dto_product_request.origin.blank? || dto_product_request.composition.blank?)
-      raise ActionController::BadRequest.new('allergens is required') if Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
+      raise ActionController::BadRequest.new('origin and composition is required') if ::Products::CategoriesSpecifications::MustHaveLabelling.new.is_satisfied_by?(category) && (dto_product_request.origin.blank? || dto_product_request.composition.blank?)
+      raise ActionController::BadRequest.new('allergens is required') if ::Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
       if @user.is_a_citizen?
         dto_product_request.status = 'submitted'
         dto_product_request.citizen_id = @user.citizen.id
       end
       ActiveRecord::Base.transaction do
         begin
-          Dao::Product.create_async(dto_product_request.to_h)
+          job_id = Dao::Product.create_async(dto_product_request.to_h)
         rescue => e
           Rails.logger.error(e.message)
           error = Dto::Errors::InternalServer.new(detail: e.message)
           return render json: error.to_h, status: error.status
         else
-          return render json: '', status: :created
+          return render json: { url: api_product_job_status_url(job_id) }, status: :accepted
         end
       end
     end
@@ -82,18 +82,17 @@ module Api
       raise ActionController::ParameterMissing.new(dto_product_request.shop_id) if dto_product_request.shop_id.blank?
       Shop.find(dto_product_request.shop_id)
       category = Category.find(dto_product_request.category_id)
-      raise ActionController::BadRequest.new('origin and composition is required') if Products::CategoriesSpecifications::MustHaveLabelling.new.is_satisfied_by?(category) && (dto_product_request.origin.blank? || dto_product_request.composition.blank?)
-      raise ActionController::BadRequest.new('allergens is required') if Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
+      raise ActionController::BadRequest.new('origin and composition is required') if ::Products::CategoriesSpecifications::MustHaveLabelling.new.is_satisfied_by?(category) && (dto_product_request.origin.blank? || dto_product_request.composition.blank?)
+      raise ActionController::BadRequest.new('allergens is required') if ::Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
       ActiveRecord::Base.transaction do
         begin
-          product = Dto::Product.build(dto_product_request: dto_product_request)
+          job_id = Dao::Product.create_async(dto_product_request.to_h)
         rescue => e
           Rails.logger.error(e.message)
           error = Dto::Errors::InternalServer.new(detail: e.message)
           return render json: error.to_h, status: error.status
         else
-          response = Dto::Product::Response.create(product).to_h
-          return render json: response, status: :created
+          return render json: { url: api_product_job_status_url(job_id) }, status: :accepted
         end
       end
     end

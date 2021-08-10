@@ -106,6 +106,8 @@ GEM
     builder (3.2.4)
     byebug (11.1.3)
     chartkick (2.3.4)
+    chronic_duration (0.10.6)
+      numerizer (~> 0.1.1)
     climate_control (0.2.0)
     coderay (1.1.3)
     concurrent-ruby (1.1.8)
@@ -254,6 +256,7 @@ GEM
     nokogiri (1.11.5)
       mini_portile2 (~> 2.5.0)
       racc (~> 1.4)
+    numerizer (0.1.1)
     omniauth (1.3.1)
       hashie (>= 1.2, < 4)
       rack (>= 1.0, < 3)
@@ -384,6 +387,9 @@ GEM
       rack (~> 2.0)
       rack-protection (>= 1.5.0)
       redis (>= 3.3.5, < 4.2)
+    sidekiq-status (2.0.2)
+      chronic_duration
+      sidekiq (>= 5.0)
     signet (0.15.0)
       addressable (~> 2.3)
       faraday (>= 0.17.3, < 2.0)
@@ -455,6 +461,7 @@ DEPENDENCIES
   rswag-specs
   rswag-ui
   shoulda-matchers
+  sidekiq-status
   simple_token_authentication (~> 1.0)
   spring
   tzinfo-data
@@ -463,4 +470,4 @@ RUBY VERSION
    ruby 2.6.6p146
 
 BUNDLED WITH
-   2.2.23
+   2.2.24

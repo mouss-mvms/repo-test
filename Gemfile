@@ -57,6 +57,7 @@ gem 'rswag-api'
 gem 'rswag-ui'
 
 gem 'delayed_job_active_record'
+gem 'sidekiq-status'
 
 gem 'omniauth', '1.3.1'
 gem 'simple_token_authentication', '~>1.0'
