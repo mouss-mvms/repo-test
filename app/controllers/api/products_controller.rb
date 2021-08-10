@@ -92,7 +92,7 @@ module Api
           error = Dto::Errors::InternalServer.new(detail: e.message)
           return render json: error.to_h, status: error.status
         else
-          return render json: { url: api_product_job_status_url(job_id) }, status: :accepted
+          return render json: { url: ENV["BASE_URL"] + api_product_job_status_path(job_id) }, status: :accepted
         end
       end
     end
