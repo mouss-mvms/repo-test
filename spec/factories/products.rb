@@ -15,7 +15,6 @@
 FactoryBot.define do
   factory :product do
     name { "MyString" }
-    slug { "my-string" }
     archived { false }
     status { 1 }
     category
@@ -24,7 +23,6 @@ FactoryBot.define do
 
   factory :product_with_category, class: Product do
     name { "MyString" }
-    slug { "my-string" }
     archived { false }
     status { 1 }
     association :category, factory: :category
@@ -33,7 +31,6 @@ FactoryBot.define do
 
   factory :available_product, class: Product do
     name { "MyString" }
-    slug { "my-string" }
     archived { false }
     status { 1 }
     shop
@@ -47,7 +44,6 @@ FactoryBot.define do
 
   factory :product_without_services, class: Product do
     name { "product_with_services1" }
-    slug { "product-with-services" }
     archived { false }
     status { 1 }
     shop
@@ -58,7 +54,6 @@ FactoryBot.define do
   end
   factory :product_without_services2, class: Product do
     name { "product_with_services2" }
-    slug { "product-with-services" }
     archived { false }
     status { 1 }
     shop
@@ -70,7 +65,6 @@ FactoryBot.define do
 
   factory :product_offline, class: Product do
     name { "MyString" }
-    slug { "my-string" }
     archived { false }
     status { 0 }
     category
@@ -79,7 +73,6 @@ FactoryBot.define do
 
   factory :product_created_by_citizen, class: Product do
     name { "MyString" }
-    slug { "my-string" }
     archived { false }
     status { 2 }
     shop
@@ -87,7 +80,6 @@ FactoryBot.define do
   end
 
   factory :product_without_name, class: Product do
-    slug { "my-string" }
     archived { false }
     status { 1 }
     category

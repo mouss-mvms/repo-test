@@ -1,7 +1,7 @@
 GEM
   remote: https://gem.fury.io/mvms/
   specs:
-    mvms-core (2.5.182)
+    mvms-core (2.5.184)
       MailchimpMarketing (~> 3.0.34)
       active_model_otp
       activerecord (~> 5.2, >= 5.2.0)
@@ -500,7 +500,7 @@ DEPENDENCIES
   figaro
   jwt
   listen (~> 3.3)
-  mvms-core (= 2.5.182)!
+  mvms-core (= 2.5.184)!
   omniauth (= 1.3.1)
   pagy
   pg (~> 1.2, >= 1.2.3)
