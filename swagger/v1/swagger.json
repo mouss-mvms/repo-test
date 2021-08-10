@@ -804,8 +804,22 @@
 
         ],
         "responses": {
-          "201": {
-            "description": "Product created"
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "example": "https://exempleurl/api/products/status/10aad2e35138aa982e0d848a",
+                      "description": "Url polling"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
             "description": "Bad request",
@@ -1037,17 +1051,19 @@
 
         ],
         "responses": {
-          "201": {
-            "description": "Created",
+          "202": {
+            "description": "Accepted",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Product"
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "example": "https://exempleurl/api/products/status/10aad2e35138aa982e0d848a",
+                      "description": "Url polling"
                     }
-                  ]
+                  }
                 }
               }
             }
@@ -1228,6 +1244,78 @@
                   "variants,",
                   "characteristics"
                 ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/product-jobs/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of product job.",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get job product informations",
+        "tags": [
+          "Products"
+        ],
+        "description": "Return the job product status",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "queued",
+                        "working",
+                        "complete",
+                        "failed",
+                        "interrupted"
+                      ],
+                      "description": "Job status"
+                    },
+                    "product_id": {
+                      "type": "integer",
+                      "example": 1,
+                      "description": "Unique identifier of a product"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Job not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/NotFound"
+                    }
+                  ]
+                }
               }
             }
           }
