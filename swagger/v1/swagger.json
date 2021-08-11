@@ -2,11 +2,11 @@
   "openapi": "3.0.1",
   "info": {
     "title": "CATALOG API",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "description": "Ma Ville Mon Shopping Catalog API"
   },
   "paths": {
-    "/api/categories": {
+    "/api/v1/categories": {
       "get": {
         "summary": "list categories",
         "tags": [
@@ -37,7 +37,7 @@
         }
       }
     },
-    "/api/citizens/{id}/products": {
+    "/api/v1/citizens/{id}/products": {
       "parameters": [
         {
           "name": "id",
@@ -109,7 +109,7 @@
         }
       }
     },
-    "/api/products/{id}": {
+    "/api/v1/products/{id}": {
       "parameters": [
         {
           "name": "id",
@@ -440,7 +440,7 @@
         }
       }
     },
-    "/api/auth/products/{id}": {
+    "/api/v1/auth/products/{id}": {
       "parameters": [
         {
           "name": "id",
@@ -777,7 +777,7 @@
         }
       }
     },
-    "/api/auth/products": {
+    "/api/v1/auth/products": {
       "parameters": [
         {
           "name": "X-client-id",
@@ -1033,7 +1033,7 @@
         }
       }
     },
-    "/api/products": {
+    "/api/v1/products": {
       "post": {
         "summary": "Create a product (offline)",
         "tags": [
@@ -1250,7 +1250,7 @@
         }
       }
     },
-    "/api/product-jobs/{id}": {
+    "/api/v1/product-jobs/{id}": {
       "parameters": [
         {
           "name": "id",
@@ -1322,7 +1322,7 @@
         }
       }
     },
-    "/api/shops/{shop_id}/products": {
+    "/api/v1/shops/{shop_id}/products": {
       "parameters": [
         {
           "name": "shop_id",
@@ -1435,7 +1435,7 @@
         }
       }
     },
-    "/api/shops/{id}/schedules": {
+    "/api/v1/shops/{id}/schedules": {
       "parameters": [
         {
           "name": "id",
@@ -1492,7 +1492,7 @@
         }
       }
     },
-    "/api/auth/shops/{id}/schedules": {
+    "/api/v1/auth/shops/{id}/schedules": {
       "parameters": [
         {
           "name": "id",
@@ -1644,7 +1644,7 @@
         }
       }
     },
-    "/api/shops/{id}": {
+    "/api/v1/shops/{id}": {
       "parameters": [
         {
           "name": "id",
@@ -1703,7 +1703,7 @@
         }
       }
     },
-    "/api/auth/shops/{id}": {
+    "/api/v1/auth/shops/{id}": {
       "parameters": [
         {
           "name": "id",
@@ -1837,7 +1837,7 @@
         }
       }
     },
-    "/api/auth/shops": {
+    "/api/v1/auth/shops": {
       "post": {
         "summary": "Create Shop",
         "tags": [
@@ -1963,7 +1963,7 @@
         }
       }
     },
-    "/api/shops": {
+    "/api/v1/shops": {
       "get": {
         "summary": "get shops",
         "tags": [
@@ -2049,7 +2049,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {

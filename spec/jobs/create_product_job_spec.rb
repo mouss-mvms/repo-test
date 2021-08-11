@@ -41,7 +41,7 @@ RSpec.describe "CreateProductJob", :type => :job do
       ]
     }
 
-    serialized_params = JSON.dump(Dto::Product::Request.new(create_params).to_h)
+    serialized_params = JSON.dump(Dto::V1::Product::Request.new(create_params).to_h)
     expect(CreateProductJob.jobs.size).to eq(0)
     CreateProductJob.perform_async(serialized_params)
     expect(CreateProductJob.jobs.size).to eq(1)

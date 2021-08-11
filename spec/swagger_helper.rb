@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
-Dir["./spec/swagger/examples/*.rb"].each do |f|
+Dir["./spec/swagger/v*/examples/*.rb"].each do |f|
   require f
 end
 
+require './spec/swagger/examples/errors.rb'
 require 'rails_helper'
 
 RSpec.configure do |config|
@@ -23,7 +24,7 @@ RSpec.configure do |config|
       openapi: '3.0.1',
       info: {
         title: 'CATALOG API',
-        version: '0.1.0',
+        version: '1.0.0',
         description: 'Ma Ville Mon Shopping Catalog API'
       },
       paths: {},
@@ -41,20 +42,20 @@ RSpec.configure do |config|
           }
         },
         schemas: {
-          Shop: Examples::Shop.to_h,
-          Address: Examples::Address.to_h,
-          Schedule: Examples::Schedule.to_h,
-          Product: Examples::Product.to_h,
-          Category: Examples::Category.to_h,
-          Variant: Examples::Variant.to_h,
-          Characteristic: Examples::Characteristics.to_h,
-          GoodDeal: Examples::GoodDeal.to_h,
-          Unauthorized: Examples::Errors::Unauthorized.new.error,
-          BadRequest: Examples::Errors::BadRequest.new.error,
-          InternalError: Examples::Errors::InternalError.new.error,
-          UnprocessableEntity: Examples::Errors::UnprocessableEntity.new.error,
-          Forbidden: Examples::Errors::Forbidden.new.error,
-          NotFound: Examples::Errors::NotFound.new.error
+          Shop: V1::Examples::Shop.to_h,
+          Address: V1::Examples::Address.to_h,
+          Schedule: V1::Examples::Schedule.to_h,
+          Product: V1::Examples::Product.to_h,
+          Category: V1::Examples::Category.to_h,
+          Variant: V1::Examples::Variant.to_h,
+          Characteristic: V1::Examples::Characteristics.to_h,
+          GoodDeal: V1::Examples::GoodDeal.to_h,
+          Unauthorized: V1::Examples::Errors::Unauthorized.new.error,
+          BadRequest: V1::Examples::Errors::BadRequest.new.error,
+          InternalError: V1::Examples::Errors::InternalError.new.error,
+          UnprocessableEntity: V1::Examples::Errors::UnprocessableEntity.new.error,
+          Forbidden: V1::Examples::Errors::Forbidden.new.error,
+          NotFound: V1::Examples::Errors::NotFound.new.error
         }
       }
     }
