@@ -8,9 +8,11 @@ Rails.application.routes.draw do
   get '/' => "rails/welcome#index"
 
   namespace :api do
-    instance_eval(File.read(Rails.root.join("config/routes/shops.rb")))
-    instance_eval(File.read(Rails.root.join("config/routes/products.rb")))
-    get '/citizens/:id/products', to: 'citizens/products#index'
-    get '/categories', to: 'categories#index'
+    namespace :v1 do
+      instance_eval(File.read(Rails.root.join("config/routes/v1/shops.rb")))
+      instance_eval(File.read(Rails.root.join("config/routes/v1/products.rb")))
+      get '/citizens/:id/products', to: 'citizens/products#index'
+      get '/categories', to: 'categories#index'
+    end
   end
 end
