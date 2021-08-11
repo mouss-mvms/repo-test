@@ -376,7 +376,6 @@
               }
             }
           },
-          
           "404": {
             "description": "Product not found",
             "content": {
