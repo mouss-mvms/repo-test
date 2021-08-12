@@ -4,49 +4,12 @@ module Api
       before_action :uncrypt_token, only: [:update, :create, :destroy]
       before_action :retrieve_user, only: [:update, :create, :destroy]
 
-      def update_offline
-        dto_product_request = Dto::V1::Product::Request.new(product_params)
-        product = Product.find(product_params[:id])
-        category = Category.find(dto_product_request.category_id)
-        raise ActionController::BadRequest.new('origin and composition is required') if ::Products::CategoriesSpecifications::MustHaveLabelling.new.is_satisfied_by?(category) && (dto_product_request.origin.blank? || dto_product_request.composition.blank?)
-        raise ActionController::BadRequest.new('allergens is required') if ::Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
-        begin
-          product = Dto::V1::Product.build(dto_product_request: dto_product_request, product: product)
-        rescue => e
-          Rails.logger.error(e)
-          error = Dto::V1::Errors::InternalServer.new
-          return render json: error.to_h, status: error.status
-        else
-          dto_product_response = Dto::V1::Product::Response.create(product)
-          return render json: dto_product_response.to_h, status: :ok
-        end
-      end
-
-      def update
-        raise ApplicationController::Forbidden unless @user.is_a_citizen? || @user.is_a_business_user?
-        dto_product_request = Dto::V1::Product::Request.new(product_params)
-        product = Product.find(product_params[:id])
-        category = Category.find(dto_product_request.category_id)
-        raise ActionController::BadRequest.new('origin and composition is required') if ::Products::CategoriesSpecifications::MustHaveLabelling.new.is_satisfied_by?(category) && (dto_product_request.origin.blank? || dto_product_request.composition.blank?)
-        raise ActionController::BadRequest.new('allergens is required') if ::Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
-
-        if @user.is_a_citizen?
-          raise ApplicationController::Forbidden if @user.citizen.products.to_a.find{ |p| p.id == product.id}.nil?
-        end
-        if @user.is_a_business_user?
-          raise ApplicationController::Forbidden if @user.shop_employee.shops.to_a.find{ |s| s.id == product.shop.id}.nil?
-        end
-
-        begin
-          product = Dto::V1::Product.build(dto_product_request: dto_product_request, product: product)
-        rescue => e
-          Rails.logger.error(e)
-          error = Dto::V1::Errors::InternalServer.new
-          return render json: error.to_h, status: error.status
-        else
-          dto_product_response = Dto::V1::Product::Response.create(product)
-          return render json: dto_product_response.to_h, status: :ok
-        end
+      def index
+        raise ActionController::ParameterMissing.new('locationSlug cannot be blank.') if params[:location_slug].blank?
+        territory = Territory.find_by(slug: params[:location_slug])
+        city = City.find_by(slug: params[:location_slug])
+        raise ApplicationController::NotFound.new('Location not found.') unless city || territory
+        render json: [], status: 200
       end
 
       def show
@@ -78,6 +41,45 @@ module Api
         end
       end
 
+      def update
+        raise ApplicationController::Forbidden unless @user.is_a_citizen? || @user.is_a_business_user?
+        dto_product_request = Dto::V1::Product::Request.new(product_params)
+        product = Product.find(product_params[:id])
+        category = Category.find(dto_product_request.category_id)
+        raise ActionController::BadRequest.new('origin and composition is required') if ::Products::CategoriesSpecifications::MustHaveLabelling.new.is_satisfied_by?(category) && (dto_product_request.origin.blank? || dto_product_request.composition.blank?)
+        raise ActionController::BadRequest.new('allergens is required') if ::Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
+
+        if @user.is_a_citizen?
+          raise ApplicationController::Forbidden if @user.citizen.products.to_a.find{ |p| p.id == product.id}.nil?
+        end
+        if @user.is_a_business_user?
+          raise ApplicationController::Forbidden if @user.shop_employee.shops.to_a.find{ |s| s.id == product.shop.id}.nil?
+        end
+
+        begin
+          product = Dto::V1::Product.build(dto_product_request: dto_product_request, product: product)
+        rescue => e
+          Rails.logger.error(e)
+          error = Dto::V1::Errors::InternalServer.new
+          return render json: error.to_h, status: error.status
+        else
+          dto_product_response = Dto::V1::Product::Response.create(product)
+          return render json: dto_product_response.to_h, status: :ok
+        end
+      end
+
+      def destroy
+        raise ApplicationController::Forbidden unless @user.is_a_citizen? || @user.is_a_business_user?
+        product = Product.find(params[:id])
+        if @user.is_a_citizen?
+          raise ApplicationController::Forbidden if @user.citizen.products.to_a.find{ |p| p.id == product.id }.nil?
+        end
+        if @user.is_a_business_user?
+          raise ApplicationController::Forbidden if @user.shop_employee.shops.to_a.find{ |s| s.id == product.shop.id}.nil?
+        end
+        product.destroy
+      end
+
       def create_offline
         dto_product_request = Dto::V1::Product::Request.new(product_params)
         raise ActionController::ParameterMissing.new(dto_product_request.shop_id) if dto_product_request.shop_id.blank?
@@ -98,20 +100,26 @@ module Api
         end
       end
 
-      def destroy_offline
-        Product.destroy(params[:id])
+      def update_offline
+        dto_product_request = Dto::V1::Product::Request.new(product_params)
+        product = Product.find(product_params[:id])
+        category = Category.find(dto_product_request.category_id)
+        raise ActionController::BadRequest.new('origin and composition is required') if ::Products::CategoriesSpecifications::MustHaveLabelling.new.is_satisfied_by?(category) && (dto_product_request.origin.blank? || dto_product_request.composition.blank?)
+        raise ActionController::BadRequest.new('allergens is required') if ::Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
+        begin
+          product = Dto::V1::Product.build(dto_product_request: dto_product_request, product: product)
+        rescue => e
+          Rails.logger.error(e)
+          error = Dto::V1::Errors::InternalServer.new
+          return render json: error.to_h, status: error.status
+        else
+          dto_product_response = Dto::V1::Product::Response.create(product)
+          return render json: dto_product_response.to_h, status: :ok
+        end
       end
 
-      def destroy
-        raise ApplicationController::Forbidden unless @user.is_a_citizen? || @user.is_a_business_user?
-        product = Product.find(params[:id])
-        if @user.is_a_citizen?
-          raise ApplicationController::Forbidden if @user.citizen.products.to_a.find{ |p| p.id == product.id }.nil?
-        end
-        if @user.is_a_business_user?
-          raise ApplicationController::Forbidden if @user.shop_employee.shops.to_a.find{ |s| s.id == product.shop.id}.nil?
-        end
-        product.destroy
+      def destroy_offline
+        Product.destroy(params[:id])
       end
 
       private

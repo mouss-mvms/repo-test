@@ -3890,6 +3890,42 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
     end
   end
 
+  describe "GET #index" do
+    context "All ok" do
+      it "should return HTTP status 200 and an array of product-summaries" do
+        location = create(:city)
+        get :index, params: { location_slug: location.slug }
+        should respond_with(200)
+        response_body = JSON.load(response.body)
+        expect(response_body).to be_instance_of(Array)
+        expect(response_body.first).to be_instance_of(Dto::V1::ProductSummary)
+      end
+    end
+
+    context "Bad params" do
+      context "when location_slug is missing" do
+        it "should return HTTP status BadRequest - 400" do
+          get :index
+          should respond_with(400)
+        end
+      end
+
+      context "when location_slug params is blank" do
+        it "should return HTTP status BadRequest - 400" do
+          get :index, params: { location_slug: ""}
+          should respond_with(400)
+        end
+      end
+
+      context "when city or territory does not exist" do
+        it "should return HTTP status NotFound - 404" do
+          get :index, params: { location_slug: "bagdad" }
+          should respond_with(404)
+        end
+      end
+    end
+  end
+
   describe 'GET #show' do
     context "All ok" do
       it 'should return 200 HTTP Status with product' do
