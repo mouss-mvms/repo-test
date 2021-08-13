@@ -3898,7 +3898,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
         should respond_with(200)
         response_body = JSON.load(response.body)
         expect(response_body).to be_instance_of(Array)
-        expect(response_body.first).to be_a(Dto::V1::ProductSummary::Response)
       end
     end
 
@@ -3920,6 +3919,14 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
       context "when city or territory does not exist" do
         it "should return HTTP status NotFound - 404" do
           get :index, params: { location_slug: "bagdad" }
+          should respond_with(404)
+        end
+      end
+
+      context "when category doesn't exist" do
+        it "should return HTTP status NotFound - 404" do
+          location = create(:city)
+          get :index, params: { location_slug: location.slug, category_slugs: ['casque-radio-star-wars'] }
           should respond_with(404)
         end
       end
@@ -5254,7 +5261,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
         context 'ae3xu0' do
           let(:user_citizen) { create(:citizen_user, email: 'citizen3@ecity.fr') }
           let(:category_others_fresh_desserts) { create(:others_fresh_desserts) }
-          it "should return HTTP status 400" do           
+          it "should return HTTP status 400" do
             create_params = {
               name:"Air jordan api 3",
               description:"Chaussures trop bien",
@@ -5265,7 +5272,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               citizenAdvice:"Produit trouvé un commercant trop sympa",
               categoryId: category_others_fresh_desserts.id,
               shopId: create(:shop).id,
-              variants:[ 
+              variants:[
                 {
                   basePrice:44.99,
                   weight:0.56,
