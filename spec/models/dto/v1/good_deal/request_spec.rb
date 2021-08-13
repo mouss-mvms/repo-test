@@ -22,7 +22,7 @@ RSpec.describe Dto::V1::GoodDeal::Request do
 
   describe 'to_h' do
     context 'All ok' do
-      it 'should a hash representation of Dto::GoodDeal::Request' do
+      it 'should a hash representation of Dto::V1::GoodDeal::Request' do
         good_deal_params = {
           start_at: "20/01/2021",
           end_at: "16/02/2021",
