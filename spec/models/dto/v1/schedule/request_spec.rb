@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Dto::V1::Schedule::Request do
   describe 'to_h' do
     context 'when condition' do
-      it 'should return a hash representation of Dto::Schedule::Request' do
+      it 'should return a hash representation of Dto::V1::Schedule::Request' do
         params = { id: 5, open_morning: '09:00', close_morning: '12:00', open_afternoon: '14:00', close_afternoon: '19:00' }
         dto = Dto::V1::Schedule::Request.new(params)
 
