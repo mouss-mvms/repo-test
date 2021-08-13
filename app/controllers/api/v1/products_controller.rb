@@ -3,13 +3,11 @@ module Api
     class ProductsController < ApplicationController
       before_action :uncrypt_token, only: [:update, :create, :destroy]
       before_action :retrieve_user, only: [:update, :create, :destroy]
+      before_action :set_location, only: [:index]
 
       def index
-        raise ActionController::ParameterMissing.new('locationSlug cannot be blank.') if params[:location_slug].blank?
-        territory = Territory.find_by(slug: params[:location_slug])
-        city = City.find_by(slug: params[:location_slug])
-        raise ApplicationController::NotFound.new('Location not found.') unless city || territory
-        render json: [], status: 200
+        response = [Dto::V1::ProductSummary::Response.new]
+        render json: response, status: 200
       end
 
       def show
@@ -165,6 +163,12 @@ module Api
         product_params
       end
 
+      def set_location
+        raise ActionController::ParameterMissing.new('locationSlug cannot be blank.') if params[:location_slug].blank?
+        @territory = Territory.find_by(slug: params[:location_slug])
+        @city = City.find_by(slug: params[:location_slug])
+        raise ApplicationController::NotFound.new('Location not found.') unless @city || @territory
+      end
     end
   end
 end

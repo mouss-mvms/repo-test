@@ -3898,7 +3898,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
         should respond_with(200)
         response_body = JSON.load(response.body)
         expect(response_body).to be_instance_of(Array)
-        expect(response_body.first).to be_instance_of(Dto::V1::ProductSummary)
+        expect(response_body.first).to be_a(Dto::V1::ProductSummary::Response)
       end
     end
 

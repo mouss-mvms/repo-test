@@ -67,6 +67,66 @@ module Dto
           Dto::V1::ProductSummary::Response.new(searchkick_product_response.merge(discount_params))
         end
 
+        def to_h
+          {
+            _index: @_index,
+            _type: @_type,
+            _id: @_id,
+            _score: @_score,
+            id: @id,
+            name: @name,
+            slug: @slug,
+            createdAt: @created_at,
+            updatedAt: @updated_at,
+            description: @description,
+            basePrice: @base_price,
+            goodDealStartsAt: @good_deal_starts_at,
+            goodDealEndsAt: @good_deal_ends_at,
+            price: @price,
+            quantity: @quantity,
+            categoryId: @category_id,
+            categoryTreeNames: @category_tree_names,
+            categoryTreeIds: @category_tree_ids,
+            status: @status,
+            shopName: @shop_name,
+            shopId: @shop_id,
+            shopSlug: @shop_slug,
+            inHolidays: @in_holidays,
+            brandName: @brand_name,
+            brandId: @brand_id,
+            cityName: @city_name,
+            cityLabel: @city_label,
+            citySlug: @city_slug,
+            conurbationSlug: @conurbation_slug,
+            inseeCode: @insee_code,
+            territoryName: @territory_name,
+            territorySlug: @territory_slug,
+            departmentNumber: @department_number,
+            productCitizenNickname: @product_citizen_nickname,
+            productCitizenSlug: @product_citizen_slug,
+            productCitizenSlug: @product_citizen_slug,
+            productcitizenImagePath: @product_citizen_image_path,
+            defaultSampleId: @default_sample_id,
+            shopPictogramUrl: @shop_pictogram_url,
+            imageUrl: @image_url,
+            productPageUrl: @product_page_url,
+            shopUrl: @shop_url,
+            numberOfOrders: @number_of_orders,
+            colors: @colors,
+            sizes: @sizes,
+            selectionIds: @selection_ids,
+            services: @services,
+            shopIsTemplate: @shop_is_template,
+            score: @score,
+            position: @position,
+            indexedAt: @indexed_at,
+            uniqueReferenceId: @unique_reference_id,
+            isAService: @is_a_service,
+            onDiscount: @on_discount,
+            discountPrice: @discount_price
+          }
+        end
+
         private
 
         def self.set_discount_price(searchkick_product_response)
