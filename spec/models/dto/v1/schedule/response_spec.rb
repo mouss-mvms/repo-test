@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Dto::V1::Schedule::Response do
   describe 'create' do
     context 'All ok' do
-      it 'should return a Dto::Schedule::Response' do
+      it 'should return a Dto::V1::Schedule::Response' do
         schedule = create(:schedule)
         result = Dto::V1::Schedule::Response.create(schedule)
 
@@ -70,7 +70,7 @@ RSpec.describe Dto::V1::Schedule::Response do
 
   describe 'to_h' do
     context 'All ok' do
-      it 'should return a hash representation of Dto::Schedule::Response' do
+      it 'should return a hash representation of Dto::V1::Schedule::Response' do
         dto = Dto::V1::Schedule::Response.create(create(:schedule))
 
         dto_hash = dto.to_h

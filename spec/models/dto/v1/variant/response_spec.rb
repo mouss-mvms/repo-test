@@ -4,7 +4,7 @@ RSpec.describe Dto::V1::Variant::Response do
 
   describe 'create' do
     context 'All ok' do
-      it 'should return a Dto::Variant::Response' do
+      it 'should return a Dto::V1::Variant::Response' do
         reference = create(:reference)
         result = Dto::V1::Variant::Response.create(reference)
         expect(result).to be_instance_of(Dto::V1::Variant::Response)
@@ -21,7 +21,7 @@ RSpec.describe Dto::V1::Variant::Response do
 
   describe 'to_h' do
     context 'All ok' do
-      it 'should a hash representation of Dto::Variant::Response' do
+      it 'should a hash representation of Dto::V1::Variant::Response' do
         reference = create(:reference)
         dto = Dto::V1::Variant::Response.create(reference)
         dto_hash = dto.to_h
