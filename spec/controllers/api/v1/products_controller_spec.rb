@@ -3894,7 +3894,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
     context "All ok" do
       it "should return HTTP status 200 and an array of product-summaries" do
         location = create(:city)
-        get :index, params: { location_slug: location.slug }
+        get :index, params: { location: location.slug }
         should respond_with(200)
         response_body = JSON.load(response.body)
         expect(response_body).to be_instance_of(Array)
@@ -3913,7 +3913,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
       context "when location_slug params is blank" do
         it "should return HTTP status BadRequest - 400" do
-          get :index, params: { location_slug: ""}
+          get :index, params: { location: ""}
           should respond_with(400)
           response_body = JSON.load(response.body)
           expect(response_body['detail']).to eq('param is missing or the value is empty: locationSlug.')
@@ -3922,7 +3922,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
       context "when city or territory does not exist" do
         it "should return HTTP status NotFound - 404" do
-          get :index, params: { location_slug: "bagdad" }
+          get :index, params: { location: "bagdad" }
           should respond_with(404)
           response_body = JSON.load(response.body)
           expect(response_body['detail']).to eq('Location not found.')
@@ -3932,7 +3932,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
       context "when category doesn't exist" do
         it "should return HTTP status NotFound - 404" do
           location = create(:city)
-          get :index, params: { location_slug: location.slug, category_slugs: ['casque-radio-star-wars'] }
+          get :index, params: { location: location.slug, categories: ['casque-radio-star-wars'] }
           should respond_with(404)
           response_body = JSON.load(response.body)
           expect(response_body['detail']).to eq('Category not found.')

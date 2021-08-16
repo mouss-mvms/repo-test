@@ -125,7 +125,7 @@
         ],
         "parameters": [
           {
-            "name": "location_slug",
+            "name": "location",
             "in": "query",
             "description": "Territory or city slug.",
             "schema": {
@@ -133,7 +133,7 @@
             }
           },
           {
-            "name": "search_query",
+            "name": "q",
             "in": "query",
             "description": "Query for search.",
             "schema": {
@@ -141,7 +141,7 @@
             }
           },
           {
-            "name": "category_slugs",
+            "name": "categories",
             "in": "query",
             "description": "Categories slugs concatened with double \"_\" if more than one.",
             "schema": {

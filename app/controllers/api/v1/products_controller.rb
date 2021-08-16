@@ -14,10 +14,10 @@ module Api
 
         search_criterias.and(::Criterias::Products::OnDiscount) if params[:sort_by] == 'discount'
 
-        search_criterias.and(::Criterias::NotInCategories.new(Category.excluded_from_catalog.pluck(:id))) unless params[:search_query]
+        search_criterias.and(::Criterias::NotInCategories.new(Category.excluded_from_catalog.pluck(:id))) unless params[:q]
 
-        if params[:category_slugs]
-          @category = Category.find_by(slug: params[:category_slugs])
+        if params[:categories]
+          @category = Category.find_by(slug: params[:categories])
           raise ApplicationController::NotFound.new('Category not found.') unless @category
           search_criterias.and(::Criterias::InCategories.new([@category.id]))
         end
@@ -25,7 +25,7 @@ module Api
         set_close_to_you_criterias(search_criterias, params[:more])
         search_criterias = filter_by(search_criterias)
 
-        search_highest = ::Requests::ProductSearches.search_highest_scored_products(params[:search_query], search_criterias)
+        search_highest = ::Requests::ProductSearches.search_highest_scored_products(params[:q], search_criterias)
         highest_scored_products = search_highest.products
 
         unless params[:sort_by] || params[:more]
@@ -35,11 +35,11 @@ module Api
 
         search_criterias.and(::Criterias::Products::ExceptProducts.new(highest_scored_products.map(&:id)))
 
-        random_products = ::Requests::ProductSearches.search_random_products(params[:search_query], search_criterias, params[:sort_by], params[:page])
+        random_products = ::Requests::ProductSearches.search_random_products(params[:q], search_criterias, params[:sort_by], params[:page])
 
         unless highest_scored_products.present? && random_products.present?
           set_close_to_you_criterias(search_criterias, true)
-          random_products = ::Requests::ProductSearches.search_random_products(params[:search_query], search_criterias, params[:sort_by], params[:page])
+          random_products = ::Requests::ProductSearches.search_random_products(params[:q], search_criterias, params[:sort_by], params[:page])
         end
         product_summaries = set_products!(highest_scored_products, random_products, params[:page], params[:more], params[:sort_by])
 
@@ -200,9 +200,9 @@ module Api
       end
 
       def set_location
-        raise ActionController::ParameterMissing.new('locationSlug.') if params[:location_slug].blank?
-        @territory = Territory.find_by(slug: params[:location_slug])
-        @city = City.find_by(slug: params[:location_slug])
+        raise ActionController::ParameterMissing.new('locationSlug.') if params[:location].blank?
+        @territory = Territory.find_by(slug: params[:location])
+        @city = City.find_by(slug: params[:location])
         raise ApplicationController::NotFound.new('Location not found.') unless @city || @territory
       end
 

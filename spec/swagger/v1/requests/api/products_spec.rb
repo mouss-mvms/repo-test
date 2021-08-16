@@ -9,9 +9,9 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
       description 'Return product-summaries list'
       security [{ authorization: [] }]
 
-      parameter name: :location_slug, in: :query, type: :string, description: 'Territory or city slug.'
-      parameter name: :search_query, in: :query, type: :string, description: 'Query for search.'
-      parameter name: :category_slugs, in: :query, type: :string, description: 'Categories slugs concatened with double "_" if more than one.'
+      parameter name: :location, in: :query, type: :string, description: 'Territory or city slug.'
+      parameter name: :q, in: :query, type: :string, description: 'Query for search.'
+      parameter name: :categories, in: :query, type: :string, description: 'Categories slugs concatened with double "_" if more than one.'
       parameter name: :prices, in: :query, type: :string, description: 'Prices range'
       parameter name: :services, in: :query,type: :string, description: 'Service slugs concatened with double "_" if more than one.'
       parameter name: :sort_by, in: :query, schema: {
