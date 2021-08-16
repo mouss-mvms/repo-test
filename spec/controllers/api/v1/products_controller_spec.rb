@@ -3906,6 +3906,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
         it "should return HTTP status BadRequest - 400" do
           get :index
           should respond_with(400)
+          response_body = JSON.load(response.body)
+          expect(response_body['detail']).to eq('param is missing or the value is empty: locationSlug.')
         end
       end
 
@@ -3913,6 +3915,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
         it "should return HTTP status BadRequest - 400" do
           get :index, params: { location_slug: ""}
           should respond_with(400)
+          response_body = JSON.load(response.body)
+          expect(response_body['detail']).to eq('param is missing or the value is empty: locationSlug.')
         end
       end
 
@@ -3920,6 +3924,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
         it "should return HTTP status NotFound - 404" do
           get :index, params: { location_slug: "bagdad" }
           should respond_with(404)
+          response_body = JSON.load(response.body)
+          expect(response_body['detail']).to eq('Location not found.')
         end
       end
 
@@ -3928,6 +3934,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           location = create(:city)
           get :index, params: { location_slug: location.slug, category_slugs: ['casque-radio-star-wars'] }
           should respond_with(404)
+          response_body = JSON.load(response.body)
+          expect(response_body['detail']).to eq('Category not found.')
         end
       end
     end

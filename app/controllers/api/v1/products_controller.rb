@@ -200,7 +200,7 @@ module Api
       end
 
       def set_location
-        raise ActionController::ParameterMissing.new('locationSlug cannot be blank.') if params[:location_slug].blank?
+        raise ActionController::ParameterMissing.new('locationSlug.') if params[:location_slug].blank?
         @territory = Territory.find_by(slug: params[:location_slug])
         @city = City.find_by(slug: params[:location_slug])
         raise ApplicationController::NotFound.new('Location not found.') unless @city || @territory
