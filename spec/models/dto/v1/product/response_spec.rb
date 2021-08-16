@@ -4,7 +4,7 @@ RSpec.describe Dto::V1::Product::Response do
 
   describe 'create' do
     context 'All ok' do
-      it 'should return a Dto::Product::Response' do
+      it 'should return a Dto::V1::Product::Response' do
         product = create(:product_created_by_citizen)
         result = Dto::V1::Product::Response.create(product)
 
@@ -27,7 +27,7 @@ RSpec.describe Dto::V1::Product::Response do
 
   describe 'to_h' do
     context 'All ok' do
-      it 'should a hash representation of Dto::Product::Response' do
+      it 'should a hash representation of Dto::V1::Product::Response' do
         product = create(:product_created_by_citizen)
         dto = Dto::V1::Product::Response.create(product)
 

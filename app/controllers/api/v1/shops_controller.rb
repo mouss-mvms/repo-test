@@ -46,7 +46,7 @@ module Api
         shops = ::Requests::ShopSearches.search_highest_scored_shops(params[:q], search_criterias)
         if !params[:page] || params[:page] == "1"
           shops.each do |shop|
-            response << Dto::Shop::Response.from_searchkick(shop).to_h
+            response << Dto::V1::Shop::Response.from_searchkick(shop).to_h
           end
         end
         slugs = shops.pluck(:slug)
@@ -55,7 +55,7 @@ module Api
         random_shops = ::Requests::ShopSearches.search_random_shops(params[:q], search_criterias, params[:page])
 
         random_shops.each do |random_shop|
-          response << Dto::Shop::Response.from_searchkick(random_shop).to_h
+          response << Dto::V1::Shop::Response.from_searchkick(random_shop).to_h
         end
         return render json: response, status: :ok
       end
