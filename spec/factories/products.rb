@@ -36,7 +36,7 @@ FactoryBot.define do
     shop
     category
     after :create do |product|
-      product.references << FactoryBot.create(:reference, base_price: 49.3)
+      product.references << FactoryBot.create(:reference)
       product.references << FactoryBot.create(:reference)
     end
     created_at { Date.new(2019, 8, 30) }

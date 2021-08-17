@@ -177,6 +177,7 @@ RSpec.describe Dto::V1::ProductSummary::Response do
             "is_a_service"=>nil}
 
           product = create(:available_product, id: product_search_result["id"])
+          product.references.first.update(base_price: 49.3)
           result = Dto::V1::ProductSummary::Response.create(**product_search_result.symbolize_keys)
 
           expect(result).to be_instance_of(Dto::V1::ProductSummary::Response)
