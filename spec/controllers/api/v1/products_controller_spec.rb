@@ -3906,8 +3906,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
         it "should return HTTP status BadRequest - 400" do
           get :index
           should respond_with(400)
-          response_body = JSON.load(response.body)
-          expect(response_body['detail']).to eq('param is missing or the value is empty: locationSlug.')
+          expect(response.body).to eq(Dto::Errors::BadRequest.new('param is missing or the value is empty: location.').to_h.to_json)
         end
       end
 
@@ -3915,8 +3914,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
         it "should return HTTP status BadRequest - 400" do
           get :index, params: { location: ""}
           should respond_with(400)
-          response_body = JSON.load(response.body)
-          expect(response_body['detail']).to eq('param is missing or the value is empty: locationSlug.')
+          expect(response.body).to eq(Dto::Errors::BadRequest.new('param is missing or the value is empty: location.').to_h.to_json)
         end
       end
 
@@ -3924,8 +3922,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
         it "should return HTTP status NotFound - 404" do
           get :index, params: { location: "bagdad" }
           should respond_with(404)
-          response_body = JSON.load(response.body)
-          expect(response_body['detail']).to eq('Location not found.')
+          expect(response.body).to eq(Dto::Errors::NotFound.new('Location not found.').to_h.to_json)
         end
       end
 
@@ -3934,8 +3931,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           location = create(:city)
           get :index, params: { location: location.slug, categories: ['casque-radio-star-wars'] }
           should respond_with(404)
-          response_body = JSON.load(response.body)
-          expect(response_body['detail']).to eq('Category not found.')
+          expect(response.body).to eq(Dto::Errors::NotFound.new('Category not found.').to_h.to_json)
+
         end
       end
     end
