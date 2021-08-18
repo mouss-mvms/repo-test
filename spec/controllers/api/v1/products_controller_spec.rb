@@ -3890,6 +3890,54 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
     end
   end
 
+  describe "GET #index" do
+    context "All ok" do
+      it "should return HTTP status 200 and an array of product-summaries" do
+        location = create(:city)
+        get :index, params: { location: location.slug }
+        should respond_with(200)
+        response_body = JSON.load(response.body)
+        expect(response_body).to be_instance_of(Array)
+      end
+    end
+
+    context "Bad params" do
+      context "when location_slug is missing" do
+        it "should return HTTP status BadRequest - 400" do
+          get :index
+          should respond_with(400)
+          expect(response.body).to eq(Dto::Errors::BadRequest.new('param is missing or the value is empty: location.').to_h.to_json)
+        end
+      end
+
+      context "when location_slug params is blank" do
+        it "should return HTTP status BadRequest - 400" do
+          get :index, params: { location: ""}
+          should respond_with(400)
+          expect(response.body).to eq(Dto::Errors::BadRequest.new('param is missing or the value is empty: location.').to_h.to_json)
+        end
+      end
+
+      context "when city or territory does not exist" do
+        it "should return HTTP status NotFound - 404" do
+          get :index, params: { location: "bagdad" }
+          should respond_with(404)
+          expect(response.body).to eq(Dto::Errors::NotFound.new('Location not found.').to_h.to_json)
+        end
+      end
+
+      context "when category doesn't exist" do
+        it "should return HTTP status NotFound - 404" do
+          location = create(:city)
+          get :index, params: { location: location.slug, categories: ['casque-radio-star-wars'] }
+          should respond_with(404)
+          expect(response.body).to eq(Dto::Errors::NotFound.new('Category not found.').to_h.to_json)
+
+        end
+      end
+    end
+  end
+
   describe 'GET #show' do
     context "All ok" do
       it 'should return 200 HTTP Status with product' do
@@ -5218,7 +5266,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
         context 'ae3xu0' do
           let(:user_citizen) { create(:citizen_user, email: 'citizen3@ecity.fr') }
           let(:category_others_fresh_desserts) { create(:others_fresh_desserts) }
-          it "should return HTTP status 400" do           
+          it "should return HTTP status 400" do
             create_params = {
               name:"Air jordan api 3",
               description:"Chaussures trop bien",
@@ -5229,7 +5277,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               citizenAdvice:"Produit trouvé un commercant trop sympa",
               categoryId: category_others_fresh_desserts.id,
               shopId: create(:shop).id,
-              variants:[ 
+              variants:[
                 {
                   basePrice:44.99,
                   weight:0.56,
