@@ -15,9 +15,7 @@
         "description": "Return the list of categories.",
         "security": [
           {
-            "authorization": [
-
-            ]
+            "authorization": []
           }
         ],
         "responses": {
@@ -57,9 +55,7 @@
         "description": "Retrieve a product from a citizen.",
         "security": [
           {
-            "authorization": [
-
-            ]
+            "authorization": []
           }
         ],
         "responses": {
@@ -118,9 +114,7 @@
         "description": "Return product-summaries list",
         "security": [
           {
-            "authorization": [
-
-            ]
+            "authorization": []
           }
         ],
         "parameters": [
@@ -232,9 +226,7 @@
         "description": "Return the product updated",
         "security": [
           {
-            "authorization": [
-
-            ]
+            "authorization": []
           }
         ],
         "parameters": [
@@ -455,9 +447,7 @@
         "description": "Delete a product",
         "security": [
           {
-            "authorization": [
-
-            ]
+            "authorization": []
           }
         ],
         "responses": {
@@ -504,9 +494,7 @@
         "description": "Retrieve a product",
         "security": [
           {
-            "authorization": [
-
-            ]
+            "authorization": []
           }
         ],
         "responses": {
@@ -570,9 +558,7 @@
         "description": "Return the product updated",
         "security": [
           {
-            "authorization": [
-
-            ]
+            "authorization": []
           }
         ],
         "parameters": [
@@ -823,9 +809,7 @@
         "description": "Delete a product",
         "security": [
           {
-            "authorization": [
-
-            ]
+            "authorization": []
           }
         ],
         "responses": {
@@ -898,9 +882,7 @@
         "description": "Return the product created",
         "security": [
           {
-            "authorization": [
-
-            ]
+            "authorization": []
           }
         ],
         "parameters": [
@@ -1145,9 +1127,7 @@
         "description": "Return the product created",
         "security": [
           {
-            "authorization": [
-
-            ]
+            "authorization": []
           }
         ],
         "parameters": [
@@ -1373,9 +1353,7 @@
         "description": "Return the job product status",
         "security": [
           {
-            "authorization": [
-
-            ]
+            "authorization": []
           }
         ],
         "responses": {
@@ -1501,9 +1479,7 @@
         "description": "Retrieve all products from the given shop.",
         "security": [
           {
-            "authorization": [
-
-            ]
+            "authorization": []
           }
         ],
         "responses": {
@@ -1558,9 +1534,7 @@
         "description": "Retrieve schedules from the given shop.",
         "security": [
           {
-            "authorization": [
-
-            ]
+            "authorization": []
           }
         ],
         "responses": {
@@ -1623,9 +1597,7 @@
         "description": "Update schedules from the given shop.",
         "security": [
           {
-            "authorization": [
-
-            ]
+            "authorization": []
           }
         ],
         "parameters": [
@@ -1767,9 +1739,7 @@
         "description": "Retrieve shop informations",
         "security": [
           {
-            "authorization": [
-
-            ]
+            "authorization": []
           }
         ],
         "responses": {
@@ -1826,9 +1796,7 @@
         "description": "Update a shop",
         "security": [
           {
-            "authorization": [
-
-            ]
+            "authorization": []
           }
         ],
         "parameters": [
@@ -1949,9 +1917,7 @@
         "description": "Create a shop",
         "security": [
           {
-            "authorization": [
-
-            ]
+            "authorization": []
           }
         ],
         "parameters": [
@@ -2075,9 +2041,7 @@
         "description": "Get a list of shops",
         "security": [
           {
-            "authorization": [
-
-            ]
+            "authorization": []
           }
         ],
         "parameters": [
@@ -2152,7 +2116,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {
