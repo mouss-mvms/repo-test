@@ -113,6 +113,7 @@ module Api
         shop_params[:address][:postal_code] = params.require(:address).permit(:postalCode).values.first
         shop_params[:address][:latitude] = params.require(:address).permit(:latitude).values.first
         shop_params[:address][:longitude] = params.require(:address).permit(:longitude).values.first
+        shop_params[:address][:insee_code] = params.require(:address).require(:inseeCode)
         return shop_params
       end
 

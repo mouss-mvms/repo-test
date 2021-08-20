@@ -48,6 +48,8 @@ module Dto
           )
         dto_shop_request.address_request.addressable_id = shop.id
         Dto::V1::Address.build(dto_shop_request.address_request)
+        shop.city_id = shop.address.city.id
+        shop.save!
         return shop
       end
     end

@@ -64,7 +64,8 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
             country: "France",
             postalCode: "33000",
             longitude: 44.8399608,
-            latitude: 0.5862431
+            latitude: 0.5862431,
+            inseeCode: "33063"
           },
           email: "test@boutique.com",
           siret: "75409821800029",
@@ -78,6 +79,8 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
           instagramLink: "http://www.instagram.com",
           websiteLink: "http://www.website.com",
         }
+        allow(City).to receive(:find_or_create_city).and_return(create(:city))
+
         shop_employee_user = create(:shop_employee_user, email: 'shop.employee789@ecity.fr')
         request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
 
