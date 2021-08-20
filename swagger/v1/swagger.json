@@ -1430,7 +1430,7 @@
         {
           "name": "shop_id",
           "in": "path",
-          "description": "Unique identifier of the citizen.",
+          "description": "Unique identifier of the shop.",
           "required": true,
           "schema": {
             "type": "integer"
