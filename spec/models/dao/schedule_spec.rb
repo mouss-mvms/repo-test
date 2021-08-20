@@ -7,7 +7,7 @@ RSpec.describe Dao::Schedule, type: :model do
       context 'All ok' do
         it 'should return updated schedule' do
           schedule = create(:schedule, am_open: "10:00", am_close: "12:30", pm_open: "14:00", pm_close: "18:00")
-          dto = Dto::Schedule::Request.new({
+          dto = Dto::V1::Schedule::Request.new({
                                              id: schedule.id,
                                              open_morning: "09:00",
                                              close_morning: "12:45",
@@ -30,7 +30,7 @@ RSpec.describe Dao::Schedule, type: :model do
         context 'Open Morning is missing' do
           it 'should return nil' do
             schedule = create(:schedule, am_open: "10:00", am_close: "12:30", pm_open: "14:00", pm_close: "18:00")
-            dto = Dto::Schedule::Request.new({
+            dto = Dto::V1::Schedule::Request.new({
                                                id: schedule.id,
                                                open_morning: nil,
                                                close_morning: "12:45",
@@ -47,7 +47,7 @@ RSpec.describe Dao::Schedule, type: :model do
         context 'Close Morning is missing' do
           it 'should return nil' do
             schedule = create(:schedule, am_open: "10:00", am_close: "12:30", pm_open: "14:00", pm_close: "18:00")
-            dto = Dto::Schedule::Request.new({
+            dto = Dto::V1::Schedule::Request.new({
                                                id: schedule.id,
                                                open_morning: "09:00",
                                                close_morning: nil,
@@ -64,7 +64,7 @@ RSpec.describe Dao::Schedule, type: :model do
         context 'Open afternoon is missing' do
           it 'should return nil' do
             schedule = create(:schedule, am_open: "10:00", am_close: "12:30", pm_open: "14:00", pm_close: "18:00")
-            dto = Dto::Schedule::Request.new({
+            dto = Dto::V1::Schedule::Request.new({
                                                id: schedule.id,
                                                open_morning: "09:00",
                                                close_morning: "12:45",
@@ -81,7 +81,7 @@ RSpec.describe Dao::Schedule, type: :model do
         context 'Close afternoon is missing' do
           it 'should return nil' do
             schedule = create(:schedule, am_open: "10:00", am_close: "12:30", pm_open: "14:00", pm_close: "18:00")
-            dto = Dto::Schedule::Request.new({
+            dto = Dto::V1::Schedule::Request.new({
                                                id: schedule.id,
                                                open_morning: "09:00",
                                                close_morning: "12:45",
@@ -101,7 +101,7 @@ RSpec.describe Dao::Schedule, type: :model do
       context 'All ok' do
         it 'should return updated schedule' do
           schedule = create(:schedule, am_open: "10:00", am_close: "12:30", pm_open: "14:00", pm_close: "18:00")
-          dto = Dto::Schedule::Request.new({
+          dto = Dto::V1::Schedule::Request.new({
                                              id: schedule.id,
                                              open_morning: "09:00",
                                              close_morning: nil,
@@ -124,7 +124,7 @@ RSpec.describe Dao::Schedule, type: :model do
         context 'Open morning is missing' do
           it 'should return nil' do
             schedule = create(:schedule, am_open: "10:00", am_close: "12:30", pm_open: "14:00", pm_close: "18:00")
-            dto = Dto::Schedule::Request.new({
+            dto = Dto::V1::Schedule::Request.new({
                                                id: schedule.id,
                                                open_morning: nil,
                                                close_morning: nil,
@@ -141,7 +141,7 @@ RSpec.describe Dao::Schedule, type: :model do
         context 'Close morning is missing' do
           it 'should return nil' do
             schedule = create(:schedule, am_open: "10:00", am_close: "12:30", pm_open: "14:00", pm_close: "18:00")
-            dto = Dto::Schedule::Request.new({
+            dto = Dto::V1::Schedule::Request.new({
                                                id: schedule.id,
                                                open_morning: "09:00",
                                                close_morning: nil,
@@ -161,7 +161,7 @@ RSpec.describe Dao::Schedule, type: :model do
       context 'All ok' do
         it 'should return updated schedule' do
           schedule = create(:schedule, am_open: "10:00", am_close: "12:30", pm_open: "14:00", pm_close: "18:00")
-          dto = Dto::Schedule::Request.new({
+          dto = Dto::V1::Schedule::Request.new({
                                              id: schedule.id,
                                              open_morning: "09:00",
                                              close_morning: "12:45",
@@ -184,7 +184,7 @@ RSpec.describe Dao::Schedule, type: :model do
         context 'Open Morning is missing' do
           it 'should return nil' do
             schedule = create(:schedule, am_open: "10:00", am_close: "12:30", pm_open: "14:00", pm_close: "18:00")
-            dto = Dto::Schedule::Request.new({
+            dto = Dto::V1::Schedule::Request.new({
                                                id: schedule.id,
                                                open_morning: nil,
                                                close_morning: "12:45",
@@ -201,7 +201,7 @@ RSpec.describe Dao::Schedule, type: :model do
         context 'Close Morning is missing' do
           it 'should return nil' do
             schedule = create(:schedule, am_open: "10:00", am_close: "12:30", pm_open: "14:00", pm_close: "18:00")
-            dto = Dto::Schedule::Request.new({
+            dto = Dto::V1::Schedule::Request.new({
                                                id: schedule.id,
                                                open_morning: "09:00",
                                                close_morning: nil,
@@ -221,7 +221,7 @@ RSpec.describe Dao::Schedule, type: :model do
       context 'All ok' do
         it 'should return updated schedule' do
           schedule = create(:schedule, am_open: "10:00", am_close: "12:30", pm_open: "14:00", pm_close: "18:00")
-          dto = Dto::Schedule::Request.new({
+          dto = Dto::V1::Schedule::Request.new({
                                              id: schedule.id,
                                              open_morning: nil,
                                              close_morning: nil,
@@ -244,7 +244,7 @@ RSpec.describe Dao::Schedule, type: :model do
         context 'Open afternoon is missing' do
           it 'should return nil' do
             schedule = create(:schedule, am_open: "10:00", am_close: "12:30", pm_open: "14:00", pm_close: "18:00")
-            dto = Dto::Schedule::Request.new({
+            dto = Dto::V1::Schedule::Request.new({
                                                id: schedule.id,
                                                open_morning: nil,
                                                close_morning: nil,
@@ -261,7 +261,7 @@ RSpec.describe Dao::Schedule, type: :model do
         context 'Close afternoon is missing' do
           it 'should return nil' do
             schedule = create(:schedule, am_open: "10:00", am_close: "12:30", pm_open: "14:00", pm_close: "18:00")
-            dto = Dto::Schedule::Request.new({
+            dto = Dto::V1::Schedule::Request.new({
                                                id: schedule.id,
                                                open_morning: nil,
                                                close_morning: nil,

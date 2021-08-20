@@ -63,6 +63,7 @@ gem 'omniauth', '1.3.1'
 gem 'simple_token_authentication', '~>1.0'
 
 gem 'jwt'
+
 source 'https://gem.fury.io/mvms/' do
-  gem 'mvms-core', '2.5.184'
+  gem 'mvms-core', '2.5.191'
 end
