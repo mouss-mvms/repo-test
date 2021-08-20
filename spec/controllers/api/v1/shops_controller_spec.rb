@@ -263,7 +263,10 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         @categories << create(:category)
         @categories << create(:homme)
         @shop = create(:shop)
-        @shop_address = create(:address)
+        @city = create(:city)
+        @shop.city_id = @city.id
+        @shop.save
+        @shop_address = create(:address, city: @city)
         @shop_address.addressable_id = @shop.id
         @shop_address.addressable_type = "Shop"
         @shop_address.save
@@ -280,7 +283,8 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
             country: @shop.address.country,
             postalCode: @shop.address.postal_code,
             longitude: @shop.address.longitude,
-            latitude: @shop.address.latitude
+            latitude: @shop.address.latitude,
+            inseeCode: @shop.address.city.insee_code
           },
           facebookLink: "http://www.facebook.com",
           instagramLink: "http://www.instagram.com",
