@@ -30,7 +30,7 @@ RSpec.configure do |config|
       paths: {},
       servers: [
         {
-          url: ENV['BASE_URL'].to_s
+          url: ENV['API_BASE_URL'].to_s
         }
       ],
       components: {

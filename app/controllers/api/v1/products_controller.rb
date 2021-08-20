@@ -70,7 +70,7 @@ module Api
             error = Dto::V1::Errors::InternalServer.new(detail: e.message)
             return render json: error.to_h, status: error.status
           else
-            return render json: { url: ENV["BASE_URL"] + api_v1_product_job_status_path(job_id) }, status: :accepted
+            return render json: { url: ENV["API_BASE_URL"] + api_v1_product_job_status_path(job_id) }, status: :accepted
           end
         end
       end
@@ -129,7 +129,7 @@ module Api
             error = Dto::V1::Errors::InternalServer.new(detail: e.message)
             return render json: error.to_h, status: error.status
           else
-            return render json: { url: ENV["BASE_URL"] + api_v1_product_job_status_path(job_id) }, status: :accepted
+            return render json: { url: ENV["API_BASE_URL"] + api_v1_product_job_status_path(job_id) }, status: :accepted
           end
         end
       end

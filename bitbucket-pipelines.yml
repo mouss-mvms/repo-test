@@ -12,7 +12,7 @@ pipelines:
           name: Swagger
           script:
             - export DATABASE_URL="postgres://ywawyfvtudfszr:bcaff794ea9e2e3329ae474c3a247bedc61c2726451a58997903cd21442ff66d@ec2-46-137-123-136.eu-west-1.compute.amazonaws.com:5432/d4qqi485bt0bg1"
-            - export BASE_URL="https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+            - export API_BASE_URL="https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
             - gem install bundler:2.2.16
             - bundle config https://gem.fury.io/mvms/ 1NRAu1-s5LftEnpweDkWewfASsrNMbVmaQ
             - bundle install
@@ -27,7 +27,7 @@ pipelines:
           name: Swagger
           script:
             - export DATABASE_URL="postgres://ywawyfvtudfszr:bcaff794ea9e2e3329ae474c3a247bedc61c2726451a58997903cd21442ff66d@ec2-46-137-123-136.eu-west-1.compute.amazonaws.com:5432/d4qqi485bt0bg1"
-            - export BASE_URL="https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-staging"
+            - export API_BASE_URL="https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-staging"
             - gem install bundler:2.2.16
             - bundle config https://gem.fury.io/mvms/ 1NRAu1-s5LftEnpweDkWewfASsrNMbVmaQ
             - bundle install
@@ -42,7 +42,7 @@ pipelines:
           name: Swagger
           script:
             - export DATABASE_URL="postgres://u673f92v2bceiv:p031efefa456f1845b4d0a88b77be90d9ebc6eba52be9250a7c4301a58fb06205@ec2-54-220-81-52.eu-west-1.compute.amazonaws.com:5432/d4omsse7rcam7v"
-            - export BASE_URL="https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog"
+            - export API_BASE_URL="https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog"
             - gem install bundler:2.2.16
             - bundle config https://gem.fury.io/mvms/ 1NRAu1-s5LftEnpweDkWewfASsrNMbVmaQ
             - bundle install
