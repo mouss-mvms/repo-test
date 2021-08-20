@@ -40,6 +40,11 @@ module V1
               example: -0.62295,
               description: "Address's longitude"
             },
+            inseeCode: {
+              type: 'string',
+              example: "33063",
+              description: "Insee code"
+            },
           }
         }
       end
