@@ -104,7 +104,6 @@ module Dto
             departmentNumber: @department_number,
             productCitizenNickname: @product_citizen_nickname,
             productCitizenSlug: @product_citizen_slug,
-            productCitizenSlug: @product_citizen_slug,
             productcitizenImagePath: @product_citizen_image_path,
             defaultSampleId: @default_sample_id,
             shopPictogramUrl: @shop_pictogram_url,

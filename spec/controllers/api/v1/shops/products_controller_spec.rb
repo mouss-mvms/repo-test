@@ -68,7 +68,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
           response_body = JSON.parse(response.body)
           expect(response_body).to be_an_instance_of(Array)
           expect(response_body.count).to eq(3)
-          expect(response_body.pluck('name')).to eq(["coutelas", "coutelas de loup de mer", "coutelas de flibustier"])
+          expect(response_body.pluck('name')).to eq(products_to_return.pluck('name'))
         end
 
         it 'handles pagination' do
