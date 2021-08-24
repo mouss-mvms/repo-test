@@ -5,6 +5,8 @@ FactoryBot.define do
     zip_code { 64000 }
     status { :active }
     insee_code { '64445' }
-    label { 'Pau' }
+    before(:create) do |city|
+      create(:city_referential)
+    end
   end
 end
