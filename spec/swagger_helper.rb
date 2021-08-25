@@ -47,6 +47,7 @@ RSpec.configure do |config|
           Schedule: V1::Examples::Schedule.to_h,
           Product: V1::Examples::Product.to_h,
           ProductSummary: V1::Examples::ProductSummary.to_h,
+          ShopSummary: V1::Examples::ShopSummary.to_h,
           Category: V1::Examples::Category.to_h,
           Variant: V1::Examples::Variant.to_h,
           Characteristic: V1::Examples::Characteristics.to_h,
