@@ -1,9 +1,9 @@
 module Api
   module V1
     class ShopsController < ApplicationController
-      before_action :uncrypt_token, except: [:show, :index]
-      before_action :retrieve_user, except: [:show, :index]
-      before_action :check_user, except: [:show, :index]
+      before_action :uncrypt_token, except: [:show, :index, :shop_summaries]
+      before_action :retrieve_user, except: [:show, :index, :shop_summaries]
+      before_action :check_user, except: [:show, :index, :shop_summaries]
       before_action :retrieve_shop, only: [:update]
       before_action :is_shop_owner, only: [:update]
 
@@ -58,6 +58,10 @@ module Api
           response << Dto::V1::Shop::Response.from_searchkick(random_shop).to_h
         end
         return render json: response, status: :ok
+      end
+
+      def shop_summaries
+        render json: 'pouet', status: :ok
       end
 
       def show

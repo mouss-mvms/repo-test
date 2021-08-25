@@ -1,6 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::ShopsController, type: :controller do
+  describe 'GET #shop_summaries' do
+    context "All ok" do
+      it 'returns pouet' do
+        get :shop_summaries
+        expect(response.body).to eq('pouet')
+      end
+    end
+  end
+
   describe "GET #show" do
     context "All ok" do
       it 'should return shop information' do
