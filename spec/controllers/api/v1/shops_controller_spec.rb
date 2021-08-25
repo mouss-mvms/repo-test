@@ -3,9 +3,25 @@ require 'rails_helper'
 RSpec.describe Api::V1::ShopsController, type: :controller do
   describe 'GET #shop_summaries' do
     context "All ok" do
-      it 'returns pouet' do
-        get :shop_summaries
-        expect(response.body).to eq('pouet')
+    end
+
+    context "when problems" do
+      context "location param is missing" do
+        it "it returns a 400 http status" do
+          get :shop_summaries
+          should respond_with(400)
+          response_body = JSON.load(response.body)
+          expect(response_body["detail"]).to eq("param is missing or the value is empty: location.")
+        end
+      end
+
+      context "location can't be found" do
+        it "it returns a 400 http status" do
+          get :shop_summaries, params: { location: 'Neo Detroit' }
+          should respond_with(404)
+          response_body = JSON.load(response.body)
+          expect(response_body["detail"]).to eq("Location not found.")
+        end
       end
     end
   end

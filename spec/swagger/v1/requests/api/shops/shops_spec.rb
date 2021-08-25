@@ -2,10 +2,18 @@ require 'swagger_helper'
 
 RSpec.describe 'api/v1/shops', swagger_doc: 'v1/swagger.json', type: :request do
   path '/api/v1/shop-summaries' do
+    parameter name: :location, in: :query, type: :string, required: true, description: 'Territory or city slug'
     parameter name: :q, in: :query, type: :string, description: 'Query for search.'
     parameter name: :categories, in: :query, type: :string, description: 'Categories slugs concatened with double "_" if more than one'
     parameter name: :page, in: :query, type: :string, description: 'Number of the researches page'
-    parameter name: :more, in: :query, type: :string
+    parameter name: :perimeter, in: :query, schema: {
+      type: :string,
+      enum: [
+        "around_me",
+        "all"
+      ]
+    }
+    parameter name: :more, in: :query
 
     get("List of shop summaries") do
       tags 'Shops'

@@ -1750,6 +1750,15 @@
     "/api/v1/shop-summaries": {
       "parameters": [
         {
+          "name": "location",
+          "in": "query",
+          "required": true,
+          "description": "Territory or city slug",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
           "name": "q",
           "in": "query",
           "description": "Query for search.",
@@ -1774,11 +1783,19 @@
           }
         },
         {
-          "name": "more",
+          "name": "perimeter",
           "in": "query",
           "schema": {
-            "type": "string"
+            "type": "string",
+            "enum": [
+              "around_me",
+              "all"
+            ]
           }
+        },
+        {
+          "name": "more",
+          "in": "query"
         }
       ],
       "get": {
