@@ -58,8 +58,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         it "it returns a 400 http status" do
           get :shop_summaries
           should respond_with(400)
-          response_body = JSON.load(response.body)
-          expect(response_body["detail"]).to eq("param is missing or the value is empty: location.")
+          expect(response.body).to eq(Dto::Errors::BadRequest.new('param is missing or the value is empty: location.').to_h.to_json)
         end
       end
 
@@ -67,8 +66,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         it "it returns a 400 http status" do
           get :shop_summaries, params: { location: 'Neo Detroit' }
           should respond_with(404)
-          response_body = JSON.load(response.body)
-          expect(response_body["detail"]).to eq("Location not found.")
+          expect(response.body).to eq(Dto::Errors::NotFound.new('Location not found.').to_h.to_json)
         end
       end
     end

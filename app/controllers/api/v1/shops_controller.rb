@@ -80,10 +80,7 @@ module Api
 
         highest_scored_shops = ::Requests::ShopSearches.search_highest_scored_shops(params[:q], search_criterias)
 
-        unless params[:more]
-          search = highest_scored_shops
-          search_criterias = filter_shops(search_criterias, highest_scored_shops)
-        end
+        search_criterias = filter_shops(search_criterias, highest_scored_shops) unless params[:more]
 
         search_criterias.and(::Criterias::Shops::ExceptShops.new(highest_scored_shops.map(&:slug)))
 
@@ -98,7 +95,7 @@ module Api
           random_shops = ::Requests::ShopSearches.search_random_shops(params[:q], search_criterias, params[:page])
         end
 
-        shop_summaries_response = set_shops!(highest_scored_shops, random_shops, product_shops, params[:page], params[:more], params[:q])
+        shop_summaries_response = build_shop_summaries_response(highest_scored_shops, random_shops, product_shops, params[:page], params[:more], params[:q])
 
         render json: shop_summaries_response, status: :ok
       end
@@ -182,7 +179,7 @@ module Api
         search_criterias
       end
 
-      def set_shops!(highest_scored_shops, random_shops, product_shops, page, see_more, query)
+      def build_shop_summaries_response(highest_scored_shops, random_shops, product_shops, page, see_more, query)
         random_shop_summaries = random_shops.map { |shop| Dto::V1::ShopSummary::Response.create(shop.deep_symbolize_keys).to_h }
         if page || see_more
           shop_summaries = random_shop_summaries
