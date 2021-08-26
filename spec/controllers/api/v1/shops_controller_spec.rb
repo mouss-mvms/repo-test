@@ -3,6 +3,54 @@ require 'rails_helper'
 RSpec.describe Api::V1::ShopsController, type: :controller do
   describe 'GET #shop_summaries' do
     context "All ok" do
+      context "when location" do
+        it 'returns a searchkick result' do
+          city = create(:city, slug: 'bordeaux')
+          searchkick_result = Searchkick::HashWrapper.new({
+            "_index" => "shops_v1_20210315094629392",
+            "_type" => "_doc",
+            "_id" => "4648",
+            "_score" => 0.9988128,
+            "name" => "Edessa kebab",
+            "created_at" => "2020-05-10T09:07:03.576+02:00",
+            "updated_at" => "2020-05-10T09:07:09.498+02:00",
+            "slug" => "edessa-kebab",
+            "shop_url" => "/fr/sable-sur-sarthe/boutiques/edessa-kebab",
+            "category_tree_ids" => [2359, 2371],
+            "category_tree_names" => ["Restauration",
+                                      "Traiteur"],
+            "baseline" => "pouet",
+            "description" => "pouet",
+            "brands_name" => [""],
+            "city_label" => "bordeaux",
+            "city_slug" => "bordeaux",
+            "insee_code" => "72264",
+            "territory_name" => "bordeaux",
+            "territory_slug" => "bordeaux",
+            "department_number" => "72",
+            "deleted_at" => "pouet",
+            "number_of_online_products" => 3,
+            "number_of_orders" => 0,
+            "image_url" => "default_box_shop.svg",
+            "coupons" => "[]",
+            "pictogram_url" => "pouet",
+            "services" => ["click-collect",
+                           "livraison-express-par-stuart",
+                           "livraison-par-la-poste",
+                           "livraison-par-colissimo",
+                           "e-reservation"],
+            "is_template" => false,
+            "score" => 0,
+            "indexed_at" => "2021-06-28T18:36:54.691+00:00",
+            "id" => "4648",
+          })
+          allow(::Requests::ShopSearches).to receive(:search_highest_scored_shops).and_return([searchkick_result])
+          allow(::Requests::ShopSearches).to receive(:search_random_shops).and_return([searchkick_result])
+
+          get :shop_summaries, params: { location: city.slug  }
+          should respond_with(200)
+        end
+      end
     end
 
     context "when problems" do

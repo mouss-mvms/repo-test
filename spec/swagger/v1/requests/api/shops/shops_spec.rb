@@ -14,6 +14,7 @@ RSpec.describe 'api/v1/shops', swagger_doc: 'v1/swagger.json', type: :request do
       ]
     }
     parameter name: :more, in: :query
+    parameter name: :services, in: :query, type: :string, description: 'Services slugs concatened with double "_" if more than one'
 
     get("List of shop summaries") do
       tags 'Shops'
@@ -23,6 +24,11 @@ RSpec.describe 'api/v1/shops', swagger_doc: 'v1/swagger.json', type: :request do
 
       response(200, 'Successful') do
         schema type: :object, oneOf: [{'$ref': '#/components/schemas/ShopSummary'}]
+        run_test!
+      end
+
+      response(400, 'Bad Request') do
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
         run_test!
       end
 

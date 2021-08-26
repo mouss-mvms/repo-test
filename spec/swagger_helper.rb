@@ -52,12 +52,12 @@ RSpec.configure do |config|
           Variant: V1::Examples::Variant.to_h,
           Characteristic: V1::Examples::Characteristics.to_h,
           GoodDeal: V1::Examples::GoodDeal.to_h,
-          Unauthorized: V1::Examples::Errors::Unauthorized.new.error,
-          BadRequest: V1::Examples::Errors::BadRequest.new.error,
-          InternalError: V1::Examples::Errors::InternalError.new.error,
-          UnprocessableEntity: V1::Examples::Errors::UnprocessableEntity.new.error,
-          Forbidden: V1::Examples::Errors::Forbidden.new.error,
-          NotFound: V1::Examples::Errors::NotFound.new.error
+          Unauthorized: Examples::Errors::Unauthorized.new.error,
+          BadRequest: Examples::Errors::BadRequest.new.error,
+          InternalError: Examples::Errors::InternalError.new.error,
+          UnprocessableEntity: Examples::Errors::UnprocessableEntity.new.error,
+          Forbidden: Examples::Errors::Forbidden.new.error,
+          NotFound: Examples::Errors::NotFound.new.error
         }
       }
     }

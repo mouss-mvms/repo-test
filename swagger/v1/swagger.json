@@ -1796,6 +1796,14 @@
         {
           "name": "more",
           "in": "query"
+        },
+        {
+          "name": "services",
+          "in": "query",
+          "description": "Services slugs concatened with double \"_\" if more than one",
+          "schema": {
+            "type": "string"
+          }
         }
       ],
       "get": {
@@ -1821,6 +1829,21 @@
                   "oneOf": [
                     {
                       "$ref": "#/components/schemas/ShopSummary"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/BadRequest"
                     }
                   ]
                 }
