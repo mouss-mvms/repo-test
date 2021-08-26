@@ -10,5 +10,7 @@ FactoryBot.define do
     locality { "Pau" }
     country { "France" }
     is_default { false }
+    latitude { "latitude" }
+    longitude { "longitude" }
   end
 end
