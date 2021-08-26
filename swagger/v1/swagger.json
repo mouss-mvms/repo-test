@@ -2273,7 +2273,7 @@
   },
   "servers": [
     {
-      "url": ""
+      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
     }
   ],
   "components": {
