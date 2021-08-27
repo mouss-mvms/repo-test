@@ -2,7 +2,7 @@ module Dto
   module V1
     module Shop
       class Response
-        attr_accessor :id, :name, :slug, :image_urls, :description, :baseline, :facebook_link, :instagram_link, :website_link, :address, :siret, :email
+        attr_accessor :id, :name, :slug, :image_urls, :description, :baseline, :facebook_link, :instagram_link, :website_link, :address, :siret, :email, :lowest_product_price, :highest_product_price
 
         def initialize(**args)
           @id = args[:id]
@@ -20,6 +20,8 @@ module Dto
           @address = args[:address] || Dto::V1::Address::Response.new
           @siret = args[:siret]
           @email = args[:email]
+          @lowest_product_price = args[:lowest_product_price]
+          @highest_product_price = args[:highest_product_price]
         end
 
         def self.create(shop)
@@ -40,7 +42,9 @@ module Dto
                                            website_link: shop.url,
                                            address: Dto::V1::Address::Response.create(shop.address),
                                            siret: shop.siret,
-                                           email: shop.email
+                                           email: shop.email,
+                                           lowest_product_price: shop.cheapest_ref&.base_price,
+                                           highest_product_price: shop.most_expensive_ref&.base_price
                                          })
         end
 
@@ -63,13 +67,14 @@ module Dto
             imageUrls: @image_urls,
             baseline: @baseline,
             description: @description,
-            schedules: @schedules,
             facebookLink: @facebook_link,
             instagramLink: @instagram_link,
             websiteLink: @website_link,
             address: @address.to_h,
             siret: @siret,
-            email: @email
+            email: @email,
+            lowestProductPrice: @lowest_product_price,
+            highestProductPrice: @highest_product_price
           }
         end
       end
