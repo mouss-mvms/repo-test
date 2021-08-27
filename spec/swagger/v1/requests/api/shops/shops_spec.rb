@@ -230,7 +230,7 @@ RSpec.describe 'api/v1/shops', swagger_doc: 'v1/swagger.json', type: :request do
       security [{authorization: []}]
 
       parameter name: :q, in: :query, type: :string, description: 'Search query'
-      parameter name: :city, in: :query, type: :string, description: 'City or territory slug'
+      parameter name: :location, in: :query, type: :string, description: 'City or territory slug'
       parameter name: :categories, in: :query, type: :string, description: 'Categories slugs concatened with double "_" if more than one.', example: "vin-et-spiritueux/aperitif-et-spiritueux/rhum__maison-et-bricolage/cuisine"
       parameter name: :perimeter, in: :query, type: :string, description: " 'around_me' : dans mon département, 'all' : dans toute la France"
       parameter name: :services, in: :query,type: :string, example: "livraison-par-la-poste__click-collect", description: 'Service slugs concatened with double "_" if more than one.'

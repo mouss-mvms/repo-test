@@ -12,6 +12,8 @@ module Api
       PER_PAGE = 15
 
       def index
+        raise ActionController::ParameterMissing.new('location.') if params[:location].blank?
+
         search_criterias = ::Criterias::Composite.new(::Criterias::Shops::WithOnlineProducts)
                                                  .and(::Criterias::Shops::NotDeleted)
                                                  .and(::Criterias::Shops::NotTemplated)
@@ -24,11 +26,11 @@ module Api
           search_criterias.and(::Criterias::InCategories.new([category.id]))
         end
 
-        if params[:city]
-          territory = Territory.find_by(slug: params[:city])
-          city = City.find_by(slug: params[:city])
+        if params[:location]
+          territory = Territory.find_by(slug: params[:location])
+          city = City.find_by(slug: params[:location])
           if territory.nil? && city.nil?
-            search_criterias.and(::Criterias::InTerritory.new(''))
+            raise ApplicationController::NotFound.new('Location not found.')
           else
             insee_codes = territory ? territory.insee_codes : city.insee_codes
             if params[:q].blank? && category.nil?
