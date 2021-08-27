@@ -66,6 +66,16 @@ module V1
             address: {
               '$ref': '#/components/schemas/Address',
               description: "Shop's address"
+            },
+            lowestProductPrice: {
+              type: :number,
+              example: 23.55,
+              description: "Shop's lowest product price"
+            },
+            highestProductPrice: {
+              type: :number,
+              example: 150000000.0,
+              description: "Shop's highest product price"
             }
           }
         }
