@@ -1425,6 +1425,48 @@
         }
       }
     },
+    "/api/v1/shops/{id}/deliveries": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of the shop.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "summary": "List of deliveries by shop",
+        "tags": [
+          "Deliveries"
+        ],
+        "description": "List of deliveries available for a shop",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Delivery"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/shops/{shop_id}/products": {
       "parameters": [
         {
@@ -2273,7 +2315,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": ""
     }
   ],
   "components": {
@@ -3234,6 +3276,56 @@
             "type": "integer",
             "example": 404,
             "description": "Status of an error."
+          }
+        }
+      },
+      "Delivery": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 32,
+            "description": "Id of delivery service"
+          },
+          "name": {
+            "type": "string",
+            "example": "Delivery's name",
+            "description": "Name of delivery service"
+          },
+          "slug": {
+            "type": "string",
+            "example": "Delivery's slug",
+            "description": "Slug of delivery service"
+          },
+          "description": {
+            "type": "string",
+            "example": "Delivery's description",
+            "description": "Description of delivery service"
+          },
+          "publicDescription": {
+            "type": "string",
+            "example": "Delivery's public description",
+            "description": "Public description of delivery service"
+          },
+          "publicDetailedDescription": {
+            "type": "string",
+            "example": "Delivery's public detailed description",
+            "description": "Public detailed description of delivery service"
+          },
+          "isExpress": {
+            "type": "bool",
+            "example": true,
+            "description": "Is Delivery express"
+          },
+          "isShopDependent": {
+            "type": "bool",
+            "example": true,
+            "description": "Is Shop Dependent"
+          },
+          "isDelivery": {
+            "type": "bool",
+            "example": true,
+            "description": "Is Service is delivery"
           }
         }
       }

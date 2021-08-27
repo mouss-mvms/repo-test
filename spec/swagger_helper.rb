@@ -57,7 +57,8 @@ RSpec.configure do |config|
           InternalError: Examples::Errors::InternalError.new.error,
           UnprocessableEntity: Examples::Errors::UnprocessableEntity.new.error,
           Forbidden: Examples::Errors::Forbidden.new.error,
-          NotFound: Examples::Errors::NotFound.new.error
+          NotFound: Examples::Errors::NotFound.new.error,
+          Delivery: V1::Examples::Delivery.to_h
         }
       }
     }
