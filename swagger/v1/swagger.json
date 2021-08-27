@@ -2211,7 +2211,7 @@
             }
           },
           {
-            "name": "city",
+            "name": "location",
             "in": "query",
             "description": "City or territory slug",
             "schema": {
@@ -2273,7 +2273,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {
