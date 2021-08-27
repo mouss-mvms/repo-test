@@ -2152,7 +2152,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {
@@ -2228,6 +2228,16 @@
           "address": {
             "$ref": "#/components/schemas/Address",
             "description": "Shop's address"
+          },
+          "lowest_product_price": {
+            "type": "number",
+            "example": 23.55,
+            "description": "Shop's lowest product price"
+          },
+          "highestProductPrice": {
+            "type": "number",
+            "example": 150000000.0,
+            "description": "Shop's highest product price"
           }
         }
       },
