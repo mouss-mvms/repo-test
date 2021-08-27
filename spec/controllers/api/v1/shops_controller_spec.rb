@@ -1,6 +1,22 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::ShopsController, type: :controller do
+  describe "GET #index" do
+    context 'when location is blank' do
+      it 'returns 400 HTTP status' do
+        get :index
+        should respond_with(400)
+      end
+    end
+
+    context 'when location is unknown' do
+      it 'returns a 404 HTTP status' do
+        get :index, params: { location: 'somewhere-over-the-rainbow' }
+        should respond_with(404)
+      end
+    end
+  end
+
   describe 'GET #shop_summaries' do
     context "All ok" do
       context "when location" do

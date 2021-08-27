@@ -30,7 +30,7 @@ module Api
           territory = Territory.find_by(slug: params[:location])
           city = City.find_by(slug: params[:location])
           if territory.nil? && city.nil?
-            raise ApplicationController::NotFound.new('Location not found.') unless @city || @territory
+            raise ApplicationController::NotFound.new('Location not found.')
           else
             insee_codes = territory ? territory.insee_codes : city.insee_codes
             if params[:q].blank? && category.nil?
