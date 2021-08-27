@@ -6,6 +6,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
       it 'returns 400 HTTP status' do
         get :index
         should respond_with(400)
+        expect(response.body).to eq(Dto::Errors::BadRequest.new('param is missing or the value is empty: location.').to_h.to_json)
       end
     end
 
@@ -13,6 +14,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
       it 'returns a 404 HTTP status' do
         get :index, params: { location: 'somewhere-over-the-rainbow' }
         should respond_with(404)
+        expect(response.body).to eq(Dto::Errors::NotFound.new('Location not found.').to_h.to_json)
       end
     end
   end
