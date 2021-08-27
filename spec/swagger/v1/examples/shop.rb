@@ -67,7 +67,7 @@ module V1
               '$ref': '#/components/schemas/Address',
               description: "Shop's address"
             },
-            lowest_product_price: {
+            lowestProductPrice: {
               type: :number,
               example: 23.55,
               description: "Shop's lowest product price"
