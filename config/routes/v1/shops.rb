@@ -8,6 +8,7 @@ end
 
 get "shops/:id", to: "shops#show", as: nil
 get "shops", to: "shops#index", as: nil
+get "shop-summaries", to: "shops#shop_summaries", as: nil
 
 namespace :shops do
   get ":id/products", to: "products#index"
