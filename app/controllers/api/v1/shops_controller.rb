@@ -23,6 +23,7 @@ module Api
         category = nil
         if params[:categories]
           category = Category.find_by(slug: params[:categories])
+          raise ActiveRecord::RecordNotFound.new("Category not found for slug #{params[:categories]}") unless category
           search_criterias.and(::Criterias::InCategories.new([category.id]))
         end
 
@@ -49,7 +50,7 @@ module Api
         shops = ::Requests::ShopSearches.search_highest_scored_shops(params[:q], search_criterias)
         if !params[:page] || params[:page] == "1"
           shops.each do |shop|
-            response << Dto::V1::Shop::Response.from_searchkick(shop).to_h
+            response << Dto::V1::Shop::Response.from_searchkick(shop).to_h(params[:fields])
           end
         end
         slugs = shops.pluck(:slug)
@@ -58,7 +59,7 @@ module Api
         random_shops = ::Requests::ShopSearches.search_random_shops(params[:q], search_criterias, params[:page])
 
         random_shops.each do |random_shop|
-          response << Dto::V1::Shop::Response.from_searchkick(random_shop).to_h
+          response << Dto::V1::Shop::Response.from_searchkick(random_shop).to_h(params[:fields])
         end
         return render json: response, status: :ok
       end
@@ -97,7 +98,7 @@ module Api
           random_shops = ::Requests::ShopSearches.search_random_shops(params[:q], search_criterias, params[:page])
         end
 
-        shop_summaries_response = build_shop_summaries_response(highest_scored_shops, random_shops, product_shops, params[:page], params[:more], params[:q])
+        shop_summaries_response = build_shop_summaries_response(highest_scored_shops, random_shops, product_shops, params[:page], params[:more], params[:q], params[:fields])
 
         render json: shop_summaries_response, status: :ok
       end
@@ -181,17 +182,17 @@ module Api
         search_criterias
       end
 
-      def build_shop_summaries_response(highest_scored_shops, random_shops, product_shops, page, see_more, query)
-        random_shop_summaries = random_shops.map { |shop| Dto::V1::ShopSummary::Response.create(shop.deep_symbolize_keys).to_h }
+      def build_shop_summaries_response(highest_scored_shops, random_shops, product_shops, page, see_more, query, fields)
+        random_shop_summaries = random_shops.map { |shop| Dto::V1::ShopSummary::Response.create(shop.deep_symbolize_keys).to_h(fields) }
         if page || see_more
           shop_summaries = random_shop_summaries
         else
-          highest_scored_shop_summaries = highest_scored_shops.map { |shop| Dto::V1::ShopSummary::Response.create(shop.deep_symbolize_keys).to_h }
+          highest_scored_shop_summaries = highest_scored_shops.map { |shop| Dto::V1::ShopSummary::Response.create(shop.deep_symbolize_keys).to_h(fields) }
           shop_summaries = highest_scored_shop_summaries.concat(random_shop_summaries)
         end
 
         if query
-          product_shop_summaries = product_shops.map { |shop| Dto::V1::ShopSummary::Response.create(shop.deep_symbolize_keys).to_h }
+          product_shop_summaries = product_shops.map { |shop| Dto::V1::ShopSummary::Response.create(shop.deep_symbolize_keys).to_h(fields) }
           shop_summaries = shop_summaries.concat(product_shop_summaries)
         end
 

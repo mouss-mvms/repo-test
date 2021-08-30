@@ -43,41 +43,41 @@ module Dto
           Dto::V1::ShopSummary::Response.new(shop_search_result)
         end
 
-        def to_h
-          {
-            _index: _index,
-            _type: _type,
-            _id: _id,
-            _score: _score,
-            id: id,
-            name: name,
-            createdAt: created_at,
-            updatedAt: updated_at,
-            slug: slug,
-            shopUrl: shop_url,
-            inHolidays: in_holidays,
-            categoryTreeIds: category_tree_ids,
-            categoryTreeNames: category_tree_names,
-            baseline: baseline,
-            description: description,
-            brandsName: brands_name,
-            cityLabel: city_label,
-            citySlug: city_slug,
-            inseeCode: insee_code,
-            territoryName: territory_name,
-            territorySlug: territory_slug,
-            departmentNumber: department_number,
-            deletedAt: deleted_at,
-            numberOfOnlineProducts: number_of_online_products,
-            numberOfOrders: number_of_orders,
-            imageUrl: image_url,
-            coupons: coupons,
-            pictogramUrl: pictogram_url,
-            services: services,
-            isTemplate: is_template,
-            score: score,
-            indexedAt: indexed_at
-          }
+        def to_h(fields = nil)
+          hash = {}
+          hash[:_index] = _index if fields.nil? || (fields.any? && fields.include?("_index"))
+          hash[:_type] = _type if fields.nil? || (fields.any? && fields.include?("_type"))
+          hash[:_id] = _id if fields.nil? || (fields.any? && fields.include?("_id"))
+          hash[:_score] = _score if fields.nil? || (fields.any? && fields.include?("_score"))
+          hash[:id] = id if fields.nil? || (fields.any? && fields.include?("id"))
+          hash[:name] = name if fields.nil? || (fields.any? && fields.include?("name"))
+          hash[:createdAt] = created_at if fields.nil? || (fields.any? && fields.include?("createdAt"))
+          hash[:updatedAt] = updated_at if fields.nil? || (fields.any? && fields.include?("updatedAt"))
+          hash[:slug] = slug if fields.nil? || (fields.any? && fields.include?("slug"))
+          hash[:shopUrl] = shop_url if fields.nil? || (fields.any? && fields.include?("shopUrl"))
+          hash[:inHolidays] = in_holidays if fields.nil? || (fields.any? && fields.include?("inHolidays"))
+          hash[:categoryTreeIds] = category_tree_ids if fields.nil? || (fields.any? && fields.include?("categoryTreeIds"))
+          hash[:categoryTreeNames] = category_tree_names if fields.nil? || (fields.any? && fields.include?("categoryTreeNames"))
+          hash[:baseline] = baseline if fields.nil? || (fields.any? && fields.include?("baseline"))
+          hash[:description] = description if fields.nil? || (fields.any? && fields.include?("description"))
+          hash[:brandsName] = brands_name if fields.nil? || (fields.any? && fields.include?("brandsName"))
+          hash[:cityLabel] = city_label if fields.nil? || (fields.any? && fields.include?("cityLabel"))
+          hash[:citySlug] = city_slug if fields.nil? || (fields.any? && fields.include?("citySlug"))
+          hash[:inseeCode] = insee_code if fields.nil? || (fields.any? && fields.include?("inseeCode"))
+          hash[:territoryName] = territory_name if fields.nil? || (fields.any? && fields.include?("territoryName"))
+          hash[:territorySlug] = territory_slug if fields.nil? || (fields.any? && fields.include?("territorySlug"))
+          hash[:departmentNumber] = department_number if fields.nil? || (fields.any? && fields.include?("departmentNumber"))
+          hash[:deletedAt] = deleted_at if fields.nil? || (fields.any? && fields.include?("deletedAt"))
+          hash[:numberOfOnlineProducts] = number_of_online_products if fields.nil? || (fields.any? && fields.include?("numberOfOnlineProducts"))
+          hash[:numberOfOrders] = number_of_orders if fields.nil? || (fields.any? && fields.include?("numberOfOrders"))
+          hash[:imageUrl] = image_url if fields.nil? || (fields.any? && fields.include?("imageUrl"))
+          hash[:coupons] = coupons if fields.nil? || (fields.any? && fields.include?("coupons"))
+          hash[:pictogramUrl] = pictogram_url if fields.nil? || (fields.any? && fields.include?("pictogramUrl"))
+          hash[:services] = services if fields.nil? || (fields.any? && fields.include?("services"))
+          hash[:isTemplate] = is_template if fields.nil? || (fields.any? && fields.include?("isTemplate"))
+          hash[:score] = score if fields.nil? || (fields.any? && fields.include?("score"))
+          hash[:indexedAt] = indexed_at if fields.nil? || (fields.any? && fields.include?("indexedAt"))
+          hash
         end
       end
     end
