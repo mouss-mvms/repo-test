@@ -25,7 +25,7 @@ module Dto
                                            detailed_public_description: delivery.detailed_public_description,
                                            is_express: delivery.express,
                                            is_shop_dependent: delivery.shop_dependent,
-                                           is_delivery: delivery.is_delivery,})
+                                           is_delivery: delivery.is_delivery})
         end
 
         def to_h

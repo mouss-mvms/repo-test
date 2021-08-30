@@ -6,10 +6,7 @@ module Api
 
         def index
           deliveries = @shop.services
-          response = []
-          deliveries.each do |delivery|
-            response << Dto::V1::Delivery::Response.create(delivery).to_h
-          end
+          response = deliveries.map { |delivery| Dto::V1::Delivery::Response.create(delivery).to_h }
 
           render json: response, status: :ok
         end
