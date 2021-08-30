@@ -41,6 +41,7 @@ RSpec.describe Dto::V1::Shop::Response do
         product.references.last.update(shop_id: shop.id)
         create(:shop_gallery, shop_id: shop.id)
         dto_response = Dto::V1::Shop::Response.create(shop)
+
         dto_hash = dto_response.to_h
 
         expect(dto_hash).to be_an_instance_of(Hash)
