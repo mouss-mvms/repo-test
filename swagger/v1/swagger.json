@@ -1825,6 +1825,17 @@
           }
         },
         {
+          "name": "fields[]",
+          "in": "query",
+          "description": "Return only the fields requested",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        {
           "name": "perimeter",
           "in": "query",
           "schema": {
@@ -2256,6 +2267,7 @@
             "name": "location",
             "in": "query",
             "description": "City or territory slug",
+            "required": true,
             "schema": {
               "type": "string"
             }
@@ -2293,6 +2305,17 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "fields[]",
+            "in": "query",
+            "description": "Return only the fields requested",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         ],
         "responses": {
@@ -2305,6 +2328,21 @@
                   "items": {
                     "$ref": "#/components/schemas/Shop"
                   }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/NotFound"
+                    }
+                  ]
                 }
               }
             }
