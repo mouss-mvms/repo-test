@@ -13,4 +13,5 @@ get "shop-summaries", to: "shops#shop_summaries", as: nil
 namespace :shops do
   get ":id/products", to: "products#index"
   get ":id/schedules", to: "schedules#index"
+  get ":id/deliveries", to: "deliveries#index"
 end
