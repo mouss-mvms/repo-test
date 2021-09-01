@@ -5,7 +5,7 @@ module Api
         before_action :check_shop
 
         def index
-          deliveries = @shop.services
+          deliveries = @shop.active_services
           response = deliveries.map { |delivery| Dto::V1::Delivery::Response.create(delivery).to_h }
 
           render json: response, status: :ok
