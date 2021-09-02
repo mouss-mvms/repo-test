@@ -13,8 +13,6 @@ Rails.application.routes.draw do
       instance_eval(File.read(Rails.root.join("config/routes/v1/products.rb")))
       get '/citizens/:id/products', to: 'citizens/products#index'
       get '/categories', to: 'categories#index'
-
-      post '/auth/reviews', to: 'reviews#create'
     end
   end
 end
