@@ -3,7 +3,8 @@
   "info": {
     "title": "CATALOG API",
     "version": "1.0.0",
-    "description": "Ma Ville Mon Shopping Catalog API"
+    "description": "Ma Ville Mon Shopping Catalog API",
+    
   },
   "paths": {
     "/api/v1/categories": {
