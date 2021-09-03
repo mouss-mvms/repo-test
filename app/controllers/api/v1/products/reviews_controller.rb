@@ -16,6 +16,7 @@ module Api
 
         def review_params
           raise ActionController::BadRequest.new("mark is not required") if params[:parentId] && params[:mark]
+          raise ActionController::BadRequest.new("mark must be between 0 and 5") if params[:mark] && ((params[:mark].to_i < 0) || (params[:mark].to_i > 5))
           review_params = {}
           review_params[:content] = params.require(:content)
           review_params[:mark] = params.require(:mark) unless params[:parentId]

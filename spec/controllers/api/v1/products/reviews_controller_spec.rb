@@ -91,6 +91,44 @@ RSpec.describe Api::V1::Products::ReviewsController, type: :controller do
             expect(response.body).to eq(Dto::Errors::BadRequest.new("param is missing or the value is empty: mark").to_h.to_json)
           end
         end
+
+        context 'mark is upper than 5' do
+          it 'should return a 400 HTTP Status' do
+            user = create(:citizen_user)
+            product = create(:product)
+
+            params = {
+              content: "Avis de la boutique",
+              mark: 6
+            }
+
+            request.headers['x-client-id'] = generate_token(user)
+
+            post :create, params: params.merge(id: product.id)
+
+            expect(response).to have_http_status(:bad_request)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("mark must be between 0 and 5").to_h.to_json)
+          end
+        end
+
+        context 'mark is lower than 0' do
+          it 'should return a 400 HTTP Status' do
+            user = create(:citizen_user)
+            product = create(:product)
+
+            params = {
+              content: "Avis de la boutique",
+              mark: -1
+            }
+
+            request.headers['x-client-id'] = generate_token(user)
+
+            post :create, params: params.merge(id: product.id)
+
+            expect(response).to have_http_status(:bad_request)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("mark must be between 0 and 5").to_h.to_json)
+          end
+        end
       end
 
       context 'review is an answer another review' do
