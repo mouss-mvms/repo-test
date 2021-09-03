@@ -18,7 +18,7 @@ RSpec.describe Api::V1::Shops::ReviewsController, type: :controller do
         expect(response).to have_http_status(:created)
         result = JSON.parse(response.body).symbolize_keys
         expect(result[:content]).to eq(params[:content])
-        expect(result[:shopId]).to eq(params[:shopId])
+        expect(result[:shopId]).to eq(shop.id)
         expect(result[:mark]).to eq(params[:mark])
         expect(result[:userId]).to eq(user.id)
         expect(result[:parentId]).to be_nil
@@ -46,7 +46,7 @@ RSpec.describe Api::V1::Shops::ReviewsController, type: :controller do
           expect(result[:productId]).to eq(params[:productId])
           expect(result[:userId]).to eq(user_shop_employee.id)
           expect(result[:parentId]).to eq(params[:parentId])
-          expect(result[:shopId]).to eq(params[:shopId])
+          expect(result[:shopId]).to eq(shop.id)
           expect(review.answers.to_a.find { |a| a.id == result[:id]}).to be_truthy
         end
       end

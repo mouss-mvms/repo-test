@@ -7,10 +7,7 @@ module Api
 
         def create
           Product.find(params[:id])
-          review = Review.new(review_params.merge(product_id: params[:id]))
-          review.user_id = @user.id
-
-          review.save!
+          review = Review.create!(review_params.merge(product_id: params[:id], user_id: @user.id))
 
           render json: Dto::V1::Review::Response.create(review).to_h, status: :created
         end
