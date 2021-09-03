@@ -4,7 +4,6 @@
     "title": "CATALOG API",
     "version": "1.0.0",
     "description": "Ma Ville Mon Shopping Catalog API"
-
   },
   "paths": {
     "/api/v1/categories": {
@@ -2646,7 +2645,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-staging"
     }
   ],
   "components": {
