@@ -58,7 +58,8 @@ RSpec.configure do |config|
           UnprocessableEntity: Examples::Errors::UnprocessableEntity.new.error,
           Forbidden: Examples::Errors::Forbidden.new.error,
           NotFound: Examples::Errors::NotFound.new.error,
-          Delivery: V1::Examples::Delivery.to_h
+          Delivery: V1::Examples::Delivery.to_h,
+          Review: V1::Examples::Review.to_h
         }
       }
     }
