@@ -25,7 +25,7 @@ RSpec.describe 'api/v1/shops/reviews', swagger_doc: 'v1/swagger.json', type: :re
       }
 
       response(201, 'successful') do
-        schema type: :array, items: {'$ref': '#/components/schemas/Review'}
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Review'}]
         run_test!
       end
 

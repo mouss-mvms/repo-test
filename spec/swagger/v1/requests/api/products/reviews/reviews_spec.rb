@@ -20,12 +20,12 @@ RSpec.describe 'api/v1/products/reviews', swagger_doc: 'v1/swagger.json', type: 
           mark: { type: :integer, example: 3, description: 'Mark of review (0 to 5)' },
           content: { type: :string, example: 'La boutique est super', description: 'Content of review' },
           parentId: { type: :integer, example: 52, description: 'Parent id review if current review is an answer to another review' },
-          required: [ 'content']
+          required: [ 'content' ]
         }
       }
 
       response(201, 'successful') do
-        schema type: :array, items: {'$ref': '#/components/schemas/Review'}
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Review'}]
         run_test!
       end
 
