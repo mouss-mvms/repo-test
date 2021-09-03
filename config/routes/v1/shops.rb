@@ -3,6 +3,7 @@ scope :auth do
   put "shops/:id", to: "shops#update", as: nil
   namespace :shops do
     put ":id/schedules", to: "schedules#update"
+    post ":id/reviews", to: "reviews#create"
   end
 end
 

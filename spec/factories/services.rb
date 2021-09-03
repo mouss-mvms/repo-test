@@ -1,19 +1,3 @@
-# == Schema Information
-#
-# Table name: services
-#
-#  id             :integer          not null, primary key
-#  name           :string
-#  created_at     :datetime         not null
-#  updated_at     :datetime         not null
-#  description    :text
-#  fixed_price    :float
-#  express        :boolean
-#  shop_dependent :boolean
-#  is_delivery    :boolean
-#  icon           :string
-#
-
 FactoryBot.define do
   factory :service do
     name { "MyString" }
