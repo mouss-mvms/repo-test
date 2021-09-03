@@ -5,10 +5,11 @@ RSpec.describe Api::V1::Shops::DeliveriesController, type: :controller do
     context "All ok" do
       it 'should return 200 HTTP Status with deliveries for a shop requested' do
         shop = create(:shop)
-        delivery1 = create(:service_delivery)
-        delivery2 = create(:service_not_delivery)
+        delivery1 = create(:service_delivery, disabled: false)
+        delivery2 = create(:service_not_delivery, disabled: false)
         shop.services << delivery1
         shop.services << delivery2
+        shop.delivery_options
         shop.save
 
         get :index, params: { id: shop.id }

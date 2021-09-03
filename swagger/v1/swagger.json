@@ -3,8 +3,7 @@
   "info": {
     "title": "CATALOG API",
     "version": "1.0.0",
-    "description": "Ma Ville Mon Shopping Catalog API",
-    
+    "description": "Ma Ville Mon Shopping Catalog API"
   },
   "paths": {
     "/api/v1/categories": {
@@ -17,6 +16,7 @@
         "security": [
           {
             "authorization": [
+
             ]
           }
         ],
@@ -101,6 +101,152 @@
                     {
                       "$ref": "#/components/schemas/NotFound"
                     }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/products/{id}/reviews": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of the products.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "x-client-id",
+          "in": "header",
+          "description": "Auth token of user",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Create a review for a product",
+        "tags": [
+          "Review"
+        ],
+        "description": "Create a review for a product or create an answer for an existing review",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "201": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Review"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/BadRequest"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Unauthorized"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/NotFound"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "To create a review, productId and mark are required, parentId is forbidden.\n                      To create an answer, parentId is required but mark is forbidden",
+                "properties": {
+                  "mark": {
+                    "type": "integer",
+                    "example": 3,
+                    "description": "Mark of review (0 to 5)"
+                  },
+                  "content": {
+                    "type": "string",
+                    "example": "La boutique est super",
+                    "description": "Content of review"
+                  },
+                  "parentId": {
+                    "type": "integer",
+                    "example": 52,
+                    "description": "Parent id review if current review is an answer to another review"
+                  },
+                  "required": [
+                    "content"
                   ]
                 }
               }
@@ -1572,6 +1718,152 @@
                     {
                       "$ref": "#/components/schemas/BadRequest"
                     }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/shops/{id}/reviews": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of the shop.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "x-client-id",
+          "in": "header",
+          "description": "Auth token of user",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Create a review for a shop",
+        "tags": [
+          "Review"
+        ],
+        "description": "Create a review for a shop or create an answer for an existing review",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "201": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Review"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/BadRequest"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Unauthorized"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/NotFound"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "To create a review, shopId and mark are required, parentId is forbidden.\n                      To create an answer, parentId is required but mark is forbidden",
+                "properties": {
+                  "mark": {
+                    "type": "integer",
+                    "example": 3,
+                    "description": "Mark of review (0 to 5)"
+                  },
+                  "content": {
+                    "type": "string",
+                    "example": "La boutique est super",
+                    "description": "Content of review"
+                  },
+                  "parentId": {
+                    "type": "integer",
+                    "example": 52,
+                    "description": "Parent id review if current review is an answer to another review"
+                  },
+                  "required": [
+                    "content"
                   ]
                 }
               }
@@ -3374,6 +3666,53 @@
             "type": "bool",
             "example": true,
             "description": "Is Service is delivery"
+          }
+        }
+      },
+      "Review": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 3,
+            "description": "Id of review"
+          },
+          "content": {
+            "type": "string",
+            "example": "La boutique est super",
+            "description": "Content of review"
+          },
+          "mark": {
+            "type": "integer",
+            "example": 3,
+            "description": "Mark of review"
+          },
+          "shopId": {
+            "type": "integer",
+            "example": 57,
+            "description": "Shop id of review"
+          },
+          "productId": {
+            "type": "integer",
+            "example": 57,
+            "description": "Product id of review"
+          },
+          "userId": {
+            "type": "integer",
+            "example": 57,
+            "description": "User id author of review"
+          },
+          "parentId": {
+            "type": "integer",
+            "example": 57,
+            "description": "Parent id review if current review is an answer to another review"
+          },
+          "answers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Review"
+            },
+            "description": "List of answers for the review."
           }
         }
       }
