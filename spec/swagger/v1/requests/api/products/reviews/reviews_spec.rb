@@ -17,11 +17,10 @@ RSpec.describe 'api/v1/products/reviews', swagger_doc: 'v1/swagger.json', type: 
         description: 'To create a review, productId and mark are required, parentId is forbidden.
                       To create an answer, parentId is required but mark is forbidden',
         properties: {
-          mark: { type: :integer, example: 3, description: 'Mark of review' },
+          mark: { type: :integer, example: 3, description: 'Mark of review (0 to 5)' },
           content: { type: :string, example: 'La boutique est super', description: 'Content of review' },
-          productId: { type: :integer, example: 14, description: 'Product id of review' },
           parentId: { type: :integer, example: 52, description: 'Parent id review if current review is an answer to another review' },
-          required: [ 'content', 'productId' ]
+          required: [ 'content']
         }
       }
 
