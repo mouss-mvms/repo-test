@@ -3,8 +3,7 @@
   "info": {
     "title": "CATALOG API",
     "version": "1.0.0",
-    "description": "Ma Ville Mon Shopping Catalog API",
-    
+    "description": "Ma Ville Mon Shopping Catalog API"
   },
   "paths": {
     "/api/v1/categories": {
@@ -232,17 +231,12 @@
                   "mark": {
                     "type": "integer",
                     "example": 3,
-                    "description": "Mark of review"
+                    "description": "Mark of review (0 to 5)"
                   },
                   "content": {
                     "type": "string",
                     "example": "La boutique est super",
                     "description": "Content of review"
-                  },
-                  "productId": {
-                    "type": "integer",
-                    "example": 14,
-                    "description": "Product id of review"
                   },
                   "parentId": {
                     "type": "integer",
@@ -250,8 +244,7 @@
                     "description": "Parent id review if current review is an answer to another review"
                   },
                   "required": [
-                    "content",
-                    "productId"
+                    "content"
                   ]
                 }
               }
@@ -1853,17 +1846,12 @@
                   "mark": {
                     "type": "integer",
                     "example": 3,
-                    "description": "Mark of review"
+                    "description": "Mark of review (0 to 5)"
                   },
                   "content": {
                     "type": "string",
                     "example": "La boutique est super",
                     "description": "Content of review"
-                  },
-                  "shopId": {
-                    "type": "integer",
-                    "example": 14,
-                    "description": "Shop id of review"
                   },
                   "parentId": {
                     "type": "integer",
@@ -1871,8 +1859,7 @@
                     "description": "Parent id review if current review is an answer to another review"
                   },
                   "required": [
-                    "content",
-                    "shopId"
+                    "content"
                   ]
                 }
               }
