@@ -109,7 +109,7 @@
         }
       }
     },
-    "/api/v1/products/{id}/reviews": {
+    "/api/v1/auth/products/{id}/reviews": {
       "parameters": [
         {
           "name": "id",
@@ -1724,7 +1724,7 @@
         }
       }
     },
-    "/api/v1/shops/{id}/reviews": {
+    "/api/v1/auth/shops/{id}/reviews": {
       "parameters": [
         {
           "name": "id",
