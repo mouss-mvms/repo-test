@@ -2,7 +2,7 @@ require 'swagger_helper'
 
 RSpec.describe 'api/v1/shops/reviews', swagger_doc: 'v1/swagger.json', type: :request do
 
-  path '/api/v1/shops/{id}/reviews' do
+  path '/api/v1/auth/shops/{id}/reviews' do
     parameter name: :id, in: :path, type: :integer, description: 'Unique identifier of the shop.', required: true
     parameter name: 'x-client-id', in: :header, type: :string, description: 'Auth token of user', required: true
     post('Create a review for a shop') do
