@@ -109,7 +109,7 @@
         }
       }
     },
-    "/api/v1/products/{id}/reviews": {
+    "/api/v1/auth/products/{id}/reviews": {
       "parameters": [
         {
           "name": "id",
@@ -231,17 +231,12 @@
                   "mark": {
                     "type": "integer",
                     "example": 3,
-                    "description": "Mark of review"
+                    "description": "Mark of review (0 to 5)"
                   },
                   "content": {
                     "type": "string",
                     "example": "La boutique est super",
                     "description": "Content of review"
-                  },
-                  "productId": {
-                    "type": "integer",
-                    "example": 14,
-                    "description": "Product id of review"
                   },
                   "parentId": {
                     "type": "integer",
@@ -249,8 +244,7 @@
                     "description": "Parent id review if current review is an answer to another review"
                   },
                   "required": [
-                    "content",
-                    "productId"
+                    "content"
                   ]
                 }
               }
@@ -1730,7 +1724,7 @@
         }
       }
     },
-    "/api/v1/shops/{id}/reviews": {
+    "/api/v1/auth/shops/{id}/reviews": {
       "parameters": [
         {
           "name": "id",
@@ -1852,17 +1846,12 @@
                   "mark": {
                     "type": "integer",
                     "example": 3,
-                    "description": "Mark of review"
+                    "description": "Mark of review (0 to 5)"
                   },
                   "content": {
                     "type": "string",
                     "example": "La boutique est super",
                     "description": "Content of review"
-                  },
-                  "shopId": {
-                    "type": "integer",
-                    "example": 14,
-                    "description": "Shop id of review"
                   },
                   "parentId": {
                     "type": "integer",
@@ -1870,8 +1859,7 @@
                     "description": "Parent id review if current review is an answer to another review"
                   },
                   "required": [
-                    "content",
-                    "shopId"
+                    "content"
                   ]
                 }
               }
