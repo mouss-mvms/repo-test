@@ -181,6 +181,7 @@ module Api
           hash[:weight] = v.require(:weight)
           hash[:quantity] = v.require(:quantity)
           hash[:is_default] = v.require(:isDefault)
+          hash[:image_urls] = v[:imageUrls]
           if v[:goodDeal]
             hash[:good_deal] = {}
             hash[:good_deal][:start_at] = v[:goodDeal].require(:startAt)
