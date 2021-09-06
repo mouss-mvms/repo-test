@@ -20,7 +20,7 @@ module Dto
         end
 
         dto_product_request.image_urls.each do |image_url|
-          set_image(object: product, image_url: image_url)
+          Dto::V1::Product.set_image(object: product, image_url: image_url)
         end
 
         dto_product_request.variants.each do |dto_variant|
@@ -28,7 +28,7 @@ module Dto
 
           if dto_variant.image_urls.present?
             dto_variant.image_urls.each do |image_url|
-              set_image(object: sample, image_url: image_url)
+              Dto::V1::Product.set_image(object: sample, image_url: image_url)
             end
           end
 
