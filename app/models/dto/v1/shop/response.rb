@@ -2,7 +2,7 @@ module Dto
   module V1
     module Shop
       class Response
-        attr_accessor :id, :name, :slug, :image_urls, :description, :baseline, :facebook_link, :instagram_link, :website_link, :address, :siret, :email
+        attr_accessor :id, :name, :slug, :image_urls, :description, :baseline, :facebook_link, :instagram_link, :website_link, :address, :siret, :email, :lowest_product_price, :highest_product_price
 
         def initialize(**args)
           @id = args[:id]
@@ -20,6 +20,8 @@ module Dto
           @address = args[:address] || Dto::V1::Address::Response.new
           @siret = args[:siret]
           @email = args[:email]
+          @lowest_product_price = args[:lowest_product_price]
+          @highest_product_price = args[:highest_product_price]
         end
 
         def self.create(shop)
@@ -40,7 +42,9 @@ module Dto
                                            website_link: shop.url,
                                            address: Dto::V1::Address::Response.create(shop.address),
                                            siret: shop.siret,
-                                           email: shop.email
+                                           email: shop.email,
+                                           lowest_product_price: shop.cheapest_ref&.base_price,
+                                           highest_product_price: shop.most_expensive_ref&.base_price
                                          })
         end
 
@@ -55,22 +59,23 @@ module Dto
                                          })
         end
 
-        def to_h
-          {
-            id: @id,
-            name: @name,
-            slug: @slug,
-            imageUrls: @image_urls,
-            baseline: @baseline,
-            description: @description,
-            schedules: @schedules,
-            facebookLink: @facebook_link,
-            instagramLink: @instagram_link,
-            websiteLink: @website_link,
-            address: @address.to_h,
-            siret: @siret,
-            email: @email
-          }
+        def to_h(fields = nil)
+          hash = {}
+          hash[:id] = @id if fields.nil? || (fields.any? && fields.include?('id'))
+          hash[:name] = @name if fields.nil? || (fields.any? && fields.include?('name'))
+          hash[:slug] = @slug if fields.nil? || (fields.any? && fields.include?('slug'))
+          hash[:imageUrls] = @image_urls if fields.nil? || (fields.any? && fields.include?('imageUrls'))
+          hash[:baseline] = @baseline if fields.nil? || (fields.any? && fields.include?('baseline'))
+          hash[:description] = @description if fields.nil? || (fields.any? && fields.include?('description'))
+          hash[:facebookLink] = @facebook_link if fields.nil? || (fields.any? && fields.include?('facebookLink'))
+          hash[:instagramLink] = @instagram_link if fields.nil? || (fields.any? && fields.include?('instagramLink'))
+          hash[:websiteLink] = @website_link if fields.nil? || (fields.any? && fields.include?('websiteLink'))
+          hash[:address] = @address.to_h if fields.nil? || (fields.any? && fields.include?('address'))
+          hash[:siret] = @siret if fields.nil? || (fields.any? && fields.include?('siret'))
+          hash[:email] = @email if fields.nil? || (fields.any? && fields.include?('email'))
+          hash[:lowestProductPrice] = @lowest_product_price if fields.nil? || (fields.any? && fields.include?('lowestProductPrice'))
+          hash[:highestProductPrice] = @highest_product_price if fields.nil? || (fields.any? && fields.include?('highestProductPrice'))
+          hash
         end
       end
     end
