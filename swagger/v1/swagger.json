@@ -109,6 +109,152 @@
         }
       }
     },
+    "/api/v1/auth/products/{id}/reviews": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of the products.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "x-client-id",
+          "in": "header",
+          "description": "Auth token of user",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Create a review for a product",
+        "tags": [
+          "Review"
+        ],
+        "description": "Create a review for a product or create an answer for an existing review",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "201": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Review"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/BadRequest"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Unauthorized"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/NotFound"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "To create a review, productId and mark are required, parentId is forbidden.\n                      To create an answer, parentId is required but mark is forbidden",
+                "properties": {
+                  "mark": {
+                    "type": "integer",
+                    "example": 3,
+                    "description": "Mark of review (0 to 5)"
+                  },
+                  "content": {
+                    "type": "string",
+                    "example": "La boutique est super",
+                    "description": "Content of review"
+                  },
+                  "parentId": {
+                    "type": "integer",
+                    "example": 52,
+                    "description": "Parent id review if current review is an answer to another review"
+                  },
+                  "required": [
+                    "content"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/product-summaries": {
       "get": {
         "summary": "Return product-summaries list",
@@ -1425,6 +1571,48 @@
         }
       }
     },
+    "/api/v1/shops/{id}/deliveries": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of the shop.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "summary": "List of deliveries by shop",
+        "tags": [
+          "Deliveries"
+        ],
+        "description": "List of deliveries available for a shop",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Delivery"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/shops/{shop_id}/products": {
       "parameters": [
         {
@@ -1530,6 +1718,152 @@
                     {
                       "$ref": "#/components/schemas/BadRequest"
                     }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/shops/{id}/reviews": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of the shop.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "x-client-id",
+          "in": "header",
+          "description": "Auth token of user",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Create a review for a shop",
+        "tags": [
+          "Review"
+        ],
+        "description": "Create a review for a shop or create an answer for an existing review",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "201": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Review"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/BadRequest"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Unauthorized"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Forbidden"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/NotFound"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "To create a review, shopId and mark are required, parentId is forbidden.\n                      To create an answer, parentId is required but mark is forbidden",
+                "properties": {
+                  "mark": {
+                    "type": "integer",
+                    "example": 3,
+                    "description": "Mark of review (0 to 5)"
+                  },
+                  "content": {
+                    "type": "string",
+                    "example": "La boutique est super",
+                    "description": "Content of review"
+                  },
+                  "parentId": {
+                    "type": "integer",
+                    "example": 52,
+                    "description": "Parent id review if current review is an answer to another review"
+                  },
+                  "required": [
+                    "content"
                   ]
                 }
               }
@@ -1740,6 +2074,138 @@
                       "description": "Close afternoon time"
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/shop-summaries": {
+      "parameters": [
+        {
+          "name": "location",
+          "in": "query",
+          "required": true,
+          "description": "Territory or city slug",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "q",
+          "in": "query",
+          "description": "Query for search.",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "categories",
+          "in": "query",
+          "description": "Categories slugs concatened with double \"_\" if more than one",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "page",
+          "in": "query",
+          "description": "Number of the researches page",
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "fields[]",
+          "in": "query",
+          "description": "Return only the fields requested",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "name": "perimeter",
+          "in": "query",
+          "schema": {
+            "type": "string",
+            "enum": [
+              "around_me",
+              "all"
+            ]
+          }
+        },
+        {
+          "name": "more",
+          "in": "query"
+        },
+        {
+          "name": "services",
+          "in": "query",
+          "description": "Services slugs concatened with double \"_\" if more than one",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "List of shop summaries",
+        "tags": [
+          "Shops"
+        ],
+        "description": "List of shop summaries",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/ShopSummary"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/BadRequest"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/NotFound"
+                    }
+                  ]
                 }
               }
             }
@@ -2090,9 +2556,10 @@
             }
           },
           {
-            "name": "city",
+            "name": "location",
             "in": "query",
             "description": "City or territory slug",
+            "required": true,
             "schema": {
               "type": "string"
             }
@@ -2130,6 +2597,17 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "fields[]",
+            "in": "query",
+            "description": "Return only the fields requested",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
           }
         ],
         "responses": {
@@ -2142,6 +2620,21 @@
                   "items": {
                     "$ref": "#/components/schemas/Shop"
                   }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/NotFound"
+                    }
+                  ]
                 }
               }
             }
@@ -2228,6 +2721,16 @@
           "address": {
             "$ref": "#/components/schemas/Address",
             "description": "Shop's address"
+          },
+          "lowestProductPrice": {
+            "type": "number",
+            "example": 23.55,
+            "description": "Shop's lowest product price"
+          },
+          "highestProductPrice": {
+            "type": "number",
+            "example": 150000000.0,
+            "description": "Shop's highest product price"
           }
         }
       },
@@ -2709,6 +3212,161 @@
           }
         }
       },
+      "ShopSummary": {
+        "type": "object",
+        "properties": {
+          "_index": {
+            "type": "string",
+            "example": "shops_v1_20210315162727103"
+          },
+          "_type": {
+            "type": "string",
+            "example": "_doc"
+          },
+          "_id": {
+            "type": "string",
+            "example": "42"
+          },
+          "_score": {
+            "type": "number",
+            "example": 0.9996825
+          },
+          "id": {
+            "type": "string",
+            "example": "42"
+          },
+          "name": {
+            "type": "string",
+            "example": "Ray's occult books"
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2020-04-11T20:22:29.446+02:00"
+          },
+          "updatedAt": {
+            "type": "string",
+            "example": "2021-05-06T17:14:04.816+02:00"
+          },
+          "slug": {
+            "type": "string",
+            "example": "ray-s-occult-books"
+          },
+          "shopUrl": {
+            "type": "string",
+            "example": "/us/new-york/boutiques/ray-s-occult-books"
+          },
+          "categoryTreeIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "example": [
+                42,
+                43
+              ]
+            }
+          },
+          "categoryTreeNames": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": [
+                "Books",
+                "Occultism"
+              ]
+            }
+          },
+          "baseline": {
+            "type": "string",
+            "example": "We are open until 7:00 P.M. on weekdays, midnight on Saturdays"
+          },
+          "description": {
+            "type": "string",
+            "example": "Ray's Occult books opened in 1986 and we specializing in the bizarre, somewhat strange, and hard to find books. If we don't got it we can get it."
+          },
+          "brandsName": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": [
+                "Book brand",
+                "Book brand",
+                "Book brand"
+              ]
+            }
+          },
+          "cityLabel": {
+            "type": "string",
+            "example": "New York"
+          },
+          "citySlug": {
+            "type": "string",
+            "example": "new-york"
+          },
+          "inseeCode": {
+            "type": "string",
+            "example": "44084"
+          },
+          "territoryName": {
+            "type": "string",
+            "example": "Usa"
+          },
+          "territorySlug": {
+            "type": "string",
+            "example": "usa"
+          },
+          "departmentNumber": {
+            "type": "string",
+            "example": "44"
+          },
+          "deletedAt": {
+            "type": "string",
+            "example": null
+          },
+          "numberOfOnlineProducts": {
+            "type": "integer",
+            "example": 233
+          },
+          "numberOfOrders": {
+            "type": "integer",
+            "example": 5
+          },
+          "imageUrl": {
+            "type": "string",
+            "example": "https://static.wikia.nocookie.net/ghostbusters/images/e/e0/GB2film1999chapter04sc001.png/revision/latest?cb=20111220104753"
+          },
+          "coupons": {
+            "type": "string",
+            "example": "[]"
+          },
+          "pictogram_url": {
+            "type": "string",
+            "example": null
+          },
+          "services": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": [
+                "click-collect",
+                "drone",
+                "helicopter"
+              ]
+            }
+          },
+          "isTemplate": {
+            "type": "boolean",
+            "example": false
+          },
+          "score": {
+            "type": "integer",
+            "example": 5
+          },
+          "indexed_at": {
+            "type": "string",
+            "example": "2021-06-28T11:09:54.088+00:00"
+          }
+        }
+      },
       "Category": {
         "type": "object",
         "properties": {
@@ -2958,6 +3616,103 @@
             "type": "integer",
             "example": 404,
             "description": "Status of an error."
+          }
+        }
+      },
+      "Delivery": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 32,
+            "description": "Id of delivery service"
+          },
+          "name": {
+            "type": "string",
+            "example": "Delivery's name",
+            "description": "Name of delivery service"
+          },
+          "slug": {
+            "type": "string",
+            "example": "Delivery's slug",
+            "description": "Slug of delivery service"
+          },
+          "description": {
+            "type": "string",
+            "example": "Delivery's description",
+            "description": "Description of delivery service"
+          },
+          "publicDescription": {
+            "type": "string",
+            "example": "Delivery's public description",
+            "description": "Public description of delivery service"
+          },
+          "publicDetailedDescription": {
+            "type": "string",
+            "example": "Delivery's public detailed description",
+            "description": "Public detailed description of delivery service"
+          },
+          "isExpress": {
+            "type": "bool",
+            "example": true,
+            "description": "Is Delivery express"
+          },
+          "isShopDependent": {
+            "type": "bool",
+            "example": true,
+            "description": "Is Shop Dependent"
+          },
+          "isDelivery": {
+            "type": "bool",
+            "example": true,
+            "description": "Is Service is delivery"
+          }
+        }
+      },
+      "Review": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 3,
+            "description": "Id of review"
+          },
+          "content": {
+            "type": "string",
+            "example": "La boutique est super",
+            "description": "Content of review"
+          },
+          "mark": {
+            "type": "integer",
+            "example": 3,
+            "description": "Mark of review"
+          },
+          "shopId": {
+            "type": "integer",
+            "example": 57,
+            "description": "Shop id of review"
+          },
+          "productId": {
+            "type": "integer",
+            "example": 57,
+            "description": "Product id of review"
+          },
+          "userId": {
+            "type": "integer",
+            "example": 57,
+            "description": "User id author of review"
+          },
+          "parentId": {
+            "type": "integer",
+            "example": 57,
+            "description": "Parent id review if current review is an answer to another review"
+          },
+          "answers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Review"
+            },
+            "description": "List of answers for the review."
           }
         }
       }

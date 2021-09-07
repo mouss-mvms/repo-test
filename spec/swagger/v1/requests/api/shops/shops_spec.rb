@@ -1,6 +1,48 @@
 require 'swagger_helper'
 
 RSpec.describe 'api/v1/shops', swagger_doc: 'v1/swagger.json', type: :request do
+  path '/api/v1/shop-summaries' do
+    parameter name: :location, in: :query, type: :string, required: true, description: 'Territory or city slug'
+    parameter name: :q, in: :query, type: :string, description: 'Query for search.'
+    parameter name: :categories, in: :query, type: :string, description: 'Categories slugs concatened with double "_" if more than one'
+    parameter name: :page, in: :query, type: :string, description: 'Number of the researches page'
+    parameter name: 'fields[]', in: :query, description: 'Return only the fields requested', schema: {
+      type: :array,
+      items: { type: :string }
+    }
+    parameter name: :perimeter, in: :query, schema: {
+      type: :string,
+      enum: [
+        "around_me",
+        "all"
+      ]
+    }
+    parameter name: :more, in: :query
+    parameter name: :services, in: :query, type: :string, description: 'Services slugs concatened with double "_" if more than one'
+
+    get("List of shop summaries") do
+      tags 'Shops'
+      produces 'application/json'
+      description 'List of shop summaries'
+      security [{authorization: []}]
+
+      response(200, 'Successful') do
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/ShopSummary'}]
+        run_test!
+      end
+
+      response(400, 'Bad Request') do
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
+        run_test!
+      end
+
+      response(404, 'Not found') do
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/NotFound'}]
+        run_test!
+      end
+    end
+  end
+
   path '/api/v1/shops/{id}' do
     parameter name: 'id', in: :path, type: :string, description: 'Unique identifier of the desired shop.'
 
@@ -192,14 +234,23 @@ RSpec.describe 'api/v1/shops', swagger_doc: 'v1/swagger.json', type: :request do
       security [{authorization: []}]
 
       parameter name: :q, in: :query, type: :string, description: 'Search query'
-      parameter name: :city, in: :query, type: :string, description: 'City or territory slug'
+      parameter name: :location, in: :query, type: :string, description: 'City or territory slug', required: true
       parameter name: :categories, in: :query, type: :string, description: 'Categories slugs concatened with double "_" if more than one.', example: "vin-et-spiritueux/aperitif-et-spiritueux/rhum__maison-et-bricolage/cuisine"
       parameter name: :perimeter, in: :query, type: :string, description: " 'around_me' : dans mon département, 'all' : dans toute la France"
       parameter name: :services, in: :query,type: :string, example: "livraison-par-la-poste__click-collect", description: 'Service slugs concatened with double "_" if more than one.'
       parameter name: :page, in: :query, type: :string, description: 'Number of the researches page'
+      parameter name: 'fields[]', in: :query, description: 'Return only the fields requested', schema: {
+        type: :array,
+        items: { type: :string }
+      }
 
       response(200, 'Ok') do
         schema type: :array, items: {'$ref': '#/components/schemas/Shop'}
+        run_test!
+      end
+
+      response(404, 'Not found') do
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/NotFound'}]
         run_test!
       end
     end

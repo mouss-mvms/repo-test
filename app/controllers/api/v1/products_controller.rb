@@ -181,6 +181,7 @@ module Api
           hash[:weight] = v.require(:weight)
           hash[:quantity] = v.require(:quantity)
           hash[:is_default] = v.require(:isDefault)
+          hash[:image_urls] = v[:imageUrls]
           if v[:goodDeal]
             hash[:good_deal] = {}
             hash[:good_deal][:start_at] = v[:goodDeal].require(:startAt)
@@ -200,7 +201,7 @@ module Api
       end
 
       def set_location
-        raise ActionController::ParameterMissing.new('location.') if params[:location].blank?
+        raise ActionController::ParameterMissing.new('location') if params[:location].blank?
         @territory = Territory.find_by(slug: params[:location])
         @city = City.find_by(slug: params[:location])
         raise ApplicationController::NotFound.new('Location not found.') unless @city || @territory
