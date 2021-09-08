@@ -3899,7 +3899,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
         it "should return HTTP status BadRequest - 400" do
           get :index
           should respond_with(400)
-          expect(response.body).to eq(Dto::Errors::BadRequest.new("param is missing or the value is empty: location.").to_h.to_json)
+          expect(response.body).to eq(Dto::Errors::BadRequest.new("param is missing or the value is empty: location").to_h.to_json)
         end
       end
 
@@ -3907,7 +3907,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
         it "should return HTTP status BadRequest - 400" do
           get :index, params: { location: "" }
           should respond_with(400)
-          expect(response.body).to eq(Dto::Errors::BadRequest.new("param is missing or the value is empty: location.").to_h.to_json)
+          expect(response.body).to eq(Dto::Errors::BadRequest.new("param is missing or the value is empty: location").to_h.to_json)
         end
       end
 
@@ -3971,6 +3971,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             isService: true,
             sellerAdvice: "pouet",
             shopId: create(:shop).id,
+            imagesUrls: ['https://www.lesitedelasneaker.com/wp-content/images/2020/07/air-jordan-1-high-dark-mocha-555088-105-banner.jpg'],
             description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
             origin: "france",
             composition: "pouet pouet",

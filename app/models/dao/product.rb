@@ -34,7 +34,7 @@ module Dao
 
       if product_params.image_urls.present?
         product_params.image_urls.each do |image_url|
-          set_image(object: product, image_url: image_url)
+          Dao::Product.set_image(object: product, image_url: image_url)
         end
       end
 
@@ -44,7 +44,7 @@ module Dao
 
         if variant_params.image_urls.present?
           variant_params.image_urls.each do |image_url|
-            set_image(object: sample, image_url: image_url)
+            Dao::Product.set_image(object: sample, image_url: image_url)
           end
         end
         characteristics = variant_params.characteristics.map { |char| OpenStruct.new(char) }
@@ -82,6 +82,16 @@ module Dao
     end
 
     private
+
+    def self.set_image(object:, image_url:)
+      begin
+        image = Shrine.remote_url(image_url)
+        object.images.create(file: image, position: 1)
+      rescue StandardError => e
+        Rails.logger.error(e)
+        Rails.logger.error(e.message)
+      end
+    end
 
     def self.date_from_string(date_string:)
       return nil unless date_string
