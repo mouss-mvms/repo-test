@@ -235,7 +235,7 @@ RSpec.describe Api::V1::Products::ReviewsController, type: :controller do
     end
 
     context 'Bad params' do
-      context 'content is not setted' do
+      context 'product does not exist' do
         it 'should return a 404 HTTP Status' do
           user = create(:citizen_user)
           product = create(:product)
