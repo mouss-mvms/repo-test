@@ -47,5 +47,33 @@ RSpec.describe 'api/v1/reviews', swagger_doc: 'v1/swagger.json', type: :request 
         run_test!
       end
     end
+
+    delete('Delete a review') do
+      tags 'Review'
+      produces 'application/json'
+      consumes 'application/json'
+      description 'Delete a review'
+      security [{ authorization: [] }]
+
+      response(204, 'successful') do
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Review'}]
+        run_test!
+      end
+
+      response(401, 'Unauthorized') do
+        schema type: :object, oneOf: [{ '$ref': '#/components/schemas/Unauthorized' }]
+        run_test!
+      end
+
+      response(403, 'Forbidden') do
+        schema type: :object, oneOf: [{ '$ref': '#/components/schemas/Forbidden' }]
+        run_test!
+      end
+
+      response(404, 'Review not found') do
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/NotFound'}]
+        run_test!
+      end
+    end
   end
 end
