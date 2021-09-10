@@ -2,8 +2,14 @@ module Api
   module V1
     module Products
       class ReviewsController < ApplicationController
-        before_action :uncrypt_token
-        before_action :retrieve_user
+        before_action :uncrypt_token, only: [:create]
+        before_action :retrieve_user, only: [:create]
+
+        def index
+          product = Product.find(params[:id])
+          reviews = product.reviews
+          render json: reviews.map {|review| Dto::V1::Review::Response.create(review).to_h }, status: :ok
+        end
 
         def create
           Product.find(params[:id])

@@ -6,6 +6,7 @@ scope :products do
   put ':id', to: 'products#update_offline'
   get ':id', to: 'products#show'
   delete ':id', to: 'products#destroy_offline'
+  get ':id/reviews', to: 'products/reviews#index'
 end
 
 scope :auth do
