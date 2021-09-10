@@ -228,7 +228,7 @@ RSpec.describe Api::V1::Products::ReviewsController, type: :controller do
           post :index, params: { id: product.id}
 
           expect(response).to have_http_status(:ok)
-          result = JSON.parse(response.body).symbolize_keys
+          result = JSON.parse(response.body)
           expect(result.count).to eq(2)
         end
       end
