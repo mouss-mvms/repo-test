@@ -61,7 +61,7 @@ RSpec.describe Api::V1::ReviewsController, type: :controller do
     end
 
     context 'Bad params' do
-      context 'No content' do
+      context 'Content is blank' do
         it 'should return 400 HTTP Status' do
           user = create(:user)
           shop = create(:shop)
@@ -76,6 +76,63 @@ RSpec.describe Api::V1::ReviewsController, type: :controller do
 
           expect(response).to have_http_status(:bad_request)
           expect(response.body).to eq(Dto::Errors::BadRequest.new('param is missing or the value is empty: content').to_h.to_json)
+        end
+      end
+      context 'Review is an answer of another review' do
+        it 'should return 400 HTTP Status' do
+          user = create(:user)
+          shop = create(:shop)
+          review = create(:review, mark: 4, shop_id: shop.id, content: "Avis non mis à jour", user_id: user.id)
+          answer_review = create(:review, shop_id: shop.id, content: "Reponse Avis", user_id: user.id, parent_id: review.id)
+          params = {
+            content: "Reponse avis mis à jour",
+            mark: 4
+          }
+
+          request.headers['x-client-id'] = generate_token(user)
+
+          put :update, params: params.merge(id: answer_review.id)
+
+          expect(response).to have_http_status(:bad_request)
+          expect(response.body).to eq(Dto::Errors::BadRequest.new('mark is forbidden').to_h.to_json)
+        end
+      end
+
+      context 'Review is not answer of another review' do
+        context 'Mark is upper than 5' do
+          it 'should return 400 HTTP Status' do
+            user = create(:user)
+            shop = create(:shop)
+            review = create(:review, mark: 4, shop_id: shop.id, content: "Avis non mis à jour", user_id: user.id)
+            params = {
+              mark: 6
+            }
+
+            request.headers['x-client-id'] = generate_token(user)
+
+            put :update, params: params.merge(id: review.id)
+
+            expect(response).to have_http_status(:bad_request)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new('mark must be between 0 and 5').to_h.to_json)
+          end
+        end
+
+        context 'Mark is lower than 0' do
+          it 'should return 400 HTTP Status' do
+            user = create(:user)
+            shop = create(:shop)
+            review = create(:review, mark: 4, shop_id: shop.id, content: "Avis non mis à jour", user_id: user.id)
+            params = {
+              mark: -1
+            }
+
+            request.headers['x-client-id'] = generate_token(user)
+
+            put :update, params: params.merge(id: review.id)
+
+            expect(response).to have_http_status(:bad_request)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new('mark must be between 0 and 5').to_h.to_json)
+          end
         end
       end
     end
