@@ -11,6 +11,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       instance_eval(File.read(Rails.root.join("config/routes/v1/shops.rb")))
       instance_eval(File.read(Rails.root.join("config/routes/v1/products.rb")))
+      instance_eval(File.read(Rails.root.join("config/routes/v1/reviews.rb")))
       get '/citizens/:id/products', to: 'citizens/products#index'
       get '/categories', to: 'categories#index'
     end
