@@ -17,6 +17,14 @@ module Api
 
         return render json: Dto::V1::Review::Response.create(review).to_h, status: :ok
       end
+
+      def destroy
+        review = Review.find(params[:id])
+        raise ApplicationController::Forbidden.new('') if review.user != @user
+        review.destroy!
+
+        return render json: nil, status: :no_content
+      end
     end
   end
 end
