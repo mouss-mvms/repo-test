@@ -2,7 +2,7 @@ require 'swagger_helper'
 
 RSpec.describe 'api/v1/products/reviews', swagger_doc: 'v1/swagger.json', type: :request do
 
-  path '/api/v1/auth/products/{id}/reviews' do
+  path '/api/v1/products/{id}/reviews' do
     parameter name: :id, in: :path, type: :integer, description: 'Unique identifier of the products.', required: true
     parameter name: 'x-client-id', in: :header, type: :string, description: 'Auth token of user', required: true
     post('Create a review for a product') do
@@ -25,6 +25,37 @@ RSpec.describe 'api/v1/products/reviews', swagger_doc: 'v1/swagger.json', type: 
       }
 
       response(201, 'successful') do
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Review'}]
+        run_test!
+      end
+
+      response(400, 'Bad request') do
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
+        run_test!
+      end
+
+      response(401, 'Unauthorized') do
+        schema type: :object, oneOf: [{ '$ref': '#/components/schemas/Unauthorized' }]
+        run_test!
+      end
+
+      response(403, 'Forbidden') do
+        schema type: :object, oneOf: [{ '$ref': '#/components/schemas/Forbidden' }]
+        run_test!
+      end
+
+      response(404, 'Product not found') do
+        schema type: :object, oneOf: [{'$ref': '#/components/schemas/NotFound'}]
+        run_test!
+      end
+    end
+    get('Get reviews for a product.') do
+      tags 'Review'
+      produces 'application/json'
+      description 'Get reviews for a product.'
+      security [{ authorization: [] }]
+
+      response(201, 'Successful') do
         schema type: :object, oneOf: [{'$ref': '#/components/schemas/Review'}]
         run_test!
       end
