@@ -52,11 +52,10 @@ RSpec.describe 'api/v1/products/reviews', swagger_doc: 'v1/swagger.json', type: 
     get('Get reviews for a product.') do
       tags 'Review'
       produces 'application/json'
-      consumes 'application/json'
       description 'Get reviews for a product.'
       security [{ authorization: [] }]
 
-      response(201, 'successful') do
+      response(201, 'Successful') do
         schema type: :object, oneOf: [{'$ref': '#/components/schemas/Review'}]
         run_test!
       end
