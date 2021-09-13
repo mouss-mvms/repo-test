@@ -109,7 +109,7 @@
         }
       }
     },
-    "/api/v1/products/{id}/reviews": {
+    "/api/v1/auth/products/{id}/reviews": {
       "parameters": [
         {
           "name": "id",
@@ -253,7 +253,20 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/v1/products/{id}/reviews": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of the products.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
       "get": {
         "summary": "Get reviews for a product.",
         "tags": [
@@ -269,7 +282,7 @@
         ],
         "responses": {
           "201": {
-            "description": "successful",
+            "description": "Successful",
             "content": {
               "application/json": {
                 "schema": {
