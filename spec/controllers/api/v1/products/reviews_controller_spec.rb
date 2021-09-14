@@ -216,4 +216,35 @@ RSpec.describe Api::V1::Products::ReviewsController, type: :controller do
       end
     end
   end
+
+  describe 'GET #index' do
+    context 'All ok' do
+      context 'with reviews' do
+        it 'should return 200 HTTP Status with reviews' do
+          user = create(:citizen_user)
+          product = create(:product)
+          product.reviews << [create(:review, mark: 4, user_id: user.id, content: "Love this product."), create(:review, mark: 4, user_id: user.id, content: "Like this product.")]
+          
+          post :index, params: { id: product.id}
+
+          expect(response).to have_http_status(:ok)
+          result = JSON.parse(response.body)
+          expect(result.count).to eq(2)
+        end
+      end
+    end
+
+    context 'Bad params' do
+      context 'product does not exist' do
+        it 'should return a 404 HTTP Status' do
+          user = create(:citizen_user)
+          product = create(:product)
+          Product.destroy_all
+          post :index, params: { id: product.id }
+
+          expect(response).to have_http_status(:not_found)
+        end
+      end
+    end
+  end
 end
