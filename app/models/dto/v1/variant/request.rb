@@ -9,7 +9,7 @@ module Dto
           @weight = args[:weight]
           @quantity = args[:quantity]
           @image_urls = []
-          args[:@image_urls]&.each { |img_url| @image_urls << img_url }
+          args[:image_urls]&.each { |img_url| @image_urls << img_url }
           @is_default = args[:is_default]
           @good_deal = Dto::V1::GoodDeal::Request.new(**args[:good_deal]) if args[:good_deal]
           @characteristics = []
