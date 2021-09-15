@@ -67,7 +67,7 @@ module Api
             job_id = Dao::Product.create_async(dto_product_request.to_h)
           rescue => e
             Rails.logger.error(e.message)
-            error = Dto::V1::Errors::InternalServer.new(detail: e.message)
+            error = Dto::Errors::InternalServer.new(detail: e.message)
             return render json: error.to_h, status: error.status
           else
             return render json: { url: ENV["API_BASE_URL"] + api_v1_product_job_status_path(job_id) }, status: :accepted
@@ -94,7 +94,7 @@ module Api
           product = Dto::V1::Product.build(dto_product_request: dto_product_request, product: product)
         rescue => e
           Rails.logger.error(e)
-          error = Dto::V1::Errors::InternalServer.new
+          error = Dto::Errors::InternalServer.new
           return render json: error.to_h, status: error.status
         else
           dto_product_response = Dto::V1::Product::Response.create(product)
@@ -126,7 +126,7 @@ module Api
             job_id = Dao::Product.create_async(dto_product_request.to_h)
           rescue => e
             Rails.logger.error(e.message)
-            error = Dto::V1::Errors::InternalServer.new(detail: e.message)
+            error = Dto::Errors::InternalServer.new(detail: e.message)
             return render json: error.to_h, status: error.status
           else
             return render json: { url: ENV["API_BASE_URL"] + api_v1_product_job_status_path(job_id) }, status: :accepted
@@ -144,7 +144,7 @@ module Api
           product = Dto::V1::Product.build(dto_product_request: dto_product_request, product: product)
         rescue => e
           Rails.logger.error(e)
-          error = Dto::V1::Errors::InternalServer.new
+          error = Dto::Errors::InternalServer.new
           return render json: error.to_h, status: error.status
         else
           dto_product_response = Dto::V1::Product::Response.create(product)
