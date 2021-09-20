@@ -17,7 +17,7 @@ RSpec.describe 'api/v1/shops', swagger_doc: 'v1/swagger.json', type: :request do
         "all"
       ]
     }
-    parameter name: :more, in: :query
+    parameter name: :more, in: :query, type: :string
     parameter name: :services, in: :query, type: :string, description: 'Services slugs concatened with double "_" if more than one'
 
     get("List of shop summaries") do
@@ -27,17 +27,17 @@ RSpec.describe 'api/v1/shops', swagger_doc: 'v1/swagger.json', type: :request do
       security [{authorization: []}]
 
       response(200, 'Successful') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/ShopSummary'}]
+        schema type: :object, '$ref': '#/components/schemas/ShopSummary'
         run_test!
       end
 
       response(400, 'Bad Request') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
+        schema type: :object, '$ref': '#/components/schemas/BadRequest'
         run_test!
       end
 
       response(404, 'Not found') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/NotFound'}]
+        schema type: :object, '$ref': '#/components/schemas/NotFound'
         run_test!
       end
     end
@@ -53,12 +53,12 @@ RSpec.describe 'api/v1/shops', swagger_doc: 'v1/swagger.json', type: :request do
       security [{authorization: []}]
 
       response(200, 'Successful') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Shop'}]
+        schema type: :object, '$ref': '#/components/schemas/Shop'
         run_test!
       end
 
       response(404, 'Not found') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/NotFound'}]
+        schema type: :object, '$ref': '#/components/schemas/NotFound'
         run_test!
       end
     end
@@ -135,12 +135,12 @@ RSpec.describe 'api/v1/shops', swagger_doc: 'v1/swagger.json', type: :request do
       }
 
       response(201, 'Created') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Shop'}]
+        schema type: :object, '$ref': '#/components/schemas/Shop'
         run_test!
       end
 
       response(400, 'Bad request') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
+        schema type: :object, '$ref': '#/components/schemas/BadRequest'
         run_test!
       end
     end
@@ -215,12 +215,12 @@ RSpec.describe 'api/v1/shops', swagger_doc: 'v1/swagger.json', type: :request do
       }
 
       response(201, 'Created') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Shop'}]
+        schema type: :object, '$ref': '#/components/schemas/Shop'
         run_test!
       end
 
       response(400, 'Bad request') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
+        schema type: :object, '$ref': '#/components/schemas/BadRequest'
         run_test!
       end
     end
@@ -245,12 +245,12 @@ RSpec.describe 'api/v1/shops', swagger_doc: 'v1/swagger.json', type: :request do
       }
 
       response(200, 'Ok') do
-        schema type: :array, items: {'$ref': '#/components/schemas/Shop'}
+        schema type: :array, items: { '$ref': '#/components/schemas/Shop' }
         run_test!
       end
 
       response(404, 'Not found') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/NotFound'}]
+        schema type: :object, '$ref': '#/components/schemas/NotFound'
         run_test!
       end
     end
