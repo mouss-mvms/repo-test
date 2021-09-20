@@ -20,32 +20,32 @@ RSpec.describe 'api/v1/products/reviews', swagger_doc: 'v1/swagger.json', type: 
           mark: { type: :integer, example: 3, description: 'Mark of review (0 to 5)' },
           content: { type: :string, example: 'La boutique est super', description: 'Content of review' },
           parentId: { type: :integer, example: 52, description: 'Parent id review if current review is an answer to another review' },
-          required: [ 'content' ]
-        }
+        },
+        required: %w[content]
       }
 
       response(201, 'successful') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Review'}]
+        schema type: :object, '$ref': '#/components/schemas/Review'
         run_test!
       end
 
       response(400, 'Bad request') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
+        schema type: :object, '$ref': '#/components/schemas/BadRequest'
         run_test!
       end
 
       response(401, 'Unauthorized') do
-        schema type: :object, oneOf: [{ '$ref': '#/components/schemas/Unauthorized' }]
+        schema type: :object, '$ref': '#/components/schemas/Unauthorized'
         run_test!
       end
 
       response(403, 'Forbidden') do
-        schema type: :object, oneOf: [{ '$ref': '#/components/schemas/Forbidden' }]
+        schema type: :object, '$ref': '#/components/schemas/Forbidden'
         run_test!
       end
 
       response(404, 'Product not found') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/NotFound'}]
+        schema type: :object, '$ref': '#/components/schemas/NotFound'
         run_test!
       end
     end
@@ -60,27 +60,27 @@ RSpec.describe 'api/v1/products/reviews', swagger_doc: 'v1/swagger.json', type: 
       security [{ authorization: [] }]
   
       response(201, 'Successful') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Review'}]
+        schema type: :object, '$ref': '#/components/schemas/Review'
         run_test!
       end
   
       response(400, 'Bad request') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
+        schema type: :object, '$ref': '#/components/schemas/BadRequest'
         run_test!
       end
   
       response(401, 'Unauthorized') do
-        schema type: :object, oneOf: [{ '$ref': '#/components/schemas/Unauthorized' }]
+        schema type: :object, '$ref': '#/components/schemas/Unauthorized'
         run_test!
       end
   
       response(403, 'Forbidden') do
-        schema type: :object, oneOf: [{ '$ref': '#/components/schemas/Forbidden' }]
+        schema type: :object, '$ref': '#/components/schemas/Forbidden'
         run_test!
       end
   
       response(404, 'Product not found') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/NotFound'}]
+        schema type: :object, '$ref': '#/components/schemas/NotFound'
         run_test!
       end
     end
