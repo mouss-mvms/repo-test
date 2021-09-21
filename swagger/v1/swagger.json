@@ -82,11 +82,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -97,11 +93,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/NotFound"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -153,11 +145,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Review"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Review"
                 }
               }
             }
@@ -168,11 +156,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -183,11 +167,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Unauthorized"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Unauthorized"
                 }
               }
             }
@@ -198,11 +178,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Forbidden"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Forbidden"
                 }
               }
             }
@@ -213,11 +189,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/NotFound"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -244,11 +216,11 @@
                     "type": "integer",
                     "example": 52,
                     "description": "Parent id review if current review is an answer to another review"
-                  },
-                  "required": [
-                    "content"
-                  ]
-                }
+                  }
+                },
+                "required": [
+                  "content"
+                ]
               }
             }
           }
@@ -287,11 +259,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Review"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Review"
                 }
               }
             }
@@ -302,11 +270,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -317,11 +281,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Unauthorized"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Unauthorized"
                 }
               }
             }
@@ -332,11 +292,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Forbidden"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Forbidden"
                 }
               }
             }
@@ -347,11 +303,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/NotFound"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -450,11 +402,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/ProductSummary"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/ProductSummary"
                 }
               }
             }
@@ -497,11 +445,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Product"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Product"
                 }
               }
             }
@@ -512,11 +456,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -527,11 +467,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/NotFound"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -720,11 +656,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -735,11 +667,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/NotFound"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -766,11 +694,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Product"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Product"
                 }
               }
             }
@@ -781,11 +705,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/NotFound"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -835,11 +755,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Product"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Product"
                 }
               }
             }
@@ -850,11 +766,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -865,11 +777,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Unauthorized"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Unauthorized"
                 }
               }
             }
@@ -880,11 +788,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Forbidden"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Forbidden"
                 }
               }
             }
@@ -895,11 +799,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/NotFound"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -1088,11 +988,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -1103,11 +999,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Unauthorized"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Unauthorized"
                 }
               }
             }
@@ -1118,11 +1010,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Forbidden"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Forbidden"
                 }
               }
             }
@@ -1180,11 +1068,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -1195,11 +1079,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Unauthorized"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Unauthorized"
                 }
               }
             }
@@ -1210,11 +1090,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Forbidden"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Forbidden"
                 }
               }
             }
@@ -1455,11 +1331,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -1691,11 +1563,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/NotFound"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -1747,11 +1615,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Review"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Review"
                 }
               }
             }
@@ -1762,11 +1626,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -1777,11 +1637,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Unauthorized"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Unauthorized"
                 }
               }
             }
@@ -1792,11 +1648,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Forbidden"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Forbidden"
                 }
               }
             }
@@ -1807,11 +1659,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/NotFound"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -1865,11 +1713,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Review"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Review"
                 }
               }
             }
@@ -1880,11 +1724,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Unauthorized"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Unauthorized"
                 }
               }
             }
@@ -1895,11 +1735,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Forbidden"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Forbidden"
                 }
               }
             }
@@ -1910,11 +1746,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/NotFound"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -2065,11 +1897,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -2121,11 +1949,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Review"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Review"
                 }
               }
             }
@@ -2136,11 +1960,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -2151,11 +1971,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Unauthorized"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Unauthorized"
                 }
               }
             }
@@ -2166,11 +1982,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Forbidden"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Forbidden"
                 }
               }
             }
@@ -2181,11 +1993,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/NotFound"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -2212,11 +2020,11 @@
                     "type": "integer",
                     "example": 52,
                     "description": "Parent id review if current review is an answer to another review"
-                  },
-                  "required": [
-                    "content"
-                  ]
-                }
+                  }
+                },
+                "required": [
+                  "content"
+                ]
               }
             }
           }
@@ -2268,11 +2076,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/NotFound"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -2336,11 +2140,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -2351,11 +2151,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Unauthorized"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Unauthorized"
                 }
               }
             }
@@ -2366,11 +2162,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Forbidden"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Forbidden"
                 }
               }
             }
@@ -2381,11 +2173,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/NotFound"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -2491,7 +2279,10 @@
         },
         {
           "name": "more",
-          "in": "query"
+          "in": "query",
+          "schema": {
+            "type": "string"
+          }
         },
         {
           "name": "services",
@@ -2522,11 +2313,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/ShopSummary"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/ShopSummary"
                 }
               }
             }
@@ -2537,11 +2324,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -2552,11 +2335,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/NotFound"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -2596,11 +2375,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Shop"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Shop"
                 }
               }
             }
@@ -2611,11 +2386,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/NotFound"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -2664,11 +2435,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Shop"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Shop"
                 }
               }
             }
@@ -2679,11 +2446,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -2787,11 +2550,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Shop"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Shop"
                 }
               }
             }
@@ -2802,11 +2561,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -2981,11 +2736,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/NotFound"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -4004,17 +3755,17 @@
             "description": "Public detailed description of delivery service"
           },
           "isExpress": {
-            "type": "bool",
+            "type": "boolean",
             "example": true,
             "description": "Is Delivery express"
           },
           "isShopDependent": {
-            "type": "bool",
+            "type": "boolean",
             "example": true,
             "description": "Is Shop Dependent"
           },
           "isDelivery": {
-            "type": "bool",
+            "type": "boolean",
             "example": true,
             "description": "Is Service is delivery"
           }

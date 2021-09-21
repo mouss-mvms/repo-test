@@ -16,12 +16,12 @@ RSpec.describe 'api/v1/citizens/products', swagger_doc: 'v1/swagger.json', type:
       end
 
       response(400, 'Bad request') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
+        schema type: :object, '$ref': '#/components/schemas/BadRequest'
         run_test!
       end
 
       response(404, 'Not found') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/NotFound'}]
+        schema type: :object, '$ref': '#/components/schemas/NotFound'
         run_test!
       end
     end
