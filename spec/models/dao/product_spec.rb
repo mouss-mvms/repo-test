@@ -14,6 +14,9 @@ RSpec.describe Dao::Product, :type => :model do
         status: "online",
         seller_advice: "Nettoyez votre mobilier à l’eau claire ou savonneuse sans détergent.",
         is_service: false,
+        image_urls: [
+          "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr"
+        ],
         origin: "france",
         composition: "pouet pouet",
         allergens: "Eric Zemmour",
@@ -23,6 +26,9 @@ RSpec.describe Dao::Product, :type => :model do
             weight: 20.5,
             quantity: 20,
             is_default: false,
+            image_urls: [
+              "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr"
+            ],
             good_deal: {
               start_at: "20/01/2021",
               end_at: "16/02/2021",
@@ -56,6 +62,8 @@ RSpec.describe Dao::Product, :type => :model do
       expect(product.origin).to eq(create_params[:origin])
       expect(product.allergens).to eq(create_params[:allergens])
       expect(product.composition).to eq(create_params[:composition])
+      expect(product.images.first.file_url).to_not be_empty
+      expect(product.samples.first.images.first.file_url).to_not be_empty
     end
   end
 

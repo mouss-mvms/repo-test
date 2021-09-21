@@ -82,11 +82,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -97,11 +93,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/NotFound"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -153,11 +145,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Review"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Review"
                 }
               }
             }
@@ -168,11 +156,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -183,11 +167,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Unauthorized"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Unauthorized"
                 }
               }
             }
@@ -198,11 +178,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Forbidden"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Forbidden"
                 }
               }
             }
@@ -213,11 +189,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/NotFound"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -244,10 +216,94 @@
                     "type": "integer",
                     "example": 52,
                     "description": "Parent id review if current review is an answer to another review"
-                  },
-                  "required": [
-                    "content"
-                  ]
+                  }
+                },
+                "required": [
+                  "content"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/products/{id}/reviews": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of the products.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get reviews for a product.",
+        "tags": [
+          "Review"
+        ],
+        "description": "Get reviews for a product.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Review"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -346,11 +402,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/ProductSummary"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/ProductSummary"
                 }
               }
             }
@@ -393,11 +445,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Product"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Product"
                 }
               }
             }
@@ -408,11 +456,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -423,11 +467,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/NotFound"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -616,11 +656,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -631,11 +667,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/NotFound"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -662,11 +694,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Product"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Product"
                 }
               }
             }
@@ -677,11 +705,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/NotFound"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -731,11 +755,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Product"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Product"
                 }
               }
             }
@@ -746,11 +766,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -761,11 +777,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Unauthorized"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Unauthorized"
                 }
               }
             }
@@ -776,11 +788,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Forbidden"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Forbidden"
                 }
               }
             }
@@ -791,11 +799,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/NotFound"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -984,11 +988,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -999,11 +999,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Unauthorized"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Unauthorized"
                 }
               }
             }
@@ -1014,11 +1010,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Forbidden"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Forbidden"
                 }
               }
             }
@@ -1076,11 +1068,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -1091,11 +1079,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Unauthorized"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Unauthorized"
                 }
               }
             }
@@ -1106,11 +1090,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Forbidden"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Forbidden"
                 }
               }
             }
@@ -1167,6 +1147,20 @@
                     "example": 453,
                     "description": "Shop id of product"
                   },
+                  "imageUrls": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "example": [
+                      "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr",
+                      "https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg"
+                    ],
+                    "default": [
+
+                    ],
+                    "description": "List of product images urls"
+                  },
                   "variants": {
                     "type": "array",
                     "items": {
@@ -1191,6 +1185,20 @@
                           "type": "boolean",
                           "example": true,
                           "description": "Tell if this variant is the product's default variant"
+                        },
+                        "imageUrls": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": [
+                            "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr",
+                            "https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg"
+                          ],
+                          "default": [
+
+                          ],
+                          "description": "List of product images urls"
                         },
                         "goodDeal": {
                           "type": "object",
@@ -1323,11 +1331,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -1559,11 +1563,190 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/NotFound"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/reviews/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of the review.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "x-client-id",
+          "in": "header",
+          "description": "Auth token of user",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "put": {
+        "summary": "Update a review",
+        "tags": [
+          "Review"
+        ],
+        "description": "Update a review (content, mark or isWarned)",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Review"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Review not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Route to update a review",
+                "properties": {
+                  "mark": {
+                    "type": "integer",
+                    "example": 3,
+                    "description": "Mark of review (0 to 5)"
+                  },
+                  "content": {
+                    "type": "string",
+                    "example": "La boutique est super",
+                    "description": "Content of review"
+                  },
+                  "isWarned": {
+                    "type": "boolean",
+                    "example": false,
+                    "description": "Attribute to report review"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a review",
+        "tags": [
+          "Review"
+        ],
+        "description": "Delete a review",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Review"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Review not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -1714,11 +1897,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -1770,11 +1949,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Review"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Review"
                 }
               }
             }
@@ -1785,11 +1960,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -1800,11 +1971,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Unauthorized"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Unauthorized"
                 }
               }
             }
@@ -1815,11 +1982,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Forbidden"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Forbidden"
                 }
               }
             }
@@ -1830,11 +1993,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/NotFound"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -1861,11 +2020,11 @@
                     "type": "integer",
                     "example": 52,
                     "description": "Parent id review if current review is an answer to another review"
-                  },
-                  "required": [
-                    "content"
-                  ]
-                }
+                  }
+                },
+                "required": [
+                  "content"
+                ]
               }
             }
           }
@@ -1917,11 +2076,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/NotFound"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -1985,11 +2140,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -2000,11 +2151,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Unauthorized"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Unauthorized"
                 }
               }
             }
@@ -2015,11 +2162,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Forbidden"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Forbidden"
                 }
               }
             }
@@ -2030,11 +2173,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/NotFound"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -2140,7 +2279,10 @@
         },
         {
           "name": "more",
-          "in": "query"
+          "in": "query",
+          "schema": {
+            "type": "string"
+          }
         },
         {
           "name": "services",
@@ -2171,11 +2313,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/ShopSummary"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/ShopSummary"
                 }
               }
             }
@@ -2186,11 +2324,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -2201,11 +2335,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/NotFound"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -2245,11 +2375,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Shop"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Shop"
                 }
               }
             }
@@ -2260,11 +2386,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/NotFound"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -2313,11 +2435,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Shop"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Shop"
                 }
               }
             }
@@ -2328,11 +2446,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -2436,11 +2550,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Shop"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Shop"
                 }
               }
             }
@@ -2451,11 +2561,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/BadRequest"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -2630,11 +2736,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/NotFound"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/NotFound"
                 }
               }
             }
@@ -3653,17 +3755,17 @@
             "description": "Public detailed description of delivery service"
           },
           "isExpress": {
-            "type": "bool",
+            "type": "boolean",
             "example": true,
             "description": "Is Delivery express"
           },
           "isShopDependent": {
-            "type": "bool",
+            "type": "boolean",
             "example": true,
             "description": "Is Shop Dependent"
           },
           "isDelivery": {
-            "type": "bool",
+            "type": "boolean",
             "example": true,
             "description": "Is Service is delivery"
           }

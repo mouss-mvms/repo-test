@@ -31,7 +31,7 @@ RSpec.describe 'api/v1/shops/products', swagger_doc: 'v1/swagger.json', type: :r
       end
 
       response(400, 'Bad request') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
+        schema type: :object, '$ref': '#/components/schemas/BadRequest'
         run_test!
       end
     end

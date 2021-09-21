@@ -26,7 +26,7 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
       parameter name: :more, in: :query, type: :boolean, description: 'Increase research perimeter scope'
 
       response(200, 'successful') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/ProductSummary'}]
+        schema type: :object, '$ref': '#/components/schemas/ProductSummary'
         run_test!
       end
     end
@@ -94,17 +94,17 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
       }
 
       response(200, 'successful') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Product'}]
+        schema type: :object, '$ref': '#/components/schemas/Product'
         run_test!
       end
 
       response(400, 'Bad request') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
+        schema type: :object, '$ref': '#/components/schemas/BadRequest'
         run_test!
       end
 
       response(404, 'Product not found') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/NotFound'}]
+        schema type: :object, '$ref': '#/components/schemas/NotFound'
         run_test!
       end
     end
@@ -121,12 +121,12 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
       end
 
       response(400, 'Bad request') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
+        schema type: :object, '$ref': '#/components/schemas/BadRequest'
         run_test!
       end
 
       response(404, 'Product not found') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/NotFound'}]
+        schema type: :object, '$ref': '#/components/schemas/NotFound'
         run_test!
       end
     end
@@ -138,12 +138,12 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
       security [{ authorization: [] }]
 
       response(200, 'Successful') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Product'}]
+        schema type: :object, '$ref': '#/components/schemas/Product'
         run_test!
       end
 
       response(404, 'Product not found') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/NotFound'}]
+        schema type: :object, '$ref': '#/components/schemas/NotFound'
         run_test!
       end
     end
@@ -212,27 +212,27 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
       }
 
       response(200, 'Successful') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Product'}]
+        schema type: :object, '$ref': '#/components/schemas/Product'
         run_test!
       end
 
       response(400, 'Bad request') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
+        schema type: :object, '$ref': '#/components/schemas/BadRequest'
         run_test!
       end
 
       response(401, 'Unauthorized') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Unauthorized'}]
+        schema type: :object, '$ref': '#/components/schemas/Unauthorized'
         run_test!
       end
 
       response(403, 'Forbidden') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Forbidden'}]
+        schema type: :object, '$ref': '#/components/schemas/Forbidden'
         run_test!
       end
 
       response(404, 'Product not found') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/NotFound'}]
+        schema type: :object, '$ref': '#/components/schemas/NotFound'
         run_test!
       end
     end
@@ -249,17 +249,17 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
       end
 
       response(400, 'Bad request') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
+        schema type: :object, '$ref': '#/components/schemas/BadRequest'
         run_test!
       end
 
       response(401, 'Unauthorized') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Unauthorized'}]
+        schema type: :object, '$ref': '#/components/schemas/Unauthorized'
         run_test!
       end
 
       response(403, 'Forbidden') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Forbidden'}]
+        schema type: :object, '$ref': '#/components/schemas/Forbidden'
         run_test!
       end
     end
@@ -287,6 +287,18 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
           citizenAdvice: {type: :string, example: 'Produit trouvé un commercant trop sympa', description: 'Advice from citizen of product'},
           categoryId: {type: :integer, example: 4, description: 'Category id of product'},
           shopId: {type: :integer, example: 453, description: 'Shop id of product'},
+          imageUrls: {
+            type: 'array',
+            items: {
+              type: 'string'
+            },
+            example: [
+              'https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr',
+              'https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg'
+            ],
+            default: [],
+            description: 'List of product images urls'
+          },
           variants: {
             type: :array,
             items: {
@@ -296,6 +308,18 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
                 weight: {type: :number, example: 0.56, description: "Weight of product's variant (in Kg)"},
                 quantity: {type: :integer, example: 9, description: "Stock of product's variant"},
                 isDefault: {type: :boolean, example: true, description: "Tell if this variant is the product's default variant"},
+                imageUrls: {
+                  type: 'array',
+                  items: {
+                    type: 'string'
+                  },
+                  example: [
+                    'https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr',
+                    'https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg'
+                  ],
+                  default: [],
+                  description: 'List of product images urls'
+                },
                 goodDeal: {
                   type: :object,
                   properties: {
@@ -325,6 +349,7 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
           composition: {type: :string, example: 'Oeuf, sucre', description: 'Composition of product. (This field is mandatory for some categories)'}
         },
         required: %w[id, name, description, brand, status, sellerAdvice, isService, categoryId, variants, characteristics]
+
       }
 
       response(202, 'Accepted') do
@@ -333,17 +358,17 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
       end
 
       response(400, 'Bad request') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
+        schema type: :object, '$ref': '#/components/schemas/BadRequest'
         run_test!
       end
 
       response(401, 'Unauthorized') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Unauthorized'}]
+        schema type: :object, '$ref': '#/components/schemas/Unauthorized'
         run_test!
       end
 
       response(403, 'Forbidden') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/Forbidden'}]
+        schema type: :object, '$ref': '#/components/schemas/Forbidden'
         run_test!
       end
     end
@@ -415,7 +440,7 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
       end
 
       response(400, 'Bad request') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/BadRequest'}]
+        schema type: :object, '$ref': '#/components/schemas/BadRequest'
         run_test!
       end
     end
@@ -446,7 +471,7 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
       end
 
       response(404, 'Job not found') do
-        schema type: :object, oneOf: [{'$ref': '#/components/schemas/NotFound'}]
+        schema type: :object, '$ref': '#/components/schemas/NotFound'
         run_test!
       end
     end

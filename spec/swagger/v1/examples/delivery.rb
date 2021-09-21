@@ -36,17 +36,17 @@ module V1
               description: "Public detailed description of delivery service"
             },
             isExpress: {
-              type: 'bool',
+              type: 'boolean',
               example: true,
               description: "Is Delivery express"
             },
             isShopDependent: {
-              type: 'bool',
+              type: 'boolean',
               example: true,
               description: "Is Shop Dependent"
             },
             isDelivery: {
-              type: 'bool',
+              type: 'boolean',
               example: true,
               description: "Is Service is delivery"
             },
