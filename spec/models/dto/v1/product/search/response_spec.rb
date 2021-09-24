@@ -218,7 +218,7 @@ RSpec.describe Dto::V1::Product::Search::Response do
         result.products.each do |product|
           expect(product).to be_instance_of(Dto::V1::ProductSummary::Response)
         end
-        expect(result.filters).to be_instance_of(Dto::V1::Product::Search::Filter::Response)
+        expect(result.filters).to be_instance_of(Dto::V1::Search::Filter::Response)
         expect(result.page).to eq(product_search_result[:page])
       end
     end

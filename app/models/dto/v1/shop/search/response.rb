@@ -1,12 +1,12 @@
 module Dto
   module V1
-    module Product
+    module Shop
       module Search
         class Response
-          attr_accessor :products, :filters, :page
+          attr_accessor :shops, :filters, :page
 
           def initialize(**args)
-            @products = args[:products].map { |product| Dto::V1::ProductSummary::Response.create(product.deep_symbolize_keys) }
+            @products = args[:shops].map { |product| Dto::V1::Shop::Response.create() }
             @filters = ::Dto::V1::Search::Filter::Response.create(args[:aggs])
             @page = args[:page]
           end

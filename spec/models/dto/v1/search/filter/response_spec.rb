@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Dto::V1::Product::Search::Filter::Response do
+RSpec.describe Dto::V1::Search::Filter::Response do
 
   describe 'create' do
     context 'All ok without category' do
@@ -75,13 +75,13 @@ RSpec.describe Dto::V1::Product::Search::Filter::Response do
         }
       }
 
-      it 'should return a Dto::V1::Product::Search::Filter::Response' do
+      it 'should return a Dto::V1::Search::Filter::Response' do
         create(:category, id: 2054, name: "Alimentaire")
         create(:category, id: 2835, name: "PS5")
         create(:category, id: 2340, name: "Vetements")
 
-        result = Dto::V1::Product::Search::Filter::Response.create(aggs)
-        expect(result).to be_instance_of(Dto::V1::Product::Search::Filter::Response)
+        result = Dto::V1::Search::Filter::Response.create(aggs)
+        expect(result).to be_instance_of(Dto::V1::Search::Filter::Response)
 
         expect(result.base_price).to be_instance_of(Array)
         expect(result.base_price).to eq(aggs["base_price"]["buckets"].map { |item| { key: item["key"], value: item["doc_count"] } }.sort_by { |item| item[:value] }.reverse)
@@ -185,13 +185,13 @@ RSpec.describe Dto::V1::Product::Search::Filter::Response do
       }
 
 
-      it 'should return a Dto::V1::Product::Search::Filter::Response' do
+      it 'should return a Dto::V1::Search::Filter::Response' do
         category_1 = create(:category, id: category_id, name: "Alimentaire")
         create(:category, id: 2835, name: "PS5", parent_id: category_1.id)
         create(:category, id: 2340, name: "Vetements")
 
-        result = Dto::V1::Product::Search::Filter::Response.create(aggs)
-        expect(result).to be_instance_of(Dto::V1::Product::Search::Filter::Response)
+        result = Dto::V1::Search::Filter::Response.create(aggs)
+        expect(result).to be_instance_of(Dto::V1::Search::Filter::Response)
 
         expect(result.base_price).to be_instance_of(Array)
         expect(result.base_price).to eq(aggs["base_price"]["buckets"].map { |item| { key: item["key"], value: item["doc_count"] } }.sort_by { |item| item[:value] }.reverse)
@@ -293,8 +293,8 @@ RSpec.describe Dto::V1::Product::Search::Filter::Response do
                 ] }
         }
       }
-      it 'should a hash representation of Dto::V1::Product::Search::Filter::Response' do
-        dto = Dto::V1::Product::Search::Filter::Response.create(aggs)
+      it 'should a hash representation of Dto::V1::Search::Filter::Response' do
+        dto = Dto::V1::Search::Filter::Response.create(aggs)
 
         dto_hash = dto.to_h
         expect(dto_hash[:basePrice]).to eq(dto.base_price)
