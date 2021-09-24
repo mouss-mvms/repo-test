@@ -125,7 +125,7 @@
       "post": {
         "summary": "Create a review for a product",
         "tags": [
-          "Review"
+          "Reviews"
         ],
         "description": "Create a review for a product or create an answer for an existing review",
         "security": [
@@ -242,7 +242,7 @@
       "get": {
         "summary": "Get reviews for a product.",
         "tags": [
-          "Review"
+          "Reviews"
         ],
         "description": "Get reviews for a product.",
         "security": [
@@ -253,13 +253,15 @@
           }
         ],
         "responses": {
-          "201": {
+          "200": {
             "description": "Successful",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/Review"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Review"
+                  }
                 }
               }
             }
@@ -1595,7 +1597,7 @@
       "put": {
         "summary": "Update a review",
         "tags": [
-          "Review"
+          "Reviews"
         ],
         "description": "Update a review (content, mark or isWarned)",
         "security": [
@@ -1696,7 +1698,7 @@
       "delete": {
         "summary": "Delete a review",
         "tags": [
-          "Review"
+          "Reviews"
         ],
         "description": "Delete a review",
         "security": [
@@ -1929,7 +1931,7 @@
       "post": {
         "summary": "Create a review for a shop",
         "tags": [
-          "Review"
+          "Reviews"
         ],
         "description": "Create a review for a shop or create an answer for an existing review",
         "security": [
@@ -2025,6 +2027,92 @@
                 "required": [
                   "content"
                 ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "api/v1/shops/{id}/reviews": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of the shop.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get reviews for a shop.",
+        "tags": [
+          "Reviews"
+        ],
+        "description": "Get reviews for a shop.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succesfull",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Review"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/NotFound"
+                }
               }
             }
           }
@@ -2747,7 +2835,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {
@@ -3706,7 +3794,7 @@
         "properties": {
           "detail": {
             "type": "string",
-            "example": "Product not found",
+            "example": "Resource not found",
             "description": "Message of an error."
           },
           "message": {
