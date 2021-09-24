@@ -1,6 +1,39 @@
 require "rails_helper"
 
 RSpec.describe Api::V1::Shops::ReviewsController, type: :controller do
+  describe "GET #index" do
+    context "All ok" do
+      it "returns 200 HTTP status" do
+        shop = create(:shop)
+
+        get :index, params: { id: shop.id }
+        should respond_with(200)
+      end
+
+      it "returns an array of reviews" do
+        shop = create(:shop)
+        user = create(:user)
+        shop.reviews << [create(:review, mark: 5, user_id: user.id, content: "Love this shop."), create(:review, mark: 4, user_id: user.id, content: "Like this product.")]
+
+        get :index, params: { id: shop.id }
+        response_body = JSON.load(response.body)
+        expect(response_body).to be_an_instance_of(Array)
+        expect(response_body.count).to eq(2)
+      end
+    end
+
+    context "Bad params" do
+      context "Shop doesn't exists" do
+        it "should return 404 HTTP status" do
+          ::Shop.destroy_all
+          get :index, params: { id: 666 }
+          should respond_with(404)
+        end
+      end
+    end
+  end
+
+
   describe 'POST #create' do
     context 'All ok' do
       it 'should return 201 HTTP Status with review' do
@@ -89,7 +122,7 @@ RSpec.describe Api::V1::Shops::ReviewsController, type: :controller do
             expect(response.body).to eq(Dto::Errors::BadRequest.new("param is missing or the value is empty: mark").to_h.to_json)
           end
         end
-        
+
         context 'mark is upper than 5' do
           it 'should return a 400 HTTP Status' do
             user = create(:citizen_user)
@@ -173,7 +206,7 @@ RSpec.describe Api::V1::Shops::ReviewsController, type: :controller do
           expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Shop with 'id'=#{shop.id}").to_h.to_json)
         end
       end
-      
+
     end
 
     context 'Bad Authentication' do

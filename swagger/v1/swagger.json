@@ -2033,7 +2033,7 @@
         }
       }
     },
-    "api/v1/shops/{id}/reviews": {
+    "/api/v1/shops/{id}/reviews": {
       "parameters": [
         {
           "name": "id",
@@ -2068,39 +2068,6 @@
                   "items": {
                     "$ref": "#/components/schemas/Review"
                   }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/BadRequest"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/Unauthorized"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/Forbidden"
                 }
               }
             }

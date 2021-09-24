@@ -51,7 +51,7 @@ RSpec.describe 'api/v1/shops/reviews', swagger_doc: 'v1/swagger.json', type: :re
     end
   end
 
-  path 'api/v1/shops/{id}/reviews' do
+  path '/api/v1/shops/{id}/reviews' do
     parameter name: :id, in: :path, type: :integer, description: 'Unique identifier of the shop.', required: true
 
     get('Get reviews for a shop.') do
@@ -63,21 +63,6 @@ RSpec.describe 'api/v1/shops/reviews', swagger_doc: 'v1/swagger.json', type: :re
 
       response(200, 'Succesfull') do
         schema type: :array, items: { '$ref': '#/components/schemas/Review' }
-        run_test!
-      end
-
-      response(400, 'Bad request') do
-        schema type: :object, '$ref': '#/components/schemas/BadRequest'
-        run_test!
-      end
-
-      response(401, 'Unauthorized') do
-        schema type: :object, '$ref': '#/components/schemas/Unauthorized'
-        run_test!
-      end
-
-      response(403, 'Forbidden') do
-        schema type: :object, '$ref': '#/components/schemas/Forbidden'
         run_test!
       end
 
