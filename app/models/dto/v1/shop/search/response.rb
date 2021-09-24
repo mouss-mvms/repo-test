@@ -6,7 +6,7 @@ module Dto
           attr_accessor :shops, :filters, :page
 
           def initialize(**args)
-            @products = args[:shops].map { |product| Dto::V1::Shop::Response.create() }
+            @shops = args[:shops].map { |shop| Dto::V1::Shop::Response.from_searchkick(shop) }
             @filters = ::Dto::V1::Search::Filter::Response.create(args[:aggs])
             @page = args[:page]
           end
@@ -17,7 +17,7 @@ module Dto
 
           def to_h
             {
-              products: @products.map(&:to_h),
+              shops: @shops.map(&:to_h),
               filters: @filters.to_h,
               page: @page,
             }
