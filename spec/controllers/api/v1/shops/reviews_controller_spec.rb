@@ -3,19 +3,13 @@ require "rails_helper"
 RSpec.describe Api::V1::Shops::ReviewsController, type: :controller do
   describe "GET #index" do
     context "All ok" do
-      it "returns 200 HTTP status" do
-        shop = create(:shop)
-
-        get :index, params: { id: shop.id }
-        should respond_with(200)
-      end
-
       it "returns an array of reviews" do
         shop = create(:shop)
         user = create(:user)
         shop.reviews << [create(:review, mark: 5, user_id: user.id, content: "Love this shop."), create(:review, mark: 4, user_id: user.id, content: "Like this product.")]
 
         get :index, params: { id: shop.id }
+        should respond_with(200)
         response_body = JSON.load(response.body)
         expect(response_body).to be_an_instance_of(Array)
         expect(response_body.count).to eq(2)
@@ -28,6 +22,7 @@ RSpec.describe Api::V1::Shops::ReviewsController, type: :controller do
           ::Shop.destroy_all
           get :index, params: { id: 666 }
           should respond_with(404)
+          expect(JSON.load(response.body)['detail']).to eq("Couldn't find Shop with 'id'=666")
         end
       end
     end
