@@ -22,7 +22,7 @@ RSpec.describe Api::V1::Shops::ReviewsController, type: :controller do
           ::Shop.destroy_all
           get :index, params: { id: 666 }
           should respond_with(404)
-          expect(JSON.load(response.body)['detail']).to eq("Couldn't find Shop with 'id'=666")
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Shop with 'id'=666").to_h.to_json)
         end
       end
     end
