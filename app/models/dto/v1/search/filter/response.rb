@@ -57,13 +57,13 @@ module Dto
             if current_category
               categories = current_category.children
               back_to_categories << nil
-              slug = []
+              slugs = []
               parent_categories = current_category.slug.split('/')
               parent_categories.pop
               unless parent_categories.empty?
                 parent_categories.each do |cat|
-                  slug << cat
-                  category = ::Category.find_by(slug: slug.join('/'))
+                  slugs << cat
+                  category = ::Category.find_by(slug: slugs.join('/'))
                   back_to_categories << { name: category.name, slugs: category.slug }
                 end
               end
