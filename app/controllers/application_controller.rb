@@ -57,5 +57,4 @@ class ApplicationController < ActionController::API
         return render json: error.to_h, status: error.status
       end
     end
-  
 end
