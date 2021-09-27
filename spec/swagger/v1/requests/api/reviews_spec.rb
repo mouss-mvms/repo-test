@@ -6,7 +6,7 @@ RSpec.describe 'api/v1/reviews', swagger_doc: 'v1/swagger.json', type: :request 
     parameter name: 'x-client-id', in: :header, type: :string, description: 'Auth token of user', required: true
 
     put('Update a review') do
-      tags 'Review'
+      tags 'Reviews'
       produces 'application/json'
       consumes 'application/json'
       description 'Update a review (content, mark or isWarned)'
@@ -49,7 +49,7 @@ RSpec.describe 'api/v1/reviews', swagger_doc: 'v1/swagger.json', type: :request 
     end
 
     delete('Delete a review') do
-      tags 'Review'
+      tags 'Reviews'
       produces 'application/json'
       consumes 'application/json'
       description 'Delete a review'

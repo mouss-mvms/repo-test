@@ -6,7 +6,7 @@ RSpec.describe 'api/v1/shops/reviews', swagger_doc: 'v1/swagger.json', type: :re
     parameter name: :id, in: :path, type: :integer, description: 'Unique identifier of the shop.', required: true
     parameter name: 'x-client-id', in: :header, type: :string, description: 'Auth token of user', required: true
     post('Create a review for a shop') do
-      tags 'Review'
+      tags 'Reviews'
       produces 'application/json'
       consumes 'application/json'
       description 'Create a review for a shop or create an answer for an existing review'
@@ -51,4 +51,25 @@ RSpec.describe 'api/v1/shops/reviews', swagger_doc: 'v1/swagger.json', type: :re
     end
   end
 
+  path '/api/v1/shops/{id}/reviews' do
+    parameter name: :id, in: :path, type: :integer, description: 'Unique identifier of the shop.', required: true
+
+    get('Get reviews for a shop.') do
+      tags 'Reviews'
+      produces 'application/json'
+      consumes 'application/json'
+      description 'Get reviews for a shop.'
+      security [{ authorization: [] }]
+
+      response(200, 'Succesfull') do
+        schema type: :array, items: { '$ref': '#/components/schemas/Review' }
+        run_test!
+      end
+
+      response(404, 'Product not found') do
+        schema type: :object, '$ref': '#/components/schemas/NotFound'
+        run_test!
+      end
+    end
+  end
 end
