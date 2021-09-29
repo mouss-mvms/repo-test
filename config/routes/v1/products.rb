@@ -1,5 +1,6 @@
 get '/product-jobs/:id', to: 'products/jobs#show', as: :product_job_status
 get '/product-summaries', to: 'products#index'
+post '/product-summaries/search', to: 'products#search'
 
 scope :products do
   post '', to: 'products#create_offline'

@@ -3,14 +3,14 @@ module Api
     class ProductsController < ApplicationController
       before_action :uncrypt_token, only: [:update, :create, :destroy]
       before_action :retrieve_user, only: [:update, :create, :destroy]
-      before_action :set_location, only: [:index]
+      before_action :set_location, only: [:index, :search]
 
       DEFAULT_FILTERS_PRODUCTS = [:prices, :brands, :colors, :sizes, :services, :categories]
 
       def index
         search_criterias = ::Criterias::Composite.new(::Criterias::Products::Online)
-        .and(::Criterias::Products::NotInShopTemplate)
-        .and(::Criterias::NotInHolidays)
+                                                 .and(::Criterias::Products::NotInShopTemplate)
+                                                 .and(::Criterias::NotInHolidays)
 
         search_criterias.and(::Criterias::Products::OnDiscount) if params[:sort_by] == 'discount'
 
@@ -25,22 +25,30 @@ module Api
         set_close_to_you_criterias(search_criterias, params[:more])
         search_criterias = filter_by(search_criterias)
 
-        search_highest = ::Requests::ProductSearches.search_highest_scored_products(params[:q], search_criterias)
-        highest_scored_products = search_highest.products
+        unless params[:q]
+          search_highest = ::Requests::ProductSearches.search_highest_scored_products(params[:q], search_criterias)
+          highest_scored_products = search_highest.products
 
-        unless params[:sort_by] || params[:more]
-          search = search_highest
-          search_criterias = filter_products(search_criterias, highest_scored_products)
+          unless params[:sort_by] || params[:more]
+            search = search_highest
+            search_criterias = filter_products(search_criterias, highest_scored_products)
+          end
+
+          search_criterias.and(::Criterias::Products::ExceptProducts.new(highest_scored_products.map(&:id)))
         end
 
-        search_criterias.and(::Criterias::Products::ExceptProducts.new(highest_scored_products.map(&:id)))
-
         random_products = ::Requests::ProductSearches.search_random_products(params[:q], search_criterias, params[:sort_by], params[:page])
+
+        if params[:more] && random_products.empty?
+          search_criterias.remove(:insee_code, :department_number)
+          random_products = ::Requests::ProductSearches.search_random_products(params[:q], search_criterias, params[:sort_by], params[:page])
+        end
 
         unless highest_scored_products.present? && random_products.present?
           set_close_to_you_criterias(search_criterias, true)
           random_products = ::Requests::ProductSearches.search_random_products(params[:q], search_criterias, params[:sort_by], params[:page])
         end
+
         product_summaries = set_products!(highest_scored_products, random_products, params[:page], params[:more], params[:sort_by])
 
         render json: product_summaries, status: 200
@@ -48,6 +56,67 @@ module Api
 
       def show
         render json: Dto::V1::Product::Response.create(Product.find(params[:id])).to_h, status: :ok
+      end
+
+      def search
+        search_criterias = ::Criterias::Composite.new(::Criterias::Products::Online)
+                                                 .and(::Criterias::Products::NotInShopTemplate)
+                                                 .and(::Criterias::NotInHolidays)
+
+        search_criterias.and(::Criterias::Products::OnDiscount) if params[:sort_by] == 'discount'
+
+        search_criterias.and(::Criterias::NotInCategories.new(Category.excluded_from_catalog.pluck(:id))) unless params[:q]
+
+        if params[:categories]
+          @category = Category.find_by(slug: params[:categories])
+          raise ApplicationController::NotFound.new('Category not found.') unless @category
+          search_criterias.and(::Criterias::InCategories.new([@category.id]))
+        end
+
+        set_close_to_you_criterias(search_criterias, params[:more])
+        search_criterias = filter_by(search_criterias)
+
+        unless params[:q]
+          search_highest = ::Requests::ProductSearches.search_highest_scored_products(params[:q], search_criterias)
+          highest_scored_products = search_highest.products
+
+          unless params[:sort_by] || params[:more]
+            search = search_highest
+            search_criterias = filter_products(search_criterias, highest_scored_products)
+          end
+          binding.pry
+          search_criterias.and(::Criterias::Products::ExceptProducts.new(highest_scored_products.map(&:id)))
+        end
+
+        random_products = ::Requests::ProductSearches.search_random_products(params[:q], search_criterias, params[:sort_by], params[:page])
+
+        if params[:more] && random_products.empty?
+          search_criterias.remove(:insee_code, :department_number)
+          random_products = ::Requests::ProductSearches.search_random_products(params[:q], search_criterias, params[:sort_by], params[:page])
+        end
+
+
+        unless params[:sort_by] || params[:more] || params[:q]
+          aggs = search_highest.aggs
+        else
+          aggs = random_products.aggs
+        end
+
+        unless highest_scored_products.present? && random_products.present?
+          set_close_to_you_criterias(search_criterias, true)
+          random_products = ::Requests::ProductSearches.search_random_products(params[:q], search_criterias, params[:sort_by], params[:page])
+          aggs = random_products.aggs
+        end
+
+        binding.pry
+        products_search  =  (params[:sort_by] || params[:more] || params[:q]) ? random_products :  highest_scored_products.concat(random_products.map { |p| p })
+
+        search = { products: products_search, aggs: aggs, page: params[:page] }
+
+
+        response = ::Dto::V1::Product::Search::Response.create(search).to_h
+
+        render json: response, status: 200
       end
 
       def create
@@ -84,10 +153,10 @@ module Api
         raise ActionController::BadRequest.new('allergens is required') if ::Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
 
         if @user.is_a_citizen?
-          raise ApplicationController::Forbidden if @user.citizen.products.to_a.find{ |p| p.id == product.id}.nil?
+          raise ApplicationController::Forbidden if @user.citizen.products.to_a.find { |p| p.id == product.id }.nil?
         end
         if @user.is_a_business_user?
-          raise ApplicationController::Forbidden if @user.shop_employee.shops.to_a.find{ |s| s.id == product.shop.id}.nil?
+          raise ApplicationController::Forbidden if @user.shop_employee.shops.to_a.find { |s| s.id == product.shop.id }.nil?
         end
 
         begin
@@ -106,10 +175,10 @@ module Api
         raise ApplicationController::Forbidden unless @user.is_a_citizen? || @user.is_a_business_user?
         product = Product.find(params[:id])
         if @user.is_a_citizen?
-          raise ApplicationController::Forbidden if @user.citizen.products.to_a.find{ |p| p.id == product.id }.nil?
+          raise ApplicationController::Forbidden if @user.citizen.products.to_a.find { |p| p.id == product.id }.nil?
         end
         if @user.is_a_business_user?
-          raise ApplicationController::Forbidden if @user.shop_employee.shops.to_a.find{ |s| s.id == product.shop.id}.nil?
+          raise ApplicationController::Forbidden if @user.shop_employee.shops.to_a.find { |s| s.id == product.shop.id }.nil?
         end
         product.destroy
       end
@@ -260,6 +329,10 @@ module Api
           highest_scored_product_summaries = highest_scored_products.map { |product| Dto::V1::ProductSummary::Response.create(product.deep_symbolize_keys).to_h }
           highest_scored_product_summaries.concat(product_summaries)
         end
+      end
+
+      def searchkick_product_search()
+
       end
     end
   end

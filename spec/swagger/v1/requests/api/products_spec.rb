@@ -13,7 +13,7 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
       parameter name: :q, in: :query, type: :string, description: 'Query for search.'
       parameter name: :categories, in: :query, type: :string, description: 'Categories slugs concatened with double "_" if more than one.'
       parameter name: :prices, in: :query, type: :string, description: 'Prices range'
-      parameter name: :services, in: :query,type: :string, description: 'Service slugs concatened with double "_" if more than one.'
+      parameter name: :services, in: :query, type: :string, description: 'Service slugs concatened with double "_" if more than one.'
       parameter name: :sort_by, in: :query, schema: {
         type: :string,
         enum: [
@@ -32,6 +32,38 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
     end
   end
 
+  path '/api/v1/product-summaries/search' do
+    post('Return product-summaries list with filters') do
+      tags 'Products'
+      consumes 'application/json'
+      produces 'application/json'
+      description 'Return product-summaries list with filters'
+      security [{ authorization: [] }]
+
+      parameter name: :product, in: :body, schema: {
+        type: :object,
+        properties: {
+          location: { type: :string, example: "Bordeaux", description: 'Territory or city slug.' },
+          q: { type: :string, example: "Chaussures", description: 'Query for search.' },
+          categories: { type: :string, example: "homme", description: 'Categories slugs concatened with double "_" if more than one.' },
+          prices: { type: :string, example: "1__100", description: 'Prices range' },
+          services: { type: :string, example: "livraison-par-la-poste__livraison-france-metropolitaine", description: 'Service slugs concatened with double "_" if more than one.' },
+          sort_by: {
+            type: :string,
+            enum: ["price-asc", "price-desc", "newest"]
+          },
+          page: { type: :string, example: '1', description: 'Search page number.' },
+          more: { type: :boolean, description: 'Increase research perimeter scope' },
+
+        }
+      }
+      response(200, 'successful') do
+        schema type: :object, '$ref': '#/components/schemas/Search'
+        run_test!
+      end
+    end
+  end
+
   path '/api/v1/products/{id}' do
     parameter name: 'id', in: :path, type: :integer, description: 'Unique identifier of the product.'
 
@@ -45,29 +77,29 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
       parameter name: :product, in: :body, schema: {
         type: :object,
         properties: {
-          name: {type: :string, example: "Air jordan", description: 'Name of product'},
-          description: {type: :string, example: "Chaussures trop bien", description: 'Description of product'},
-          brand: {type: :string, example: "Chaussures trop bien", description: 'Description of product'},
-          status: {type: :string, example: "online", description: 'Status of product'},
-          sellerAdvice: {type: :string, example: "Taille petite, prendre une demi pointure au dessus", description: 'Advice from seller of product'},
-          isService: {type: :boolean, example: false, description: 'Tell if the product is a service'},
-          citizenAdvice: {type: :string, example: 'Produit trouvé un commercant trop sympa', description: 'Advice from citizen of product'},
-          categoryId: {type: :integer, example: 4, description: 'Category id of product'},
+          name: { type: :string, example: "Air jordan", description: 'Name of product' },
+          description: { type: :string, example: "Chaussures trop bien", description: 'Description of product' },
+          brand: { type: :string, example: "Chaussures trop bien", description: 'Description of product' },
+          status: { type: :string, example: "online", description: 'Status of product' },
+          sellerAdvice: { type: :string, example: "Taille petite, prendre une demi pointure au dessus", description: 'Advice from seller of product' },
+          isService: { type: :boolean, example: false, description: 'Tell if the product is a service' },
+          citizenAdvice: { type: :string, example: 'Produit trouvé un commercant trop sympa', description: 'Advice from citizen of product' },
+          categoryId: { type: :integer, example: 4, description: 'Category id of product' },
           variants: {
             type: :array,
             items: {
               type: :object,
               properties: {
-                basePrice: {type: :number, example: 44.99, description: "Price of product's variant"},
-                weight: {type: :number, example: 0.56, description: "Weight of product's variant (in Kg)"},
-                quantity: {type: :integer, example: 9, description: "Stock of product's variant"},
-                isDefault: {type: :boolean, example: true, description: "Tell if this variant is the product's default variant"},
+                basePrice: { type: :number, example: 44.99, description: "Price of product's variant" },
+                weight: { type: :number, example: 0.56, description: "Weight of product's variant (in Kg)" },
+                quantity: { type: :integer, example: 9, description: "Stock of product's variant" },
+                isDefault: { type: :boolean, example: true, description: "Tell if this variant is the product's default variant" },
                 goodDeal: {
                   type: :object,
                   properties: {
-                    startAt: {type: :string, example: "20/07/2021", description: "Date of start of good deal"},
-                    endAt: {type: :string, example: "27/07/2021", description: "Date of end of good deal"},
-                    discount: {type: :integer, example: 45, description: "Amount of discount (in %)"}
+                    startAt: { type: :string, example: "20/07/2021", description: "Date of start of good deal" },
+                    endAt: { type: :string, example: "27/07/2021", description: "Date of end of good deal" },
+                    discount: { type: :integer, example: 45, description: "Amount of discount (in %)" }
                   },
                   required: %w[startAt, endAt, discount]
                 },
@@ -76,8 +108,8 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
                   items: {
                     type: :object,
                     properties: {
-                      name: {type: :string, example: 'color', description: 'Name of characteristic'},
-                      value: {type: :string, example: 'Bleu', description: 'Value of characteristic'}
+                      name: { type: :string, example: 'color', description: 'Name of characteristic' },
+                      value: { type: :string, example: 'Bleu', description: 'Value of characteristic' }
                     },
                     required: %w[name, value]
                   }
@@ -86,9 +118,9 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
               required: %w[basePrice, weight, quantity, isDefault]
             }
           },
-          origin: {type: :string, example: 'France', description: 'Origin of product. (This field is mandatory for some categories)'},
-          allergens: {type: :string, example: 'Contient des traces de fruit à coques', description: 'Advice of potencial allergens. (This field is mandatory for some categories)'},
-          composition: {type: :string, example: 'Oeuf, sucre', description: 'Composition of product. (This field is mandatory for some categories)'}
+          origin: { type: :string, example: 'France', description: 'Origin of product. (This field is mandatory for some categories)' },
+          allergens: { type: :string, example: 'Contient des traces de fruit à coques', description: 'Advice of potencial allergens. (This field is mandatory for some categories)' },
+          composition: { type: :string, example: 'Oeuf, sucre', description: 'Composition of product. (This field is mandatory for some categories)' }
         },
         required: %w[id, name, description, brand, status, sellerAdvice, isService, categoryId, variants, characteristics]
       }
@@ -163,29 +195,29 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
       parameter name: :product, in: :body, schema: {
         type: :object,
         properties: {
-          name: {type: :string, example: "Air jordan", description: 'Name of product'},
-          description: {type: :string, example: "Chaussures trop bien", description: 'Description of product'},
-          brand: {type: :string, example: "Chaussures trop bien", description: 'Description of product'},
-          status: {type: :string, example: "online", description: 'Status of product'},
-          sellerAdvice: {type: :string, example: "Taille petite, prendre une demi pointure au dessus", description: 'Advice from seller of product'},
-          isService: {type: :boolean, example: false, description: 'Tell if the product is a service'},
-          citizenAdvice: {type: :string, example: 'Produit trouvé un commercant trop sympa', description: 'Advice from citizen of product'},
-          categoryId: {type: :integer, example: 4, description: 'Category id of product'},
+          name: { type: :string, example: "Air jordan", description: 'Name of product' },
+          description: { type: :string, example: "Chaussures trop bien", description: 'Description of product' },
+          brand: { type: :string, example: "Chaussures trop bien", description: 'Description of product' },
+          status: { type: :string, example: "online", description: 'Status of product' },
+          sellerAdvice: { type: :string, example: "Taille petite, prendre une demi pointure au dessus", description: 'Advice from seller of product' },
+          isService: { type: :boolean, example: false, description: 'Tell if the product is a service' },
+          citizenAdvice: { type: :string, example: 'Produit trouvé un commercant trop sympa', description: 'Advice from citizen of product' },
+          categoryId: { type: :integer, example: 4, description: 'Category id of product' },
           variants: {
             type: :array,
             items: {
               type: :object,
               properties: {
-                basePrice: {type: :number, example: 44.99, description: "Price of product's variant"},
-                weight: {type: :number, example: 0.56, description: "Weight of product's variant (in Kg)"},
-                quantity: {type: :integer, example: 9, description: "Stock of product's variant"},
-                isDefault: {type: :boolean, example: true, description: "Tell if this variant is the product's default variant"},
+                basePrice: { type: :number, example: 44.99, description: "Price of product's variant" },
+                weight: { type: :number, example: 0.56, description: "Weight of product's variant (in Kg)" },
+                quantity: { type: :integer, example: 9, description: "Stock of product's variant" },
+                isDefault: { type: :boolean, example: true, description: "Tell if this variant is the product's default variant" },
                 goodDeal: {
                   type: :object,
                   properties: {
-                    startAt: {type: :string, example: "20/07/2021", description: "Date of start of good deal"},
-                    endAt: {type: :string, example: "27/07/2021", description: "Date of end of good deal"},
-                    discount: {type: :integer, example: 45, description: "Amount of discount (in %)"}
+                    startAt: { type: :string, example: "20/07/2021", description: "Date of start of good deal" },
+                    endAt: { type: :string, example: "27/07/2021", description: "Date of end of good deal" },
+                    discount: { type: :integer, example: 45, description: "Amount of discount (in %)" }
                   },
                   required: %w[startAt, endAt, discount]
                 },
@@ -194,8 +226,8 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
                   items: {
                     type: :object,
                     properties: {
-                      name: {type: :string, example: 'color', description: 'Name of characteristic'},
-                      value: {type: :string, example: 'Bleu', description: 'Value of characteristic'}
+                      name: { type: :string, example: 'color', description: 'Name of characteristic' },
+                      value: { type: :string, example: 'Bleu', description: 'Value of characteristic' }
                     },
                     required: %w[name, value]
                   }
@@ -204,9 +236,9 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
               required: %w[basePrice, weight, quantity, isDefault]
             }
           },
-          origin: {type: :string, example: 'France', description: 'Origin of product. (This field is mandatory for some categories)'},
-          allergens: {type: :string, example: 'Contient des traces de fruit à coques', description: 'Advice of potencial allergens. (This field is mandatory for some categories)'},
-          composition: {type: :string, example: 'Oeuf, sucre', description: 'Composition of product. (This field is mandatory for some categories)'}
+          origin: { type: :string, example: 'France', description: 'Origin of product. (This field is mandatory for some categories)' },
+          allergens: { type: :string, example: 'Contient des traces de fruit à coques', description: 'Advice of potencial allergens. (This field is mandatory for some categories)' },
+          composition: { type: :string, example: 'Oeuf, sucre', description: 'Composition of product. (This field is mandatory for some categories)' }
         },
         required: %w[id, name, description, brand, status, sellerAdvice, isService, categoryId, variants, characteristics]
       }
@@ -278,15 +310,15 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
       parameter name: :product, in: :body, schema: {
         type: :object,
         properties: {
-          name: {type: :string, example: "Air jordan", description: 'Name of product'},
-          description: {type: :string, example: "Chaussures trop bien", description: 'Description of product'},
-          brand: {type: :string, example: "Chaussures trop bien", description: 'Description of product'},
-          status: {type: :string, example: "online", description: 'Status of product'},
-          sellerAdvice: {type: :string, example: "Taille petite, prendre une demi pointure au dessus", description: 'Advice from seller of product'},
-          isService: {type: :boolean, example: false, description: 'Tell if the product is a service'},
-          citizenAdvice: {type: :string, example: 'Produit trouvé un commercant trop sympa', description: 'Advice from citizen of product'},
-          categoryId: {type: :integer, example: 4, description: 'Category id of product'},
-          shopId: {type: :integer, example: 453, description: 'Shop id of product'},
+          name: { type: :string, example: "Air jordan", description: 'Name of product' },
+          description: { type: :string, example: "Chaussures trop bien", description: 'Description of product' },
+          brand: { type: :string, example: "Chaussures trop bien", description: 'Description of product' },
+          status: { type: :string, example: "online", description: 'Status of product' },
+          sellerAdvice: { type: :string, example: "Taille petite, prendre une demi pointure au dessus", description: 'Advice from seller of product' },
+          isService: { type: :boolean, example: false, description: 'Tell if the product is a service' },
+          citizenAdvice: { type: :string, example: 'Produit trouvé un commercant trop sympa', description: 'Advice from citizen of product' },
+          categoryId: { type: :integer, example: 4, description: 'Category id of product' },
+          shopId: { type: :integer, example: 453, description: 'Shop id of product' },
           imageUrls: {
             type: 'array',
             items: {
@@ -304,10 +336,10 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
             items: {
               type: :object,
               properties: {
-                basePrice: {type: :number, example: 44.99, description: "Price of product's variant"},
-                weight: {type: :number, example: 0.56, description: "Weight of product's variant (in Kg)"},
-                quantity: {type: :integer, example: 9, description: "Stock of product's variant"},
-                isDefault: {type: :boolean, example: true, description: "Tell if this variant is the product's default variant"},
+                basePrice: { type: :number, example: 44.99, description: "Price of product's variant" },
+                weight: { type: :number, example: 0.56, description: "Weight of product's variant (in Kg)" },
+                quantity: { type: :integer, example: 9, description: "Stock of product's variant" },
+                isDefault: { type: :boolean, example: true, description: "Tell if this variant is the product's default variant" },
                 imageUrls: {
                   type: 'array',
                   items: {
@@ -323,9 +355,9 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
                 goodDeal: {
                   type: :object,
                   properties: {
-                    startAt: {type: :string, example: "20/07/2021", description: "Date of start of good deal"},
-                    endAt: {type: :string, example: "27/07/2021", description: "Date of end of good deal"},
-                    discount: {type: :integer, example: 45, description: "Amount of discount (in %)"}
+                    startAt: { type: :string, example: "20/07/2021", description: "Date of start of good deal" },
+                    endAt: { type: :string, example: "27/07/2021", description: "Date of end of good deal" },
+                    discount: { type: :integer, example: 45, description: "Amount of discount (in %)" }
                   },
                   required: %w[startAt, endAt, discount]
                 },
@@ -334,8 +366,8 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
                   items: {
                     type: :object,
                     properties: {
-                      name: {type: :string, example: 'color', description: 'Name of characteristic'},
-                      value: {type: :string, example: 'Bleu', description: 'Value of characteristic'}
+                      name: { type: :string, example: 'color', description: 'Name of characteristic' },
+                      value: { type: :string, example: 'Bleu', description: 'Value of characteristic' }
                     },
                     required: %w[name, value]
                   }
@@ -344,9 +376,9 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
               required: %w[basePrice, weight, quantity, isDefault]
             }
           },
-          origin: {type: :string, example: 'France', description: 'Origin of product. (This field is mandatory for some categories)'},
-          allergens: {type: :string, example: 'Contient des traces de fruit à coques', description: 'Advice of potencial allergens. (This field is mandatory for some categories)'},
-          composition: {type: :string, example: 'Oeuf, sucre', description: 'Composition of product. (This field is mandatory for some categories)'}
+          origin: { type: :string, example: 'France', description: 'Origin of product. (This field is mandatory for some categories)' },
+          allergens: { type: :string, example: 'Contient des traces de fruit à coques', description: 'Advice of potencial allergens. (This field is mandatory for some categories)' },
+          composition: { type: :string, example: 'Oeuf, sucre', description: 'Composition of product. (This field is mandatory for some categories)' }
         },
         required: %w[id, name, description, brand, status, sellerAdvice, isService, categoryId, variants, characteristics]
 
@@ -385,30 +417,30 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
       parameter name: :product, in: :body, schema: {
         type: :object,
         properties: {
-          name: {type: :string, example: "Air jordan", description: 'Name of product'},
-          description: {type: :string, example: "Chaussures trop bien", description: 'Description of product'},
-          brand: {type: :string, example: "Chaussures trop bien", description: 'Description of product'},
-          status: {type: :string, example: "online", description: 'Status of product'},
-          sellerAdvice: {type: :string, example: "Taille petite, prendre une demi pointure au dessus", description: 'Advice from seller of product'},
-          isService: {type: :boolean, example: false, description: 'Tell if the product is a service'},
-          citizenAdvice: {type: :string, example: 'Produit trouvé un commercant trop sympa', description: 'Advice from citizen of product'},
-          categoryId: {type: :integer, example: 4, description: 'Category id of product'},
-          shopId: {type: :integer, example: 453, description: 'Shop id of product'},
+          name: { type: :string, example: "Air jordan", description: 'Name of product' },
+          description: { type: :string, example: "Chaussures trop bien", description: 'Description of product' },
+          brand: { type: :string, example: "Chaussures trop bien", description: 'Description of product' },
+          status: { type: :string, example: "online", description: 'Status of product' },
+          sellerAdvice: { type: :string, example: "Taille petite, prendre une demi pointure au dessus", description: 'Advice from seller of product' },
+          isService: { type: :boolean, example: false, description: 'Tell if the product is a service' },
+          citizenAdvice: { type: :string, example: 'Produit trouvé un commercant trop sympa', description: 'Advice from citizen of product' },
+          categoryId: { type: :integer, example: 4, description: 'Category id of product' },
+          shopId: { type: :integer, example: 453, description: 'Shop id of product' },
           variants: {
             type: :array,
             items: {
               type: :object,
               properties: {
-                basePrice: {type: :number, example: 44.99, description: "Price of product's variant"},
-                weight: {type: :number, example: 0.56, description: "Weight of product's variant (in Kg)"},
-                quantity: {type: :integer, example: 9, description: "Stock of product's variant"},
-                isDefault: {type: :boolean, example: true, description: "Tell if this variant is the product's default variant"},
+                basePrice: { type: :number, example: 44.99, description: "Price of product's variant" },
+                weight: { type: :number, example: 0.56, description: "Weight of product's variant (in Kg)" },
+                quantity: { type: :integer, example: 9, description: "Stock of product's variant" },
+                isDefault: { type: :boolean, example: true, description: "Tell if this variant is the product's default variant" },
                 goodDeal: {
                   type: :object,
                   properties: {
-                    startAt: {type: :string, example: "20/07/2021", description: "Date of start of good deal"},
-                    endAt: {type: :string, example: "27/07/2021", description: "Date of end of good deal"},
-                    discount: {type: :integer, example: 45, description: "Amount of discount (in %)"}
+                    startAt: { type: :string, example: "20/07/2021", description: "Date of start of good deal" },
+                    endAt: { type: :string, example: "27/07/2021", description: "Date of end of good deal" },
+                    discount: { type: :integer, example: 45, description: "Amount of discount (in %)" }
                   },
                   required: %w[startAt, endAt, discount]
                 },
@@ -417,8 +449,8 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
                   items: {
                     type: :object,
                     properties: {
-                      name: {type: :string, example: 'color', description: 'Name of characteristic'},
-                      value: {type: :string, example: 'Bleu', description: 'Value of characteristic'}
+                      name: { type: :string, example: 'color', description: 'Name of characteristic' },
+                      value: { type: :string, example: 'Bleu', description: 'Value of characteristic' }
                     },
                     required: %w[name, value]
                   }
@@ -427,9 +459,9 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
               required: %w[basePrice, weight, quantity, isDefault]
             }
           },
-          origin: {type: :string, example: 'France', description: 'Origin of product. (This field is mandatory for some categories)'},
-          allergens: {type: :string, example: 'Contient des traces de fruit à coques', description: 'Advice of potencial allergens. (This field is mandatory for some categories)'},
-          composition: {type: :string, example: 'Oeuf, sucre', description: 'Composition of product. (This field is mandatory for some categories)'}
+          origin: { type: :string, example: 'France', description: 'Origin of product. (This field is mandatory for some categories)' },
+          allergens: { type: :string, example: 'Contient des traces de fruit à coques', description: 'Advice of potencial allergens. (This field is mandatory for some categories)' },
+          composition: { type: :string, example: 'Oeuf, sucre', description: 'Composition of product. (This field is mandatory for some categories)' }
         },
         required: %w[id, name, description, brand, status, sellerAdvice, isService, categoryId, variants, characteristics]
       }

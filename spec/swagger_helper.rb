@@ -42,24 +42,25 @@ RSpec.configure do |config|
           }
         },
         schemas: {
-          Shop: V1::Examples::Shop.to_h,
           Address: V1::Examples::Address.to_h,
-          Schedule: V1::Examples::Schedule.to_h,
+          BadRequest: Examples::Errors::BadRequest.new.error,
+          Category: V1::Examples::Category.to_h,
+          Characteristic: V1::Examples::Characteristics.to_h,
+          Delivery: V1::Examples::Delivery.to_h,
+          Forbidden: Examples::Errors::Forbidden.new.error,
+          GoodDeal: V1::Examples::GoodDeal.to_h,
+          InternalError: Examples::Errors::InternalError.new.error,
+          NotFound: Examples::Errors::NotFound.new.error,
           Product: V1::Examples::Product.to_h,
           ProductSummary: V1::Examples::ProductSummary.to_h,
+          Review: V1::Examples::Review.to_h,
+          Schedule: V1::Examples::Schedule.to_h,
+          Search: V1::Examples::Search.to_h,
+          Shop: V1::Examples::Shop.to_h,
           ShopSummary: V1::Examples::ShopSummary.to_h,
-          Category: V1::Examples::Category.to_h,
-          Variant: V1::Examples::Variant.to_h,
-          Characteristic: V1::Examples::Characteristics.to_h,
-          GoodDeal: V1::Examples::GoodDeal.to_h,
           Unauthorized: Examples::Errors::Unauthorized.new.error,
-          BadRequest: Examples::Errors::BadRequest.new.error,
-          InternalError: Examples::Errors::InternalError.new.error,
           UnprocessableEntity: Examples::Errors::UnprocessableEntity.new.error,
-          Forbidden: Examples::Errors::Forbidden.new.error,
-          NotFound: Examples::Errors::NotFound.new.error,
-          Delivery: V1::Examples::Delivery.to_h,
-          Review: V1::Examples::Review.to_h
+          Variant: V1::Examples::Variant.to_h,
         }
       }
     }
