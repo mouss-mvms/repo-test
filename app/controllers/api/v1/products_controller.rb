@@ -84,7 +84,7 @@ module Api
             search = search_highest
             search_criterias = filter_products(search_criterias, highest_scored_products)
           end
-          binding.pry
+
           search_criterias.and(::Criterias::Products::ExceptProducts.new(highest_scored_products.map(&:id)))
         end
 
@@ -108,8 +108,7 @@ module Api
           aggs = random_products.aggs
         end
 
-        binding.pry
-        products_search  =  (params[:sort_by] || params[:more] || params[:q]) ? random_products :  highest_scored_products.concat(random_products.map { |p| p })
+        products_search  =  (params[:sort_by] || params[:more] || params[:q]) ? random_products.map {|p| p} :  highest_scored_products.concat(random_products.map { |p| p })
 
         search = { products: products_search, aggs: aggs, page: params[:page] }
 
