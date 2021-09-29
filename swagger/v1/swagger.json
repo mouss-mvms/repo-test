@@ -125,7 +125,7 @@
       "post": {
         "summary": "Create a review for a product",
         "tags": [
-          "Review"
+          "Reviews"
         ],
         "description": "Create a review for a product or create an answer for an existing review",
         "security": [
@@ -242,7 +242,7 @@
       "get": {
         "summary": "Get reviews for a product.",
         "tags": [
-          "Review"
+          "Reviews"
         ],
         "description": "Get reviews for a product.",
         "security": [
@@ -253,13 +253,15 @@
           }
         ],
         "responses": {
-          "201": {
+          "200": {
             "description": "Successful",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/Review"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Review"
+                  }
                 }
               }
             }
@@ -403,6 +405,91 @@
                 "schema": {
                   "type": "object",
                   "$ref": "#/components/schemas/ProductSummary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/product-summaries/search": {
+      "post": {
+        "summary": "Return product-summaries list with filters",
+        "tags": [
+          "Products"
+        ],
+        "description": "Return product-summaries list with filters",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Search"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "location": {
+                    "type": "string",
+                    "example": "Bordeaux",
+                    "description": "Territory or city slug."
+                  },
+                  "q": {
+                    "type": "string",
+                    "example": "Chaussures",
+                    "description": "Query for search."
+                  },
+                  "categories": {
+                    "type": "string",
+                    "example": "homme",
+                    "description": "Categories slugs concatened with double \"_\" if more than one."
+                  },
+                  "prices": {
+                    "type": "string",
+                    "example": "1__100",
+                    "description": "Prices range"
+                  },
+                  "services": {
+                    "type": "string",
+                    "example": "livraison-par-la-poste__livraison-france-metropolitaine",
+                    "description": "Service slugs concatened with double \"_\" if more than one."
+                  },
+                  "sort_by": {
+                    "type": "string",
+                    "enum": [
+                      "price-asc",
+                      "price-desc",
+                      "newest"
+                    ]
+                  },
+                  "page": {
+                    "type": "string",
+                    "example": "1",
+                    "description": "Search page number."
+                  },
+                  "more": {
+                    "type": "boolean",
+                    "description": "Increase research perimeter scope"
+                  }
                 }
               }
             }
@@ -1595,7 +1682,7 @@
       "put": {
         "summary": "Update a review",
         "tags": [
-          "Review"
+          "Reviews"
         ],
         "description": "Update a review (content, mark or isWarned)",
         "security": [
@@ -1696,7 +1783,7 @@
       "delete": {
         "summary": "Delete a review",
         "tags": [
-          "Review"
+          "Reviews"
         ],
         "description": "Delete a review",
         "security": [
@@ -1929,7 +2016,7 @@
       "post": {
         "summary": "Create a review for a shop",
         "tags": [
-          "Review"
+          "Reviews"
         ],
         "description": "Create a review for a shop or create an answer for an existing review",
         "security": [
@@ -2025,6 +2112,59 @@
                 "required": [
                   "content"
                 ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/shops/{id}/reviews": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of the shop.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get reviews for a shop.",
+        "tags": [
+          "Reviews"
+        ],
+        "description": "Get reviews for a shop.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succesfull",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Review"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/NotFound"
+                }
               }
             }
           }
@@ -2759,83 +2899,6 @@
       }
     },
     "schemas": {
-      "Shop": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "example": 1,
-            "description": "Unique identifier of a shop."
-          },
-          "name": {
-            "type": "string",
-            "example": "Jardin Local",
-            "description": "Display name of a shop."
-          },
-          "slug": {
-            "type": "string",
-            "example": "jardin-local",
-            "description": "Slug of a shop."
-          },
-          "imageUrls": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "example": "http://www.image.com/image.jpg"
-            },
-            "description": "Images of a shop"
-          },
-          "description": {
-            "type": "string",
-            "example": "La description d'une boutique",
-            "description": "Shop's description"
-          },
-          "siret": {
-            "type": "string",
-            "example": "75409821800029",
-            "description": "Shop's siret"
-          },
-          "email": {
-            "type": "string",
-            "example": "boutique@email.com",
-            "description": "Shop's email"
-          },
-          "baseline": {
-            "type": "string",
-            "example": "Ma boutique est top",
-            "description": "Shop's baseline"
-          },
-          "facebookLink": {
-            "type": "string",
-            "example": "http://www.facebook.com/boutique",
-            "description": "Shop's facebook link"
-          },
-          "instagramLink": {
-            "type": "string",
-            "example": "http://www.instagram.com/boutique",
-            "description": "Shop's instagram link"
-          },
-          "websiteLink": {
-            "type": "string",
-            "example": "http://www.boutique.com/",
-            "description": "Shop's website link"
-          },
-          "address": {
-            "$ref": "#/components/schemas/Address",
-            "description": "Shop's address"
-          },
-          "lowestProductPrice": {
-            "type": "number",
-            "example": 23.55,
-            "description": "Shop's lowest product price"
-          },
-          "highestProductPrice": {
-            "type": "number",
-            "example": 150000000.0,
-            "description": "Shop's highest product price"
-          }
-        }
-      },
       "Address": {
         "type": "object",
         "properties": {
@@ -2881,38 +2944,207 @@
           }
         }
       },
-      "Schedule": {
+      "BadRequest": {
+        "type": "object",
+        "properties": {
+          "detail": {
+            "type": "string",
+            "example": "The syntax of the query is incorrect.",
+            "description": "Message of an error."
+          },
+          "message": {
+            "type": "string",
+            "example": "Bad Request",
+            "description": "Display description error."
+          },
+          "status": {
+            "type": "integer",
+            "example": 400,
+            "description": "Status of an error."
+          }
+        }
+      },
+      "Category": {
         "type": "object",
         "properties": {
           "id": {
             "type": "integer",
-            "example": 3,
-            "description": "Id of schedules"
+            "example": 1,
+            "description": "Unique identifier of a category."
           },
-          "day": {
+          "name": {
             "type": "string",
-            "example": "Lundi",
-            "description": "Day of week"
+            "example": "Mobilier extérieur",
+            "description": "Display name of a category."
           },
-          "openMorning": {
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Category"
+            },
+            "description": "List of children category."
+          }
+        }
+      },
+      "Characteristic": {
+        "type": "object",
+        "properties": {
+          "name": {
             "type": "string",
-            "example": "09:00",
-            "description": "Time of opening morning"
+            "example": "color",
+            "enum": [
+              "color",
+              "size"
+            ],
+            "description": "Type of a characteristic."
           },
-          "closeMorning": {
+          "value": {
             "type": "string",
-            "example": "12:00",
-            "description": "Time of closing morning"
+            "example": "blue",
+            "description": "Display name of a characteristic."
+          }
+        },
+        "required": [
+          "name",
+          "type"
+        ]
+      },
+      "Delivery": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 32,
+            "description": "Id of delivery service"
           },
-          "openAfternoon": {
+          "name": {
             "type": "string",
-            "example": "14:00",
-            "description": "Time of opening afternoon"
+            "example": "Delivery's name",
+            "description": "Name of delivery service"
           },
-          "closeAftenoon": {
+          "slug": {
             "type": "string",
-            "example": "19:00",
-            "description": "Time of closing afternoon"
+            "example": "Delivery's slug",
+            "description": "Slug of delivery service"
+          },
+          "description": {
+            "type": "string",
+            "example": "Delivery's description",
+            "description": "Description of delivery service"
+          },
+          "publicDescription": {
+            "type": "string",
+            "example": "Delivery's public description",
+            "description": "Public description of delivery service"
+          },
+          "publicDetailedDescription": {
+            "type": "string",
+            "example": "Delivery's public detailed description",
+            "description": "Public detailed description of delivery service"
+          },
+          "isExpress": {
+            "type": "boolean",
+            "example": true,
+            "description": "Is Delivery express"
+          },
+          "isShopDependent": {
+            "type": "boolean",
+            "example": true,
+            "description": "Is Shop Dependent"
+          },
+          "isDelivery": {
+            "type": "boolean",
+            "example": true,
+            "description": "Is Service is delivery"
+          }
+        }
+      },
+      "Forbidden": {
+        "type": "object",
+        "properties": {
+          "detail": {
+            "type": "string",
+            "example": "",
+            "description": "Message of an error."
+          },
+          "message": {
+            "type": "string",
+            "example": "Forbidden",
+            "description": "Display description error."
+          },
+          "status": {
+            "type": "integer",
+            "example": 403,
+            "description": "Status of an error."
+          }
+        }
+      },
+      "GoodDeal": {
+        "type": "object",
+        "properties": {
+          "startAt": {
+            "type": "string",
+            "format": "date",
+            "example": "20/01/2021",
+            "description": "Start date of a good deal."
+          },
+          "endAt": {
+            "type": "string",
+            "format": "date",
+            "example": "16/02/2021",
+            "description": "End date of a good deal."
+          },
+          "discount": {
+            "type": "integer",
+            "example": "20",
+            "minimum": 1,
+            "maximum": 100,
+            "description": "Discount amount of a good deal."
+          }
+        },
+        "required": [
+          "startAt",
+          "endAt",
+          "discount"
+        ]
+      },
+      "InternalError": {
+        "type": "object",
+        "properties": {
+          "detail": {
+            "type": "string",
+            "example": "",
+            "description": "Message of an error."
+          },
+          "message": {
+            "type": "string",
+            "example": "Internal Error",
+            "description": "Display description error."
+          },
+          "status": {
+            "type": "integer",
+            "example": 500,
+            "description": "Status of an error."
+          }
+        }
+      },
+      "NotFound": {
+        "type": "object",
+        "properties": {
+          "detail": {
+            "type": "string",
+            "example": "Resource not found",
+            "description": "Message of an error."
+          },
+          "message": {
+            "type": "string",
+            "example": "Not found",
+            "description": "Display description error."
+          },
+          "status": {
+            "type": "integer",
+            "example": 404,
+            "description": "Status of an error."
           }
         }
       },
@@ -3314,6 +3546,530 @@
           }
         }
       },
+      "Review": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 3,
+            "description": "Id of review"
+          },
+          "content": {
+            "type": "string",
+            "example": "La boutique est super",
+            "description": "Content of review"
+          },
+          "mark": {
+            "type": "integer",
+            "example": 3,
+            "description": "Mark of review"
+          },
+          "shopId": {
+            "type": "integer",
+            "example": 57,
+            "description": "Shop id of review"
+          },
+          "productId": {
+            "type": "integer",
+            "example": 57,
+            "description": "Product id of review"
+          },
+          "userId": {
+            "type": "integer",
+            "example": 57,
+            "description": "User id author of review"
+          },
+          "parentId": {
+            "type": "integer",
+            "example": 57,
+            "description": "Parent id review if current review is an answer to another review"
+          },
+          "answers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Review"
+            },
+            "description": "List of answers for the review."
+          }
+        }
+      },
+      "Schedule": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 3,
+            "description": "Id of schedules"
+          },
+          "day": {
+            "type": "string",
+            "example": "Lundi",
+            "description": "Day of week"
+          },
+          "openMorning": {
+            "type": "string",
+            "example": "09:00",
+            "description": "Time of opening morning"
+          },
+          "closeMorning": {
+            "type": "string",
+            "example": "12:00",
+            "description": "Time of closing morning"
+          },
+          "openAfternoon": {
+            "type": "string",
+            "example": "14:00",
+            "description": "Time of opening afternoon"
+          },
+          "closeAftenoon": {
+            "type": "string",
+            "example": "19:00",
+            "description": "Time of closing afternoon"
+          }
+        }
+      },
+      "Search": {
+        "type": "object",
+        "properties": {
+          "products": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_index": {
+                  "type": "string",
+                  "example": "products_v1_20210315162727103"
+                },
+                "_id": {
+                  "type": "string",
+                  "example": "21034"
+                },
+                "_type": {
+                  "type": "string",
+                  "example": "_doc"
+                },
+                "_score": {
+                  "type": "number",
+                  "example": 0.9976985
+                },
+                "id": {
+                  "type": "integer",
+                  "example": 21034
+                },
+                "name": {
+                  "type": "string",
+                  "example": "MIRACLE : L'ENVOÛTANT PARFUM D'UN PÂTÉ BRASSÉ"
+                },
+                "slug": {
+                  "type": "string",
+                  "example": "miracle-l-envoutant-parfum-d-un-pate-brasse"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "example": "2020-04-10T14:44:53.723+02:0"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "example": "2020-04-10T14:46:26.902+02:00"
+                },
+                "description": {
+                  "type": "string",
+                  "example": "Par cette collaboration, l’idée est de se fondre dans l’agrosystème mis en place entre l’éleveur du Prince Noir de Biscay et la brasserie Mira. Par ce mécanisme soigneusement orchestré, le bon sens commun et la culture raisonnée sont mis à l’honneur. C’est un retour aux fondamentaux, au sens de la vie, au « Miracle » de la vie.\r\n\r\nAccompagné de sa phrase « L’envoûtant parfum d’un pâté brassé », on retrouve l’évocation du charme envoûtant de cette bière brune et son parfum si délicat.\r\n\r\nIngrédients: Viande, gorge et foie de porc Prince noir de Biscay, Bière Brune de la Brasserie Mira, sel, poivre, ail et une pincée d’amour."
+                },
+                "basePrice": {
+                  "type": "number",
+                  "example": 5.5
+                },
+                "goodDealStartsAt": {
+                  "type": "string",
+                  "example": "2020-04-10T14:44:53.723+02:0"
+                },
+                "goodDealEndsAt": {
+                  "type": "string",
+                  "example": "2020-04-14T14:44:53.723+02:0"
+                },
+                "price": {
+                  "type": "number",
+                  "example": "5.5"
+                },
+                "quantity": {
+                  "type": "integer",
+                  "example": 100
+                },
+                "categoryId": {
+                  "type": "integer",
+                  "example": 2204
+                },
+                "categoryTreeNames": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "example": "Alimentation"
+                  }
+                },
+                "categoryTreeIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "example": 2054
+                  }
+                },
+                "status": {
+                  "type": "string",
+                  "example": "online"
+                },
+                "shopName": {
+                  "type": "string",
+                  "example": "LES CONSERVISTES"
+                },
+                "shopId": {
+                  "type": "integer",
+                  "example": 2088
+                },
+                "shopSlug": {
+                  "type": "string",
+                  "example": "shop_slug"
+                },
+                "inHolidays": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "brandName": {
+                  "type": "string",
+                  "example": "LES CONSERVISTES"
+                },
+                "brandId": {
+                  "type": "integer",
+                  "example": 4494
+                },
+                "cityName": {
+                  "type": "string",
+                  "example": "Bordeaux"
+                },
+                "cityLabel": {
+                  "type": "string",
+                  "example": "Bordeaux"
+                },
+                "citySlug": {
+                  "type": "string",
+                  "example": "bordeaux"
+                },
+                "conurbationSlug": {
+                  "type": "string",
+                  "example": "bordeaux"
+                },
+                "inseeCode": {
+                  "type": "string",
+                  "example": "33063"
+                },
+                "territoryName": {
+                  "type": "string",
+                  "example": "Bordeaux Métropole"
+                },
+                "territorySlug": {
+                  "type": "string",
+                  "example": "bordeaux-metropole"
+                },
+                "departmentNumber": {
+                  "type": "string",
+                  "example": "33"
+                },
+                "productCitizenNickname": {
+                  "type": "string",
+                  "example": "XxxDarkSasukexxX"
+                },
+                "productCitizenSlug": {
+                  "type": "string",
+                  "example": "xxxdarksasuexxxx"
+                },
+                "productCitizenImagePath": {
+                  "type": "string",
+                  "example": "https://mavillemonshopping-examples/uploads/development/image/8096/file/thumb-b04b1b37d90da7bae3200fef258666c0.jpg"
+                },
+                "defaultSampleId": {
+                  "type": "integer",
+                  "example": 25301
+                },
+                "shopPictogramUrl": {
+                  "type": "string",
+                  "example": "https://mavillemonshopping-exemples.com/uploads/development/image/48072/file/thumb-417fqfsqfq958591c590cb5d0e619f38f.jpg"
+                },
+                "imageUrl": {
+                  "type": "string",
+                  "example": "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg"
+                },
+                "productPageUrl": {
+                  "type": "string",
+                  "example": "https://mavillemonshopping-dev.herokuapp.com/fr/bordeaux/les-conservistes/alimentation/epicerie-salee/conserves-et-plats-cuisines/produits/miracle-l-envoutant-parfum-d-un-pate-brasse"
+                },
+                "shopUrl": {
+                  "type": "string",
+                  "example": "/fr/bordeaux/boutiques/les-conservistes"
+                },
+                "numberOfOrders": {
+                  "type": "integer",
+                  "example": 3
+                },
+                "colors": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "example": "Modèle par défaut"
+                  }
+                },
+                "sizes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "example": "40"
+                  }
+                },
+                "selectionIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "example": 30
+                  }
+                },
+                "services": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "example": "e-reservation"
+                  }
+                },
+                "shopIsTemplate": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "score": {
+                  "type": "integer",
+                  "example": 0
+                },
+                "position": {
+                  "type": "integer",
+                  "example": 480
+                },
+                "indexedAt": {
+                  "type": "string",
+                  "example": "2021-07-30T10:29:24.113+02:00"
+                },
+                "uniqueReferenceId": {
+                  "type": "integer",
+                  "example": 1356
+                },
+                "isAService": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "onDisount": {
+                  "type": "boolean",
+                  "example": true
+                },
+                "disountPrice": {
+                  "type": "number",
+                  "example": 50.5
+                }
+              }
+            }
+          },
+          "filters": {
+            "type": "object",
+            "properties": {
+              "basePrice": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "description": "Base price value",
+                      "example": "23"
+                    },
+                    "value": {
+                      "type": "string",
+                      "description": "Number of occurrences for this key",
+                      "example": "12"
+                    }
+                  }
+                }
+              },
+              "colors": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "description": "Color name",
+                      "example": "red"
+                    },
+                    "value": {
+                      "type": "string",
+                      "description": "Number of occurrences for this key",
+                      "example": "23"
+                    }
+                  }
+                }
+              },
+              "sizes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "description": "Size name",
+                      "example": "M"
+                    },
+                    "value": {
+                      "type": "string",
+                      "description": "Number of occurrences for this key",
+                      "example": "23"
+                    }
+                  }
+                }
+              },
+              "services": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "description": "Service slug",
+                      "example": "livraison-la-poste"
+                    },
+                    "value": {
+                      "type": "string",
+                      "description": "Number of occurrences for this key",
+                      "example": "23"
+                    }
+                  }
+                }
+              },
+              "categories": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "description": "Category name",
+                      "example": "homme/vetements"
+                    },
+                    "value": {
+                      "type": "string",
+                      "description": "Number of occurrences for this key",
+                      "example": "23"
+                    }
+                  }
+                }
+              },
+              "brands": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "description": "Brand name",
+                      "example": "Nike"
+                    },
+                    "value": {
+                      "type": "string",
+                      "description": "Number of occurrences for this key",
+                      "example": "23"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "page": {
+            "type": "string",
+            "description": "Search page number.",
+            "example": "2"
+          }
+        }
+      },
+      "Shop": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1,
+            "description": "Unique identifier of a shop."
+          },
+          "name": {
+            "type": "string",
+            "example": "Jardin Local",
+            "description": "Display name of a shop."
+          },
+          "slug": {
+            "type": "string",
+            "example": "jardin-local",
+            "description": "Slug of a shop."
+          },
+          "imageUrls": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "http://www.image.com/image.jpg"
+            },
+            "description": "Images of a shop"
+          },
+          "description": {
+            "type": "string",
+            "example": "La description d'une boutique",
+            "description": "Shop's description"
+          },
+          "siret": {
+            "type": "string",
+            "example": "75409821800029",
+            "description": "Shop's siret"
+          },
+          "email": {
+            "type": "string",
+            "example": "boutique@email.com",
+            "description": "Shop's email"
+          },
+          "baseline": {
+            "type": "string",
+            "example": "Ma boutique est top",
+            "description": "Shop's baseline"
+          },
+          "facebookLink": {
+            "type": "string",
+            "example": "http://www.facebook.com/boutique",
+            "description": "Shop's facebook link"
+          },
+          "instagramLink": {
+            "type": "string",
+            "example": "http://www.instagram.com/boutique",
+            "description": "Shop's instagram link"
+          },
+          "websiteLink": {
+            "type": "string",
+            "example": "http://www.boutique.com/",
+            "description": "Shop's website link"
+          },
+          "address": {
+            "$ref": "#/components/schemas/Address",
+            "description": "Shop's address"
+          },
+          "lowestProductPrice": {
+            "type": "number",
+            "example": 23.55,
+            "description": "Shop's lowest product price"
+          },
+          "highestProductPrice": {
+            "type": "number",
+            "example": 150000000.0,
+            "description": "Shop's highest product price"
+          }
+        }
+      },
       "ShopSummary": {
         "type": "object",
         "properties": {
@@ -3469,25 +4225,43 @@
           }
         }
       },
-      "Category": {
+      "Unauthorized": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "integer",
-            "example": 1,
-            "description": "Unique identifier of a category."
-          },
-          "name": {
+          "detail": {
             "type": "string",
-            "example": "Mobilier extérieur",
-            "description": "Display name of a category."
+            "example": "",
+            "description": "Message of an error."
           },
-          "children": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Category"
-            },
-            "description": "List of children category."
+          "message": {
+            "type": "string",
+            "example": "Unauthorized",
+            "description": "Display description error."
+          },
+          "status": {
+            "type": "integer",
+            "example": 401,
+            "description": "Status of an error."
+          }
+        }
+      },
+      "UnprocessableEntity": {
+        "type": "object",
+        "properties": {
+          "detail": {
+            "type": "string",
+            "example": "Password or email invalid.",
+            "description": "Message of an error."
+          },
+          "message": {
+            "type": "string",
+            "example": "Unprocessable Entity",
+            "description": "Display description error."
+          },
+          "status": {
+            "type": "integer",
+            "example": 422,
+            "description": "Status of an error."
           }
         }
       },
@@ -3546,275 +4320,6 @@
               "$ref": "#/components/schemas/Characteristic"
             },
             "description": "List of characteristics."
-          }
-        }
-      },
-      "Characteristic": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "color",
-            "enum": [
-              "color",
-              "size"
-            ],
-            "description": "Type of a characteristic."
-          },
-          "value": {
-            "type": "string",
-            "example": "blue",
-            "description": "Display name of a characteristic."
-          }
-        },
-        "required": [
-          "name",
-          "type"
-        ]
-      },
-      "GoodDeal": {
-        "type": "object",
-        "properties": {
-          "startAt": {
-            "type": "string",
-            "format": "date",
-            "example": "20/01/2021",
-            "description": "Start date of a good deal."
-          },
-          "endAt": {
-            "type": "string",
-            "format": "date",
-            "example": "16/02/2021",
-            "description": "End date of a good deal."
-          },
-          "discount": {
-            "type": "integer",
-            "example": "20",
-            "minimum": 1,
-            "maximum": 100,
-            "description": "Discount amount of a good deal."
-          }
-        },
-        "required": [
-          "startAt",
-          "endAt",
-          "discount"
-        ]
-      },
-      "Unauthorized": {
-        "type": "object",
-        "properties": {
-          "detail": {
-            "type": "string",
-            "example": "",
-            "description": "Message of an error."
-          },
-          "message": {
-            "type": "string",
-            "example": "Unauthorized",
-            "description": "Display description error."
-          },
-          "status": {
-            "type": "integer",
-            "example": 401,
-            "description": "Status of an error."
-          }
-        }
-      },
-      "BadRequest": {
-        "type": "object",
-        "properties": {
-          "detail": {
-            "type": "string",
-            "example": "The syntax of the query is incorrect.",
-            "description": "Message of an error."
-          },
-          "message": {
-            "type": "string",
-            "example": "Bad Request",
-            "description": "Display description error."
-          },
-          "status": {
-            "type": "integer",
-            "example": 400,
-            "description": "Status of an error."
-          }
-        }
-      },
-      "InternalError": {
-        "type": "object",
-        "properties": {
-          "detail": {
-            "type": "string",
-            "example": "",
-            "description": "Message of an error."
-          },
-          "message": {
-            "type": "string",
-            "example": "Internal Error",
-            "description": "Display description error."
-          },
-          "status": {
-            "type": "integer",
-            "example": 500,
-            "description": "Status of an error."
-          }
-        }
-      },
-      "UnprocessableEntity": {
-        "type": "object",
-        "properties": {
-          "detail": {
-            "type": "string",
-            "example": "Password or email invalid.",
-            "description": "Message of an error."
-          },
-          "message": {
-            "type": "string",
-            "example": "Unprocessable Entity",
-            "description": "Display description error."
-          },
-          "status": {
-            "type": "integer",
-            "example": 422,
-            "description": "Status of an error."
-          }
-        }
-      },
-      "Forbidden": {
-        "type": "object",
-        "properties": {
-          "detail": {
-            "type": "string",
-            "example": "",
-            "description": "Message of an error."
-          },
-          "message": {
-            "type": "string",
-            "example": "Forbidden",
-            "description": "Display description error."
-          },
-          "status": {
-            "type": "integer",
-            "example": 403,
-            "description": "Status of an error."
-          }
-        }
-      },
-      "NotFound": {
-        "type": "object",
-        "properties": {
-          "detail": {
-            "type": "string",
-            "example": "Product not found",
-            "description": "Message of an error."
-          },
-          "message": {
-            "type": "string",
-            "example": "Not found",
-            "description": "Display description error."
-          },
-          "status": {
-            "type": "integer",
-            "example": 404,
-            "description": "Status of an error."
-          }
-        }
-      },
-      "Delivery": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "example": 32,
-            "description": "Id of delivery service"
-          },
-          "name": {
-            "type": "string",
-            "example": "Delivery's name",
-            "description": "Name of delivery service"
-          },
-          "slug": {
-            "type": "string",
-            "example": "Delivery's slug",
-            "description": "Slug of delivery service"
-          },
-          "description": {
-            "type": "string",
-            "example": "Delivery's description",
-            "description": "Description of delivery service"
-          },
-          "publicDescription": {
-            "type": "string",
-            "example": "Delivery's public description",
-            "description": "Public description of delivery service"
-          },
-          "publicDetailedDescription": {
-            "type": "string",
-            "example": "Delivery's public detailed description",
-            "description": "Public detailed description of delivery service"
-          },
-          "isExpress": {
-            "type": "boolean",
-            "example": true,
-            "description": "Is Delivery express"
-          },
-          "isShopDependent": {
-            "type": "boolean",
-            "example": true,
-            "description": "Is Shop Dependent"
-          },
-          "isDelivery": {
-            "type": "boolean",
-            "example": true,
-            "description": "Is Service is delivery"
-          }
-        }
-      },
-      "Review": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "example": 3,
-            "description": "Id of review"
-          },
-          "content": {
-            "type": "string",
-            "example": "La boutique est super",
-            "description": "Content of review"
-          },
-          "mark": {
-            "type": "integer",
-            "example": 3,
-            "description": "Mark of review"
-          },
-          "shopId": {
-            "type": "integer",
-            "example": 57,
-            "description": "Shop id of review"
-          },
-          "productId": {
-            "type": "integer",
-            "example": 57,
-            "description": "Product id of review"
-          },
-          "userId": {
-            "type": "integer",
-            "example": 57,
-            "description": "User id author of review"
-          },
-          "parentId": {
-            "type": "integer",
-            "example": 57,
-            "description": "Parent id review if current review is an answer to another review"
-          },
-          "answers": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Review"
-            },
-            "description": "List of answers for the review."
           }
         }
       }

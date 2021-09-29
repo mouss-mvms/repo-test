@@ -15,4 +15,5 @@ namespace :shops do
   get ":id/products", to: "products#index"
   get ":id/schedules", to: "schedules#index"
   get ":id/deliveries", to: "deliveries#index"
+  get ":id/reviews", to: "reviews#index"
 end
