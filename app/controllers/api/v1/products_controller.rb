@@ -329,10 +329,6 @@ module Api
           highest_scored_product_summaries.concat(product_summaries)
         end
       end
-
-      def searchkick_product_search()
-
-      end
     end
   end
 end

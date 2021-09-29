@@ -9,7 +9,7 @@ module V1
               type: :array,
               items: ::V1::Examples::ProductSummary.to_h
             },
-            filters: ::V1::Examples::Filter.to_h,
+            filters: ::V1::Examples::Search::Filter.to_h,
             page: { type: :string, description: 'Search page number.', example: "2" }
           },
         }

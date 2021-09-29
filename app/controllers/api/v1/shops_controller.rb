@@ -99,7 +99,6 @@ module Api
         end
 
         shop_summaries_response = build_shop_summaries_response(highest_scored_shops, random_shops, product_shops, params[:page], params[:more], params[:q], params[:fields])
-        binding.pry
 
         render json: shop_summaries_response, status: :ok
       end
