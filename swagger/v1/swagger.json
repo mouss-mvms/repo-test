@@ -2887,7 +2887,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {
@@ -3059,95 +3059,7 @@
           }
         }
       },
-      "Forbidden": {
-        "type": "object",
-        "properties": {
-          "detail": {
-            "type": "string",
-            "example": "",
-            "description": "Message of an error."
           },
-          "message": {
-            "type": "string",
-            "example": "Forbidden",
-            "description": "Display description error."
-          },
-          "status": {
-            "type": "integer",
-            "example": 403,
-            "description": "Status of an error."
-          }
-        }
-      },
-      "GoodDeal": {
-        "type": "object",
-        "properties": {
-          "startAt": {
-            "type": "string",
-            "format": "date",
-            "example": "20/01/2021",
-            "description": "Start date of a good deal."
-          },
-          "endAt": {
-            "type": "string",
-            "format": "date",
-            "example": "16/02/2021",
-            "description": "End date of a good deal."
-          },
-          "discount": {
-            "type": "integer",
-            "example": "20",
-            "minimum": 1,
-            "maximum": 100,
-            "description": "Discount amount of a good deal."
-          }
-        },
-        "required": [
-          "startAt",
-          "endAt",
-          "discount"
-        ]
-      },
-      "InternalError": {
-        "type": "object",
-        "properties": {
-          "detail": {
-            "type": "string",
-            "example": "",
-            "description": "Message of an error."
-          },
-          "message": {
-            "type": "string",
-            "example": "Internal Error",
-            "description": "Display description error."
-          },
-          "status": {
-            "type": "integer",
-            "example": 500,
-            "description": "Status of an error."
-          }
-        }
-      },
-      "NotFound": {
-        "type": "object",
-        "properties": {
-          "detail": {
-            "type": "string",
-            "example": "Resource not found",
-            "description": "Message of an error."
-          },
-          "message": {
-            "type": "string",
-            "example": "Not found",
-            "description": "Display description error."
-          },
-          "status": {
-            "type": "integer",
-            "example": 404,
-            "description": "Status of an error."
-          }
-        }
-      },
       "Product": {
         "type": "object",
         "properties": {
