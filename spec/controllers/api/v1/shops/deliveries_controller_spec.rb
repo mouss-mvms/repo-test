@@ -75,6 +75,8 @@ RSpec.describe Api::V1::Shops::DeliveriesController, type: :controller do
         expect(shop.is_self_delivery).to be(false)
         expect(shop.active_services.count).to eq(1)
         expect(shop.active_services).to include(colissimo)
+        expect(shop.free_delivery_price).to be_nil
+        expect(shop.self_delivery_price).to be_nil
 
         put :update, params: params
 
@@ -88,6 +90,8 @@ RSpec.describe Api::V1::Shops::DeliveriesController, type: :controller do
         expect(shop.active_services).to include(self_delivery)
         expect(shop.is_self_delivery).to be(true)
         expect(shop.active_services).not_to include(colissimo)
+        expect(shop.free_delivery_price).to eq(params[:freeShippingAmount])
+        expect(shop.self_delivery_price).to eq(params[:selfDeliveryPrice])
       end
     end
 

@@ -28,8 +28,8 @@ module Api
 
             if service_slug == SELF_DELIVERY_SLUG
               @shop.is_self_delivery = true
-              @shop.self_delivery_price = params[:self_delivery_price]
-              @shop.free_delivery_price = params[:free_shipping_amount]
+              @shop.self_delivery_price = deliveries_params[:self_delivery_price]
+              @shop.free_delivery_price = deliveries_params[:free_shipping_amount]
               @shop.save!
             end
           end
