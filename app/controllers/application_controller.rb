@@ -35,12 +35,12 @@ class ApplicationController < ActionController::API
     end
 
     def uncrypt_token
-      unless request.headers[:HTTP_X_CLIENT_ID] && request.headers[:HTTP_X_CLIENT_ID].present?
+      unless request.headers['x-client-id'] && request.headers['x-client-id'].present?
         error = Dto::Errors::Unauthorized.new
         return render json: error.to_h, status: error.status
       end
       begin
-        @uncrypted_token = JWT.decode(request.headers[:HTTP_X_CLIENT_ID], ENV["JWT_SECRET"], true, { algorithm: 'HS256' })
+        @uncrypted_token = JWT.decode(request.headers['x-client-id'], ENV["JWT_SECRET"], true, { algorithm: 'HS256' })
       rescue JWT::DecodeError => e
         Rails.logger.error(e)
         error = Dto::Errors::InternalServer.new(detail: "Enable to decrypt token")

@@ -2454,6 +2454,123 @@
         }
       }
     },
+    "/api/v1/auth/shops/{id}/deliveries": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of the shop.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "x-client-id",
+          "in": "header",
+          "description": "Auth token of user.",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "put": {
+        "summary": "Update delivery services for a shop",
+        "tags": [
+          "Deliveries"
+        ],
+        "description": "Update delivery services for a shop",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Delivery"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "serviceSlugs": {
+                    "type": "array",
+                    "items": "string",
+                    "description": "List of delivery service slugs.",
+                    "example": [
+                      "click-collect",
+                      "livraison-par-le-commercant"
+                    ]
+                  },
+                  "selfDeliveryPrice": {
+                    "type": "number",
+                    "example": 1.55,
+                    "description": "Price of shop delivery."
+                  },
+                  "freeShippingAmount": {
+                    "type": "number",
+                    "example": 45,
+                    "description": "Minimal purchase amount for free shipping."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/shops/{shop_id}/products": {
       "parameters": [
         {

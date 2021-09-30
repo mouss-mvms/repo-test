@@ -4,6 +4,7 @@ scope :auth do
   namespace :shops do
     put ":id/schedules", to: "schedules#update"
     post ":id/reviews", to: "reviews#create"
+    put ":id/deliveries", to: "deliveries#update"
   end
 end
 
