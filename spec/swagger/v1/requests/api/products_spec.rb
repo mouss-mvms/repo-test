@@ -29,6 +29,11 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
         schema type: :object, '$ref': '#/components/schemas/ProductSummary'
         run_test!
       end
+
+      response(400, 'Bad request') do
+        schema Examples::Errors::BadRequest.new.error
+        run_test!
+      end
     end
   end
 
@@ -59,6 +64,16 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
       }
       response(200, 'successful') do
         schema type: :object, '$ref': '#/components/schemas/Search'
+        run_test!
+      end
+
+      response(400, 'Bad request') do
+        schema Examples::Errors::BadRequest.new.error
+        run_test!
+      end
+
+      response(404, 'Not Found') do
+        schema Examples::Errors::NotFound.new.error
         run_test!
       end
     end
@@ -131,12 +146,12 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
       end
 
       response(400, 'Bad request') do
-        schema type: :object, '$ref': '#/components/schemas/BadRequest'
+        schema Examples::Errors::BadRequest.new.error
         run_test!
       end
 
       response(404, 'Product not found') do
-        schema type: :object, '$ref': '#/components/schemas/NotFound'
+        schema Examples::Errors::NotFound.new.error
         run_test!
       end
     end
@@ -153,12 +168,12 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
       end
 
       response(400, 'Bad request') do
-        schema type: :object, '$ref': '#/components/schemas/BadRequest'
+        schema Examples::Errors::BadRequest.new.error
         run_test!
       end
 
       response(404, 'Product not found') do
-        schema type: :object, '$ref': '#/components/schemas/NotFound'
+        schema Examples::Errors::NotFound.new.error
         run_test!
       end
     end
@@ -175,7 +190,7 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
       end
 
       response(404, 'Product not found') do
-        schema type: :object, '$ref': '#/components/schemas/NotFound'
+        schema Examples::Errors::NotFound.new.error
         run_test!
       end
     end
@@ -249,22 +264,22 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
       end
 
       response(400, 'Bad request') do
-        schema type: :object, '$ref': '#/components/schemas/BadRequest'
+        schema Examples::Errors::BadRequest.new.error
         run_test!
       end
 
       response(401, 'Unauthorized') do
-        schema type: :object, '$ref': '#/components/schemas/Unauthorized'
+        schema Examples::Errors::Unauthorized.new.error
         run_test!
       end
 
       response(403, 'Forbidden') do
-        schema type: :object, '$ref': '#/components/schemas/Forbidden'
+        schema Examples::Errors::Forbidden.new.error
         run_test!
       end
 
       response(404, 'Product not found') do
-        schema type: :object, '$ref': '#/components/schemas/NotFound'
+        schema Examples::Errors::NotFound.new.error
         run_test!
       end
     end
@@ -281,17 +296,17 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
       end
 
       response(400, 'Bad request') do
-        schema type: :object, '$ref': '#/components/schemas/BadRequest'
+        schema Examples::Errors::BadRequest.new.error
         run_test!
       end
 
       response(401, 'Unauthorized') do
-        schema type: :object, '$ref': '#/components/schemas/Unauthorized'
+        schema Examples::Errors::Unauthorized.new.error
         run_test!
       end
 
       response(403, 'Forbidden') do
-        schema type: :object, '$ref': '#/components/schemas/Forbidden'
+        schema Examples::Errors::Forbidden.new.error
         run_test!
       end
     end
@@ -390,17 +405,17 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
       end
 
       response(400, 'Bad request') do
-        schema type: :object, '$ref': '#/components/schemas/BadRequest'
+        schema Examples::Errors::BadRequest.new.error
         run_test!
       end
 
       response(401, 'Unauthorized') do
-        schema type: :object, '$ref': '#/components/schemas/Unauthorized'
+        schema Examples::Errors::Unauthorized.new.error
         run_test!
       end
 
       response(403, 'Forbidden') do
-        schema type: :object, '$ref': '#/components/schemas/Forbidden'
+        schema Examples::Errors::Forbidden.new.error
         run_test!
       end
     end
@@ -472,7 +487,7 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
       end
 
       response(400, 'Bad request') do
-        schema type: :object, '$ref': '#/components/schemas/BadRequest'
+        schema Examples::Errors::BadRequest.new.error
         run_test!
       end
     end
@@ -503,7 +518,7 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
       end
 
       response(404, 'Job not found') do
-        schema type: :object, '$ref': '#/components/schemas/NotFound'
+        schema Examples::Errors::NotFound.new.error
         run_test!
       end
     end

@@ -1,10 +1,15 @@
 # frozen_string_literal: true
 
-Dir["./spec/swagger/v*/examples/*.rb"].each do |f|
-  require f
+%w[request response].each do |folder|
+  Dir["./spec/swagger/v*/examples/#{folder}/*.rb"].sort.each do |f|
+    require f
+  end
 end
 
 require './spec/swagger/examples/errors.rb'
+require './spec/swagger/v1/examples/response/searches/filter.rb'
+
+
 require 'rails_helper'
 
 RSpec.configure do |config|
@@ -42,25 +47,20 @@ RSpec.configure do |config|
           }
         },
         schemas: {
-          Address: V1::Examples::Address.to_h,
-          BadRequest: Examples::Errors::BadRequest.new.error,
-          Category: V1::Examples::Category.to_h,
-          Characteristic: V1::Examples::Characteristics.to_h,
-          Delivery: V1::Examples::Delivery.to_h,
-          Forbidden: Examples::Errors::Forbidden.new.error,
-          GoodDeal: V1::Examples::GoodDeal.to_h,
-          InternalError: Examples::Errors::InternalError.new.error,
-          NotFound: Examples::Errors::NotFound.new.error,
-          Product: V1::Examples::Product.to_h,
-          ProductSummary: V1::Examples::ProductSummary.to_h,
-          Review: V1::Examples::Review.to_h,
-          Schedule: V1::Examples::Schedule.to_h,
-          Search: V1::Examples::Search.to_h,
-          Shop: V1::Examples::Shop.to_h,
-          ShopSummary: V1::Examples::ShopSummary.to_h,
-          Unauthorized: Examples::Errors::Unauthorized.new.error,
-          UnprocessableEntity: Examples::Errors::UnprocessableEntity.new.error,
-          Variant: V1::Examples::Variant.to_h,
+          Address: V1::Examples::Response::Address.to_h,
+          Category: V1::Examples::Response::Category.to_h,
+          Characteristic: V1::Examples::Response::Characteristics.to_h,
+          Delivery: V1::Examples::Response::Delivery.to_h,
+          GoodDeal: V1::Examples::Response::GoodDeal.to_h,
+          Product: V1::Examples::Response::Product.to_h,
+          Review: V1::Examples::Response::Review.to_h,
+          Schedule: V1::Examples::Response::Schedule.to_h,
+          Search: V1::Examples::Response::Search.to_h,
+          ProductSummary: V1::Examples::Response::ProductSummary.to_h,
+          Shop: V1::Examples::Response::Shop.to_h,
+          ShopSummary: V1::Examples::Response::ShopSummary.to_h,
+          Variant: V1::Examples::Response::Variant.to_h,
+          Errors: Examples::Errors::Error.new(message_example: "Bad Request", status_example: 400, detail_example: "The syntax of the query is incorrect.").error
         }
       }
     }
