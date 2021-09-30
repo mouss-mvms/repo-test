@@ -1801,9 +1801,18 @@
     "/api/v1/auth/shops/{id}/deliveries": {
       "parameters": [
         {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of the shop.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
           "name": "x-client-id",
           "in": "header",
-          "description": "Auth token of user",
+          "description": "Auth token of user.",
           "required": true,
           "schema": {
             "type": "string"
@@ -2910,7 +2919,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {
