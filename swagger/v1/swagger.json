@@ -627,60 +627,6 @@
                 }
               }
             }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "detail": {
-                      "type": "string",
-                      "example": "The syntax of the query is incorrect.",
-                      "description": "Message of an error."
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Bad Request",
-                      "description": "Display description error."
-                    },
-                    "status": {
-                      "type": "integer",
-                      "example": 400,
-                      "description": "Status of an error."
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "detail": {
-                      "type": "string",
-                      "example": "Resource not found",
-                      "description": "Message of an error."
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Not found",
-                      "description": "Display description error."
-                    },
-                    "status": {
-                      "type": "integer",
-                      "example": 404,
-                      "description": "Status of an error."
-                    }
-                  }
-                }
-              }
-            }
           }
         },
         "requestBody": {
