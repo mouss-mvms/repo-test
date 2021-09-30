@@ -2,7 +2,7 @@ module Api
   module V1
     class ProductsController < ApplicationController
       before_action :uncrypt_token, only: [:update, :create, :destroy]
-      before_action :retrieve_user, only: [:update, :create, :destroy]
+      before_action :retrieve_user, only: [:update,  :create, :destroy]
       before_action :set_location, only: [:index]
 
       DEFAULT_FILTERS_PRODUCTS = [:prices, :brands, :colors, :sizes, :services, :categories]

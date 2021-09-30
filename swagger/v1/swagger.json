@@ -2275,7 +2275,7 @@
         }
       }
     },
-    "/api/v1/shop-summaries": {
+    "/api/v1/shops/summaries": {
       "parameters": [
         {
           "name": "location",
@@ -2802,7 +2802,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-staging"
+      "url": "http://localhost:3000"
     }
   ],
   "components": {

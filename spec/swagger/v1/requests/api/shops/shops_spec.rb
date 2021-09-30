@@ -1,7 +1,7 @@
 require 'swagger_helper'
 
 RSpec.describe 'api/v1/shops', swagger_doc: 'v1/swagger.json', type: :request do
-  path '/api/v1/shop-summaries' do
+  path '/api/v1/shops/summaries' do
     parameter name: :location, in: :query, type: :string, required: true, description: 'Territory or city slug'
     parameter name: :q, in: :query, type: :string, description: 'Query for search.'
     parameter name: :categories, in: :query, type: :string, description: 'Categories slugs concatened with double "_" if more than one'

@@ -33,7 +33,6 @@ module Dto
           private
 
           def self.set_filters(aggs)
-
             @filters = {}
             @filters[:base_price] = generate_filter(aggs["base_price"]["buckets"]) if aggs["base_price"]
             @filters[:colors] = generate_filter(aggs["colors"]["buckets"]) if aggs["colors"] && aggs["colors"]["buckets"].count > 1
