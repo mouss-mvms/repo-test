@@ -18,7 +18,8 @@ RSpec.describe 'api/v1/shops/deliveries', swagger_doc: 'v1/swagger.json', type: 
   end
 
   path '/api/v1/auth/shops/{id}/deliveries' do
-    parameter name: 'x-client-id', in: :header, type: :string, description: 'Auth token of user', required: true
+    parameter name: :id, in: :path, type: :integer, description: 'Unique identifier of the shop.', required: true
+    parameter name: 'x-client-id', in: :header, type: :string, description: 'Auth token of user.', required: true
 
     put('Update delivery services for a shop') do
       tags 'Deliveries'
