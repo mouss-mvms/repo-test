@@ -4,12 +4,12 @@ module Api
       class SummariesController < ApplicationController
         before_action :set_location, only: [:index, :search]
 
-        DEFAULT_FILTERS_PRODUCTS = [:prices, :brands, :colors, :sizes, :services, :categories]
+        DEFAULT_FILTERS_PRODUCTS = [:prices, :brands, :colors, :sizes, :services]
 
         def index
           search_criterias = ::Criterias::Composite.new(::Criterias::Products::Online)
-                                                  .and(::Criterias::Products::NotInShopTemplate)
-                                                  .and(::Criterias::NotInHolidays)
+                                                   .and(::Criterias::Products::NotInShopTemplate)
+                                                   .and(::Criterias::NotInHolidays)
 
           search_criterias.and(::Criterias::Products::OnDiscount) if params[:sort_by] == 'discount'
 
@@ -43,7 +43,7 @@ module Api
             random_products = ::Requests::ProductSearches.search_random_products(params[:q], search_criterias, params[:sort_by], params[:page])
           end
 
-          unless highest_scored_products.present? && random_products.present?
+          if highest_scored_products.blank? && random_products.blank?
             set_close_to_you_criterias(search_criterias, true)
             random_products = ::Requests::ProductSearches.search_random_products(params[:q], search_criterias, params[:sort_by], params[:page])
           end
@@ -92,16 +92,15 @@ module Api
 
           aggs = params[:sort_by] || params[:more] || params[:q] ? random_products.aggs : search_highest.aggs
 
-          unless highest_scored_products.present? && random_products.present?
+          if highest_scored_products.blank? && random_products.blank?
             set_close_to_you_criterias(search_criterias, true)
-            random_products = ::Requests::ProductSearches.search_random_products(params[:q], search_criterias, params[:sort_by], params[:page])
+            random_products = ::Requests::ProductSearches.search_random_products(params[:q], search_criterias, params[:sort_by], random_products.options[:page])
             aggs = random_products.aggs
           end
 
-          products_search  =  (params[:sort_by] || params[:more] || params[:q]) ? random_products.map {|p| p } :  highest_scored_products.concat(random_products.map { |p| p })
+          products_search = (params[:sort_by] || params[:more] || params[:q]) ? random_products.map { |p| p } : highest_scored_products.concat(random_products.map { |p| p })
 
-          search = { products: products_search, aggs: aggs, page: params[:page] }
-
+          search = { products: products_search, aggs: aggs, page: random_products.options[:page] }
 
           response = ::Dto::V1::Product::Search::Response.create(search).to_h
 
@@ -119,7 +118,6 @@ module Api
 
         def set_close_to_you_criterias(search_criterias, see_more)
           insee_codes = @territory ? @territory.insee_codes : @city.insee_codes
-
           if see_more
             return search_criterias.and(::Criterias::CloseToYou.new(@city, insee_codes))
           else
@@ -128,7 +126,7 @@ module Api
         end
 
         def set_perimeter(search_criterias, insee_codes)
-          if params[:search_query] && !@category
+          if params[:q] && !@category
             search_criterias.and(::Criterias::InCities.new(insee_codes))
           else
             case params[:perimeter]
