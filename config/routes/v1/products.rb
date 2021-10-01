@@ -1,5 +1,10 @@
 get '/product-jobs/:id', to: 'products/jobs#show', as: :product_job_status
-get '/product-summaries', to: 'products#index'
+
+namespace :products do
+  resources :summaries, only: [:index] do
+    post :search, on: :collection
+  end
+end
 
 scope :products do
   post '', to: 'products#create_offline'
