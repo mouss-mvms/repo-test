@@ -90,12 +90,7 @@ module Api
             random_products = ::Requests::ProductSearches.search_random_products(params[:q], search_criterias, params[:sort_by], params[:page])
           end
 
-
-          unless params[:sort_by] || params[:more] || params[:q]
-            aggs = search_highest.aggs
-          else
-            aggs = random_products.aggs
-          end
+          aggs = params[:sort_by] || params[:more] || params[:q] ? random_products.aggs : search_highest.aggs
 
           unless highest_scored_products.present? && random_products.present?
             set_close_to_you_criterias(search_criterias, true)
@@ -103,7 +98,7 @@ module Api
             aggs = random_products.aggs
           end
 
-          products_search  =  (params[:sort_by] || params[:more] || params[:q]) ? random_products.map {|p| p} :  highest_scored_products.concat(random_products.map { |p| p })
+          products_search  =  (params[:sort_by] || params[:more] || params[:q]) ? random_products.map {|p| p } :  highest_scored_products.concat(random_products.map { |p| p })
 
           search = { products: products_search, aggs: aggs, page: params[:page] }
 
