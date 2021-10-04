@@ -42,7 +42,7 @@ RSpec.describe 'api/v1/shops/deliveries', swagger_doc: 'v1/swagger.json', type: 
             example: 1.55,
             description: "Price of shop delivery."
           },
-          freeShippingAmount: {
+          freeDeliveryPrice: {
             type: :number,
             example: 45,
             description: "Minimal purchase amount for free shipping."
