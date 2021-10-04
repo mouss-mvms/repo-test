@@ -3880,56 +3880,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
     end
   end
 
-  describe "GET #index" do
-    context "All ok" do
-      it "should return HTTP status 200 and an array of product-summaries" do
-        location = create(:city)
-        searchkick_result = Searchkick::HashWrapper.new({ "_index" => "products_v1_20210315162727103", "_type" => "_doc", "_id" => "2635", "_score" => nil, "id" => 2635, "name" => "Savon d'Alep Tradition 200 g", "slug" => "savon-d-alep-tradition-250-g", "createdAt" => "2017-04-20T15:19:26.137+02:00", "updatedAt" => "2021-05-06T11:47:06.312+02:00", "description" => "Savon d'Alep Tradition poids 200 g.\r\nIl est fabriqué selon la méthode ancestrale par un Maître Savonnier d'Alep. \r\nIl ne désseche pas la peau on peut l'utiliser en shampoing notamment comme anti-pelliculaire.\r\nIl est nourrissant, hydratant et il a des propriétés purifiantes et antiseptiques. \r\nIl convient parfaitement aux peaux sensibles ou peaux à problèmes (rougeurs, irritations..).", "basePrice" => 6.9, "goodDealStartsAt" => nil, "goodDealEndsAt" => nil, "price" => 6.9, "quantity" => 7, "categoryId" => 3190, "categoryTreeNames" => ["Beauté et santé", "Soin visage"], "categoryTreeIds" => [3189, 3190], "status" => "online", "shopName" => "LA MAISON DU SAVON DE MARSEILLE ", "shopId" => 271, "shopSlug" => "la-maison-du-savon-de-marseille", "inHolidays" => nil, "brandName" => "La Maison du Savon de Marseille", "brandId" => 818, "cityName" => "Pau", "cityLabel" => nil, "citySlug" => "pau", "conurbationSlug" => "pau", "inseeCode" => "64445", "territoryName" => nil, "territorySlug" => nil, "departmentNumber" => "64", "productCitizenNickname" => "Céline", "productCitizenSlug" => "celine", "productcitizenImagePath" => "https://mavillemonshopping-pages.s3.eu-west-1.amazonaws.com/uploads/development/image/8762/file/thumb-510229dfbc2330148a1a2b73b607c936.jpg", "defaultSampleId" => 3685, "shopPictogramUrl" => "https://mavillemonshopping-pages.s3.eu-west-1.amazonaws.com/uploads/development/image/9365/file/thumb-7805deea2addd0cb852e84fb6727295a.jpg", "imageUrl" => "https://e-city.s3.eu-central-1.amazonaws.com/images/files/000/009/338/thumb/IMG_3951.JPG?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIDWT2IFATUZXDWCA%2F20210628%2Feu-central-1%2Fs3%2Faws4_request&X-Amz-Date=20210628T112832Z&X-Amz-Expires=900&X-Amz-SignedHeaders=host&X-Amz-Signature=62d57b4d03b7a043a69b23d6f7dd1bfd5169c34b360d9bfddf10e75471222e61", "productPageUrl" => "https://mavillemonshopping-dev.herokuapp.com/fr/pau/la-maison-du-savon-de-marseille/beaute-et-sante/soin-visage/produits/savon-d-alep-tradition-250-g", "shopUrl" => "/fr/pau/boutiques/la-maison-du-savon-de-marseille", "numberOfOrders" => 1, "colors" => ["Modèle par défaut"], "sizes" => [], "selectionIds" => [5, 35, 5, 35, 5, 35], "services" => ["click-collect", "livraison-express-par-stuart", "livraison-par-la-poste", "livraison-par-colissimo", "e-reservation"], "shopIsTemplate" => false, "score" => 3, "position" => nil, "indexedAt" => "2021-06-28T11:28:32.714+00:00", "uniqueReferenceId" => 6353, "isAService" => nil, "onDiscount" => false, "discountPrice" => 6.9 })
-        allow(::Requests::ProductSearches).to receive(:search_highest_scored_products).and_return(OpenStruct.new(products: [searchkick_result] ))
-        allow(::Requests::ProductSearches).to receive(:search_random_products).and_return([searchkick_result])
-        get :index, params: { location: location.slug }
-        should respond_with(200)
-        response_body = JSON.load(response.body)
-        expect(response_body).to be_instance_of(Array)
-      end
-    end
-
-    context "Bad params" do
-      context "when location_slug is missing" do
-        it "should return HTTP status BadRequest - 400" do
-          get :index
-          should respond_with(400)
-          expect(response.body).to eq(Dto::Errors::BadRequest.new("param is missing or the value is empty: location").to_h.to_json)
-        end
-      end
-
-      context "when location_slug params is blank" do
-        it "should return HTTP status BadRequest - 400" do
-          get :index, params: { location: "" }
-          should respond_with(400)
-          expect(response.body).to eq(Dto::Errors::BadRequest.new("param is missing or the value is empty: location").to_h.to_json)
-        end
-      end
-
-      context "when city or territory does not exist" do
-        it "should return HTTP status NotFound - 404" do
-          get :index, params: { location: "bagdad" }
-          should respond_with(404)
-          expect(response.body).to eq(Dto::Errors::NotFound.new("Location not found.").to_h.to_json)
-        end
-      end
-
-      context "when category doesn't exist" do
-        it "should return HTTP status NotFound - 404" do
-          location = create(:city)
-          get :index, params: { location: location.slug, categories: ["casque-radio-star-wars"] }
-          should respond_with(404)
-          expect(response.body).to eq(Dto::Errors::NotFound.new("Category not found.").to_h.to_json)
-        end
-      end
-    end
-  end
-
   describe "GET #show" do
     context "All ok" do
       it "should return 200 HTTP Status with product" do
