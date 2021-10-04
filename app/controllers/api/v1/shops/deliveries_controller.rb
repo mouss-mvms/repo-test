@@ -18,7 +18,7 @@ module Api
         def update
           raise ApplicationController::Forbidden.new if @shop.owner.user.id != @user.id
 
-          unable_delivery_options(shop: @shop)
+          reset_delivery_options(shop: @shop)
 
           deliveries_params[:service_slugs].each do |service_slug|
             service = Service.find_by(slug: service_slug)
@@ -29,7 +29,7 @@ module Api
             if service_slug == SELF_DELIVERY_SLUG
               @shop.is_self_delivery = true
               @shop.self_delivery_price = deliveries_params[:self_delivery_price]
-              @shop.free_delivery_price = deliveries_params[:free_shipping_amount]
+              @shop.free_delivery_price = deliveries_params[:free_delivery_price] if deliveries_params[:free_delivery_price]
               @shop.save!
             end
           end
@@ -51,8 +51,8 @@ module Api
           deliveries_params = {}
           deliveries_params[:service_slugs] = params.require(:serviceSlugs)
           if deliveries_params[:service_slugs].include?(SELF_DELIVERY_SLUG)
-            deliveries_params[:free_shipping_amount] = params.require(:freeShippingAmount)
-            raise ActionController::BadRequest.new("freeShippingAmount must be non null") unless deliveries_params[:free_shipping_amount].to_f > 0.0
+            deliveries_params[:free_delivery_price] = params[:freeDeliveryPrice]
+            raise ActionController::BadRequest.new("freeDeliveryPrice must be at least 1.0") if deliveries_params[:free_delivery_price] && deliveries_params[:free_delivery_price].to_f < 1
 
             deliveries_params[:self_delivery_price] = params.require(:selfDeliveryPrice)
             raise ActionController::BadRequest.new("selfDeliveryPrice must be non null") unless deliveries_params[:self_delivery_price].to_f > 0.0
@@ -60,9 +60,9 @@ module Api
           deliveries_params
         end
 
-        def unable_delivery_options(shop:)
+        def reset_delivery_options(shop:)
           shop.delivery_options.update_all(is_enabled: false)
-          shop.update!(is_self_delivery: false)
+          shop.update!(is_self_delivery: false, free_delivery_price: nil)
         end
       end
     end

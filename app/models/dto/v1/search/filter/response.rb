@@ -40,6 +40,7 @@ module Dto
             @filters[:services] = generate_filter(aggs["services"]["buckets"]) if (aggs["services"] && aggs["services"]["buckets"].count > 1)
             @filters[:categories] = generate_filter_category(aggs["category_tree_ids"]["buckets"], aggs["category_id"]) if aggs["category_tree_ids"] && aggs["category_tree_ids"]["buckets"].count > 1
             @filters[:brands] = generate_filter(aggs["brand_name"]["buckets"]) if aggs["brand_name"] && aggs["brand_name"]["buckets"].count > 1
+            @filters[:brands] = generate_filter(aggs["brands_name"]["buckets"]) if aggs["brands_name"] && aggs["brands_name"]["buckets"].count > 1
             @filters
           end
 

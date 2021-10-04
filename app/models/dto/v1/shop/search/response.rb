@@ -6,7 +6,7 @@ module Dto
           attr_accessor :shops, :filters, :page
 
           def initialize(**args)
-            @shops = args[:shops].map { |shop| Dto::V1::Shop::Response.from_searchkick(shop) }
+            @shops = args[:shops].map { |shop| Dto::V1::ShopSummary::Response.create(shop.deep_symbolize_keys) }
             @filters = ::Dto::V1::Search::Filter::Response.create(args[:aggs])
             @page = args[:page]
           end

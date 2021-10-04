@@ -1,4 +1,4 @@
-require "rails_helper"
+  require "rails_helper"
 
 RSpec.describe Api::V1::Products::ReviewsController, type: :controller do
   describe 'POST #create' do
@@ -224,7 +224,7 @@ RSpec.describe Api::V1::Products::ReviewsController, type: :controller do
           user = create(:citizen_user)
           product = create(:product)
           product.reviews << [create(:review, mark: 4, user_id: user.id, content: "Love this product."), create(:review, mark: 4, user_id: user.id, content: "Like this product.")]
-          
+
           post :index, params: { id: product.id}
 
           expect(response).to have_http_status(:ok)
