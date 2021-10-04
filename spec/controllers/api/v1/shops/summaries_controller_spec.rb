@@ -155,6 +155,11 @@ RSpec.describe Api::V1::Shops::SummariesController, type: :controller do
 
           allow(::Requests::ShopSearches).to receive(:search_random_shops).and_return(random_shops)
           allow(::Requests::ShopSearches).to receive(:search).and_return(product_shops)
+          allow(::Requests::ProductSearches).to receive(:search).and_return(Searchkick::Results.new(Product, {"aggregations"=> {"shop_id"=>
+                                                                                                                                  {"doc_count"=>19,
+                                                                                                                                   "doc_count_error_upper_bound"=>0,
+                                                                                                                                   "sum_other_doc_count"=>0,
+                                                                                                                                   "buckets"=>[{"key"=>584, "doc_count"=>19}]}}}))
 
           shop_summaries = random_shops.map { |p| p } + product_shops.map {|p| p}
           expect(::Requests::ShopSearches).to_not receive(:search_highest_scored_shops)
