@@ -94,7 +94,7 @@ module Api
 
           if highest_scored_products.blank? && random_products.blank?
             set_close_to_you_criterias(search_criterias, true)
-            random_products = ::Requests::ProductSearches.search_random_products(params[:q], search_criterias, params[:sort_by], random_products.options[:page])
+            random_products = ::Requests::ProductSearches.search_random_products(params[:q], search_criterias, params[:sort_by], params[:page])
             aggs = random_products.aggs
           end
 
