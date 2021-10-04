@@ -28,11 +28,11 @@ module Api
           set_close_to_you_criterias(search_criterias, params[:more])
           search_criterias = filter_by(search_criterias)
 
-          highest_scored_shops = ::Requests::ShopSearches.search_highest_scored_shops(params[:q], search_criterias)
 
-          search_criterias = filter_shops(search_criterias, highest_scored_shops) unless params[:more]
-
-          search_criterias.and(::Criterias::Shops::ExceptShops.new(highest_scored_shops.map(&:slug)))
+          unless params[:more] || params[:q].present?
+            highest_scored_shops = ::Requests::ShopSearches.search_highest_scored_shops(params[:q], search_criterias)
+            search_criterias = filter_shops(search_criterias, highest_scored_shops)
+          end
 
           random_shops = ::Requests::ShopSearches.search_random_shops(params[:q], search_criterias, params[:page])
 
@@ -40,29 +40,27 @@ module Api
             product_shops = shops_from_product(search_criterias, params[:q], random_shops)
           end
 
+          binding.pry
+
           unless highest_scored_shops.present? && random_shops.present?
             set_close_to_you_criterias(search_criterias, true)
             random_shops = ::Requests::ShopSearches.search_random_shops(params[:q], search_criterias, params[:page])
           end
 
-
-
-
-
-          if  params[:page] || params[:more]
+          if params[:page] || params[:more] || params[:q]
             shop_summaries = random_shops
           else
-            shop_summaries = highest_scored_shops.response['hits']['hits'].concat(random_shops.response['hits']['hits'])
+            shop_summaries = highest_scored_shops.map { |p| p } + random_shops.map { |p| p }
           end
 
           if params[:q]
-            shop_summaries = shop_summaries.response['hits']['hits'].concat(product_shops.response['hits']['hits'])
+            shop_summaries = shop_summaries.map { |p| p } + product_shops.map { |p| p }
           end
 
           aggs = params[:more] || params[:q] ? random_shops.aggs : highest_scored_shops.aggs
           aggs = aggs.merge!(product_shops.aggs) if params[:q]
 
-          render json: Dto::V1::Shop::Search::Response.new({shops: shop_summaries, filters: aggs, page: 1}), status: :ok
+          render json: Dto::V1::Shop::Search::Response.new({ shops: shop_summaries, aggs: aggs, page: random_shops.options[:page] }).to_h, status: :ok
         end
 
         private
@@ -148,7 +146,8 @@ module Api
               module_name = key.to_s.titleize
               begin
                 search_criterias.and("::Criterias::Shops::From#{module_name}".constantize.new(splited_values))
-              rescue; end
+              rescue;
+              end
             end
           end
           search_criterias
@@ -169,6 +168,17 @@ module Api
           end
 
           shop_summaries
+        end
+
+        def shops_from_product(search_criterias, query, excluded_shops = [])
+          product_criterias = ::Criterias::Composite.new(::Criterias::Products::Online)
+                                                    .and(::Criterias::Products::NotInShopTemplate)
+          products = ::Requests::ProductSearches.search(query, product_criterias)
+
+          shops_ids_excluded = excluded_shops.hits.map { |h| h["_id"].to_i } rescue []
+          shop_ids = products.aggs["shop_id"]["buckets"].map { |item| item["key"] }
+          search_criterias.and(::Criterias::ByIds.new(shop_ids - shops_ids_excluded))
+          ::Requests::ShopSearches.search(search_criterias, params[:page])
         end
       end
     end

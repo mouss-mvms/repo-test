@@ -43,6 +43,49 @@ RSpec.describe 'api/v1/shops', swagger_doc: 'v1/swagger.json', type: :request do
     end
   end
 
+  path '/api/v1/shops/summaries/search' do
+    post("List of shop summaries with filters") do
+      tags 'Shops'
+      consumes 'application/json'
+      produces 'application/json'
+      description 'List of shop summaries with filters'
+      security [{authorization: []}]
+
+      parameter name: :location, in: :query, type: :string, required: true, description: 'Territory or city slug'
+      parameter name: :q, in: :query, type: :string, description: 'Query for search.'
+      parameter name: :categories, in: :query, type: :string, description: 'Categories slugs concatened with double "_" if more than one'
+      parameter name: :page, in: :query, type: :string, description: 'Number of the researches page'
+      parameter name: 'fields[]', in: :query, description: 'Return only the fields requested', schema: {
+        type: :array,
+        items: { type: :string }
+      }
+      parameter name: :perimeter, in: :query, schema: {
+        type: :string,
+        enum: [
+          "around_me",
+          "all"
+        ]
+      }
+      parameter name: :more, in: :query, type: :string
+      parameter name: :services, in: :query, type: :string, description: 'Services slugs concatened with double "_" if more than one'
+
+      response(200, 'Successful') do
+        schema type: :object, '$ref': '#/components/schemas/ShopSummary'
+        run_test!
+      end
+
+      response(400, 'Bad Request') do
+        schema type: :object, '$ref': '#/components/schemas/BadRequest'
+        run_test!
+      end
+
+      response(404, 'Not found') do
+        schema type: :object, '$ref': '#/components/schemas/NotFound'
+        run_test!
+      end
+    end
+  end
+
   path '/api/v1/shops/{id}' do
     parameter name: 'id', in: :path, type: :string, description: 'Unique identifier of the desired shop.'
 

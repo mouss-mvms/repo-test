@@ -47,11 +47,14 @@ module Api
         response = []
 
         shops = ::Requests::ShopSearches.search_highest_scored_shops(params[:q], search_criterias)
+
         if !params[:page] || params[:page] == "1"
           shops.each do |shop|
             response << Dto::V1::Shop::Response.from_searchkick(shop).to_h(params[:fields])
           end
         end
+
+
         slugs = shops.pluck(:slug)
         search_criterias.and(::Criterias::Shops::ExceptShops.new(slugs))
 
@@ -193,17 +196,6 @@ module Api
       def filter_shops(search_criterias, shops)
         slugs = shops.pluck(:slug)
         search_criterias.and(::Criterias::Shops::ExceptShops.new(slugs))
-      end
-
-      def shops_from_product(search_criterias, query, excluded_shops = [])
-        product_criterias = ::Criterias::Composite.new(::Criterias::Products::Online)
-          .and(::Criterias::Products::NotInShopTemplate)
-        products = ::Requests::ProductSearches.search(query, product_criterias)
-
-        shops_ids_excluded = excluded_shops.hits.map { |h| h["_id"].to_i } rescue []
-        shop_ids = products.aggs["shop_id"]["buckets"].map { |item| item["key"] }
-        search_criterias.and(::Criterias::ByIds.new(shop_ids - shops_ids_excluded))
-        ::Requests::ShopSearches.search(search_criterias, params[:page])
       end
     end
   end
