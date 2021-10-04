@@ -623,7 +623,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "$ref": "#/components/schemas/Search"
+                  "$ref": "#/components/schemas/ProductSearch"
                 }
               }
             }
@@ -2511,7 +2511,23 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "$ref": "#/components/schemas/Unauthorized"
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 401,
+                      "description": "Status of an error."
+                    }
+                  }
                 }
               }
             }
@@ -2522,7 +2538,23 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "$ref": "#/components/schemas/Forbidden"
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 403,
+                      "description": "Status of an error."
+                    }
+                  }
                 }
               }
             }
@@ -2533,7 +2565,23 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "$ref": "#/components/schemas/NotFound"
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Resource not found",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Not found",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404,
+                      "description": "Status of an error."
+                    }
+                  }
                 }
               }
             }
@@ -2559,7 +2607,7 @@
                     "example": 1.55,
                     "description": "Price of shop delivery."
                   },
-                  "freeShippingAmount": {
+                  "freeDeliveryPrice": {
                     "type": "number",
                     "example": 45,
                     "description": "Minimal purchase amount for free shipping."
@@ -3379,6 +3427,149 @@
         }
       }
     },
+    "/api/v1/shops/summaries/search": {
+      "post": {
+        "summary": "List of shop summaries with filters",
+        "tags": [
+          "Shops"
+        ],
+        "description": "List of shop summaries with filters",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/ShopSearch"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "The syntax of the query is incorrect.",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Bad Request",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 400,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Resource not found",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Not found",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "location": {
+                    "type": "string",
+                    "example": "Bordeaux",
+                    "description": "Territory or city slug."
+                  },
+                  "q": {
+                    "type": "string",
+                    "example": "Chaussures",
+                    "description": "Query for search."
+                  },
+                  "categories": {
+                    "type": "string",
+                    "example": "homme",
+                    "description": "Categories slugs concatened with double \"_\" if more than one."
+                  },
+                  "services": {
+                    "type": "string",
+                    "example": "livraison-par-la-poste__livraison-france-metropolitaine",
+                    "description": "Service slugs concatened with double \"_\" if more than one."
+                  },
+                  "sort_by": {
+                    "type": "string",
+                    "enum": [
+                      "price-asc",
+                      "price-desc",
+                      "newest"
+                    ]
+                  },
+                  "page": {
+                    "type": "string",
+                    "example": "1",
+                    "description": "Search page number."
+                  },
+                  "more": {
+                    "type": "boolean",
+                    "description": "Increase research perimeter scope"
+                  },
+                  "name": "perimeter",
+                  "in": "query",
+                  "schema": {
+                    "type": "string",
+                    "enum": [
+                      "around_me",
+                      "all"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/shops/{id}": {
       "parameters": [
         {
@@ -3847,7 +4038,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000"
+      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
     }
   ],
   "components": {
@@ -4269,7 +4460,7 @@
           }
         }
       },
-      "Search": {
+      "ProductSearch": {
         "type": "object",
         "properties": {
           "products": {
@@ -4947,6 +5138,287 @@
             "type": "number",
             "example": 150000000.0,
             "description": "Shop's highest product price"
+          }
+        }
+      },
+      "ShopSearch": {
+        "type": "object",
+        "properties": {
+          "shops": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_index": {
+                  "type": "string",
+                  "example": "shops_v1_20210315162727103"
+                },
+                "_type": {
+                  "type": "string",
+                  "example": "_doc"
+                },
+                "_id": {
+                  "type": "string",
+                  "example": "42"
+                },
+                "_score": {
+                  "type": "number",
+                  "example": 0.9996825
+                },
+                "id": {
+                  "type": "string",
+                  "example": "42"
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Ray's occult books"
+                },
+                "createdAt": {
+                  "type": "string",
+                  "example": "2020-04-11T20:22:29.446+02:00"
+                },
+                "updatedAt": {
+                  "type": "string",
+                  "example": "2021-05-06T17:14:04.816+02:00"
+                },
+                "slug": {
+                  "type": "string",
+                  "example": "ray-s-occult-books"
+                },
+                "shopUrl": {
+                  "type": "string",
+                  "example": "/us/new-york/boutiques/ray-s-occult-books"
+                },
+                "categoryTreeIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer",
+                    "example": [
+                      42,
+                      43
+                    ]
+                  }
+                },
+                "categoryTreeNames": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "example": [
+                      "Books",
+                      "Occultism"
+                    ]
+                  }
+                },
+                "baseline": {
+                  "type": "string",
+                  "example": "We are open until 7:00 P.M. on weekdays, midnight on Saturdays"
+                },
+                "description": {
+                  "type": "string",
+                  "example": "Ray's Occult books opened in 1986 and we specializing in the bizarre, somewhat strange, and hard to find books. If we don't got it we can get it."
+                },
+                "brandsName": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "example": [
+                      "Book brand",
+                      "Book brand",
+                      "Book brand"
+                    ]
+                  }
+                },
+                "cityLabel": {
+                  "type": "string",
+                  "example": "New York"
+                },
+                "citySlug": {
+                  "type": "string",
+                  "example": "new-york"
+                },
+                "inseeCode": {
+                  "type": "string",
+                  "example": "44084"
+                },
+                "territoryName": {
+                  "type": "string",
+                  "example": "Usa"
+                },
+                "territorySlug": {
+                  "type": "string",
+                  "example": "usa"
+                },
+                "departmentNumber": {
+                  "type": "string",
+                  "example": "44"
+                },
+                "deletedAt": {
+                  "type": "string",
+                  "example": null
+                },
+                "numberOfOnlineProducts": {
+                  "type": "integer",
+                  "example": 233
+                },
+                "numberOfOrders": {
+                  "type": "integer",
+                  "example": 5
+                },
+                "imageUrl": {
+                  "type": "string",
+                  "example": "https://static.wikia.nocookie.net/ghostbusters/images/e/e0/GB2film1999chapter04sc001.png/revision/latest?cb=20111220104753"
+                },
+                "coupons": {
+                  "type": "string",
+                  "example": "[]"
+                },
+                "pictogram_url": {
+                  "type": "string",
+                  "example": null
+                },
+                "services": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "example": [
+                      "click-collect",
+                      "drone",
+                      "helicopter"
+                    ]
+                  }
+                },
+                "isTemplate": {
+                  "type": "boolean",
+                  "example": false
+                },
+                "score": {
+                  "type": "integer",
+                  "example": 5
+                },
+                "indexed_at": {
+                  "type": "string",
+                  "example": "2021-06-28T11:09:54.088+00:00"
+                }
+              }
+            }
+          },
+          "filters": {
+            "type": "object",
+            "properties": {
+              "basePrice": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "description": "Base price value",
+                      "example": "23"
+                    },
+                    "value": {
+                      "type": "string",
+                      "description": "Number of occurrences for this key",
+                      "example": "12"
+                    }
+                  }
+                }
+              },
+              "colors": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "description": "Color name",
+                      "example": "red"
+                    },
+                    "value": {
+                      "type": "string",
+                      "description": "Number of occurrences for this key",
+                      "example": "23"
+                    }
+                  }
+                }
+              },
+              "sizes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "description": "Size name",
+                      "example": "M"
+                    },
+                    "value": {
+                      "type": "string",
+                      "description": "Number of occurrences for this key",
+                      "example": "23"
+                    }
+                  }
+                }
+              },
+              "services": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "description": "Service slug",
+                      "example": "livraison-la-poste"
+                    },
+                    "value": {
+                      "type": "string",
+                      "description": "Number of occurrences for this key",
+                      "example": "23"
+                    }
+                  }
+                }
+              },
+              "categories": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "description": "Category name",
+                      "example": "homme/vetements"
+                    },
+                    "value": {
+                      "type": "string",
+                      "description": "Number of occurrences for this key",
+                      "example": "23"
+                    }
+                  }
+                }
+              },
+              "brands": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "description": "Brand name",
+                      "example": "Nike"
+                    },
+                    "value": {
+                      "type": "string",
+                      "description": "Number of occurrences for this key",
+                      "example": "23"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "page": {
+            "type": "string",
+            "description": "Search page number.",
+            "example": "2"
           }
         }
       },
