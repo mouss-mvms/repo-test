@@ -63,7 +63,7 @@ RSpec.describe "api/v1/products/summaries", swagger_doc: "v1/swagger.json", type
         }
       }
       response(200, 'successful') do
-        schema type: :object, '$ref': '#/components/schemas/Search'
+        schema type: :object, '$ref': '#/components/schemas/ProductSearch'
         run_test!
       end
     end

@@ -143,7 +143,6 @@ RSpec.describe Api::V1::Shops::SummariesController, type: :controller do
           shop_summaries = highest_shops.map {|p| p } + random_shops.map { |p| p }
           post :search, params: { location: city.slug }
           should respond_with(200)
-
           expect(response.body).to eq(Dto::V1::Shop::Search::Response.new({ shops: shop_summaries, aggs: highest_shops.aggs, page:  random_shops.options[:page]}).to_h.to_json)
         end
       end
@@ -152,14 +151,17 @@ RSpec.describe Api::V1::Shops::SummariesController, type: :controller do
         it 'should return response without highest scored shops' do
           city = create(:city, slug: 'bordeaux')
           random_shops = Searchkick::Results.new(Shop, random_shops_response, random_shops_options)
+          product_shops = Searchkick::Results.new(Shop, product_shops_response, product_shops_options)
 
           allow(::Requests::ShopSearches).to receive(:search_random_shops).and_return(random_shops)
-          shop_summaries = random_shops.map { |p| p }
+          allow(::Requests::ShopSearches).to receive(:search).and_return(product_shops)
+
+          shop_summaries = random_shops.map { |p| p } + product_shops.map {|p| p}
           expect(::Requests::ShopSearches).to_not receive(:search_highest_scored_shops)
           post :search, params: { location: city.slug, q: "cbd" }
           should respond_with(200)
-          binding.pry
-          expect(response.body).to eq(Dto::V1::Shop::Search::Response.new({ shops: shop_summaries, aggs: random_shops.aggs, page:  random_shops.options[:page]}).to_h.to_json)
+
+          expect(response.body).to eq(Dto::V1::Shop::Search::Response.new({ shops: shop_summaries, aggs: random_shops.aggs.merge(product_shops.aggs), page:  random_shops.options[:page]}).to_h.to_json)
         end
       end
 
@@ -613,5 +615,152 @@ dc383bbcbe8c9d8586bb2d20283.jpg",
                      { "key" => "livraison-par-colissimo", "doc_count" => 3 },
                      { "key" => "livraison-par-le-commercant", "doc_count" => 3 }] } } }
     }
+  end
+
+  def product_shops_response
+    {"took"=>4,
+     "timed_out"=>false,
+     "_shards"=>{"total"=>1, "successful"=>1, "skipped"=>0, "failed"=>0},
+     "hits"=>
+       {"total"=>{"value"=>2, "relation"=>"eq"},
+        "max_score"=>1.0,
+        "hits"=>
+          [{"_index"=>"shops_v1_20210314105410121",
+            "_type"=>"_doc",
+            "_id"=>"352",
+            "_score"=>1.0,
+            "_source"=>
+              {"name"=>"AMOS",
+               "created_at"=>"2017-10-24T16:18:33.475+02:00",
+               "updated_at"=>"2020-03-26T18:32:35.971+01:00",
+               "slug"=>"amos",
+               "shop_url"=>"/fr/bordeaux/boutiques/amos",
+               "in_holidays"=>false,
+               "category_tree_ids"=>[2565, 2621, 2625, 3422],
+               "category_tree_names"=>
+                 ["Maison et bricolage", "Art de la table", "Carafe à eau", "Chèque cadeau et bon d'achat"],
+               "baseline"=>"Vivez la mode solidaire ",
+               "description"=>
+                 "Notre boutique solidaire vend des vêtements, chaussures, accessoires et linges de maison donnés et recyclés.",
+               "brands_name"=>["yopo", "poumpoum"],
+               "city_label"=>"Bordeaux",
+               "city_slug"=>"bordeaux",
+               "insee_code"=>"33063",
+               "territory_name"=>nil,
+               "territory_slug"=>nil,
+               "department_number"=>"33",
+               "deleted_at"=>nil,
+               "number_of_online_products"=>2,
+               "number_of_orders"=>0,
+               "image_url"=>
+                 "https://mavillemonshopping-pages.s3.eu-west-1.amazonaws.com/uploads/development/image/25891/file/thumb-5c029f756a18d81b7d5c2b23f8cdf785.jpg",
+               "coupons"=>"[]",
+               "pictogram_url"=>nil,
+               "services"=>["e-reservation", "livraison-par-colissimo", "livraison-express-par-stuart", "click-collect"],
+               "is_template"=>false,
+               "score"=>0,
+               "indexed_at"=>"2021-09-30T12:38:59.879+02:00"}},
+           {"_index"=>"shops_v1_20210314105410121",
+            "_type"=>"_doc",
+            "_id"=>"4760",
+            "_score"=>1.0,
+            "_source"=>
+              {"name"=>"Sybille Crd",
+               "created_at"=>"2020-07-17T17:40:20.808+02:00",
+               "updated_at"=>"2021-05-06T17:16:53.781+02:00",
+               "slug"=>"sybille-crd",
+               "shop_url"=>"/fr/bordeaux/boutiques/sybille-crd",
+               "in_holidays"=>false,
+               "category_tree_ids"=>[2635, 2565, 2621, 2054, 2127, 2115, 2906, 2835, 2908, 2836],
+               "category_tree_names"=>
+                 ["Accessoires à vin",
+                  "Maison et bricolage",
+                  "Art de la table",
+                  "Alimentation",
+                  "Grillades",
+                  "Viande",
+                  "Accessoires",
+                  "Mode",
+                  "Bague",
+                  "Femme"],
+               "baseline"=>"Lorem ipsum dolor sit amet",
+               "description"=>"Lorem ipsum dolor sit amet",
+               "brands_name"=>["Anonyme", "Agapanthe ", "Chateau Loustalet"],
+               "city_label"=>"Bordeaux",
+               "city_slug"=>"bordeaux",
+               "insee_code"=>"33063",
+               "territory_name"=>nil,
+               "territory_slug"=>nil,
+               "department_number"=>"33",
+               "deleted_at"=>nil,
+               "number_of_online_products"=>3,
+               "number_of_orders"=>2,
+               "image_url"=>"default_box_shop.svg",
+               "coupons"=>"[]",
+               "pictogram_url"=>nil,
+               "services"=>["e-reservation", "livraison-par-colissimo", "livraison-express-par-stuart", "click-collect"],
+               "is_template"=>false,
+               "score"=>2,
+               "indexed_at"=>"2021-09-30T12:38:53.547+02:00"}}]},
+     "aggregations"=>
+       {"category_tree_ids"=>
+          {"doc_count"=>2,
+           "category_tree_ids"=>
+             {"doc_count_error_upper_bound"=>0,
+              "sum_other_doc_count"=>0,
+              "buckets"=>
+                [{"key"=>2565, "doc_count"=>2},
+                 {"key"=>2621, "doc_count"=>2},
+                 {"key"=>2054, "doc_count"=>1},
+                 {"key"=>2115, "doc_count"=>1},
+                 {"key"=>2127, "doc_count"=>1},
+                 {"key"=>2625, "doc_count"=>1},
+                 {"key"=>2635, "doc_count"=>1},
+                 {"key"=>2835, "doc_count"=>1},
+                 {"key"=>2836, "doc_count"=>1},
+                 {"key"=>2906, "doc_count"=>1},
+                 {"key"=>2908, "doc_count"=>1},
+                 {"key"=>3422, "doc_count"=>1}]}},
+        "brands_name"=>
+          {"doc_count"=>2,
+           "brands_name"=>
+             {"doc_count_error_upper_bound"=>0,
+              "sum_other_doc_count"=>0,
+              "buckets"=>
+                [{"key"=>"Agapanthe ", "doc_count"=>1},
+                 {"key"=>"Anonyme", "doc_count"=>1},
+                 {"key"=>"Chateau Loustalet", "doc_count"=>1},
+                 {"key"=>"poumpoum", "doc_count"=>1},
+                 {"key"=>"yopo", "doc_count"=>1}]}},
+        "services"=>
+          {"doc_count"=>2,
+           "services"=>
+             {"doc_count_error_upper_bound"=>0,
+              "sum_other_doc_count"=>0,
+              "buckets"=>
+                [{"key"=>"click-collect", "doc_count"=>2},
+                 {"key"=>"e-reservation", "doc_count"=>2},
+                 {"key"=>"livraison-express-par-stuart", "doc_count"=>2},
+                 {"key"=>"livraison-par-colissimo", "doc_count"=>2}]}}}}
+  end
+
+  def product_shops_options
+    {:page=>1,
+     :per_page=>15,
+     :padding=>0,
+     :load=>false,
+     :includes=>nil,
+     :model_includes=>nil,
+     :json=>false,
+     :match_suffix=>"analyzed",
+     :highlight=>nil,
+     :highlighted_fields=>[],
+     :misspellings=>false,
+     :term=>"*",
+     :scope_results=>nil,
+     :total_entries=>nil,
+     :index_mapping=>nil,
+     :suggest=>nil,
+     :scroll=>nil}
   end
 end

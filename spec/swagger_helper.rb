@@ -6,8 +6,13 @@
   end
 end
 
+%w[products shops searches].each do |folder|
+  Dir["./spec/swagger/v*/examples/response/#{folder}/*.rb"].sort.each do |f|
+    require f
+  end
+end
+
 require './spec/swagger/examples/errors.rb'
-require './spec/swagger/v1/examples/response/searches/filter.rb'
 
 
 require 'rails_helper'
@@ -55,9 +60,10 @@ RSpec.configure do |config|
           Product: V1::Examples::Response::Product.to_h,
           Review: V1::Examples::Response::Review.to_h,
           Schedule: V1::Examples::Response::Schedule.to_h,
-          Search: V1::Examples::Response::Search.to_h,
+          ProductSearch: V1::Examples::Response::Products::Search.to_h,
           ProductSummary: V1::Examples::Response::ProductSummary.to_h,
           Shop: V1::Examples::Response::Shop.to_h,
+          ShopSearch: V1::Examples::Response::Shops::Search.to_h,
           ShopSummary: V1::Examples::Response::ShopSummary.to_h,
           Variant: V1::Examples::Response::Variant.to_h,
           Errors: Examples::Errors::Error.new(message_example: "Bad Request", status_example: 400, detail_example: "The syntax of the query is incorrect.").error

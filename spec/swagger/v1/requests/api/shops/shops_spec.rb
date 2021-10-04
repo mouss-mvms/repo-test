@@ -51,36 +51,41 @@ RSpec.describe 'api/v1/shops', swagger_doc: 'v1/swagger.json', type: :request do
       description 'List of shop summaries with filters'
       security [{authorization: []}]
 
-      parameter name: :location, in: :query, type: :string, required: true, description: 'Territory or city slug'
-      parameter name: :q, in: :query, type: :string, description: 'Query for search.'
-      parameter name: :categories, in: :query, type: :string, description: 'Categories slugs concatened with double "_" if more than one'
-      parameter name: :page, in: :query, type: :string, description: 'Number of the researches page'
-      parameter name: 'fields[]', in: :query, description: 'Return only the fields requested', schema: {
-        type: :array,
-        items: { type: :string }
+      parameter name: :shops, in: :body, schema: {
+        type: :object,
+        properties: {
+          location: { type: :string, example: "Bordeaux", description: 'Territory or city slug.' },
+          q: { type: :string, example: "Chaussures", description: 'Query for search.' },
+          categories: { type: :string, example: "homme", description: 'Categories slugs concatened with double "_" if more than one.' },
+          services: { type: :string, example: "livraison-par-la-poste__livraison-france-metropolitaine", description: 'Service slugs concatened with double "_" if more than one.' },
+          sort_by: {
+            type: :string,
+            enum: ["price-asc", "price-desc", "newest"]
+          },
+          page: { type: :string, example: '1', description: 'Search page number.' },
+          more: { type: :boolean, description: 'Increase research perimeter scope' },
+          name: :perimeter, in: :query, schema: {
+            type: :string,
+            enum: [
+              "around_me",
+              "all"
+            ]
+          }
+        }
       }
-      parameter name: :perimeter, in: :query, schema: {
-        type: :string,
-        enum: [
-          "around_me",
-          "all"
-        ]
-      }
-      parameter name: :more, in: :query, type: :string
-      parameter name: :services, in: :query, type: :string, description: 'Services slugs concatened with double "_" if more than one'
 
       response(200, 'Successful') do
-        schema type: :object, '$ref': '#/components/schemas/ShopSummary'
+        schema type: :object, '$ref': '#/components/schemas/ShopSearch'
         run_test!
       end
 
       response(400, 'Bad Request') do
-        schema type: :object, '$ref': '#/components/schemas/BadRequest'
+        schema Examples::Errors::BadRequest.new.error
         run_test!
       end
 
       response(404, 'Not found') do
-        schema type: :object, '$ref': '#/components/schemas/NotFound'
+        schema Examples::Errors::NotFound.new.error
         run_test!
       end
     end

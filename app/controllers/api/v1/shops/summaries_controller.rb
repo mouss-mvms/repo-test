@@ -40,9 +40,8 @@ module Api
             product_shops = shops_from_product(search_criterias, params[:q], random_shops)
           end
 
-          binding.pry
 
-          unless highest_scored_shops.present? && random_shops.present?
+          if highest_scored_shops.blank? && random_shops.blank?
             set_close_to_you_criterias(search_criterias, true)
             random_shops = ::Requests::ShopSearches.search_random_shops(params[:q], search_criterias, params[:page])
           end
