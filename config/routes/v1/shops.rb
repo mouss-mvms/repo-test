@@ -8,13 +8,15 @@ scope :auth do
   end
 end
 
-get "shops/:id", to: "shops#show", as: nil
-get "shops", to: "shops#index", as: nil
-get "shop-summaries", to: "shops#shop_summaries", as: nil
-
 namespace :shops do
   get ":id/products", to: "products#index"
   get ":id/schedules", to: "schedules#index"
   get ":id/deliveries", to: "deliveries#index"
   get ":id/reviews", to: "reviews#index"
+  resources :summaries, only: [:index] do
+    post :search, on: :collection
+  end
 end
+
+get "shops/:id", to: "shops#show", as: nil
+get "shops", to: "shops#index", as: nil

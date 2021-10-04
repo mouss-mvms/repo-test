@@ -57,17 +57,17 @@ RSpec.describe 'api/v1/shops/deliveries', swagger_doc: 'v1/swagger.json', type: 
       end
 
       response(401, 'Unauthorized') do
-        schema type: :object, '$ref': '#/components/schemas/Unauthorized'
+        schema Examples::Errors::Unauthorized.new.error
         run_test!
       end
 
       response(403, 'Forbidden') do
-        schema type: :object, '$ref': '#/components/schemas/Forbidden'
+        schema Examples::Errors::Forbidden.new.error
         run_test!
       end
 
       response(404, 'Not found') do
-        schema type: :object, '$ref': '#/components/schemas/NotFound'
+        schema Examples::Errors::NotFound.new.error
         run_test!
       end
     end
