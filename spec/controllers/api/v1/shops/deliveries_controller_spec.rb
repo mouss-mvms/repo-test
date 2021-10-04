@@ -47,7 +47,7 @@ RSpec.describe Api::V1::Shops::DeliveriesController, type: :controller do
 
   describe "PUT #update" do
     context "All ok" do
-      context "with freeShippingAmount" do
+      context "with freeDeliveryPrice" do
         it "should update shop deliveries" do
           shop = create(:shop, is_self_delivery: false)
           user = create(:shop_employee_user, email: 'chucknoris@mvms.fr')
@@ -70,7 +70,7 @@ RSpec.describe Api::V1::Shops::DeliveriesController, type: :controller do
               self_delivery.slug
             ],
             selfDeliveryPrice: 1.55,
-            freeShippingAmount: 45
+            freeDeliveryPrice: 45
           }
 
           expect(shop.is_self_delivery).to be(false)
@@ -91,12 +91,12 @@ RSpec.describe Api::V1::Shops::DeliveriesController, type: :controller do
           expect(shop.active_services).to include(self_delivery)
           expect(shop.is_self_delivery).to be(true)
           expect(shop.active_services).not_to include(colissimo)
-          expect(shop.free_delivery_price).to eq(params[:freeShippingAmount])
+          expect(shop.free_delivery_price).to eq(params[:freeDeliveryPrice])
           expect(shop.self_delivery_price).to eq(params[:selfDeliveryPrice])
         end
       end
 
-      context "without freeShippingAmount" do
+      context "without freeDeliveryPrice" do
         it "should update shop deliveries" do
           shop = create(:shop, is_self_delivery: false)
           user = create(:shop_employee_user, email: 'chucknoris@mvms.fr')
@@ -139,7 +139,7 @@ RSpec.describe Api::V1::Shops::DeliveriesController, type: :controller do
           expect(shop.active_services).to include(self_delivery)
           expect(shop.is_self_delivery).to be(true)
           expect(shop.active_services).not_to include(colissimo)
-          expect(shop.free_delivery_price).to eq(params[:freeShippingAmount])
+          expect(shop.free_delivery_price).to eq(params[:freeDeliveryPrice])
           expect(shop.self_delivery_price).to eq(params[:selfDeliveryPrice])
         end
       end
@@ -243,7 +243,7 @@ RSpec.describe Api::V1::Shops::DeliveriesController, type: :controller do
       end
 
       context "serviceSlugs contains 'livraison-par-le-commerçant'" do
-        context "freeShippingAmount value is < 1.0" do
+        context "freeDeliveryPrice value is < 1.0" do
           it "should returns 4OO HTTP Status" do
             shop = create(:shop)
             user = create(:shop_employee_user, email: 'chucknoris@mvms.fr')
@@ -258,12 +258,12 @@ RSpec.describe Api::V1::Shops::DeliveriesController, type: :controller do
                 "livraison-par-le-commercant"
               ],
               selfDeliveryPrice: 45.99,
-              freeShippingAmount: 0
+              freeDeliveryPrice: 0
             }
 
             put :update, params: params
             should respond_with(400)
-            expect(response.body).to eq(Dto::Errors::BadRequest.new("freeShippingAmount must be at least 1.0").to_h.to_json)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("freeDeliveryPrice must be at least 1.0").to_h.to_json)
           end
         end
 
@@ -281,7 +281,7 @@ RSpec.describe Api::V1::Shops::DeliveriesController, type: :controller do
                 "click-collect",
                 "livraison-par-le-commercant"
               ],
-              freeShippingAmount: 45.99,
+              freeDeliveryPrice: 45.99,
             }
 
             put :update, params: params
@@ -304,7 +304,7 @@ RSpec.describe Api::V1::Shops::DeliveriesController, type: :controller do
                 "click-collect",
                 "livraison-par-le-commercant"
               ],
-              freeShippingAmount: 45.99,
+              freeDeliveryPrice: 45.99,
               selfDeliveryPrice: 0
             }
 

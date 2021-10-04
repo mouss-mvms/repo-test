@@ -29,7 +29,7 @@ module Api
             if service_slug == SELF_DELIVERY_SLUG
               @shop.is_self_delivery = true
               @shop.self_delivery_price = deliveries_params[:self_delivery_price]
-              @shop.free_delivery_price = deliveries_params[:free_shipping_amount] if deliveries_params[:free_shipping_amount]
+              @shop.free_delivery_price = deliveries_params[:free_delivery_price] if deliveries_params[:free_delivery_price]
               @shop.save!
             end
           end
@@ -51,8 +51,8 @@ module Api
           deliveries_params = {}
           deliveries_params[:service_slugs] = params.require(:serviceSlugs)
           if deliveries_params[:service_slugs].include?(SELF_DELIVERY_SLUG)
-            deliveries_params[:free_shipping_amount] = params[:freeShippingAmount]
-            raise ActionController::BadRequest.new("freeShippingAmount must be at least 1.0") if deliveries_params[:free_shipping_amount] && deliveries_params[:free_shipping_amount].to_f < 1
+            deliveries_params[:free_delivery_price] = params[:freeDeliveryPrice]
+            raise ActionController::BadRequest.new("freeDeliveryPrice must be at least 1.0") if deliveries_params[:free_delivery_price] && deliveries_params[:free_delivery_price].to_f < 1
 
             deliveries_params[:self_delivery_price] = params.require(:selfDeliveryPrice)
             raise ActionController::BadRequest.new("selfDeliveryPrice must be non null") unless deliveries_params[:self_delivery_price].to_f > 0.0
