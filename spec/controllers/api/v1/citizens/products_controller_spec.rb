@@ -43,8 +43,3 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
     end
   end
 end
-
-def generate_token(user)
-  exp_payload = { id: user.id, exp: Time.now.to_i + 1 * 3600 * 24 }
-  JWT.encode exp_payload, ENV["JWT_SECRET"], 'HS256'
-end

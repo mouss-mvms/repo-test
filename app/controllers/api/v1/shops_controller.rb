@@ -1,12 +1,11 @@
 module Api
   module V1
     class ShopsController < ApplicationController
-      before_action :uncrypt_token, except: [:show, :index, :shop_summaries]
-      before_action :retrieve_user, except: [:show, :index, :shop_summaries]
-      before_action :check_user, except: [:show, :index, :shop_summaries]
+      before_action :uncrypt_token, except: [:show, :index]
+      before_action :retrieve_user, except: [:show, :index]
+      before_action :check_user, except: [:show, :index]
       before_action :retrieve_shop, only: [:update]
       before_action :is_shop_owner, only: [:update]
-      before_action :set_location, only: [:shop_summaries]
 
       DEFAULT_FILTERS_SHOPS = [:brands, :services, :categories]
       PER_PAGE = 15
@@ -48,11 +47,14 @@ module Api
         response = []
 
         shops = ::Requests::ShopSearches.search_highest_scored_shops(params[:q], search_criterias)
+
         if !params[:page] || params[:page] == "1"
           shops.each do |shop|
             response << Dto::V1::Shop::Response.from_searchkick(shop).to_h(params[:fields])
           end
         end
+
+
         slugs = shops.pluck(:slug)
         search_criterias.and(::Criterias::Shops::ExceptShops.new(slugs))
 
@@ -62,45 +64,6 @@ module Api
           response << Dto::V1::Shop::Response.from_searchkick(random_shop).to_h(params[:fields])
         end
         return render json: response, status: :ok
-      end
-
-      def shop_summaries
-        search_criterias = ::Criterias::Composite.new(::Criterias::Shops::WithOnlineProducts)
-          .and(::Criterias::Shops::NotDeleted)
-          .and(::Criterias::Shops::NotTemplated)
-          .and(::Criterias::NotInHolidays)
-
-        search_criterias.and(::Criterias::NotInCategories.new(Category.excluded_from_catalog.pluck(:id))) unless params[:q]
-
-        if params[:categories]
-          @category = Category.find_by(slug: params[:categories])
-          raise ApplicationController::NotFound.new('Category not found.') unless @category
-          search_criterias.and(::Criterias::InCategories.new([@category.id]))
-        end
-
-        set_close_to_you_criterias(search_criterias, params[:more])
-        search_criterias = filter_by(search_criterias)
-
-        highest_scored_shops = ::Requests::ShopSearches.search_highest_scored_shops(params[:q], search_criterias)
-
-        search_criterias = filter_shops(search_criterias, highest_scored_shops) unless params[:more]
-
-        search_criterias.and(::Criterias::Shops::ExceptShops.new(highest_scored_shops.map(&:slug)))
-
-        random_shops = ::Requests::ShopSearches.search_random_shops(params[:q], search_criterias, params[:page])
-
-        if params[:q]
-          product_shops = shops_from_product(search_criterias, params[:q], random_shops)
-        end
-
-        unless highest_scored_shops.present? && random_shops.present?
-          set_close_to_you_criterias(search_criterias, true)
-          random_shops = ::Requests::ShopSearches.search_random_shops(params[:q], search_criterias, params[:page])
-        end
-
-        shop_summaries_response = build_shop_summaries_response(highest_scored_shops, random_shops, product_shops, params[:page], params[:more], params[:q], params[:fields])
-
-        render json: shop_summaries_response, status: :ok
       end
 
       def show
@@ -233,17 +196,6 @@ module Api
       def filter_shops(search_criterias, shops)
         slugs = shops.pluck(:slug)
         search_criterias.and(::Criterias::Shops::ExceptShops.new(slugs))
-      end
-
-      def shops_from_product(search_criterias, query, excluded_shops = [])
-        product_criterias = ::Criterias::Composite.new(::Criterias::Products::Online)
-          .and(::Criterias::Products::NotInShopTemplate)
-        products = ::Requests::ProductSearches.search(query, product_criterias)
-
-        shops_ids_excluded = excluded_shops.hits.map { |h| h["_id"].to_i } rescue []
-        shop_ids = products.aggs["shop_id"]["buckets"].map { |item| item["key"] }
-        search_criterias.and(::Criterias::ByIds.new(shop_ids - shops_ids_excluded))
-        ::Requests::ShopSearches.search(search_criterias, params[:page])
       end
     end
   end

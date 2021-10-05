@@ -59,7 +59,7 @@ module Examples
 
     class NotFound < Error
       def initialize
-        super(message_example: "Not found", status_example: 404, detail_example: "Product not found")
+        super(message_example: "Not found", status_example: 404, detail_example: "Resource not found")
       end
     end
   end
