@@ -3636,6 +3636,23 @@
           }
         }
       }
+<<<<<<< HEAD
+=======
+    }
+  },
+  "servers": [
+    {
+      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "authorization": {
+        "type": "apiKey",
+        "name": "authorization",
+        "in": "header"
+      }
+>>>>>>> master
     },
     "/api/v1/auth/shops/{id}": {
       "parameters": [
