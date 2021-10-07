@@ -7,7 +7,7 @@ module Api
 
       def create
         brand = Brand.create!(brand_params)
-        response = Dto::V1::Brand::Response.create(brand: brand)
+        response = Dto::V1::Brand::Response.create(brand: brand).to_h
         render json: response, status: :created
       end
 
