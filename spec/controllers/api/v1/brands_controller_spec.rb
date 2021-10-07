@@ -17,6 +17,21 @@ RSpec.describe Api::V1::BrandsController, type: :controller do
           expect(response.body).to eq(Dto::V1::Brand::Response.create(brand: Brand.first).to_h.to_json)
         end
       end
+
+      context "user is an admin" do
+        it "should create a brand" do
+          params = { name: 'Chuck Noris' }
+          request.headers['x-client-id'] = generate_token(create(:admin_user))
+
+          Brand.destroy_all
+          expect(Brand.count).to eq(0)
+
+          post :create, params: params
+          should respond_with(201)
+          expect(Brand.count).to eq(1)
+          expect(response.body).to eq(Dto::V1::Brand::Response.create(brand: Brand.first).to_h.to_json)
+        end
+      end
     end
 
     context "When problems" do
