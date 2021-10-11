@@ -130,6 +130,14 @@ module Api
           }
           product_params[:variants] << hash
         }
+        params.require(:provider)
+        product_params[:provider] = {}
+        product_params[:provider][:name] = params[:provider].require(:name)
+        if product_params[:provider][:name] == 'wynd'
+          product_params[:provider][:external_product_id] = params[:provider].require(:externalProductId)
+        else
+          product_params[:provider][:external_product_id] = params[:provider][:externalProductId]
+        end
         product_params
       end
     end

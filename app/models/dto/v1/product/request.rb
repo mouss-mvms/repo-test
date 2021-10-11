@@ -2,7 +2,7 @@ module Dto
   module V1
     module Product
       class Request
-        attr_accessor :name, :slug, :category_id, :brand, :status, :seller_advice, :is_service, :description, :variants, :image_urls, :citizen_advice, :citizen_id, :shop_id, :origin, :composition, :allergens
+        attr_accessor :name, :slug, :category_id, :brand, :status, :seller_advice, :is_service, :description, :variants, :image_urls, :citizen_advice, :citizen_id, :shop_id, :origin, :composition, :allergens, :provider
 
         def initialize(**args)
           @name = args[:name]
@@ -23,6 +23,7 @@ module Dto
           @origin = args[:origin]
           @allergens = args[:allergens]
           @composition = args[:composition]
+          @provider = args[:provider]
         end
 
         def to_h
@@ -42,7 +43,8 @@ module Dto
             citizen_id: @citizen_id,
             origin: @origin,
             allergens: @allergens,
-            composition: @composition
+            composition: @composition,
+            provider: @provider
           }
         end
       end
