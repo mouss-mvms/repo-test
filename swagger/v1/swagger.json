@@ -4844,6 +4844,25 @@
             "type": "string",
             "example": "Oeuf, sucre",
             "description": "Composition of product. (This field is mandatory for some categories)"
+          },
+          "provider": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "example": "wynd",
+                "description": "Name of provider"
+              },
+              "externalProductId": {
+                "type": "string",
+                "example": "33ur",
+                "description": "Id used by the provider"
+              }
+            },
+            "required": [
+              "name,",
+              "externalProductId"
+            ]
           }
         }
       },
