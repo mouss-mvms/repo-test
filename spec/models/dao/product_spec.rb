@@ -5,6 +5,11 @@ RSpec.describe Dao::Product, :type => :model do
     it 'should create a product' do
       shop = create(:shop)
       category = create(:category)
+      create(:api_provider, name: 'wynd')
+      provider = {
+        name: 'wynd',
+        external_product_id: '33rt'
+      }
       create_params = {
         name: "TEST Job create with sidekiq de ses morts",
         shop_id: shop.id,
@@ -45,8 +50,10 @@ RSpec.describe Dao::Product, :type => :model do
               }
             ]
           }
-        ]
+        ],
+        provider: provider
       }
+
 
       product = Dao::Product.create(create_params)
 
@@ -64,6 +71,10 @@ RSpec.describe Dao::Product, :type => :model do
       expect(product.composition).to eq(create_params[:composition])
       expect(product.images.first.file_url).to_not be_empty
       expect(product.samples.first.images.first.file_url).to_not be_empty
+      expect(product.api_provider_products).to_not be_empty
+      product_api_provider = product.api_provider_products.first
+      expect(product_api_provider.api_provider.name).to eq(provider[:name])
+      expect(product_api_provider.external_product_id).to eq(provider[:external_product_id])
     end
   end
 
