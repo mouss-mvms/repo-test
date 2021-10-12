@@ -38,6 +38,15 @@ module Dao
         end
       end
 
+      if product_params.provider
+        api_provider = ApiProvider.where(name: product_params.provider[:name]).first
+        if api_provider
+          product.api_provider_products << ApiProviderProduct.create!(api_provider: api_provider,
+                                                                      external_product_id: product_params.provider[:external_product_id])
+        end
+        product.save!
+      end
+
       product_params.variants.each do |variant_params|
         variant_params = OpenStruct.new(variant_params)
         sample = ::Sample.create!(name: product_params.name, default: variant_params.is_default, product_id: product.id)

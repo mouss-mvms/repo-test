@@ -64,5 +64,6 @@ gem 'simple_token_authentication', '~>1.0'
 
 gem 'jwt'
 
-
-gem 'mvms-core', path: '../../mvms-core'
+source 'https://gem.fury.io/mvms/' do
+  gem 'mvms-core', '2.5.277'
+end

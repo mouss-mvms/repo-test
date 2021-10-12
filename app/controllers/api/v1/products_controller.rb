@@ -48,6 +48,10 @@ module Api
       end
 
       def create_offline
+        raise ActionController::ParameterMissing.new('provider') unless product_params[:provider]
+        if product_params[:provider][:name] == 'wynd'
+          raise ActionController::ParameterMissing.new('provider.external_product_id') unless product_params[:provider][:external_product_id]
+        end
         dto_product_request = Dto::V1::Product::Request.new(product_params)
         raise ActionController::ParameterMissing.new(dto_product_request.shop_id) if dto_product_request.shop_id.blank?
         Shop.find(dto_product_request.shop_id)
@@ -130,13 +134,10 @@ module Api
           }
           product_params[:variants] << hash
         }
-        params.require(:provider)
-        product_params[:provider] = {}
-        product_params[:provider][:name] = params[:provider].require(:name)
-        if product_params[:provider][:name] == 'wynd'
-          product_params[:provider][:external_product_id] = params[:provider].require(:externalProductId)
-        else
-          product_params[:provider][:external_product_id] = params[:provider][:externalProductId]
+        if params[:provider]
+          product_params[:provider] = {}
+          product_params[:provider][:name] = params[:provider][:name] if params[:provider][:name]
+          product_params[:provider][:external_product_id] = params[:provider][:externalProductId] if params[:provider][:externalProductId]
         end
         product_params
       end
