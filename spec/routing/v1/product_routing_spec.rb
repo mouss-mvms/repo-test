@@ -3,7 +3,8 @@ require "rails_helper"
 RSpec.describe "routes for Products", :type => :routing do
   it { should route(:get, '/api/v1/shops/26/products').to(controller: 'api/v1/shops/products', action: :index, id: 26) }
   it { should route(:get, '/api/v1/products/47671').to(controller: 'api/v1/products', action: :show, id: 47671) }
-  it { should route(:post, '/api/v1/auth/products').to(controller: 'api/v1/products', action: :create) }
+  it { should route(:post, '/api/v1/auth/citizens/self/products').to(controller: 'api/v1/citizens/products', action: :create) }
+  it { should route(:post, '/api/v1/auth/shops/self/products').to(controller: 'api/v1/shops/products', action: :create) }
   it { should route(:post, '/api/v1/products').to(controller: 'api/v1/products', action: :create_offline) }
   it { should route(:delete, '/api/v1/auth/products/47671').to(controller: 'api/v1/products', action: :destroy, id: 47671) }
   it { should route(:delete, '/api/v1/products/47671').to(controller: 'api/v1/products', action: :destroy_offline, id: 47671) }
