@@ -156,6 +156,17 @@
       }
     },
     "/api/v1/categories": {
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "description": "Desired page.",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
       "get": {
         "summary": "list categories",
         "tags": [
@@ -175,9 +186,37 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Category"
+                  "type": "object",
+                  "properties": {
+                    "categories": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "example": 1,
+                            "description": "Unique identifier of a category."
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "Mobilier extérieur",
+                            "description": "Display name of a category."
+                          },
+                          "children": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/Category"
+                            },
+                            "description": "List of children category."
+                          }
+                        }
+                      }
+                    },
+                    "page": {
+                      "type": "string",
+                      "example": 1
+                    }
                   }
                 }
               }
@@ -2162,6 +2201,27 @@
                     "type": "string",
                     "example": "Oeuf, sucre",
                     "description": "Composition of product. (This field is mandatory for some categories)"
+                  },
+                  "provider": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "example": "wynd",
+                        "name": "Name of the API Provider",
+                        "enum": [
+                          "wynd"
+                        ]
+                      },
+                      "externalProductId": {
+                        "type": "string",
+                        "example": "33tr",
+                        "name": "ID of product saved by the provider"
+                      }
+                    },
+                    "required": [
+                      "name"
+                    ]
                   }
                 },
                 "required": [
@@ -2174,7 +2234,8 @@
                   "isService,",
                   "categoryId,",
                   "variants,",
-                  "characteristics"
+                  "characteristics,",
+                  "provider"
                 ]
               }
             }
