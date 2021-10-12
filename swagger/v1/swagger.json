@@ -101,7 +101,7 @@
                     "example": "rebok",
                     "description": "Query for search."
                   },
-                  "sort_by": {
+                  "sortBy": {
                     "type": "string",
                     "enum": [
                       "products-count"
