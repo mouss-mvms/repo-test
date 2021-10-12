@@ -18,8 +18,7 @@ module Api
         children_categories = @categories.select{|cc| cc[:parent_id] == parent_category_response.id}
         children_categories.each do |child_category|
           child_category_response = Dto::V1::Category::Response.new({id: child_category.id, name: child_category.name, slug: child_category.slug})
-          children  = build_children_category_response(child_category_response)
-          parent_category_response.children << children
+          parent_category_response.children << build_children_category_response(child_category_response)
         end
         return parent_category_response
       end
