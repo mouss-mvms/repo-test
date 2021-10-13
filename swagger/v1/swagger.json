@@ -1106,7 +1106,7 @@
                 "properties": {
                   "location": {
                     "type": "string",
-                    "example": "Bordeaux",
+                    "example": "bordeaux",
                     "description": "Territory or city slug."
                   },
                   "q": {
@@ -1123,6 +1123,11 @@
                     "type": "string",
                     "example": "1__100",
                     "description": "Prices range"
+                  },
+                  "shared_products": {
+                    "type": "boolean",
+                    "description": "Only shared products",
+                    "example": false
                   },
                   "services": {
                     "type": "string",
@@ -2162,6 +2167,27 @@
                     "type": "string",
                     "example": "Oeuf, sucre",
                     "description": "Composition of product. (This field is mandatory for some categories)"
+                  },
+                  "provider": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "example": "wynd",
+                        "name": "Name of the API Provider",
+                        "enum": [
+                          "wynd"
+                        ]
+                      },
+                      "externalProductId": {
+                        "type": "string",
+                        "example": "33tr",
+                        "name": "ID of product saved by the provider"
+                      }
+                    },
+                    "required": [
+                      "name"
+                    ]
                   }
                 },
                 "required": [
@@ -2174,7 +2200,8 @@
                   "isService,",
                   "categoryId,",
                   "variants,",
-                  "characteristics"
+                  "characteristics,",
+                  "provider"
                 ]
               }
             }
