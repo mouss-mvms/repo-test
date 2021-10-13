@@ -62,6 +62,9 @@ module Api
 
           search_criterias.and(::Criterias::NotInCategories.new(Category.excluded_from_catalog.pluck(:id))) unless params[:q]
 
+
+          search_criterias.and(::Criterias::Products::SharedByCitizen) if params[:shared_products] == true
+
           if params[:categories]
             @category = Category.find_by(slug: params[:categories])
             raise ApplicationController::NotFound.new('Category not found.') unless @category

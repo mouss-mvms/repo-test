@@ -48,10 +48,11 @@ RSpec.describe "api/v1/products/summaries", swagger_doc: "v1/swagger.json", type
       parameter name: :product, in: :body, schema: {
         type: :object,
         properties: {
-          location: { type: :string, example: "Bordeaux", description: 'Territory or city slug.' },
+          location: { type: :string, example: "bordeaux", description: 'Territory or city slug.' },
           q: { type: :string, example: "Chaussures", description: 'Query for search.' },
           categories: { type: :string, example: "homme", description: 'Categories slugs concatened with double "_" if more than one.' },
           prices: { type: :string, example: "1__100", description: 'Prices range' },
+          shared_products: { type: :boolean, description: "Only shared products", example: false },
           services: { type: :string, example: "livraison-par-la-poste__livraison-france-metropolitaine", description: 'Service slugs concatened with double "_" if more than one.' },
           sort_by: {
             type: :string,

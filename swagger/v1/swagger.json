@@ -1219,7 +1219,7 @@
                 "properties": {
                   "location": {
                     "type": "string",
-                    "example": "Bordeaux",
+                    "example": "bordeaux",
                     "description": "Territory or city slug."
                   },
                   "q": {
@@ -1236,6 +1236,11 @@
                     "type": "string",
                     "example": "1__100",
                     "description": "Prices range"
+                  },
+                  "shared_products": {
+                    "type": "boolean",
+                    "description": "Only shared products",
+                    "example": false
                   },
                   "services": {
                     "type": "string",
