@@ -8,11 +8,11 @@ RSpec.describe Api::V1::Brands::SummariesController do
           searchkick_brands = Searchkick::Results.new(Brand, no_params_response, no_params_options)
 
           allow(::Requests::BrandSearches).to receive(:search).and_return(searchkick_brands)
-          brands = searchkick_brands.response.map { |brand| brand }
+          brands = searchkick_brands.map { |brand| brand }
           post :search
           should respond_with(200)
           expect(response.body).to eq(Dto::V1::Brand::Search::Response.create(brands: brands, page: searchkick_brands.options[:page]).to_h.to_json)
-          expect(dto_search.page).to eq(1)
+          expect(JSON.load(response.body)['page']).to eq(no_params_options[:page])
         end
       end
 
@@ -44,7 +44,7 @@ RSpec.describe Api::V1::Brands::SummariesController do
           dto_search = Dto::V1::Brand::Search::Response.create(brands: brands, page: searchkick_brands.options[:page])
           expect(dto_search.brands.count).to eq(15)
           expect(response.body).to eq(dto_search.to_h.to_json)
-          expect(dto_search.brands.pluck(:productsCount)).to eq(dto_search.brands.pluck(:productsCount).sort.reverse)
+          expect(JSON.parse(response.body)["brands"].map {|brand| brand["productsCount"] }).to eq(searchkick_brands.map {|b| b["products_count"]}.sort.reverse)
           expect(dto_search.page).to eq(search_params[:page])
         end
       end

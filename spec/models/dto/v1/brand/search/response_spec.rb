@@ -34,6 +34,7 @@ RSpec.describe Dto::V1::Brand::Search::Response do
         dto = ::Dto::V1::Brand::Search::Response.create(brand_search_response)
 
         expect(dto).to be_an_instance_of(Dto::V1::Brand::Search::Response)
+        expect(dto.brands).to be_instance_of(Array)
         expect(dto.brands.count).to eq(2)
         dto.brands.each do |brand|
           expect(brand).to be_an_instance_of(Dto::V1::BrandSummary::Response)

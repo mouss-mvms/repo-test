@@ -6,7 +6,7 @@ module Dto
           attr_accessor :brands, :page
 
           def initialize(**args)
-            @brands = args[:brands].map { |brand| Dto::V1::BrandSummary::Response.create(brand.deep_symbolize_keys).to_h }
+            @brands = args[:brands].map { |brand| Dto::V1::BrandSummary::Response.create(brand.deep_symbolize_keys) }
             @page = args[:page]
           end
 
@@ -16,7 +16,7 @@ module Dto
 
           def to_h
             {
-              brands: brands,
+              brands: brands.map(&:to_h),
               page: page,
             }
           end
