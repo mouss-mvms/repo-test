@@ -27,7 +27,7 @@ module Dto
             id: @id,
             name: @name,
             slug: @slug,
-            children: children
+            children: @children
           }
         end
       end
