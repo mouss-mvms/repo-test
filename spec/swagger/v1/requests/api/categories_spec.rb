@@ -3,6 +3,7 @@ require 'swagger_helper'
 RSpec.describe 'api/v1/categories', swagger_doc: 'v1/swagger.json', type: :request do
 
   path '/api/v1/categories' do
+    parameter name: 'page', in: :query, type: :string, description: 'Desired page.', required: true
 
     get('list categories') do
       tags 'Categories'
@@ -11,7 +12,7 @@ RSpec.describe 'api/v1/categories', swagger_doc: 'v1/swagger.json', type: :reque
       security [{ authorization: [] }]
 
       response(200, 'successful') do
-        schema type: :array, items: {'$ref': '#/components/schemas/Category'}
+        schema ::V1::Examples::Response::Categories.to_h
         run_test!
       end
     end
