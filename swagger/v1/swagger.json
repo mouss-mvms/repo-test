@@ -1276,7 +1276,7 @@
                     "example": "1__100",
                     "description": "Prices range"
                   },
-                  "shared_products": {
+                  "sharedProducts": {
                     "type": "boolean",
                     "description": "Only shared products",
                     "example": false
@@ -1286,7 +1286,7 @@
                     "example": "livraison-par-la-poste__livraison-france-metropolitaine",
                     "description": "Service slugs concatened with double \"_\" if more than one."
                   },
-                  "sort_by": {
+                  "sortBy": {
                     "type": "string",
                     "enum": [
                       "price-asc",
@@ -4686,7 +4686,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-staging"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {

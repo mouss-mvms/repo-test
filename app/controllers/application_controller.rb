@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::API
+
     Forbidden = Class.new(ActionController::ActionControllerError)
     UnpermittedParameter = Class.new(ActionController::ActionControllerError)
     InternalServerError = Class.new(ActionController::ActionControllerError)
@@ -55,6 +56,30 @@ class ApplicationController < ActionController::API
         Rails.logger.error(e)
         error = Dto::Errors::Forbidden.new
         return render json: error.to_h, status: error.status
+      end
+    end
+
+
+    protected
+    def cache_path
+      controller = params[:controller]
+      action = params[:action]
+      rest = permitted_params.sort_by { |k, v| k }.to_h.values.join('-')
+      "#{controller}-#{action}-#{rest}"
+    end
+
+    def render_cache
+      cached_response = Rails.cache.read(cache_path)
+      return render json: cached_response, statut: :ok if cached_response
+    end
+
+    def set_cache!(response:)
+      begin
+        return unless cache_path
+
+        Rails.cache.write(cache_path, response)
+      rescue e
+        Rails.logger.error(e)
       end
     end
 end
