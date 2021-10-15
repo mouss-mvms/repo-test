@@ -50,7 +50,7 @@ Rails.application.configure do
 
   # Use a different cache store in production.
   # config.cache_store = :mem_cache_store
-  config.action_controller.perform_caching = true
+  config.action_controller.perform_caching =  StringHelper.to_bool(ENV["PERFORM_CACHE"])
 
   config.cache_store = :mem_cache_store,
                       (ENV["MEMCACHIER_SERVERS"] || "").split(","),
