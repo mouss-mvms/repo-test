@@ -64,20 +64,20 @@ class ApplicationController < ActionController::API
     def cache_path
       controller = params[:controller]
       action = params[:action]
-      rest = permitted_params.sort_by { |k, v| k }.to_h.values.join('-')
+      rest = permitted_params.sort_by { |k, v| k }.to_h.values.compact.join('-')
       "#{controller}-#{action}-#{rest}"
     end
 
     def render_cache
       cached_response = Rails.cache.read(cache_path)
-      return render json: cached_response, statut: :ok if cached_response
+      return render json: cached_response, statut: :ok if cached_response.present?
     end
 
     def set_cache!(response:)
       begin
         return unless cache_path
 
-        Rails.cache.write(cache_path, response)
+        Rails.cache.write(cache_path, response, expires_in: ENV["CACHE_EXPIRATION"].to_i.seconds)
       rescue e
         Rails.logger.error(e)
       end
