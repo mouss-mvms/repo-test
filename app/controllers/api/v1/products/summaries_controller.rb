@@ -3,67 +3,21 @@ module Api
     module Products
       class SummariesController < ApplicationController
         before_action :set_location, only: [:index, :search]
+        before_action :render_cache, only: [:search]
 
         DEFAULT_FILTERS_PRODUCTS = [:prices, :brands, :colors, :sizes, :services]
-
-        def index
-          search_criterias = ::Criterias::Composite.new(::Criterias::Products::Online)
-                                                   .and(::Criterias::Products::NotInShopTemplate)
-                                                   .and(::Criterias::NotInHolidays)
-
-          search_criterias.and(::Criterias::Products::OnDiscount) if params[:sort_by] == 'discount'
-
-          search_criterias.and(::Criterias::NotInCategories.new(Category.excluded_from_catalog.pluck(:id))) unless params[:q]
-
-          if params[:categories]
-            @category = Category.find_by(slug: params[:categories])
-            raise ApplicationController::NotFound.new('Category not found.') unless @category
-            search_criterias.and(::Criterias::InCategories.new([@category.id]))
-          end
-
-          set_close_to_you_criterias(search_criterias, params[:more])
-          search_criterias = filter_by(search_criterias)
-
-          unless params[:q]
-            search_highest = ::Requests::ProductSearches.search_highest_scored_products(params[:q], search_criterias)
-            highest_scored_products = search_highest.products
-
-            unless params[:sort_by] || params[:more]
-              search = search_highest
-              search_criterias = filter_products(search_criterias, highest_scored_products)
-            end
-
-            search_criterias.and(::Criterias::Products::ExceptProducts.new(highest_scored_products.map(&:id)))
-          end
-
-          random_products = ::Requests::ProductSearches.search_random_products(params[:q], search_criterias, params[:sort_by], params[:page])
-
-          if params[:more] && random_products.empty?
-            search_criterias.remove(:insee_code, :department_number)
-            random_products = ::Requests::ProductSearches.search_random_products(params[:q], search_criterias, params[:sort_by], params[:page])
-          end
-
-          if highest_scored_products.blank? && random_products.blank?
-            set_close_to_you_criterias(search_criterias, true)
-            random_products = ::Requests::ProductSearches.search_random_products(params[:q], search_criterias, params[:sort_by], params[:page])
-          end
-
-          product_summaries = set_products!(highest_scored_products, random_products, params[:page], params[:more], params[:sort_by])
-
-          render json: product_summaries, status: 200
-        end
 
         def search
           search_criterias = ::Criterias::Composite.new(::Criterias::Products::Online)
                                                    .and(::Criterias::Products::NotInShopTemplate)
                                                    .and(::Criterias::NotInHolidays)
 
-          search_criterias.and(::Criterias::Products::OnDiscount) if params[:sort_by] == 'discount'
+          search_criterias.and(::Criterias::Products::OnDiscount) if params[:sortBy] == 'discount'
 
           search_criterias.and(::Criterias::NotInCategories.new(Category.excluded_from_catalog.pluck(:id))) unless params[:q]
 
 
-          search_criterias.and(::Criterias::Products::SharedByCitizen) if params[:shared_products] == true
+          search_criterias.and(::Criterias::Products::SharedByCitizen) if params[:sharedProducts] == true
 
           if params[:categories]
             @category = Category.find_by(slug: params[:categories])
@@ -78,7 +32,7 @@ module Api
             search_highest = ::Requests::ProductSearches.search_highest_scored_products(params[:q], search_criterias)
             highest_scored_products = search_highest.products
 
-            unless params[:sort_by] || params[:more]
+            unless params[:sortBy] || params[:more]
               search = search_highest
               search_criterias = filter_products(search_criterias, highest_scored_products)
             end
@@ -86,31 +40,47 @@ module Api
             search_criterias.and(::Criterias::Products::ExceptProducts.new(highest_scored_products.map(&:id)))
           end
 
-          random_products = ::Requests::ProductSearches.search_random_products(params[:q], search_criterias, params[:sort_by], params[:page])
+          random_products = ::Requests::ProductSearches.search_random_products(params[:q], search_criterias, params[:sortBy], params[:page])
 
           if params[:more] && random_products.empty?
             search_criterias.remove(:insee_code, :department_number)
-            random_products = ::Requests::ProductSearches.search_random_products(params[:q], search_criterias, params[:sort_by], params[:page])
+            random_products = ::Requests::ProductSearches.search_random_products(params[:q], search_criterias, params[:sortBy], params[:page])
           end
 
-          aggs = params[:sort_by] || params[:more] || params[:q] ? random_products.aggs : search_highest.aggs
+          aggs = params[:sortBy] || params[:more] || params[:q] ? random_products.aggs : search_highest.aggs
 
           if highest_scored_products.blank? && random_products.blank?
             set_close_to_you_criterias(search_criterias, true)
-            random_products = ::Requests::ProductSearches.search_random_products(params[:q], search_criterias, params[:sort_by], params[:page])
+            random_products = ::Requests::ProductSearches.search_random_products(params[:q], search_criterias, params[:sortBy], params[:page])
             aggs = random_products.aggs
           end
 
-          products_search = (params[:sort_by] || params[:more] || params[:q]) ? random_products.map { |p| p } : highest_scored_products.concat(random_products.map { |p| p })
+          products_search = (params[:sortBy] || params[:more] || params[:q]) ? random_products.map { |p| p } : highest_scored_products.concat(random_products.map { |p| p })
 
           search = { products: products_search, aggs: aggs, page: random_products.options[:page] }
 
           response = ::Dto::V1::Product::Search::Response.create(search).to_h
 
+          set_cache!(response: response)
+
           render json: response, status: 200
         end
 
         private
+
+        def permitted_params
+          permitted_params = {}
+          permitted_params[:location] = params[:location]
+          permitted_params[:q] = params[:q]
+          permitted_params[:categories] = params[:categories]
+          permitted_params[:prices] = params[:prices]
+          permitted_params[:shared_products] = params[:sharedProducts]
+          permitted_params[:services] = params[:services]
+          permitted_params[:sort_by] = params[:sortBy]
+          permitted_params[:page] = params[:page]
+          permitted_params[:more] = params[:more].to_s
+          permitted_params
+        end
 
         def set_location
           raise ActionController::ParameterMissing.new('location') if params[:location].blank?

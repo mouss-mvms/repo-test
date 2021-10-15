@@ -1,7 +1,7 @@
 get '/product-jobs/:id', to: 'products/jobs#show', as: :product_job_status
 
 namespace :products do
-  resources :summaries, only: [:index] do
+  resources :summaries do
     post :search, on: :collection
   end
 end
