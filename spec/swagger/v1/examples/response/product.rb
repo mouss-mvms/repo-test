@@ -35,6 +35,7 @@ module V1
                 items: {
                   type: :object,
                   properties: {
+                    id: { type: :integer, example: 23, description: "Id of product's variant" },
                     basePrice: { type: :number, example: 44.99, description: "Price of product's variant" },
                     weight: { type: :number, example: 0.56, description: "Weight of product's variant (in Kg)" },
                     quantity: { type: :integer, example: 9, description: "Stock of product's variant" },
