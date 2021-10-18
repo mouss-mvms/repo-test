@@ -1396,6 +1396,27 @@
                               "value"
                             ]
                           }
+                        },
+                        "provider": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "example": "wynd",
+                              "name": "Name of the API Provider",
+                              "enum": [
+                                "wynd"
+                              ]
+                            },
+                            "externalVariantId": {
+                              "type": "string",
+                              "example": "33tr",
+                              "name": "ID of variant saved by the provider"
+                            }
+                          },
+                          "required": [
+                            "name"
+                          ]
                         }
                       },
                       "required": [
@@ -1420,6 +1441,27 @@
                     "type": "string",
                     "example": "Oeuf, sucre",
                     "description": "Composition of product. (This field is mandatory for some categories)"
+                  },
+                  "provider": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "example": "wynd",
+                        "name": "Name of the API Provider",
+                        "enum": [
+                          "wynd"
+                        ]
+                      },
+                      "externalProductId": {
+                        "type": "string",
+                        "example": "33tr",
+                        "name": "ID of product saved by the provider"
+                      }
+                    },
+                    "required": [
+                      "name"
+                    ]
                   }
                 },
                 "required": [
@@ -4405,7 +4447,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-staging"
+      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
     }
   ],
   "components": {

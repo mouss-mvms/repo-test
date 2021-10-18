@@ -72,6 +72,14 @@ module Api
       end
 
       def update_offline
+        if product_params[:provider] && product_params[:provider][:name] == 'wynd'
+          raise ActionController::ParameterMissing.new('provider.externalProductId') unless product_params[:provider][:external_product_id]
+        end
+        product_params[:variants].each do |variant|
+          if variant[:provider] && variant[:provider][:name] == 'wynd'
+            raise ActionController::ParameterMissing.new('variant.provider.externalVariantId') unless variant[:provider][:external_variant_id]
+          end
+        end
         dto_product_request = Dto::V1::Product::Request.new(product_params)
         product = Product.find(product_params[:id])
         category = Category.find(dto_product_request.category_id)
@@ -132,6 +140,11 @@ module Api
             characteristic[:value] = c.require(:value)
             hash[:characteristics] << characteristic
           }
+          if v[:provider]
+            hash[:provider] = {}
+            hash[:provider][:name] = v[:provider][:name] if params[:provider][:name]
+            hash[:provider][:external_product_id] = v[:provider][:externalVariantId] if v[:provider][:externalVariantId]
+          end
           product_params[:variants] << hash
         }
         if params[:provider]
