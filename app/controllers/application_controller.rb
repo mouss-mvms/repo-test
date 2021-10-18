@@ -4,11 +4,13 @@ class ApplicationController < ActionController::API
     UnpermittedParameter = Class.new(ActionController::ActionControllerError)
     InternalServerError = Class.new(ActionController::ActionControllerError)
     NotFound = Class.new(ActionController::ActionControllerError)
+    Conflict = Class.new(ActionController::ActionControllerError)
 
     rescue_from ActiveRecord::RecordNotFound, ApplicationController::NotFound, with: :render_record_not_found
     rescue_from ActionController::ParameterMissing, ApplicationController::UnpermittedParameter, ActionController::BadRequest, with: :render_bad_request
     rescue_from ApplicationController::Forbidden, with: :render_forbidden
     rescue_from ApplicationController::InternalServerError, with: :render_internal_server_error
+    rescue_from ApplicationController::Conflict, with: :render_conflict
     rescue_from ActiveRecord::RecordNotSaved, with: :render_internal_server_error
 
     def render_record_not_found(exception)
@@ -26,6 +28,12 @@ class ApplicationController < ActionController::API
     def render_forbidden(exception)
       Rails.logger.error(exception)
       error = Dto::Errors::Forbidden.new(exception.message)
+      return render json: error.to_h, status: error.status
+    end
+
+    def render_conflict(exception)
+      Rails.logger.error
+      error = Dto::Errors::Conflict.new(exception.message)
       return render json: error.to_h, status: error.status
     end
 

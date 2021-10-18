@@ -71,6 +71,26 @@ RSpec.describe Api::V1::BrandsController, type: :controller do
             should respond_with(403)
           end
         end
+
+        context "When brand name allready exists" do
+          it "It returns a 409 HTTP status" do
+            brand = create(:brand)
+            name_params = [
+              { name: 'rupture farms' },
+              { name: 'Rupture farms' },
+              { name: 'rupture Farms' },
+              { name: 'Rupture Farms' },
+            ]
+            request.headers['x-client-id'] = generate_token(create(:shop_employee_user))
+
+            expect(Brand.find_by(name: "Rupture Farms")).not_to be_nil
+            name_params.each do |name_param|
+              post :create, params: name_param
+              should respond_with(409)
+              expect(response.body).to eq(Dto::Errors::Conflict.new("A brand named '#{name_param[:name]}' already exists.}").to_h.to_json)
+            end
+          end
+        end
       end
     end
   end
