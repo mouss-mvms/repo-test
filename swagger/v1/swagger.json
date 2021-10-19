@@ -4226,7 +4226,150 @@
         }
       }
     },
-    "/api/v1/variants/{id}": {
+    "/api/v1/shops/summaries/search": {
+      "post": {
+        "summary": "List of shop summaries with filters",
+        "tags": [
+          "Shops"
+        ],
+        "description": "List of shop summaries with filters",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/ShopSearch"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "The syntax of the query is incorrect.",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Bad Request",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 400,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Resource not found",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Not found",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "location": {
+                    "type": "string",
+                    "example": "Bordeaux",
+                    "description": "Territory or city slug."
+                  },
+                  "q": {
+                    "type": "string",
+                    "example": "Chaussures",
+                    "description": "Query for search."
+                  },
+                  "categories": {
+                    "type": "string",
+                    "example": "homme",
+                    "description": "Categories slugs concatened with double \"_\" if more than one."
+                  },
+                  "services": {
+                    "type": "string",
+                    "example": "livraison-par-la-poste__livraison-france-metropolitaine",
+                    "description": "Service slugs concatened with double \"_\" if more than one."
+                  },
+                  "sort_by": {
+                    "type": "string",
+                    "enum": [
+                      "price-asc",
+                      "price-desc",
+                      "newest"
+                    ]
+                  },
+                  "page": {
+                    "type": "string",
+                    "example": "1",
+                    "description": "Search page number."
+                  },
+                  "more": {
+                    "type": "boolean",
+                    "description": "Increase research perimeter scope"
+                  },
+                  "name": "perimeter",
+                  "in": "query",
+                  "schema": {
+                    "type": "string",
+                    "enum": [
+                      "around_me",
+                      "all"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/variants/{id}": {
       "parameters": [
         {
           "name": "id",
@@ -4236,9 +4379,17 @@
           "schema": {
             "type": "integer"
           }
+        },
+        {
+          "name": "x-client-id",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
         }
       ],
-      "put": {
+      "patch": {
         "summary": "Update a variant",
         "tags": [
           "Variants"
@@ -4250,6 +4401,9 @@
 
             ]
           }
+        ],
+        "parameters": [
+
         ],
         "responses": {
           "200": {
@@ -4425,13 +4579,92 @@
               }
             }
           }
+        },
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "basePrice": {
+                    "type": "number",
+                    "example": 44.99,
+                    "description": "Price of product's variant"
+                  },
+                  "weight": {
+                    "type": "number",
+                    "example": 0.56,
+                    "description": "Weight of product's variant (in Kg)"
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "example": 9,
+                    "description": "Stock of product's variant"
+                  },
+                  "isDefault": {
+                    "type": "boolean",
+                    "example": true,
+                    "description": "Tell if this variant is the product's default variant"
+                  },
+                  "goodDeal": {
+                    "type": "object",
+                    "description": "Set a good deal for the variant",
+                    "properties": {
+                      "startAt": {
+                        "type": "string",
+                        "example": "20/07/2021",
+                        "description": "Date of start of good deal"
+                      },
+                      "endAt": {
+                        "type": "string",
+                        "example": "27/07/2021",
+                        "description": "Date of end of good deal"
+                      },
+                      "discount": {
+                        "type": "integer",
+                        "example": 45,
+                        "description": "Amount of discount (in %)"
+                      }
+                    }
+                  },
+                  "characteristics": {
+                    "type": "array",
+                    "description": "Set the characteristics of variant",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "example": "color",
+                          "description": "Name of characteristic"
+                        },
+                        "value": {
+                          "type": "string",
+                          "example": "Bleu",
+                          "description": "Value of characteristic"
+                        }
+                      }
+                    }
+                  },
+                  "files": {
+                    "type": "array",
+                    "description": "Variant's pictures",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     }
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {
