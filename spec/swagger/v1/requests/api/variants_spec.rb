@@ -3,7 +3,7 @@ require 'swagger_helper'
 RSpec.describe 'api/v1/variants', swagger_doc: 'v1/swagger.json', type: :request do
   path '/api/v1/auth/variants/{id}' do
     parameter name: 'id', in: :path, type: :integer, description: 'Unique identifier of the variant of a product.'
-    parameter name: 'x-client-id', in: :header, type: :string
+    parameter name: 'x-client-id', in: :header, type: :string, required: true
 
     patch('Update a variant') do
       tags 'Variants'
@@ -12,7 +12,7 @@ RSpec.describe 'api/v1/variants', swagger_doc: 'v1/swagger.json', type: :request
       description 'Return the variant updated'
       security [{ authorization: [] }]
 
-      parameter name: :file, in: :body, content: 'multipart/form-data', schema: {
+      parameter name: :variant, in: :body, content: :formData, schema: {
         type: :object,
         properties: {
           basePrice: { type: :number, example: 44.99, description: "Price of product's variant" },
@@ -21,6 +21,7 @@ RSpec.describe 'api/v1/variants', swagger_doc: 'v1/swagger.json', type: :request
           isDefault: { type: :boolean, example: true, description: "Tell if this variant is the product's default variant" },
           goodDeal: {
             type: :object,
+            description: 'Set a good deal for the variant',
             properties: {
               startAt: { type: :string, example: "20/07/2021", description: "Date of start of good deal" },
               endAt: { type: :string, example: "27/07/2021", description: "Date of end of good deal" },
@@ -29,6 +30,7 @@ RSpec.describe 'api/v1/variants', swagger_doc: 'v1/swagger.json', type: :request
           },
           characteristics: {
             type: :array,
+            description: 'Set the characteristics of variant',
             items: {
               type: :object,
               properties: {
@@ -39,9 +41,10 @@ RSpec.describe 'api/v1/variants', swagger_doc: 'v1/swagger.json', type: :request
           },
           files: {
             type: :array,
+            description: "Variant's pictures",
             items: {
-              type: 'string',
-              format: 'binary'
+              type: :string,
+              format: :binary
             }
           }
         }
