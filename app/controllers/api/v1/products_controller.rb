@@ -113,7 +113,7 @@ module Api
         product_params[:seller_advice] = params.require(:sellerAdvice)
         product_params[:is_service] = params.require(:isService)
         product_params[:citizen_advice] = params.permit(:citizenAdvice).values.first
-        product_params[:image_urls] = params[:imageUrls]
+        #product_params[:image_urls] = params[:imageUrls]
         product_params[:category_id] = params.require(:categoryId)
         product_params[:shop_id] = params[:shopId].to_i if params[:shopId]
         product_params[:allergens] = params[:allergens]
