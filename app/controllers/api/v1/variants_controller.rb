@@ -7,7 +7,7 @@ module Api
       before_action :check_authorization
 
       def update
-        if params[:files]
+        if params[:files].present?
           params[:files].each do |file|
             raise ApplicationController::UnpermittedParameter.new("Incorrect file format") unless file.is_a?(ActionDispatch::Http::UploadedFile)
             image_dto = Dto::V1::Image::Request.create(image: file)
@@ -15,12 +15,12 @@ module Api
             @reference.sample.images << image
           end
         end
-        @reference.base_price = variant_params[:base_price] if variant_params[:base_price]
-        @reference.weight = variant_params[:weight] if variant_params[:weight]
-        @reference.quantity = variant_params[:quantity] if variant_params[:quantity]
-        @reference.sample.default = variant_params[:is_default] if variant_params[:is_default]
-        @reference.good_deal.update(variant_params[:good_deal]) if variant_params[:good_deal]
-        update_characteristics if params[:characteristics]
+        @reference.base_price = variant_params[:base_price] if variant_params[:base_price].present?
+        @reference.weight = variant_params[:weight] if variant_params[:weight].present?
+        @reference.quantity = variant_params[:quantity] if variant_params[:quantity].present?
+        @reference.sample.default = variant_params[:is_default] if variant_params[:is_default].present?
+        @reference.good_deal.update(variant_params[:good_deal]) if variant_params[:good_deal].present?
+        update_characteristics if params[:characteristics].present?
         @reference.save!
 
         variant = Dto::V1::Variant::Response.create(@reference)
@@ -37,14 +37,14 @@ module Api
           hash[:quantity] = params[:quantity]
           hash[:is_default] = params[:isDefault]
           hash[:image_urls] = params[:imageUrls]
-          if params[:goodDeal]
+          if params[:goodDeal].present?
             hash[:good_deal] = {}
             hash[:good_deal][:starts_at] = params[:goodDeal].require(:startAt)
             hash[:good_deal][:ends_at] = params[:goodDeal].require(:endAt)
             hash[:good_deal][:discount] = params[:goodDeal].require(:discount)
           end
           hash[:characteristics] = []
-          if params[:characteristics]
+          if params[:characteristics].present?
             params.require(:characteristics).each { |c|
               characteristic = {}
               characteristic[:name] = c.require(:name)
