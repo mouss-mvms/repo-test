@@ -34,60 +34,6 @@
                 }
               }
             }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "detail": {
-                      "type": "string",
-                      "example": "The syntax of the query is incorrect.",
-                      "description": "Message of an error."
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Bad Request",
-                      "description": "Display description error."
-                    },
-                    "status": {
-                      "type": "integer",
-                      "example": 400,
-                      "description": "Status of an error."
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "detail": {
-                      "type": "string",
-                      "example": "Resource not found",
-                      "description": "Message of an error."
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Not found",
-                      "description": "Display description error."
-                    },
-                    "status": {
-                      "type": "integer",
-                      "example": 404,
-                      "description": "Status of an error."
-                    }
-                  }
-                }
-              }
-            }
           }
         },
         "requestBody": {
@@ -610,20 +556,6 @@
                     "type": "integer",
                     "example": 453,
                     "description": "Shop id of product"
-                  },
-                  "imageUrls": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": [
-                      "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr",
-                      "https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg"
-                    ],
-                    "default": [
-
-                    ],
-                    "description": "List of product images urls"
                   },
                   "variants": {
                     "type": "array",
@@ -1396,6 +1328,27 @@
                               "value"
                             ]
                           }
+                        },
+                        "provider": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "example": "wynd",
+                              "name": "Name of the API Provider",
+                              "enum": [
+                                "wynd"
+                              ]
+                            },
+                            "externalVariantId": {
+                              "type": "string",
+                              "example": "33tr",
+                              "name": "ID of variant saved by the provider"
+                            }
+                          },
+                          "required": [
+                            "name"
+                          ]
                         }
                       },
                       "required": [
@@ -1420,6 +1373,27 @@
                     "type": "string",
                     "example": "Oeuf, sucre",
                     "description": "Composition of product. (This field is mandatory for some categories)"
+                  },
+                  "provider": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "example": "wynd",
+                        "name": "Name of the API Provider",
+                        "enum": [
+                          "wynd"
+                        ]
+                      },
+                      "externalProductId": {
+                        "type": "string",
+                        "example": "33tr",
+                        "name": "ID of product saved by the provider"
+                      }
+                    },
+                    "required": [
+                      "name"
+                    ]
                   }
                 },
                 "required": [
@@ -3123,20 +3097,6 @@
                     "example": 453,
                     "description": "Shop id of product"
                   },
-                  "imageUrls": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": [
-                      "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr",
-                      "https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg"
-                    ],
-                    "default": [
-
-                    ],
-                    "description": "List of product images urls"
-                  },
                   "variants": {
                     "type": "array",
                     "items": {
@@ -4711,20 +4671,6 @@
           "category": {
             "$ref": "#/components/schemas/Category",
             "description": "Category of a product"
-          },
-          "imageUrls": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "example": [
-              "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr",
-              "https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg"
-            ],
-            "default": [
-
-            ],
-            "description": "List of product images urls"
           },
           "variants": {
             "type": "array",

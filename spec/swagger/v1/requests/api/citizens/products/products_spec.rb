@@ -49,6 +49,7 @@ RSpec.describe 'api/v1/citizens/products', swagger_doc: 'v1/swagger.json', type:
           citizenAdvice: { type: :string, example: 'Produit trouvé un commercant trop sympa', description: 'Advice from citizen of product' },
           categoryId: { type: :integer, example: 4, description: 'Category id of product' },
           shopId: { type: :integer, example: 453, description: 'Shop id of product' },
+=begin
           imageUrls: {
             type: 'array',
             items: {
@@ -61,6 +62,7 @@ RSpec.describe 'api/v1/citizens/products', swagger_doc: 'v1/swagger.json', type:
             default: [],
             description: 'List of product images urls'
           },
+=end
           variants: {
             type: :array,
             items: {

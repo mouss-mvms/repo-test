@@ -1105,6 +1105,106 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           end
         end
       end
+
+      context "In Provider" do
+        context 'If provider is wynd and externalProductId is missing in product' do
+          it 'should return 400 HTTP Status' do
+            product = create(:product)
+
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: product.category_id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+              provider: {
+                name: "wynd"
+              }
+            }
+
+            put :update_offline, params: update_params.merge(id: product.id)
+
+            expect(response).to have_http_status(:bad_request)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new('param is missing or the value is empty: provider.externalProductId').to_h.to_json)
+          end
+        end
+
+        context 'If provider is wynd and externalVariantId is missing a variant' do
+          it 'should return 400 HTTP Status' do
+            product = create(:product)
+
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: product.category_id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                  provider: {
+                    name: "wynd",
+                  }
+                },
+              ],
+              provider: {
+                name: "wynd",
+                externalProductId: "33tr"
+              }
+            }
+
+            put :update_offline, params: update_params.merge(id: product.id)
+
+            expect(response).to have_http_status(:bad_request)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new('param is missing or the value is empty: variant.provider.externalVariantId').to_h.to_json)
+          end
+        end
+      end
     end
   end
 

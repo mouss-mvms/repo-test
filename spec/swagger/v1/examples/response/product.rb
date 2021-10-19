@@ -18,6 +18,7 @@ module V1
                 '$ref': '#/components/schemas/Category',
                 description: 'Category of a product'
               },
+=begin
               imageUrls: {
                 type: 'array',
                 items: {
@@ -30,6 +31,7 @@ module V1
                 default: [],
                 description: 'List of product images urls'
               },
+=end
               variants: {
                 type: :array,
                 items: {
