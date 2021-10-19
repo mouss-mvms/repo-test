@@ -87,7 +87,7 @@ RSpec.describe Api::V1::BrandsController, type: :controller do
             name_params.each do |name_param|
               post :create, params: name_param
               should respond_with(409)
-              expect(response.body).to eq(Dto::Errors::Conflict.new("A brand named '#{name_param[:name]}' already exists.}").to_h.to_json)
+              expect(response.body).to eq(Dto::Errors::Conflict.new("A brand named '#{name_param[:name]}' already exists.").to_h.to_json)
             end
           end
         end
