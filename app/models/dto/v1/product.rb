@@ -19,9 +19,11 @@ module Dto
           end
         end
 
+=begin
         dto_product_request.image_urls.each do |image_url|
           Dto::V1::Product.set_image(object: product, image_url: image_url)
         end
+=end
 
         dto_product_request.variants.each do |dto_variant|
           sample = ::Sample.create!(name: dto_product_request.name, default: dto_variant.is_default, product_id: product.id)
