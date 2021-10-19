@@ -13,7 +13,7 @@ namespace :shops do
   get ":id/schedules", to: "schedules#index"
   get ":id/deliveries", to: "deliveries#index"
   get ":id/reviews", to: "reviews#index"
-  resources :summaries, only: [:index] do
+  resources :summaries do
     post :search, on: :collection
   end
 end

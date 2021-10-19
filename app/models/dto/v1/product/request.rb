@@ -2,7 +2,15 @@ module Dto
   module V1
     module Product
       class Request
-        attr_accessor :name, :slug, :category_id, :brand, :status, :seller_advice, :is_service, :description, :variants, :image_urls, :citizen_advice, :citizen_id, :shop_id, :origin, :composition, :allergens
+        class Provider
+          attr_accessor :name, :external_product_id
+
+          def initialize(name, external_product_id)
+            @name = name
+            @external_product_id = external_product_id
+          end
+        end
+        attr_accessor :name, :slug, :category_id, :brand, :status, :seller_advice, :is_service, :description, :variants, :image_urls, :citizen_advice, :citizen_id, :shop_id, :origin, :composition, :allergens, :provider
 
         def initialize(**args)
           @name = args[:name]
@@ -23,6 +31,9 @@ module Dto
           @origin = args[:origin]
           @allergens = args[:allergens]
           @composition = args[:composition]
+          if args[:provider]
+            @provider = Provider.new(args[:provider][:name], args[:provider][:external_product_id])
+          end
         end
 
         def to_h
@@ -42,7 +53,8 @@ module Dto
             citizen_id: @citizen_id,
             origin: @origin,
             allergens: @allergens,
-            composition: @composition
+            composition: @composition,
+            provider: @provider
           }
         end
       end

@@ -64,6 +64,10 @@ gem 'simple_token_authentication', '~>1.0'
 
 gem 'jwt'
 
+#Cache
+gem 'dalli'
+gem 'memcachier'
+
 source 'https://gem.fury.io/mvms/' do
-  gem 'mvms-core', '2.5.253'
+  gem 'mvms-core', '2.5.291'
 end

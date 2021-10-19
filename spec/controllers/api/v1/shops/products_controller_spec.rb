@@ -313,6 +313,1350 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
       end
     end
   end
+
+
+  describe "POST #create" do
+    context "For a shop's product" do
+      context "All ok" do
+        it "should return 202 HTTP Status with product created" do
+          shop = create(:shop)
+          create_params = {
+            name: "manteau MAC",
+            slug: "manteau-mac",
+            categoryId: create(:category).id,
+            brand: "3sixteen",
+            status: "online",
+            isService: true,
+            sellerAdvice: "pouet",
+            shopId: shop.id,
+            description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+            variants: [
+              {
+                basePrice: 379,
+                weight: 1,
+                quantity: 0,
+                imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                isDefault: false,
+                goodDeal: {
+                  startAt: "17/05/2021",
+                  endAt: "18/06/2021",
+                  discount: 20,
+                },
+                characteristics: [
+                  {
+                    value: "coloris black",
+                    name: "color",
+                  },
+                  {
+                    value: "S",
+                    name: "size",
+                  },
+                ],
+              },
+            ],
+          }
+          user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
+          user_shop_employee.shop_employee.shops << shop
+          user_shop_employee.shop_employee.save
+          request.headers["x-client-id"] = generate_token(user_shop_employee)
+          job_id = "10aad2e35138aa982e0d848a"
+          allow(Dao::Product).to receive(:create_async).and_return(job_id)
+          expect(Dao::Product).to receive(:create_async)
+          post :create, params: create_params
+          should respond_with(202)
+          expect(JSON.parse(response.body)["url"]).to eq(ENV["API_BASE_URL"] + api_v1_product_job_status_path(job_id))
+        end
+      end
+
+      context "Param incorrect" do
+        let(:user_shop_employee) { create(:shop_employee_user, email: "shop.employee7@ecity.fr") }
+
+        context "Shop id is missing" do
+          it "should return 400 HTTP status" do
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: create(:category).id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+            request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+            post :create, params: create_params
+
+            should respond_with(400)
+          end
+        end
+
+        context "Shop not found" do
+          it "should return 404 HTTP status" do
+            shop = create(:shop)
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: create(:category).id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              shopId: shop.id,
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+            user_shop_employee.shop_employee.shops << shop
+            user_shop_employee.shop_employee.save
+            Shop.destroy_all
+
+            request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+            post :create, params: create_params
+
+            should respond_with(404)
+          end
+        end
+
+        context "Category id is missing" do
+          it "should return 400 HTTP status" do
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              shopId: create(:shop).id,
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+            post :create, params: create_params
+
+            should respond_with(400)
+          end
+        end
+
+        context "Category not found" do
+          it "should return 404 HTTP Status" do
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              brand: "3sixteen",
+              status: "online",
+              categoryId: create(:category).id,
+              isService: true,
+              sellerAdvice: "pouet",
+              shopId: create(:shop).id,
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+            Product.all.each do |p|
+              p.category_id = nil
+              p.save
+            end
+            Category.delete_all
+
+            request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+            post :create, params: create_params
+
+            should respond_with(404)
+          end
+        end
+
+        context "Category is dry-fresh group" do
+          let(:category) { create(:category, group: "dry-food") }
+          context "Origin of product is missing" do
+            it "should return 400 HTTP Status" do
+              category = create(:category)
+              category.group = "dry-food"
+              category.save
+
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20,
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color",
+                      },
+                      {
+                        value: "S",
+                        name: "size",
+                      },
+                    ],
+                  },
+                ],
+              }
+
+              request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result["detail"]).to eq("origin and composition is required")
+            end
+          end
+
+          context "Composition of product is missing" do
+            it "should return 400 HTTP Status" do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20,
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color",
+                      },
+                      {
+                        value: "S",
+                        name: "size",
+                      },
+                    ],
+                  },
+                ],
+              }
+
+              request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result["detail"]).to eq("origin and composition is required")
+            end
+          end
+
+          context "Allergens of product is missing" do
+            it "should return 400 HTTP Status" do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                composition: "Tissu",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20,
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color",
+                      },
+                      {
+                        value: "S",
+                        name: "size",
+                      },
+                    ],
+                  },
+                ],
+              }
+
+              request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result["detail"]).to eq("allergens is required")
+            end
+          end
+        end
+        context "Category is fresh-food group" do
+          let(:category) { create(:category, group: "fresh-food") }
+          context "Origin of product is missing" do
+            it "should return 400 HTTP Status" do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20,
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color",
+                      },
+                      {
+                        value: "S",
+                        name: "size",
+                      },
+                    ],
+                  },
+                ],
+              }
+
+              request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result["detail"]).to eq("origin and composition is required")
+            end
+          end
+
+          context "Composition of product is missing" do
+            it "should return 400 HTTP Status" do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20,
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color",
+                      },
+                      {
+                        value: "S",
+                        name: "size",
+                      },
+                    ],
+                  },
+                ],
+              }
+
+              request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result["detail"]).to eq("origin and composition is required")
+            end
+          end
+
+          context "Allergens of product is missing" do
+            it "should return 400 HTTP Status" do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                composition: "Tissu",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20,
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color",
+                      },
+                      {
+                        value: "S",
+                        name: "size",
+                      },
+                    ],
+                  },
+                ],
+              }
+
+              request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result["detail"]).to eq("allergens is required")
+            end
+          end
+        end
+        context "Category is frozen-food group" do
+          let(:category) { create(:category, group: "frozen-food") }
+          context "Origin of product is missing" do
+            it "should return 400 HTTP Status" do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20,
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color",
+                      },
+                      {
+                        value: "S",
+                        name: "size",
+                      },
+                    ],
+                  },
+                ],
+              }
+
+              request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result["detail"]).to eq("origin and composition is required")
+            end
+          end
+
+          context "Composition of product is missing" do
+            it "should return 400 HTTP Status" do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20,
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color",
+                      },
+                      {
+                        value: "S",
+                        name: "size",
+                      },
+                    ],
+                  },
+                ],
+              }
+
+              request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result["detail"]).to eq("origin and composition is required")
+            end
+          end
+
+          context "Allergens of product is missing" do
+            it "should return 400 HTTP Status" do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                composition: "Tissu",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20,
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color",
+                      },
+                      {
+                        value: "S",
+                        name: "size",
+                      },
+                    ],
+                  },
+                ],
+              }
+
+              request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result["detail"]).to eq("allergens is required")
+            end
+          end
+        end
+        context "Category is alcohol group" do
+          let(:category) { create(:category, group: "alcohol") }
+
+          context "Origin of product is missing" do
+            it "should return 400 HTTP Status" do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20,
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color",
+                      },
+                      {
+                        value: "S",
+                        name: "size",
+                      },
+                    ],
+                  },
+                ],
+              }
+
+              request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result["detail"]).to eq("origin and composition is required")
+            end
+          end
+
+          context "Composition of product is missing" do
+            it "should return 400 HTTP Status" do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20,
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color",
+                      },
+                      {
+                        value: "S",
+                        name: "size",
+                      },
+                    ],
+                  },
+                ],
+              }
+
+              request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result["detail"]).to eq("origin and composition is required")
+            end
+          end
+
+          context "Allergens of product is missing" do
+            it "should return 400 HTTP Status" do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                composition: "Tissu",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20,
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color",
+                      },
+                      {
+                        value: "S",
+                        name: "size",
+                      },
+                    ],
+                  },
+                ],
+              }
+
+              request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result["detail"]).to eq("allergens is required")
+            end
+          end
+        end
+
+        context "Category is cosmetic group" do
+          let(:category) { create(:category, group: "cosmetic") }
+
+          context "Origin of product is missing" do
+            it "should return 400 HTTP Status" do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20,
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color",
+                      },
+                      {
+                        value: "S",
+                        name: "size",
+                      },
+                    ],
+                  },
+                ],
+              }
+
+              request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result["detail"]).to eq("origin and composition is required")
+            end
+          end
+
+          context "Composition of product is missing" do
+            it "should return 400 HTTP Status" do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20,
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color",
+                      },
+                      {
+                        value: "S",
+                        name: "size",
+                      },
+                    ],
+                  },
+                ],
+              }
+
+              request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result["detail"]).to eq("origin and composition is required")
+            end
+          end
+
+          context "Allergens of product is missing" do
+            it "should return 400 HTTP Status" do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                composition: "Tissu",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20,
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color",
+                      },
+                      {
+                        value: "S",
+                        name: "size",
+                      },
+                    ],
+                  },
+                ],
+              }
+
+              request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result["detail"]).to eq("allergens is required")
+            end
+          end
+        end
+        context "Category is food group" do
+          let(:category) { create(:category, group: "food") }
+          context "Origin of product is missing" do
+            it "should return 400 HTTP Status" do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20,
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color",
+                      },
+                      {
+                        value: "S",
+                        name: "size",
+                      },
+                    ],
+                  },
+                ],
+              }
+
+              request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result["detail"]).to eq("origin and composition is required")
+            end
+          end
+
+          context "Composition of product is missing" do
+            it "should return 400 HTTP Status" do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20,
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color",
+                      },
+                      {
+                        value: "S",
+                        name: "size",
+                      },
+                    ],
+                  },
+                ],
+              }
+
+              request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result["detail"]).to eq("origin and composition is required")
+            end
+          end
+
+          context "Allergens of product is missing" do
+            it "should return 400 HTTP Status" do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                composition: "Tissu",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20,
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color",
+                      },
+                      {
+                        value: "S",
+                        name: "size",
+                      },
+                    ],
+                  },
+                ],
+              }
+
+              request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result["detail"]).to eq("allergens is required")
+            end
+          end
+        end
+
+        context "Category is clothing group" do
+          let(:category) { create(:category, group: "clothing") }
+
+          context "Origin of product is missing" do
+            it "should return 400 HTTP Status" do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20,
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color",
+                      },
+                      {
+                        value: "S",
+                        name: "size",
+                      },
+                    ],
+                  },
+                ],
+              }
+
+              request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result["detail"]).to eq("origin and composition is required")
+            end
+          end
+
+          context "Composition of product is missing" do
+            it "should return 400 HTTP Status" do
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: category.id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                origin: "France",
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20,
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color",
+                      },
+                      {
+                        value: "S",
+                        name: "size",
+                      },
+                    ],
+                  },
+                ],
+              }
+
+              request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+              post :create, params: create_params
+
+              should respond_with(400)
+              result = JSON.parse(response.body)
+              expect(result["detail"]).to eq("origin and composition is required")
+            end
+          end
+        end
+      end
+
+      context "Bad authentication" do
+        context "x-client-id is missing" do
+          it "should return 401 HTTP status" do
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: create(:category).id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            post :create, params: create_params
+
+            should respond_with(401)
+          end
+        end
+
+        context "User is not a shop employee" do
+          it "should return 403 HTTP status" do
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: create(:category).id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+            user_customer_user = create(:customer_user, email: "shop.employee3@ecity.fr")
+
+            request.headers["x-client-id"] = generate_token(user_customer_user)
+
+            post :create, params: create_params
+
+            should respond_with(403)
+          end
+        end
+      end
+    end
+  end
 end
 
 

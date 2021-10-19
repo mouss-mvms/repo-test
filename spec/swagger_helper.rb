@@ -6,7 +6,7 @@
   end
 end
 
-%w[products shops searches].each do |folder|
+%w[brands products shops searches].each do |folder|
   Dir["./spec/swagger/v*/examples/response/#{folder}/*.rb"].sort.each do |f|
     require f
   end
@@ -53,6 +53,8 @@ RSpec.configure do |config|
         },
         schemas: {
           Address: V1::Examples::Response::Address.to_h,
+          BrandSummary: V1::Examples::Response::BrandSummary.to_h,
+          BrandSearch: V1::Examples::Response::Brands::Search.to_h,
           Category: V1::Examples::Response::Category.to_h,
           Characteristic: V1::Examples::Response::Characteristics.to_h,
           Delivery: V1::Examples::Response::Delivery.to_h,

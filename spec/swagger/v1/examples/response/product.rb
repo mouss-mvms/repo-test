@@ -18,6 +18,7 @@ module V1
                 '$ref': '#/components/schemas/Category',
                 description: 'Category of a product'
               },
+=begin
               imageUrls: {
                 type: 'array',
                 items: {
@@ -30,11 +31,13 @@ module V1
                 default: [],
                 description: 'List of product images urls'
               },
+=end
               variants: {
                 type: :array,
                 items: {
                   type: :object,
                   properties: {
+                    id: { type: :integer, example: 23, description: "Id of product's variant" },
                     basePrice: { type: :number, example: 44.99, description: "Price of product's variant" },
                     weight: { type: :number, example: 0.56, description: "Weight of product's variant (in Kg)" },
                     quantity: { type: :integer, example: 9, description: "Stock of product's variant" },
@@ -65,7 +68,15 @@ module V1
               },
               origin: { type: :string, example: 'France', description: 'Origin of product. (This field is mandatory for some categories)' },
               allergens: { type: :string, example: 'Contient des traces de fruit à coques', description: 'Advice of potencial allergens. (This field is mandatory for some categories)' },
-              composition: { type: :string, example: 'Oeuf, sucre', description: 'Composition of product. (This field is mandatory for some categories)' }
+              composition: { type: :string, example: 'Oeuf, sucre', description: 'Composition of product. (This field is mandatory for some categories)' },
+              provider: {
+                type: :object,
+                properties: {
+                  name: { type: :string, example: 'wynd', description: 'Name of provider' },
+                  externalProductId: { type: :string, example: '33ur', description: 'Id used by the provider' }
+                },
+                required: %w[name, externalProductId]
+              }
             },
           }
         end
