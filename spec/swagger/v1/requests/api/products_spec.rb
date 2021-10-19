@@ -51,6 +51,14 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
                     },
                     required: %w[name, value]
                   }
+                },
+                provider: {
+                  type: :object,
+                  properties: {
+                    name: { type: :string, example: 'wynd', name: 'Name of the API Provider', enum: ['wynd'] },
+                    externalVariantId: { type: :string, example: '33tr', name: 'ID of variant saved by the provider' }
+                  },
+                  required: %w[name]
                 }
               },
               required: %w[basePrice, weight, quantity, isDefault]
@@ -58,7 +66,15 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
           },
           origin: { type: :string, example: 'France', description: 'Origin of product. (This field is mandatory for some categories)' },
           allergens: { type: :string, example: 'Contient des traces de fruit à coques', description: 'Advice of potencial allergens. (This field is mandatory for some categories)' },
-          composition: { type: :string, example: 'Oeuf, sucre', description: 'Composition of product. (This field is mandatory for some categories)' }
+          composition: { type: :string, example: 'Oeuf, sucre', description: 'Composition of product. (This field is mandatory for some categories)' },
+          provider: {
+            type: :object,
+            properties: {
+              name: { type: :string, example: 'wynd', name: 'Name of the API Provider', enum: ['wynd'] },
+              externalProductId: { type: :string, example: '33tr', name: 'ID of product saved by the provider' }
+            },
+            required: %w[name]
+          }
         },
         required: %w[id, name, description, brand, status, sellerAdvice, isService, categoryId, variants, characteristics]
       }

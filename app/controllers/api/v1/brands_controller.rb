@@ -14,6 +14,8 @@ module Api
       private
 
       def brand_params
+        raise ApplicationController::Conflict.new("A brand named '#{params[:name]}' already exists.") if params[:name] && Brand.where('LOWER(name) LIKE ?', "#{params[:name].downcase}").present?
+
         brand_params = {}
         brand_params[:name] = params.require(:name)
         brand_params

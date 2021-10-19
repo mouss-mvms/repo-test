@@ -6,6 +6,65 @@
     "description": "Ma Ville Mon Shopping Catalog API"
   },
   "paths": {
+    "/api/v1/brands/summaries/search": {
+      "post": {
+        "summary": "Return brand-summaries list.",
+        "tags": [
+          "Brands"
+        ],
+        "description": "Return brand-summaries list",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/BrandSearch"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "q": {
+                    "type": "string",
+                    "example": "rebok",
+                    "description": "Query for search."
+                  },
+                  "sortBy": {
+                    "type": "string",
+                    "enum": [
+                      "products-count"
+                    ]
+                  },
+                  "page": {
+                    "type": "string",
+                    "example": "2",
+                    "description": "Search page number."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/auth/brands": {
       "parameters": [
         {
@@ -156,6 +215,17 @@
       }
     },
     "/api/v1/categories": {
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "description": "Desired page.",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
       "get": {
         "summary": "list categories",
         "tags": [
@@ -175,9 +245,37 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Category"
+                  "type": "object",
+                  "properties": {
+                    "categories": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "integer",
+                            "example": 1,
+                            "description": "Unique identifier of a category."
+                          },
+                          "name": {
+                            "type": "string",
+                            "example": "Mobilier extérieur",
+                            "description": "Display name of a category."
+                          },
+                          "children": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/Category"
+                            },
+                            "description": "List of children category."
+                          }
+                        }
+                      }
+                    },
+                    "page": {
+                      "type": "string",
+                      "example": 1
+                    }
                   }
                 }
               }
@@ -458,20 +556,6 @@
                     "type": "integer",
                     "example": 453,
                     "description": "Shop id of product"
-                  },
-                  "imageUrls": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": [
-                      "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr",
-                      "https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg"
-                    ],
-                    "default": [
-
-                    ],
-                    "description": "List of product images urls"
                   },
                   "variants": {
                     "type": "array",
@@ -942,132 +1026,6 @@
         }
       }
     },
-    "/api/v1/products/summaries": {
-      "get": {
-        "summary": "Return product-summaries list",
-        "tags": [
-          "Products"
-        ],
-        "description": "Return product-summaries list",
-        "security": [
-          {
-            "authorization": [
-
-            ]
-          }
-        ],
-        "parameters": [
-          {
-            "name": "location",
-            "in": "query",
-            "description": "Territory or city slug.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "q",
-            "in": "query",
-            "description": "Query for search.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "categories",
-            "in": "query",
-            "description": "Categories slugs concatened with double \"_\" if more than one.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "prices",
-            "in": "query",
-            "description": "Prices range",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "services",
-            "in": "query",
-            "description": "Service slugs concatened with double \"_\" if more than one.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "sort_by",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "price-asc",
-                "price-desc",
-                "newest"
-              ]
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "description": "Search page number.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "more",
-            "in": "query",
-            "description": "Increase research perimeter scope",
-            "schema": {
-              "type": "boolean"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "successful",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/ProductSummary"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "detail": {
-                      "type": "string",
-                      "example": "The syntax of the query is incorrect.",
-                      "description": "Message of an error."
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Bad Request",
-                      "description": "Display description error."
-                    },
-                    "status": {
-                      "type": "integer",
-                      "example": 400,
-                      "description": "Status of an error."
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v1/products/summaries/search": {
       "post": {
         "summary": "Return product-summaries list with filters",
@@ -1106,7 +1064,7 @@
                 "properties": {
                   "location": {
                     "type": "string",
-                    "example": "Bordeaux",
+                    "example": "bordeaux",
                     "description": "Territory or city slug."
                   },
                   "q": {
@@ -1124,12 +1082,17 @@
                     "example": "1__100",
                     "description": "Prices range"
                   },
+                  "sharedProducts": {
+                    "type": "boolean",
+                    "description": "Only shared products",
+                    "example": false
+                  },
                   "services": {
                     "type": "string",
                     "example": "livraison-par-la-poste__livraison-france-metropolitaine",
                     "description": "Service slugs concatened with double \"_\" if more than one."
                   },
-                  "sort_by": {
+                  "sortBy": {
                     "type": "string",
                     "enum": [
                       "price-asc",
@@ -1372,6 +1335,27 @@
                               "value"
                             ]
                           }
+                        },
+                        "provider": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "example": "wynd",
+                              "name": "Name of the API Provider",
+                              "enum": [
+                                "wynd"
+                              ]
+                            },
+                            "externalVariantId": {
+                              "type": "string",
+                              "example": "33tr",
+                              "name": "ID of variant saved by the provider"
+                            }
+                          },
+                          "required": [
+                            "name"
+                          ]
                         }
                       },
                       "required": [
@@ -1396,6 +1380,27 @@
                     "type": "string",
                     "example": "Oeuf, sucre",
                     "description": "Composition of product. (This field is mandatory for some categories)"
+                  },
+                  "provider": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "example": "wynd",
+                        "name": "Name of the API Provider",
+                        "enum": [
+                          "wynd"
+                        ]
+                      },
+                      "externalProductId": {
+                        "type": "string",
+                        "example": "33tr",
+                        "name": "ID of product saved by the provider"
+                      }
+                    },
+                    "required": [
+                      "name"
+                    ]
                   }
                 },
                 "required": [
@@ -3099,20 +3104,6 @@
                     "example": 453,
                     "description": "Shop id of product"
                   },
-                  "imageUrls": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "example": [
-                      "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr",
-                      "https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg"
-                    ],
-                    "default": [
-
-                    ],
-                    "description": "List of product images urls"
-                  },
                   "variants": {
                     "type": "array",
                     "items": {
@@ -3762,304 +3753,6 @@
                       "example": "20:00",
                       "description": "Close afternoon time"
                     }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/shops/summaries": {
-      "parameters": [
-        {
-          "name": "location",
-          "in": "query",
-          "required": true,
-          "description": "Territory or city slug",
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
-          "name": "q",
-          "in": "query",
-          "description": "Query for search.",
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
-          "name": "categories",
-          "in": "query",
-          "description": "Categories slugs concatened with double \"_\" if more than one",
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
-          "name": "page",
-          "in": "query",
-          "description": "Number of the researches page",
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
-          "name": "fields[]",
-          "in": "query",
-          "description": "Return only the fields requested",
-          "schema": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          }
-        },
-        {
-          "name": "perimeter",
-          "in": "query",
-          "schema": {
-            "type": "string",
-            "enum": [
-              "around_me",
-              "all"
-            ]
-          }
-        },
-        {
-          "name": "more",
-          "in": "query",
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
-          "name": "services",
-          "in": "query",
-          "description": "Services slugs concatened with double \"_\" if more than one",
-          "schema": {
-            "type": "string"
-          }
-        }
-      ],
-      "get": {
-        "summary": "List of shop summaries",
-        "tags": [
-          "Shops"
-        ],
-        "description": "List of shop summaries",
-        "security": [
-          {
-            "authorization": [
-
-            ]
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/ShopSummary"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "detail": {
-                      "type": "string",
-                      "example": "The syntax of the query is incorrect.",
-                      "description": "Message of an error."
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Bad Request",
-                      "description": "Display description error."
-                    },
-                    "status": {
-                      "type": "integer",
-                      "example": 400,
-                      "description": "Status of an error."
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "detail": {
-                      "type": "string",
-                      "example": "Resource not found",
-                      "description": "Message of an error."
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Not found",
-                      "description": "Display description error."
-                    },
-                    "status": {
-                      "type": "integer",
-                      "example": 404,
-                      "description": "Status of an error."
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/shops/summaries/search": {
-      "post": {
-        "summary": "List of shop summaries with filters",
-        "tags": [
-          "Shops"
-        ],
-        "description": "List of shop summaries with filters",
-        "security": [
-          {
-            "authorization": [
-
-            ]
-          }
-        ],
-        "parameters": [
-
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "$ref": "#/components/schemas/ShopSearch"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "detail": {
-                      "type": "string",
-                      "example": "The syntax of the query is incorrect.",
-                      "description": "Message of an error."
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Bad Request",
-                      "description": "Display description error."
-                    },
-                    "status": {
-                      "type": "integer",
-                      "example": 400,
-                      "description": "Status of an error."
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "detail": {
-                      "type": "string",
-                      "example": "Resource not found",
-                      "description": "Message of an error."
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Not found",
-                      "description": "Display description error."
-                    },
-                    "status": {
-                      "type": "integer",
-                      "example": 404,
-                      "description": "Status of an error."
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "location": {
-                    "type": "string",
-                    "example": "Bordeaux",
-                    "description": "Territory or city slug."
-                  },
-                  "q": {
-                    "type": "string",
-                    "example": "Chaussures",
-                    "description": "Query for search."
-                  },
-                  "categories": {
-                    "type": "string",
-                    "example": "homme",
-                    "description": "Categories slugs concatened with double \"_\" if more than one."
-                  },
-                  "services": {
-                    "type": "string",
-                    "example": "livraison-par-la-poste__livraison-france-metropolitaine",
-                    "description": "Service slugs concatened with double \"_\" if more than one."
-                  },
-                  "sort_by": {
-                    "type": "string",
-                    "enum": [
-                      "price-asc",
-                      "price-desc",
-                      "newest"
-                    ]
-                  },
-                  "page": {
-                    "type": "string",
-                    "example": "1",
-                    "description": "Search page number."
-                  },
-                  "more": {
-                    "type": "boolean",
-                    "description": "Increase research perimeter scope"
-                  },
-                  "name": "perimeter",
-                  "in": "query",
-                  "schema": {
-                    "type": "string",
-                    "enum": [
-                      "around_me",
-                      "all"
-                    ]
                   }
                 }
               }
@@ -4795,6 +4488,85 @@
           }
         }
       },
+      "BrandSummary": {
+        "type": "object",
+        "properties": {
+          "_index": {
+            "type": "string",
+            "example": "brands_v1_20210315162727103"
+          },
+          "_id": {
+            "type": "string",
+            "example": "21034"
+          },
+          "_type": {
+            "type": "string",
+            "example": "_doc"
+          },
+          "_score": {
+            "type": "number",
+            "example": 0.9976985
+          },
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Rebok"
+          },
+          "products_count": {
+            "type": "integer",
+            "example": 61
+          }
+        }
+      },
+      "BrandSearch": {
+        "type": "object",
+        "properties": {
+          "brands": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "_index": {
+                  "type": "string",
+                  "example": "brands_v1_20210315162727103"
+                },
+                "_id": {
+                  "type": "string",
+                  "example": "21034"
+                },
+                "_type": {
+                  "type": "string",
+                  "example": "_doc"
+                },
+                "_score": {
+                  "type": "number",
+                  "example": 0.9976985
+                },
+                "id": {
+                  "type": "integer",
+                  "example": 1
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Rebok"
+                },
+                "products_count": {
+                  "type": "integer",
+                  "example": 61
+                }
+              }
+            }
+          },
+          "page": {
+            "type": "string",
+            "description": "Search page number.",
+            "example": "2"
+          }
+        }
+      },
       "Category": {
         "type": "object",
         "properties": {
@@ -4966,25 +4738,16 @@
             "$ref": "#/components/schemas/Category",
             "description": "Category of a product"
           },
-          "imageUrls": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "example": [
-              "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr",
-              "https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg"
-            ],
-            "default": [
-
-            ],
-            "description": "List of product images urls"
-          },
           "variants": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
+                "id": {
+                  "type": "integer",
+                  "example": 23,
+                  "description": "Id of product's variant"
+                },
                 "basePrice": {
                   "type": "number",
                   "example": 44.99,
