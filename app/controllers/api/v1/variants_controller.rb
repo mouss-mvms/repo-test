@@ -30,31 +30,32 @@ module Api
       private
 
       def variant_params
-          hash = {}
-          hash[:id] = params.require(:id)
-          hash[:base_price] = params[:basePrice]
-          hash[:weight] = params[:weight]
-          hash[:quantity] = params[:quantity]
-          hash[:is_default] = params[:isDefault]
-          hash[:image_urls] = params[:imageUrls]
+          return @hash if @hash
+          @hash = {}
+          @hash[:id] = params.require(:id)
+          @hash[:base_price] = params[:basePrice]
+          @hash[:weight] = params[:weight]
+          @hash[:quantity] = params[:quantity]
+          @hash[:is_default] = params[:isDefault]
+          @hash[:image_urls] = params[:imageUrls]
           if params[:goodDeal].present?
             good_deal_params = ActionController::Parameters.new(JSON.parse(params[:goodDeal]))
-            hash[:good_deal] = {}
-            hash[:good_deal][:starts_at] = good_deal_params.require(:startAt)
-            hash[:good_deal][:ends_at] = good_deal_params.require(:endAt)
-            hash[:good_deal][:discount] = good_deal_params.require(:discount)
+            @hash[:good_deal] = {}
+            @hash[:good_deal][:starts_at] = good_deal_params.require(:startAt)
+            @hash[:good_deal][:ends_at] = good_deal_params.require(:endAt)
+            @hash[:good_deal][:discount] = good_deal_params.require(:discount)
           end
-          hash[:characteristics] = []
+          @hash[:characteristics] = []
           if params[:characteristics].present?
             JSON.parse(params[:characteristics]).each { |c|
               characteristic_params = ActionController::Parameters.new(c)
               characteristic = {}
               characteristic[:name] = characteristic_params.require(:name)
               characteristic[:value] = characteristic_params.require(:value)
-              hash[:characteristics] << characteristic
+              @hash[:characteristics] << characteristic
             }
           end
-          hash
+          @hash
       end
 
       def check_authorization
@@ -79,10 +80,6 @@ module Api
         @reference.color_id = color_characteristic ? ::Color.where(name: color_characteristic[:value]).first_or_create.id : nil
         @reference.size_id = size_characteristic ? ::Size.where(name: size_characteristic[:value]).first_or_create.id : nil
         @reference
-      end
-
-      def set_image
-
       end
     end
   end
