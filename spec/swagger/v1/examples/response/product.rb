@@ -34,37 +34,7 @@ module V1
 =end
               variants: {
                 type: :array,
-                items: {
-                  type: :object,
-                  properties: {
-                    id: { type: :integer, example: 23, description: "Id of product's variant" },
-                    basePrice: { type: :number, example: 44.99, description: "Price of product's variant" },
-                    weight: { type: :number, example: 0.56, description: "Weight of product's variant (in Kg)" },
-                    quantity: { type: :integer, example: 9, description: "Stock of product's variant" },
-                    isDefault: { type: :boolean, example: true, description: "Tell if this variant is the product's default variant" },
-                    goodDeal: {
-                      type: :object,
-                      properties: {
-                        startAt: { type: :string, example: "20/07/2021", description: "Date of start of good deal" },
-                        endAt: { type: :string, example: "27/07/2021", description: "Date of end of good deal" },
-                        discount: { type: :integer, example: 45, description: "Amount of discount (in %)" }
-                      },
-                      required: %w[startAt, endAt, discount]
-                    },
-                    characteristics: {
-                      type: :array,
-                      items: {
-                        type: :object,
-                        properties: {
-                          name: { type: :string, example: 'color', description: 'Name of characteristic' },
-                          value: { type: :string, example: 'Bleu', description: 'Value of characteristic' }
-                        },
-                        required: %w[name, value]
-                      }
-                    }
-                  },
-                  required: %w[basePrice, weight, quantity, isDefault]
-                }
+                items: { '$ref': '#/components/schemas/Variant' }
               },
               origin: { type: :string, example: 'France', description: 'Origin of product. (This field is mandatory for some categories)' },
               allergens: { type: :string, example: 'Contient des traces de fruit à coques', description: 'Advice of potencial allergens. (This field is mandatory for some categories)' },
