@@ -13,7 +13,6 @@ RSpec.describe Api::V1::VariantsController, type: :controller do
           user_shop_employee.shop_employee.shops << product.shop
           user_shop_employee.shop_employee.save
           request.headers["x-client-id"] = generate_token(user_shop_employee)
-          request.headers["CONTENT_TYPE"] = 'application/x-www-form-urlencoded'
           request.env["CONTENT_TYPE"] = "multipart/form-data"
           uploaded_file = fixture_file_upload(Rails.root.join("spec/fixtures/files/images/harry-and-marv.jpg"), 'image/jpeg')
           body = { id: reference.id, files: [uploaded_file],
