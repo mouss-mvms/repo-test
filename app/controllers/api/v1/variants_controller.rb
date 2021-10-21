@@ -9,6 +9,7 @@ module Api
       def update
         if params[:files].present?
           params[:files].each do |file|
+            next if file.blank?
             raise ApplicationController::UnpermittedParameter.new("Incorrect file format") unless file.is_a?(ActionDispatch::Http::UploadedFile)
             image_dto = Dto::V1::Image::Request.create(image: file)
             image = ::Image.create!(file: image_dto.tempfile)
@@ -19,7 +20,13 @@ module Api
         @reference.weight = variant_params[:weight] if variant_params[:weight].present?
         @reference.quantity = variant_params[:quantity] if variant_params[:quantity].present?
         @reference.sample.default = variant_params[:is_default] if variant_params[:is_default].present?
-        @reference.good_deal.update(variant_params[:good_deal]) if variant_params[:good_deal].present?
+        if variant_params[:good_deal].present?
+          if @reference.good_deal
+            @reference.good_deal.update(variant_params[:good_deal])
+          else
+            @reference.good_deal = GoodDeal.new(variant_params[:good_deal])
+          end
+        end
         update_characteristics if params[:characteristics].present?
         @reference.save!
 
@@ -37,8 +44,7 @@ module Api
           @hash[:weight] = params[:weight]
           @hash[:quantity] = params[:quantity]
           @hash[:is_default] = params[:isDefault]
-          @hash[:image_urls] = params[:imageUrls]
-          if params[:goodDeal].present?
+          if params[:goodDeal].present? && !params[:characteristics].blank?
             good_deal_params = ActionController::Parameters.new(JSON.parse(params[:goodDeal]))
             @hash[:good_deal] = {}
             @hash[:good_deal][:starts_at] = good_deal_params.require(:startAt)
