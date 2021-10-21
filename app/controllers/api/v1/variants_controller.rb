@@ -44,7 +44,7 @@ module Api
           @hash[:weight] = params[:weight]
           @hash[:quantity] = params[:quantity]
           @hash[:is_default] = params[:isDefault]
-          if params[:goodDeal].present? && !params[:characteristics].blank?
+          if params[:goodDeal].present? && !params[:goodDeal].blank?
             good_deal_params = ActionController::Parameters.new(JSON.parse(params[:goodDeal]))
             @hash[:good_deal] = {}
             @hash[:good_deal][:starts_at] = good_deal_params.require(:startAt)

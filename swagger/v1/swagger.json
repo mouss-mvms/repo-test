@@ -4628,21 +4628,18 @@
                     }
                   },
                   "characteristics": {
-                    "type": "array",
-                    "description": "Set the characteristics of variant",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "name": {
-                          "type": "string",
-                          "example": "color",
-                          "description": "Name of characteristic"
-                        },
-                        "value": {
-                          "type": "string",
-                          "example": "Bleu",
-                          "description": "Value of characteristic"
-                        }
+                    "type": "object",
+                    "description": "Set the characteristics of variant (Set as an array)",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "example": "color",
+                        "description": "Name of characteristic"
+                      },
+                      "value": {
+                        "type": "string",
+                        "example": "Bleu",
+                        "description": "Value of characteristic"
                       }
                     }
                   },
