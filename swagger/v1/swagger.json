@@ -70,6 +70,7 @@
         {
           "name": "X-client-id",
           "in": "header",
+          "required": true,
           "schema": {
             "type": "string"
           }
@@ -207,7 +208,10 @@
                     "example": "Rebok",
                     "description": "Name of brand."
                   }
-                }
+                },
+                "required": [
+                  "name"
+                ]
               }
             }
           }
@@ -385,6 +389,7 @@
         {
           "name": "X-client-id",
           "in": "header",
+          "required": true,
           "schema": {
             "type": "string"
           }
@@ -616,8 +621,8 @@
                             }
                           },
                           "required": [
-                            "startAt,",
-                            "endAt,",
+                            "startAt",
+                            "endAt",
                             "discount"
                           ]
                         },
@@ -638,16 +643,16 @@
                               }
                             },
                             "required": [
-                              "name,",
+                              "name",
                               "value"
                             ]
                           }
                         }
                       },
                       "required": [
-                        "basePrice,",
-                        "weight,",
-                        "quantity,",
+                        "basePrice",
+                        "weight",
+                        "quantity",
                         "isDefault"
                       ]
                     }
@@ -669,15 +674,15 @@
                   }
                 },
                 "required": [
-                  "id,",
-                  "name,",
-                  "description,",
-                  "brand,",
-                  "status,",
-                  "sellerAdvice,",
-                  "isService,",
-                  "categoryId,",
-                  "variants,",
+                  "name",
+                  "description",
+                  "brand",
+                  "status",
+                  "sellerAdvice",
+                  "isService",
+                  "citizenAdvice",
+                  "categoryId",
+                  "variants",
                   "characteristics"
                 ]
               }
@@ -1109,7 +1114,10 @@
                     "type": "boolean",
                     "description": "Increase research perimeter scope"
                   }
-                }
+                },
+                "required": [
+                  "location"
+                ]
               }
             }
           }
@@ -1309,8 +1317,8 @@
                             }
                           },
                           "required": [
-                            "startAt,",
-                            "endAt,",
+                            "startAt",
+                            "endAt",
                             "discount"
                           ]
                         },
@@ -1331,7 +1339,7 @@
                               }
                             },
                             "required": [
-                              "name,",
+                              "name",
                               "value"
                             ]
                           }
@@ -1342,7 +1350,7 @@
                             "name": {
                               "type": "string",
                               "example": "wynd",
-                              "name": "Name of the API Provider",
+                              "description": "Name of the API Provider",
                               "enum": [
                                 "wynd"
                               ]
@@ -1350,7 +1358,7 @@
                             "externalVariantId": {
                               "type": "string",
                               "example": "33tr",
-                              "name": "ID of variant saved by the provider"
+                              "description": "ID of variant saved by the provider"
                             }
                           },
                           "required": [
@@ -1359,9 +1367,9 @@
                         }
                       },
                       "required": [
-                        "basePrice,",
-                        "weight,",
-                        "quantity,",
+                        "basePrice",
+                        "weight",
+                        "quantity",
                         "isDefault"
                       ]
                     }
@@ -1387,7 +1395,7 @@
                       "name": {
                         "type": "string",
                         "example": "wynd",
-                        "name": "Name of the API Provider",
+                        "description": "Name of the API Provider",
                         "enum": [
                           "wynd"
                         ]
@@ -1395,7 +1403,7 @@
                       "externalProductId": {
                         "type": "string",
                         "example": "33tr",
-                        "name": "ID of product saved by the provider"
+                        "description": "ID of product saved by the provider"
                       }
                     },
                     "required": [
@@ -1404,15 +1412,15 @@
                   }
                 },
                 "required": [
-                  "id,",
-                  "name,",
-                  "description,",
-                  "brand,",
-                  "status,",
-                  "sellerAdvice,",
-                  "isService,",
-                  "categoryId,",
-                  "variants,",
+                  "id",
+                  "name",
+                  "description",
+                  "brand",
+                  "status",
+                  "sellerAdvice",
+                  "isService",
+                  "categoryId",
+                  "variants",
                   "characteristics"
                 ]
               }
@@ -1824,9 +1832,9 @@
                         }
                       },
                       "required": [
-                        "basePrice,",
-                        "weight,",
-                        "quantity,",
+                        "basePrice",
+                        "weight",
+                        "quantity",
                         "isDefault"
                       ]
                     }
@@ -1848,15 +1856,15 @@
                   }
                 },
                 "required": [
-                  "id,",
-                  "name,",
-                  "description,",
-                  "brand,",
-                  "status,",
-                  "sellerAdvice,",
-                  "isService,",
-                  "categoryId,",
-                  "variants,",
+                  "id",
+                  "name",
+                  "description",
+                  "brand",
+                  "status",
+                  "sellerAdvice",
+                  "isService",
+                  "categoryId",
+                  "variants",
                   "characteristics"
                 ]
               }
@@ -2124,8 +2132,8 @@
                             }
                           },
                           "required": [
-                            "startAt,",
-                            "endAt,",
+                            "startAt",
+                            "endAt",
                             "discount"
                           ]
                         },
@@ -2146,16 +2154,16 @@
                               }
                             },
                             "required": [
-                              "name,",
+                              "name",
                               "value"
                             ]
                           }
                         }
                       },
                       "required": [
-                        "basePrice,",
-                        "weight,",
-                        "quantity,",
+                        "basePrice",
+                        "weight",
+                        "quantity",
                         "isDefault"
                       ]
                     }
@@ -2181,7 +2189,7 @@
                       "name": {
                         "type": "string",
                         "example": "wynd",
-                        "name": "Name of the API Provider",
+                        "description": "Name of the API Provider",
                         "enum": [
                           "wynd"
                         ]
@@ -2189,7 +2197,7 @@
                       "externalProductId": {
                         "type": "string",
                         "example": "33tr",
-                        "name": "ID of product saved by the provider"
+                        "description": "ID of product saved by the provider"
                       }
                     },
                     "required": [
@@ -2198,16 +2206,15 @@
                   }
                 },
                 "required": [
-                  "id,",
-                  "name,",
-                  "description,",
-                  "brand,",
-                  "status,",
-                  "sellerAdvice,",
-                  "isService,",
-                  "categoryId,",
-                  "variants,",
-                  "characteristics,",
+                  "name",
+                  "description",
+                  "brand",
+                  "status",
+                  "sellerAdvice",
+                  "isService",
+                  "categoryId",
+                  "variants",
+                  "characteristics",
                   "provider"
                 ]
               }
@@ -2778,12 +2785,14 @@
                 "properties": {
                   "serviceSlugs": {
                     "type": "array",
-                    "items": "string",
-                    "description": "List of delivery service slugs.",
-                    "example": [
-                      "click-collect",
-                      "livraison-par-le-commercant"
-                    ]
+                    "items": {
+                      "type": "string",
+                      "description": "List of delivery service slugs.",
+                      "example": [
+                        "click-collect",
+                        "livraison-par-le-commercant"
+                      ]
+                    }
                   },
                   "selfDeliveryPrice": {
                     "type": "number",
@@ -2932,6 +2941,7 @@
         {
           "name": "X-client-id",
           "in": "header",
+          "required": true,
           "schema": {
             "type": "string"
           }
@@ -3163,8 +3173,8 @@
                             }
                           },
                           "required": [
-                            "startAt,",
-                            "endAt,",
+                            "startAt",
+                            "endAt",
                             "discount"
                           ]
                         },
@@ -3185,16 +3195,16 @@
                               }
                             },
                             "required": [
-                              "name,",
+                              "name",
                               "value"
                             ]
                           }
                         }
                       },
                       "required": [
-                        "basePrice,",
-                        "weight,",
-                        "quantity,",
+                        "basePrice",
+                        "weight",
+                        "quantity",
                         "isDefault"
                       ]
                     }
@@ -3216,15 +3226,14 @@
                   }
                 },
                 "required": [
-                  "id,",
-                  "name,",
-                  "description,",
-                  "brand,",
-                  "status,",
-                  "sellerAdvice,",
-                  "isService,",
-                  "categoryId,",
-                  "variants,",
+                  "name",
+                  "description",
+                  "brand",
+                  "status",
+                  "sellerAdvice",
+                  "isService",
+                  "categoryId",
+                  "variants",
                   "characteristics"
                 ]
               }
@@ -4362,7 +4371,10 @@
                       "all"
                     ]
                   }
-                }
+                },
+                "required": [
+                  "location"
+                ]
               }
             }
           }
@@ -4664,7 +4676,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {

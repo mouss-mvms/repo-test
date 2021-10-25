@@ -39,7 +39,7 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
                     endAt: { type: :string, example: "27/07/2021", description: "Date of end of good deal" },
                     discount: { type: :integer, example: 45, description: "Amount of discount (in %)" }
                   },
-                  required: %w[startAt, endAt, discount]
+                  required: %w[startAt endAt discount]
                 },
                 characteristics: {
                   type: :array,
@@ -49,19 +49,19 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
                       name: { type: :string, example: 'color', description: 'Name of characteristic' },
                       value: { type: :string, example: 'Bleu', description: 'Value of characteristic' }
                     },
-                    required: %w[name, value]
+                    required: %w[name value]
                   }
                 },
                 provider: {
                   type: :object,
                   properties: {
-                    name: { type: :string, example: 'wynd', name: 'Name of the API Provider', enum: ['wynd'] },
-                    externalVariantId: { type: :string, example: '33tr', name: 'ID of variant saved by the provider' }
+                    name: { type: :string, example: 'wynd', description: 'Name of the API Provider', enum: ['wynd'] },
+                    externalVariantId: { type: :string, example: '33tr', description: 'ID of variant saved by the provider' }
                   },
                   required: %w[name]
                 }
               },
-              required: %w[basePrice, weight, quantity, isDefault]
+              required: %w[basePrice weight quantity isDefault]
             }
           },
           origin: { type: :string, example: 'France', description: 'Origin of product. (This field is mandatory for some categories)' },
@@ -70,13 +70,13 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
           provider: {
             type: :object,
             properties: {
-              name: { type: :string, example: 'wynd', name: 'Name of the API Provider', enum: ['wynd'] },
-              externalProductId: { type: :string, example: '33tr', name: 'ID of product saved by the provider' }
+              name: { type: :string, example: 'wynd', description: 'Name of the API Provider', enum: ['wynd'] },
+              externalProductId: { type: :string, example: '33tr', description: 'ID of product saved by the provider' }
             },
             required: %w[name]
           }
         },
-        required: %w[id, name, description, brand, status, sellerAdvice, isService, categoryId, variants, characteristics]
+        required: %w[id name description brand status sellerAdvice isService categoryId variants characteristics]
       }
 
       response(200, 'successful') do
@@ -187,14 +187,14 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
                   }
                 }
               },
-              required: %w[basePrice, weight, quantity, isDefault]
+              required: %w[basePrice weight quantity isDefault]
             }
           },
           origin: { type: :string, example: 'France', description: 'Origin of product. (This field is mandatory for some categories)' },
           allergens: { type: :string, example: 'Contient des traces de fruit à coques', description: 'Advice of potencial allergens. (This field is mandatory for some categories)' },
           composition: { type: :string, example: 'Oeuf, sucre', description: 'Composition of product. (This field is mandatory for some categories)' }
         },
-        required: %w[id, name, description, brand, status, sellerAdvice, isService, categoryId, variants, characteristics]
+        required: %w[id name description brand status sellerAdvice isService categoryId variants characteristics]
       }
 
       response(200, 'Successful') do
@@ -287,7 +287,7 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
                     endAt: { type: :string, example: "27/07/2021", description: "Date of end of good deal" },
                     discount: { type: :integer, example: 45, description: "Amount of discount (in %)" }
                   },
-                  required: %w[startAt, endAt, discount]
+                  required: %w[startAt endAt discount]
                 },
                 characteristics: {
                   type: :array,
@@ -297,11 +297,11 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
                       name: { type: :string, example: 'color', description: 'Name of characteristic' },
                       value: { type: :string, example: 'Bleu', description: 'Value of characteristic' }
                     },
-                    required: %w[name, value]
+                    required: %w[name value]
                   }
                 }
               },
-              required: %w[basePrice, weight, quantity, isDefault]
+              required: %w[basePrice weight quantity isDefault]
             }
           },
           origin: { type: :string, example: 'France', description: 'Origin of product. (This field is mandatory for some categories)' },
@@ -310,13 +310,13 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
           provider: {
             type: :object,
             properties: {
-              name: { type: :string, example: 'wynd', name: 'Name of the API Provider', enum: ['wynd'] },
-              externalProductId: { type: :string, example: '33tr', name: 'ID of product saved by the provider' }
+              name: { type: :string, example: 'wynd', description: 'Name of the API Provider', enum: ['wynd'] },
+              externalProductId: { type: :string, example: '33tr', description: 'ID of product saved by the provider' }
             },
             required: %w[name]
           }
         },
-        required: %w[id, name, description, brand, status, sellerAdvice, isService, categoryId, variants, characteristics, provider]
+        required: %w[name description brand status sellerAdvice isService categoryId variants characteristics provider]
       }
 
       response(202, 'Accepted') do

@@ -29,7 +29,8 @@ RSpec.describe 'api/v1/shops/summaries', swagger_doc: 'v1/swagger.json', type: :
               "all"
             ]
           }
-        }
+        },
+        required: %w[location]
       }
 
       response(200, 'Successful') do
