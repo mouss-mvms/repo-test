@@ -4241,7 +4241,9 @@
         "description": "List of shop summaries with filters",
         "security": [
           {
-            "authorization": []
+            "authorization": [
+
+            ]
           }
         ],
         "parameters": [
@@ -4671,7 +4673,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-staging"
     }
   ],
   "components": {
