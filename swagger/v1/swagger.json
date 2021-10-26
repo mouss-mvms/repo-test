@@ -1124,16 +1124,8 @@
         }
       }
     },
-    "/api/auth/v1/products/{id}": {
+    "/api/v1/products/{id}": {
       "parameters": [
-        {
-          "name": "X-client-id",
-          "in": "header",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
         {
           "name": "id",
           "in": "path",

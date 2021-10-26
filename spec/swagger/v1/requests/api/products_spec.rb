@@ -1,8 +1,7 @@
 require 'swagger_helper'
 
 RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request do
-  path '/api/auth/v1/products/{id}' do
-    parameter name: 'X-client-id', in: :header, type: :string, required: true
+  path '/api/v1/products/{id}' do
     parameter name: 'id', in: :path, type: :integer, description: 'Unique identifier of the product.'
 
     put('Update a product (offline)') do
