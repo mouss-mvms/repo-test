@@ -1129,6 +1129,7 @@
         {
           "name": "X-client-id",
           "in": "header",
+          "required": true,
           "schema": {
             "type": "string"
           }
@@ -1570,6 +1571,7 @@
         {
           "name": "X-client-id",
           "in": "header",
+          "required": true,
           "schema": {
             "type": "string"
           }
@@ -3585,6 +3587,7 @@
           "name": "x-client-id",
           "in": "header",
           "description": "Auth token of user",
+          "required": true,
           "schema": {
             "type": "string"
           }
@@ -3866,6 +3869,7 @@
           {
             "name": "X-client-id",
             "in": "header",
+            "required": true,
             "schema": {
               "type": "string"
             }
@@ -3997,6 +4001,7 @@
           {
             "name": "X-client-id",
             "in": "header",
+            "required": true,
             "schema": {
               "type": "string"
             }
@@ -4676,7 +4681,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {

@@ -31,7 +31,7 @@ RSpec.describe 'api/v1/shops', swagger_doc: 'v1/swagger.json', type: :request do
       produces 'application/json'
       description 'Update a shop'
       security [{authorization: []}]
-      parameter name: 'X-client-id', in: :header, type: :string
+      parameter name: 'X-client-id', in: :header, type: :string, required: true
 
       parameter name: :shop, in: :body, schema: {
         type: 'object',
@@ -111,7 +111,7 @@ RSpec.describe 'api/v1/shops', swagger_doc: 'v1/swagger.json', type: :request do
       produces 'application/json'
       description 'Create a shop'
       security [{authorization: []}]
-      parameter name: 'X-client-id', in: :header, type: :string
+      parameter name: 'X-client-id', in: :header, type: :string, required: true
 
       parameter name: :shop, in: :body, schema: {
         type: 'object',
