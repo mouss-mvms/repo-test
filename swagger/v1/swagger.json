@@ -4241,9 +4241,7 @@
         "description": "List of shop summaries with filters",
         "security": [
           {
-            "authorization": [
-
-            ]
+            "authorization": []
           }
         ],
         "parameters": [
