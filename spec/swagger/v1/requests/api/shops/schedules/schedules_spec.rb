@@ -25,7 +25,7 @@ RSpec.describe 'api/v1/shops/schedules', swagger_doc: 'v1/swagger.json', type: :
 
   path '/api/v1/auth/shops/{id}/schedules' do
     parameter name: 'id', in: :path, type: :string, description: 'Unique identifier of the desired shop.'
-    parameter name: 'x-client-id', in: :header, type: :string, description: 'Auth token of user'
+    parameter name: 'x-client-id', in: :header, type: :string, description: 'Auth token of user', required: true
 
     put("Update shop's schedules") do
       tags 'Schedules'

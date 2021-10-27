@@ -38,7 +38,7 @@ RSpec.describe 'api/v1/shops/products', swagger_doc: 'v1/swagger.json', type: :r
   end
 
   path '/api/v1/auth/shops/self/products' do
-    parameter name: 'X-client-id', in: :header, type: :string
+    parameter name: 'X-client-id', in: :header, type: :string, required: true
 
     post('Create a product for a shop.') do
       tags 'Products'
@@ -101,7 +101,7 @@ RSpec.describe 'api/v1/shops/products', swagger_doc: 'v1/swagger.json', type: :r
                     endAt: { type: :string, example: "27/07/2021", description: "Date of end of good deal" },
                     discount: { type: :integer, example: 45, description: "Amount of discount (in %)" }
                   },
-                  required: %w[startAt, endAt, discount]
+                  required: %w[startAt endAt discount]
                 },
                 characteristics: {
                   type: :array,
@@ -111,18 +111,18 @@ RSpec.describe 'api/v1/shops/products', swagger_doc: 'v1/swagger.json', type: :r
                       name: { type: :string, example: 'color', description: 'Name of characteristic' },
                       value: { type: :string, example: 'Bleu', description: 'Value of characteristic' }
                     },
-                    required: %w[name, value]
+                    required: %w[name value]
                   }
                 }
               },
-              required: %w[basePrice, weight, quantity, isDefault]
+              required: %w[basePrice weight quantity isDefault]
             }
           },
           origin: { type: :string, example: 'France', description: 'Origin of product. (This field is mandatory for some categories)' },
           allergens: { type: :string, example: 'Contient des traces de fruit à coques', description: 'Advice of potencial allergens. (This field is mandatory for some categories)' },
           composition: { type: :string, example: 'Oeuf, sucre', description: 'Composition of product. (This field is mandatory for some categories)' }
         },
-        required: %w[id, name, description, brand, status, sellerAdvice, isService, categoryId, variants, characteristics]
+        required: %w[name description brand status sellerAdvice isService categoryId variants characteristics]
 
       }
 

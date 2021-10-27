@@ -33,9 +33,11 @@ RSpec.describe 'api/v1/shops/deliveries', swagger_doc: 'v1/swagger.json', type: 
         properties: {
           serviceSlugs: {
             type: :array,
-            items: :string,
-            description: "List of delivery service slugs.",
-            example: ["click-collect", "livraison-par-le-commercant"]
+            items: {
+              type: :string,
+              description: "List of delivery service slugs.",
+              example: ["click-collect", "livraison-par-le-commercant"]
+            }
           },
           selfDeliveryPrice: {
             type: :number,
