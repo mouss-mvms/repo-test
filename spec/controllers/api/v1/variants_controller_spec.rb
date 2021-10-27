@@ -14,7 +14,9 @@ RSpec.describe Api::V1::VariantsController, type: :controller do
           user_shop_employee.shop_employee.save
           request.headers["x-client-id"] = generate_token(user_shop_employee)
           uploaded_file = fixture_file_upload(Rails.root.join("spec/fixtures/files/images/harry-and-marv.jpg"), 'image/jpeg')
-          patch :update, params: variant_params.merge(id:  reference.id, files: [uploaded_file])
+
+          patch :update, params: variant_params.merge(id: reference.id, files: [uploaded_file])
+
           should respond_with(200)
           result = JSON.parse(response.body, symbolize_names: true)
           expect(result[:basePrice]).to eq(variant_params[:basePrice])
@@ -144,6 +146,6 @@ def variant_params
         value: "S",
         name: "size",
       },
-    ],
+    ]
   }
 end

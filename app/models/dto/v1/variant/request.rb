@@ -2,7 +2,7 @@ module Dto
   module V1
     module Variant
       class Request
-        attr_reader :base_price, :weight, :quantity, :is_default, :good_deal, :characteristics, :image_urls, :external_variant_id, :product_id
+        attr_reader :base_price, :weight, :quantity, :is_default, :good_deal, :characteristics, :image_urls, :external_variant_id
 
         def initialize(**args)
           @product_id = args[:product_id]
@@ -27,8 +27,7 @@ module Dto
             is_default: @is_default,
             good_deal: @good_deal.to_h,
             characteristics: @characteristics&.map { |characteristic| characteristic.to_h },
-            external_variant_id: @external_variant_id,
-            product_id: @product_id
+            external_variant_id: @external_variant_id
           }
         end
       end

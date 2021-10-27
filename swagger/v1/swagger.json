@@ -1337,26 +1337,10 @@
                             ]
                           }
                         },
-                        "provider": {
-                          "type": "object",
-                          "properties": {
-                            "name": {
-                              "type": "string",
-                              "example": "wynd",
-                              "description": "Name of the API Provider",
-                              "enum": [
-                                "wynd"
-                              ]
-                            },
-                            "externalVariantId": {
-                              "type": "string",
-                              "example": "33tr",
-                              "description": "ID of variant saved by the provider"
-                            }
-                          },
-                          "required": [
-                            "name"
-                          ]
+                        "externalVariantId": {
+                          "type": "string",
+                          "example": "67ty7",
+                          "description": "Id of variant saved by the provider"
                         }
                       },
                       "required": [
@@ -2152,6 +2136,11 @@
                               "value"
                             ]
                           }
+                        },
+                        "externalVariantId": {
+                          "type": "string",
+                          "example": "67ty7",
+                          "description": "Id of variant saved by the provider"
                         }
                       },
                       "required": [
@@ -4474,6 +4463,11 @@
                         "$ref": "#/components/schemas/Characteristic"
                       },
                       "description": "List of characteristics."
+                    },
+                    "externalVariantId": {
+                      "type": "string",
+                      "example": "67ty7",
+                      "description": "Id of variant saved by the provider"
                     }
                   }
                 }
@@ -6276,6 +6270,11 @@
               "$ref": "#/components/schemas/Characteristic"
             },
             "description": "List of characteristics."
+          },
+          "externalVariantId": {
+            "type": "string",
+            "example": "67ty7",
+            "description": "Id of variant saved by the provider"
           }
         }
       },
