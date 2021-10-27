@@ -41,7 +41,7 @@ module Dao
       if product_params.provider
         api_provider = ApiProvider.where(name: product_params.provider[:name]).first
         if api_provider
-          product.api_provider_products << ApiProviderProduct.create!(api_provider: api_provider,
+          product.api_provider_product = ApiProviderProduct.create!(api_provider: api_provider,
                                                                       external_product_id: product_params.provider[:external_product_id])
         end
         product.save!

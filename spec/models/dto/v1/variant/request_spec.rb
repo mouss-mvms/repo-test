@@ -23,7 +23,8 @@ RSpec.describe Dto::V1::Variant::Request do
                 name: "size",
                 value: "S"
             }
-          ]
+          ],
+          external_variant_id: 'tr56'
         }
 
         dto_variant = Dto::V1::Variant::Request.new(variant_params)
@@ -35,6 +36,7 @@ RSpec.describe Dto::V1::Variant::Request do
         expect(dto_variant.is_default).to eq(variant_params[:is_default])
         expect(dto_variant.good_deal).to be_instance_of(Dto::V1::GoodDeal::Request)
         expect(dto_variant.characteristics.count).to eq(variant_params[:characteristics].count)
+        expect(dto_variant.external_variant_id).to eq(variant_params[:external_variant_id])
         dto_variant.characteristics.each do |c|
           expect(c).to be_instance_of(Dto::V1::Characteristic::Request)
         end
@@ -46,7 +48,7 @@ RSpec.describe Dto::V1::Variant::Request do
   describe 'to_h' do
     context 'All ok' do
       it 'should a hash representation of Dto::V1::Variant::Request' do
-        variant_params =             {
+        variant_params = {
           base_price: 20.5,
           weight: 20.5,
           quantity: 20,
@@ -65,7 +67,8 @@ RSpec.describe Dto::V1::Variant::Request do
                 name: "size",
                 value: "S"
             }
-          ]
+          ],
+          external_variant_id: 'tr56'
         }
 
         dto_variant = Dto::V1::Variant::Request.new(variant_params)
@@ -78,6 +81,7 @@ RSpec.describe Dto::V1::Variant::Request do
         expect(dto_hash[:is_default]).to eq(dto_variant.is_default)
         expect(dto_hash[:good_deal]).to eq(dto_variant.good_deal.to_h)
         expect(dto_hash[:characteristics].count).to eq(dto_variant.characteristics.count)
+        expect(dto_hash[:external_variant_id]).to eq(dto_variant.external_variant_id)
       end
     end
   end

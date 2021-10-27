@@ -2,7 +2,7 @@ module Dto
   module V1
     module Variant
       class Response
-        attr_reader :id, :base_price, :weight, :quantity, :is_default, :good_deal, :characteristics, :image_urls
+        attr_reader :id, :base_price, :weight, :quantity, :is_default, :good_deal, :characteristics, :image_urls, :external_variant_id
 
         def initialize(**args)
           @id = args[:id]
@@ -13,6 +13,7 @@ module Dto
           @is_default = args[:is_default]
           @good_deal = args[:good_deal]
           @characteristics = args[:characteristics] || []
+          @external_variant_id = args[:external_variant_id]
         end
 
         def self.create(reference)
@@ -23,7 +24,8 @@ module Dto
             image_urls: reference.sample.images.map(&:file_url),
             base_price: reference.base_price,
             is_default: reference.sample.default,
-            good_deal: Dto::V1::GoodDeal::Response.create(reference&.good_deal)
+            good_deal: Dto::V1::GoodDeal::Response.create(reference.good_deal),
+            external_variant_id: reference.api_provider_variant&.external_variant_id
           )
           variant.send(:create_characteristics, reference)
           variant
@@ -38,7 +40,8 @@ module Dto
             imageUrls: @image_urls,
             isDefault: @is_default,
             goodDeal: @good_deal&.to_h,
-            characteristics: @characteristics&.map { |characteristic| characteristic.to_h }
+            characteristics: @characteristics&.map { |characteristic| characteristic.to_h },
+            externalVariantId: @external_variant_id
           }
         end
 
