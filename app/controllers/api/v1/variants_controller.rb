@@ -52,6 +52,7 @@ module Api
               hash[:characteristics] << characteristic
             }
           end
+          hash[:external_variant_id] = params[:externalVariantId]
           hash
       end
 
