@@ -24,7 +24,6 @@ RSpec.describe Api::V1::VariantsController, type: :controller do
           expect(result[:quantity]).to eq(variant_params[:quantity])
           expect(result[:isDefault]).to eq(variant_params[:isDefault])
           expect(result[:goodDeal]).to eq(variant_params[:goodDeal])
-          expect(result[:externalVariantId]).to eq(variant_params[:externalVariantId])
           expect(result[:imageUrls]).to_not be_nil
           variant_params_mapped = variant_params[:characteristics].map { |c| [ c[:value], c[:name] ] }
           result[:characteristics].each do |charac|
@@ -147,7 +146,6 @@ def variant_params
         value: "S",
         name: "size",
       },
-    ],
-    externalVariantId: 'tfg67'
+    ]
   }
 end

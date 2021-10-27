@@ -72,10 +72,9 @@ RSpec.describe Dao::Product, :type => :model do
       expect(product.composition).to eq(create_params[:composition])
       expect(product.images.first.file_url).to_not be_empty
       expect(product.samples.first.images.first.file_url).to_not be_empty
-      expect(product.api_provider_products).to_not be_empty
-      product_api_provider = product.api_provider_products.first
-      expect(product_api_provider.api_provider.name).to eq(provider[:name])
-      expect(product_api_provider.external_product_id).to eq(provider[:external_product_id])
+      expect(product.api_provider_product).to_not be_nil
+      expect(product.api_provider_product.api_provider.name).to eq(provider[:name])
+      expect(product.api_provider_product.external_product_id).to eq(provider[:external_product_id])
     end
   end
 
