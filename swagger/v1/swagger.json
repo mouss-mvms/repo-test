@@ -1337,26 +1337,10 @@
                             ]
                           }
                         },
-                        "provider": {
-                          "type": "object",
-                          "properties": {
-                            "name": {
-                              "type": "string",
-                              "example": "wynd",
-                              "description": "Name of the API Provider",
-                              "enum": [
-                                "wynd"
-                              ]
-                            },
-                            "externalVariantId": {
-                              "type": "string",
-                              "example": "33tr",
-                              "description": "ID of variant saved by the provider"
-                            }
-                          },
-                          "required": [
-                            "name"
-                          ]
+                        "externalVariantId": {
+                          "type": "string",
+                          "example": "67ty7",
+                          "description": "Id of variant saved by the provider"
                         }
                       },
                       "required": [
@@ -4683,7 +4667,7 @@
   },
   "servers": [
     {
-      "url": "http://0.0.0.0:3000/"
+      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
     }
   ],
   "components": {
