@@ -156,7 +156,7 @@ RSpec.describe Api::V1::Products::ReviewsController, type: :controller do
         end
       end
 
-      context 'Product setted is not exist' do
+      context 'Product set is not exist' do
         it 'should return 404 HTTP Status' do
           user = create(:citizen_user)
           product = create(:product)

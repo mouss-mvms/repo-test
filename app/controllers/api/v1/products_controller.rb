@@ -50,9 +50,13 @@ module Api
       def create_offline
         raise ActionController::ParameterMissing.new('provider') unless product_params[:provider]
         if product_params[:provider][:name] == 'wynd'
-          raise ActionController::ParameterMissing.new('provider.external_product_id') unless product_params[:provider][:external_product_id]
+          raise ActionController::ParameterMissing.new('provider.externalProductId') unless product_params[:provider][:external_product_id]
+        end
+        product_params[:variants].each do |req_variant|
+          raise ActionController::ParameterMissing.new('variant.externalVariantId') unless req_variant[:external_variant_id]
         end
         dto_product_request = Dto::V1::Product::Request.new(product_params)
+
         raise ActionController::ParameterMissing.new(dto_product_request.shop_id) if dto_product_request.shop_id.blank?
         Shop.find(dto_product_request.shop_id)
         category = Category.find(dto_product_request.category_id)
@@ -140,11 +144,7 @@ module Api
             characteristic[:value] = c.require(:value)
             hash[:characteristics] << characteristic
           }
-          if v[:provider]
-            hash[:provider] = {}
-            hash[:provider][:name] = v[:provider][:name] if params[:provider][:name]
-            hash[:provider][:external_product_id] = v[:provider][:externalVariantId] if v[:provider][:externalVariantId]
-          end
+          hash[:external_variant_id] = v[:externalVariantId] if v[:externalVariantId]
           product_params[:variants] << hash
         }
         if params[:provider]

@@ -3,7 +3,7 @@ require 'swagger_helper'
 RSpec.describe 'api/v1/brands', swagger_doc: 'v1/swagger.json', type: :request do
 
   path '/api/v1/auth/brands' do
-    parameter name: 'X-client-id', in: :header, type: :string
+    parameter name: 'X-client-id', in: :header, type: :string, required: true
 
     post('Create a brand.') do
       tags 'Brands'
@@ -16,7 +16,8 @@ RSpec.describe 'api/v1/brands', swagger_doc: 'v1/swagger.json', type: :request d
         type: :object,
         properties: {
           name: { type: :string, example: "Rebok", description: 'Name of brand.' },
-        }
+        },
+        required: %w[name]
       }
 
       response(200, 'successful') do

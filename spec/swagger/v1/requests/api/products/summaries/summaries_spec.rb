@@ -24,8 +24,8 @@ RSpec.describe "api/v1/products/summaries", swagger_doc: "v1/swagger.json", type
           },
           page: { type: :string, example: '1', description: 'Search page number.' },
           more: { type: :boolean, description: 'Increase research perimeter scope' },
-
-        }
+        },
+        required: %w[location]
       }
       response(200, 'successful') do
         schema type: :object, '$ref': '#/components/schemas/ProductSearch'

@@ -48,8 +48,9 @@ RSpec.describe Dao::Product, :type => :model do
                   name: "size",
                   value: "S"
               }
-            ]
-          }
+            ],
+            external_variant_id: 'tre89'
+          },
         ],
         provider: provider
       }
@@ -115,7 +116,8 @@ RSpec.describe Dao::Product, :type => :model do
                   value: "S"
               }
             ]
-          }
+          },
+          external_variant_id: 'tre78'
         ]
       }
 
