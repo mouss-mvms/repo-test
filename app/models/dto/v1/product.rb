@@ -25,6 +25,12 @@ module Dto
         end
 =end
 
+        if dto_product_request.provider && product.api_provider_product.nil?
+          provider = ApiProvider.find_by(name: dto_product_request.provider.name)
+          product.api_provider_product = ApiProviderProduct.new(external_product_id: dto_product_request.provider.external_product_id, api_provider: provider) if provider
+          product.api_provider_product.save!
+        end
+
         dto_product_request.variants.each do |dto_variant|
           sample = ::Sample.create!(name: dto_product_request.name, default: dto_variant.is_default, product_id: product.id)
 
@@ -45,8 +51,13 @@ module Dto
             sample_id: sample.id,
             shop_id: product.shop.id,
             color_id: color_characteristic ? ::Color.where(name: color_characteristic.name).first_or_create.id : nil,
-            size_id: size_characteristic ? ::Size.where(name: size_characteristic.name).first_or_create.id : nil
+            size_id: size_characteristic ? ::Size.where(name: size_characteristic.name).first_or_create.id : nil,
           )
+
+          if dto_variant.external_variant_id && reference.api_provider_variant.nil?
+            reference.api_provider_variant = ApiProviderVariant.new(external_variant_id: dto_variant.external_variant_id, api_provider: product.api_provider_product.api_provider)
+            reference.api_provider_variant.save!
+          end
 
           dto_good_deal = dto_variant.good_deal if dto_variant.good_deal&.discount && dto_variant.good_deal&.end_at && dto_variant.good_deal&.start_at
 
@@ -86,7 +97,8 @@ module Dto
           fields_attributes: [
             { lang: "fr", field: "description", content: dto_product_request.description },
             { lang: "en", field: "description", content: "" }
-          ]
+          ],
+          api_provider_products: ApiProviderProduct.new(external_variant_id: dto_product_request.provider.external_variant_id)
         )
       end
 
@@ -108,6 +120,7 @@ module Dto
         ::Sample.where(product_id: product.id).destroy_all
         ::Image.where(product_id: product.id).destroy_all
         ::Advice.where(product_id: product.id).destroy_all
+        ::ApiProviderProduct.where(product_id: product.id).destroy_all
 
         product
       end

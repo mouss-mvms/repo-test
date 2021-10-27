@@ -1116,7 +1116,7 @@
         }
       }
     },
-    "/api/auth/v1/products/{id}": {
+    "/api/v1/products/{id}": {
       "parameters": [
         {
           "name": "X-client-id",
@@ -1336,26 +1336,10 @@
                             ]
                           }
                         },
-                        "provider": {
-                          "type": "object",
-                          "properties": {
-                            "name": {
-                              "type": "string",
-                              "example": "wynd",
-                              "name": "Name of the API Provider",
-                              "enum": [
-                                "wynd"
-                              ]
-                            },
-                            "externalVariantId": {
-                              "type": "string",
-                              "example": "33tr",
-                              "name": "ID of variant saved by the provider"
-                            }
-                          },
-                          "required": [
-                            "name"
-                          ]
+                        "externalVariantId": {
+                          "type": "string",
+                          "example": "67ty7",
+                          "description": "Id of variant saved by the provider"
                         }
                       },
                       "required": [
@@ -2150,6 +2134,11 @@
                               "value"
                             ]
                           }
+                        },
+                        "externalVariantId": {
+                          "type": "string",
+                          "example": "67ty7",
+                          "description": "Id of variant saved by the provider"
                         }
                       },
                       "required": [
@@ -4465,6 +4454,11 @@
                         "$ref": "#/components/schemas/Characteristic"
                       },
                       "description": "List of characteristics."
+                    },
+                    "externalVariantId": {
+                      "type": "string",
+                      "example": "67ty7",
+                      "description": "Id of variant saved by the provider"
                     }
                   }
                 }
@@ -4664,7 +4658,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://0.0.0.0:3000/"
     }
   ],
   "components": {
@@ -6267,6 +6261,11 @@
               "$ref": "#/components/schemas/Characteristic"
             },
             "description": "List of characteristics."
+          },
+          "externalVariantId": {
+            "type": "string",
+            "example": "67ty7",
+            "description": "Id of variant saved by the provider"
           }
         }
       },

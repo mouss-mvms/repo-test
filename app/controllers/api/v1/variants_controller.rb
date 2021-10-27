@@ -15,6 +15,7 @@ module Api
             @reference.sample.images << image
           end
         end
+        @reference.external_variant_id = variant_params[:external_variant_id] if variant_params[:external_variant_id]
         @reference.base_price = variant_params[:base_price] if variant_params[:base_price]
         @reference.weight = variant_params[:weight] if variant_params[:weight]
         @reference.quantity = variant_params[:quantity] if variant_params[:quantity]
@@ -52,6 +53,7 @@ module Api
               hash[:characteristics] << characteristic
             }
           end
+          hash[:external_variant_id] = params[:externalVariantId]
           hash
       end
 

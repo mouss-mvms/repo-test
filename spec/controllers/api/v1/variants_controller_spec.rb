@@ -14,7 +14,9 @@ RSpec.describe Api::V1::VariantsController, type: :controller do
           user_shop_employee.shop_employee.save
           request.headers["x-client-id"] = generate_token(user_shop_employee)
           uploaded_file = fixture_file_upload(Rails.root.join("spec/fixtures/files/images/harry-and-marv.jpg"), 'image/jpeg')
-          patch :update, params: variant_params.merge(id:  reference.id, files: [uploaded_file])
+
+          patch :update, params: variant_params.merge(id: reference.id, files: [uploaded_file])
+
           should respond_with(200)
           result = JSON.parse(response.body, symbolize_names: true)
           expect(result[:basePrice]).to eq(variant_params[:basePrice])
@@ -22,6 +24,7 @@ RSpec.describe Api::V1::VariantsController, type: :controller do
           expect(result[:quantity]).to eq(variant_params[:quantity])
           expect(result[:isDefault]).to eq(variant_params[:isDefault])
           expect(result[:goodDeal]).to eq(variant_params[:goodDeal])
+          expect(result[:externalVariantId]).to eq(variant_params[:externalVariantId])
           expect(result[:imageUrls]).to_not be_nil
           variant_params_mapped = variant_params[:characteristics].map { |c| [ c[:value], c[:name] ] }
           result[:characteristics].each do |charac|
@@ -145,5 +148,6 @@ def variant_params
         name: "size",
       },
     ],
+    externalVariantId: 'tfg67'
   }
 end

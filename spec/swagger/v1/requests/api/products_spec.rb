@@ -1,9 +1,8 @@
 require 'swagger_helper'
 
 RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request do
-  path '/api/auth/v1/products/{id}' do
-    parameter name: 'X-client-id', in: :header, type: :string
-    parameter name: 'id', in: :path, type: :integer, description: 'Unique identifier of the product.'
+  path '/api/v1/products/{id}' do
+      parameter name: 'id', in: :path, type: :integer, description: 'Unique identifier of the product.'
 
     put('Update a product (offline)') do
       tags 'Products'
@@ -52,14 +51,7 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
                     required: %w[name, value]
                   }
                 },
-                provider: {
-                  type: :object,
-                  properties: {
-                    name: { type: :string, example: 'wynd', name: 'Name of the API Provider', enum: ['wynd'] },
-                    externalVariantId: { type: :string, example: '33tr', name: 'ID of variant saved by the provider' }
-                  },
-                  required: %w[name]
-                }
+                externalVariantId: { type: :string, example: '67ty7', description: 'Id of variant saved by the provider' }
               },
               required: %w[basePrice, weight, quantity, isDefault]
             }
@@ -299,7 +291,8 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
                     },
                     required: %w[name, value]
                   }
-                }
+                },
+                externalVariantId: { type: :string, example: '67ty7', description: 'Id of variant saved by the provider' }
               },
               required: %w[basePrice, weight, quantity, isDefault]
             }
