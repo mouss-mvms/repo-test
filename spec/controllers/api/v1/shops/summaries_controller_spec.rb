@@ -14,7 +14,7 @@ RSpec.describe Api::V1::Shops::SummariesController, type: :controller do
           shop_summaries = highest_shops.map {|p| p } + random_shops.map { |p| p }
           post :search, params: { location: city.slug }
           should respond_with(200)
-          expect(response.body).to eq(Dto::V1::Shop::Search::Response.new({ shops: shop_summaries, aggs: highest_shops.aggs, page:  random_shops.options[:page]}).to_h.to_json)
+          expect(response.body).to eq(Dto::V1::Shop::Search::Response.new({ shops: shop_summaries, aggs: highest_shops.aggs, page:  random_shops.options[:page], total_pages: random_shops.total_pages }).to_h.to_json)
         end
       end
 
@@ -37,22 +37,64 @@ RSpec.describe Api::V1::Shops::SummariesController, type: :controller do
           post :search, params: { location: city.slug, q: "cbd" }
           should respond_with(200)
 
-          expect(response.body).to eq(Dto::V1::Shop::Search::Response.new({ shops: shop_summaries, aggs: random_shops.aggs.merge(product_shops.aggs), page:  random_shops.options[:page]}).to_h.to_json)
+          expect(response.body).to eq(Dto::V1::Shop::Search::Response.new({ shops: shop_summaries, aggs: random_shops.aggs.merge(product_shops.aggs), page:  random_shops.options[:page], total_pages: random_shops.total_pages}).to_h.to_json)
+        end
+      end
+
+      context "geoloc_options" do
+        it "should returns a searchkick result" do
+          address = create(:address)
+          highest_shops = Searchkick::Results.new(Shop, random_shops_response, highest_shops_options)
+          random_shops = Searchkick::Results.new(Shop, random_shops_response, random_shops_options)
+          allow(::Requests::ShopSearches).to receive(:search_highest_scored_shops).and_return(highest_shops)
+          allow(::Requests::ShopSearches).to receive(:search_random_shops).and_return(random_shops)
+          shop_summaries = highest_shops.map { |p| p } + random_shops.map { |p| p }
+          post :search, params: { geolocOptions: { lat: address.latitude, long: address.longitude, radius: 1200 } }
+          should respond_with(200)
+          expect(response.body).to eq(Dto::V1::Shop::Search::Response.new({ shops: shop_summaries, aggs: highest_shops.aggs, page:  random_shops.options[:page], total_pages: random_shops.total_pages}).to_h.to_json)
         end
       end
 
     end
     context "when problems" do
-      context "location param is missing" do
+      context "location && geoloc_options param is missing" do
         it "it returns a 400 http status" do
           post :search
           should respond_with(400)
-          expect(response.body).to eq(Dto::Errors::BadRequest.new('param is missing or the value is empty: location.').to_h.to_json)
+          expect(response.body).to eq(Dto::Errors::BadRequest.new('You should have location or geolocOptions.').to_h.to_json)
+        end
+      end
+
+      context "when geolocOptions is present but lat || long || radius" do
+        it "should return HTTP status 400" do
+          post :search, params: { location: "bordeaux", geolocOptions: { lat: 10, long: 12, radius: 13 } }
+          should respond_with(400)
+          expect(response.body).to eq(Dto::Errors::BadRequest.new("you can't have location and geolocOptions.").to_h.to_json)
+        end
+      end
+
+      context "when geolocOptions is present but lat || long || radius" do
+        it "should return HTTP status 400" do
+          post :search, params: { geolocOptions: { long: 12, radius: 13 } }
+          should respond_with(400)
+          expect(response.body).to eq(Dto::Errors::BadRequest.new('lat && long && radius params are required with geolocOptions.').to_h.to_json)
+        end
+
+        it "should return HTTP status 400" do
+          post :search, params: { geolocOptions: { lat: 11, radius: 13 } }
+          should respond_with(400)
+          expect(response.body).to eq(Dto::Errors::BadRequest.new('lat && long && radius params are required with geolocOptions.').to_h.to_json)
+        end
+
+        it "should return HTTP status 400" do
+          post :search, params: { geolocOptions: { lat: 11, long: 12 } }
+          should respond_with(400)
+          expect(response.body).to eq(Dto::Errors::BadRequest.new('lat && long && radius params are required with geolocOptions.').to_h.to_json)
         end
       end
 
       context "location can't be found" do
-        it "it returns a 400 http status" do
+        it "it returns a 404 http status" do
           post :search, params: { location: 'Neo Detroit' }
           should respond_with(404)
           expect(response.body).to eq(Dto::Errors::NotFound.new('Location not found.').to_h.to_json)
@@ -121,6 +163,7 @@ RSpec.describe Api::V1::Shops::SummariesController, type: :controller do
                     "number_of_orders" => 0,
                     "image_url" => "default_box_shop.svg",
                     "coupons" => "[]",
+                    "location"=>{"lat"=>45.79923399999999, "lon"=>4.8470666},
                     "pictogram_url" => nil,
                     "services" => ["e-reservation", "livraison-par-colissimo", "livraison-express-par-stuart", "click-collect"],
                     "is_template" => false,
@@ -135,6 +178,7 @@ RSpec.describe Api::V1::Shops::SummariesController, type: :controller do
                     "created_at" => "2020-04-23T18:23:26.029+02:00",
                     "updated_at" => "2021-05-06T17:14:45.587+02:00",
                     "slug" => "liberty-fleurs-muret",
+                    "location"=>{"lat"=>45.79923399999999, "lon"=>4.8470666},
                     "shop_url" => "/fr/muret/boutiques/liberty-fleurs-muret",
                     "in_holidays" => false,
                     "category_tree_ids" => [2333, 2332, 2338, 2335, 2835, 2923, 2965, 2972],
@@ -182,6 +226,7 @@ RSpec.describe Api::V1::Shops::SummariesController, type: :controller do
                     "created_at" => "2020-03-26T09:09:09.639+01:00",
                     "updated_at" => "2020-04-07T13:51:18.309+02:00",
                     "slug" => "2e-chance",
+                    "location"=>{"lat"=>45.79923399999999, "lon"=>4.8470666},
                     "shop_url" => "/fr/saint-orens-de-gameville/boutiques/2e-chance",
                     "category_tree_ids" => [2565, 2579, 2580, 2649, 2666, 2835, 2836, 2837, 2853, 2895, 2906],
                     "category_tree_names" =>
@@ -204,6 +249,7 @@ RSpec.describe Api::V1::Shops::SummariesController, type: :controller do
                     "insee_code" => "31506",
                     "territory_name" => nil,
                     "territory_slug" => nil,
+                    "location"=>{"lat"=>45.79923399999999, "lon"=>4.8470666},
                     "department_number" => "31",
                     "deleted_at" => nil,
                     "number_of_online_products" => 12,
@@ -323,6 +369,7 @@ a4a9e7fe915de4f7b9e438df35e06.jpg",
                    "description" => nil,
                    "brands_name" => [""],
                    "city_label" => "Toulouse",
+                   "location"=>{"lat"=>45.79923399999999, "lon"=>4.8470666},
                    "city_slug" => "toulouse",
                    "insee_code" => "31555",
                    "territory_name" => "Toulouse",
@@ -355,6 +402,7 @@ a4a9e7fe915de4f7b9e438df35e06.jpg",
                    "created_at" => "2020-04-26T13:32:41.995+02:00",
                    "updated_at" => "2021-05-06T17:16:00.275+02:00",
                    "slug" => "iep-shoes-com",
+                   "location"=>{"lat"=>45.79923399999999, "lon"=>4.8470666},
                    "shop_url" => "/fr/toulouse/boutiques/iep-shoes-com",
                    "in_holidays" => false,
                    "category_tree_ids" => [3025, 3024, 2835, 2988, 3080, 3082, 3050, 2954, 2962, 2923, 2878, 2881, 2836],
@@ -401,6 +449,7 @@ a4a9e7fe915de4f7b9e438df35e06.jpg",
                "_type" => "_doc",
                "_id" => "2247",
                "_score" => nil,
+               "location"=>{"lat"=>45.79923399999999, "lon"=>4.8470666},
                "_source" =>
                  { "name" => "MODI IN ",
                    "created_at" => "2020-04-11T14:37:01.615+02:00",
@@ -512,6 +561,7 @@ dc383bbcbe8c9d8586bb2d20283.jpg",
                "slug"=>"amos",
                "shop_url"=>"/fr/bordeaux/boutiques/amos",
                "in_holidays"=>false,
+               "location"=>{"lat"=>45.79923399999999, "lon"=>4.8470666},
                "category_tree_ids"=>[2565, 2621, 2625, 3422],
                "category_tree_names"=>
                  ["Maison et bricolage", "Art de la table", "Carafe à eau", "Chèque cadeau et bon d'achat"],
@@ -545,6 +595,7 @@ dc383bbcbe8c9d8586bb2d20283.jpg",
                "created_at"=>"2020-07-17T17:40:20.808+02:00",
                "updated_at"=>"2021-05-06T17:16:53.781+02:00",
                "slug"=>"sybille-crd",
+               "location"=>{"lat"=>45.79923399999999, "lon"=>4.8470666},
                "shop_url"=>"/fr/bordeaux/boutiques/sybille-crd",
                "in_holidays"=>false,
                "category_tree_ids"=>[2635, 2565, 2621, 2054, 2127, 2115, 2906, 2835, 2908, 2836],

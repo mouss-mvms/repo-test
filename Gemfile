@@ -69,5 +69,5 @@ gem 'dalli'
 gem 'memcachier'
 
 source 'https://gem.fury.io/mvms/' do
-  gem 'mvms-core', '2.5.289'
+  gem 'mvms-core', '2.5.311'
 end
