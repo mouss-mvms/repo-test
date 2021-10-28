@@ -3,8 +3,8 @@ require "rails_helper"
 RSpec.describe Dao::Variant, :type => :model do
   context '#create' do
     it 'should create a variant' do
-      product = create(:available_product)
-      create(:api_provider, name: 'wynd')
+      api_provider = create(:api_provider, name: 'wynd')
+      product = create(:available_product, api_provider_product: ApiProviderProduct.create(external_product_id: 'trf67', api_provider: api_provider))
       create_params =
         {
           base_price: 20.5,
@@ -30,10 +30,7 @@ RSpec.describe Dao::Variant, :type => :model do
             }
           ],
           product_id: product.id,
-          provider: {
-            name: 'wynd',
-            external_variant_id: '56ty'
-          }
+          external_variant_id: '56ty'
         }
 
       dto_variant = Dto::V1::Variant::Request.new(create_params)
@@ -46,7 +43,7 @@ RSpec.describe Dao::Variant, :type => :model do
       expect(reference.sample.images).not_to be_empty
       expect(reference.good_deal.starts_at).to eq(date_from_string(date_string: dto_variant.good_deal.start_at))
       expect(reference.good_deal.discount).to eq(dto_variant.good_deal.discount)
-      expect(reference.api_provider_variant.external_variant_id).to eq(dto_variant.provider.external_variant_id)
+      expect(reference.api_provider_variant.external_variant_id).to eq(dto_variant.external_variant_id)
       characteristics = []
       characteristics << { name: 'color', value: reference.color.name }
       characteristics << { name: 'size', value: reference.size.name }
