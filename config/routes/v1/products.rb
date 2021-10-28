@@ -19,6 +19,7 @@ scope :auth do
   delete 'products/:id', to: 'products#destroy'
   namespace :products do
     post ":id/reviews", to: "reviews#create"
+    delete ':product_id/variants/:id', to: "variants#destroy"
   end
   post '/citizens/self/products', to: 'citizens/products#create'
   post '/shops/self/products', to: 'shops/products#create'
