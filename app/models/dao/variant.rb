@@ -6,7 +6,7 @@ module Dao
 
       if dto_variant_request.image_urls.present?
         dto_variant_request.image_urls.each do |image_url|
-          Dao::Product.set_image(object: sample, image_url: image_url)
+          Dao::Variant.set_image(object: sample, image_url: image_url)
         end
       end
       characteristics = dto_variant_request.characteristics
@@ -21,9 +21,18 @@ module Dao
         product_id: product.id,
         sample_id: sample.id,
         shop_id: product.shop.id,
-        color_id: color_characteristic ? ::Color.where(name: color_characteristic.name).first_or_create.id : nil,
-        size_id: size_characteristic ? ::Size.where(name: size_characteristic.name).first_or_create.id : nil
+        color_id: color_characteristic ? ::Color.where(name: color_characteristic.value).first_or_create.id : nil,
+        size_id: size_characteristic ? ::Size.where(name: size_characteristic.value).first_or_create.id : nil
       )
+
+      if dto_variant_request.provider
+        api_provider = ApiProvider.where(name: dto_variant_request.provider.name).first
+        if api_provider
+          reference.api_provider_variant = ApiProviderVariant.create!(api_provider: api_provider,
+                                                                      external_variant_id: dto_variant_request.provider.external_variant_id)
+          reference.save!
+        end
+      end
 
       good_deal_params = dto_variant_request.good_deal
 
