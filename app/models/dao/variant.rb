@@ -1,7 +1,7 @@
 module Dao
   class Variant
     def self.create(dto_variant_request:)
-      product = Product.find(dto_variant_request.product_id)
+      product = ::Product.find(dto_variant_request.product_id)
       sample = ::Sample.create!(name: product.name, default: dto_variant_request.is_default, product_id: product.id)
 
       if dto_variant_request.image_urls.present?
@@ -25,11 +25,11 @@ module Dao
         size_id: size_characteristic ? ::Size.where(name: size_characteristic.value).first_or_create.id : nil
       )
 
-      if dto_variant_request.provider
-        api_provider = ApiProvider.where(name: dto_variant_request.provider.name).first
-        if api_provider
-          reference.api_provider_variant = ApiProviderVariant.create!(api_provider: api_provider,
-                                                                      external_variant_id: dto_variant_request.provider.external_variant_id)
+      if dto_variant_request.external_variant_id
+        api_provider_product = product.api_provider_product
+        if api_provider_product
+          reference.api_provider_variant = ApiProviderVariant.create!(api_provider: api_provider_product.api_provider,
+                                                                      external_variant_id: dto_variant_request.external_variant_id)
           reference.save!
         end
       end

@@ -24,11 +24,9 @@ RSpec.describe Dto::V1::Variant::Request do
                 value: "S"
             }
           ],
-          provider: {
-            name: 'wynd',
-            external_variant_id: '56yt'
-          }
+          external_variant_id: '56yt'
         }
+
 
         dto_variant = Dto::V1::Variant::Request.new(**variant_params)
 
@@ -42,9 +40,7 @@ RSpec.describe Dto::V1::Variant::Request do
         dto_variant.characteristics.each do |c|
           expect(c).to be_instance_of(Dto::V1::Characteristic::Request)
         end
-        expect(dto_variant.provider.name).to eq(variant_params[:provider][:name])
-        expect(dto_variant.provider.external_variant_id).to eq(variant_params[:provider][:external_variant_id])
-
+        expect(dto_variant.external_variant_id).to eq(variant_params[:external_variant_id])
       end
     end
   end
