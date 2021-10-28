@@ -1124,6 +1124,136 @@
         }
       }
     },
+    "/api/v1/products/{id}/variants": {
+      "post": {
+        "summary": "Create a variant for a product.",
+        "tags": [
+          "Products"
+        ],
+        "description": "Create a variant for a product.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Unique identifier of the product.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Variant"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "basePrice": {
+                    "type": "number",
+                    "example": 44.99,
+                    "description": "Price of product's variant"
+                  },
+                  "weight": {
+                    "type": "number",
+                    "example": 0.56,
+                    "description": "Weight of product's variant (in Kg)"
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "example": 9,
+                    "description": "Stock of product's variant"
+                  },
+                  "isDefault": {
+                    "type": "boolean",
+                    "example": true,
+                    "description": "Tell if this variant is the product's default variant"
+                  },
+                  "goodDeal": {
+                    "type": "object",
+                    "properties": {
+                      "startAt": {
+                        "type": "string",
+                        "example": "20/07/2021",
+                        "description": "Date of start of good deal"
+                      },
+                      "endAt": {
+                        "type": "string",
+                        "example": "27/07/2021",
+                        "description": "Date of end of good deal"
+                      },
+                      "discount": {
+                        "type": "integer",
+                        "example": 45,
+                        "description": "Amount of discount (in %)"
+                      }
+                    },
+                    "required": [
+                      "startAt",
+                      "endAt",
+                      "discount"
+                    ]
+                  },
+                  "characteristics": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "example": "color",
+                          "description": "Name of characteristic"
+                        },
+                        "value": {
+                          "type": "string",
+                          "example": "Bleu",
+                          "description": "Value of characteristic"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "value"
+                      ]
+                    }
+                  },
+                  "externalVariantId": {
+                    "type": "string",
+                    "example": "67ty7",
+                    "description": "Id of variant saved by the provider"
+                  }
+                },
+                "required": [
+                  "basePrice",
+                  "weight",
+                  "quantity",
+                  "isDefault",
+                  "externalVariantId"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/products/{id}": {
       "parameters": [
         {
@@ -4667,7 +4797,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {
