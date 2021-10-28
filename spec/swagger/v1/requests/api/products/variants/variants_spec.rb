@@ -42,11 +42,20 @@ RSpec.describe "api/v1/products/variants", swagger_doc: "v1/swagger.json", type:
         required: %w[basePrice weight quantity isDefault externalVariantId]
       }
 
-      response(200, 'successful') do
+      response(201, 'Succesfull') do
         schema type: :object, '$ref': '#/components/schemas/Variant'
         run_test!
       end
 
+      response(400, 'Bad request') do
+        schema Examples::Errors::BadRequest.new.error
+        run_test!
+      end
+
+      response(404, 'Product not found') do
+        schema Examples::Errors::NotFound.new.error
+        run_test!
+      end
     end
   end
 end
