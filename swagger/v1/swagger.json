@@ -1031,13 +1031,41 @@
         }
       }
     },
-    "/api/v1/products/summaries/search": {
-      "post": {
-        "summary": "Return product-summaries list with filters",
+    "/api/v1/auth/products/{product_id}/search/{id}": {
+      "parameters": [
+        {
+          "name": "product_id",
+          "in": "path",
+          "required": true,
+          "description": "Id of the product requested",
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "Id of the variant to destroy",
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "X-client-id",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "delete": {
+        "summary": "Delete a variant for a product",
         "tags": [
-          "Products"
+          "Variants"
         ],
-        "description": "Return product-summaries list with filters",
+        "description": "Delete a variant for a product",
         "security": [
           {
             "authorization": [
@@ -1045,79 +1073,115 @@
             ]
           }
         ],
-        "parameters": [
-
-        ],
         "responses": {
-          "200": {
-            "description": "successful",
+          "204": {
+            "description": "successful"
+          },
+          "400": {
+            "description": "Bad request",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "$ref": "#/components/schemas/ProductSearch"
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "The syntax of the query is incorrect.",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Bad Request",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 400,
+                      "description": "Status of an error."
+                    }
+                  }
                 }
               }
             }
-          }
-        },
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "location": {
-                    "type": "string",
-                    "example": "bordeaux",
-                    "description": "Territory or city slug."
-                  },
-                  "q": {
-                    "type": "string",
-                    "example": "Chaussures",
-                    "description": "Query for search."
-                  },
-                  "categories": {
-                    "type": "string",
-                    "example": "homme",
-                    "description": "Categories slugs concatened with double \"_\" if more than one."
-                  },
-                  "prices": {
-                    "type": "string",
-                    "example": "1__100",
-                    "description": "Prices range"
-                  },
-                  "sharedProducts": {
-                    "type": "boolean",
-                    "description": "Only shared products",
-                    "example": false
-                  },
-                  "services": {
-                    "type": "string",
-                    "example": "livraison-par-la-poste__livraison-france-metropolitaine",
-                    "description": "Service slugs concatened with double \"_\" if more than one."
-                  },
-                  "sortBy": {
-                    "type": "string",
-                    "enum": [
-                      "price-asc",
-                      "price-desc",
-                      "newest"
-                    ]
-                  },
-                  "page": {
-                    "type": "string",
-                    "example": "1",
-                    "description": "Search page number."
-                  },
-                  "more": {
-                    "type": "boolean",
-                    "description": "Increase research perimeter scope"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 401,
+                      "description": "Status of an error."
+                    }
                   }
-                },
-                "required": [
-                  "location"
-                ]
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 403,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Resource not found",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Not found",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
               }
             }
           }
@@ -4667,7 +4731,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {

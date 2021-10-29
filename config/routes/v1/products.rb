@@ -4,6 +4,7 @@ namespace :products do
   resources :summaries do
     post :search, on: :collection
   end
+  delete ':product_id/variants/:id', to: "variants#destroy_offline"
 end
 
 scope :products do

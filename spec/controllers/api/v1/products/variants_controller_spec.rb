@@ -142,5 +142,64 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
       end
     end
   end
+
+  describe 'DELETE #destroy_offline' do
+    context 'All ok' do
+      it 'should return 204 HTTP status' do
+        shop = create(:shop)
+        product = create(:product)
+        ref1 = create(:reference)
+        product.references << ref1
+        ref2 = create(:reference)
+        product.references << ref2
+        product.save
+        shop.products << product
+        shop.save
+
+        delete :destroy_offline, params: {product_id: product.id, id: ref1.id}
+
+        expect(response).to have_http_status(:no_content)
+        expect(Reference.where(id: ref1.id).any?).to be_falsey
+      end
+    end
+
+    context 'Bad Params' do
+      context "Product doesn't find" do
+        it 'should return 404 HTTP Status' do
+          shop = create(:shop)
+          product = create(:product)
+          ref1 = create(:reference)
+          product.references << ref1
+          ref2 = create(:reference)
+          product.references << ref2
+          product.save
+          shop.products << product
+
+          Product.destroy_all
+          delete :destroy_offline, params: {product_id: product.id, id: ref1.id}
+
+          expect(response).to have_http_status(:not_found)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Product with 'id'=#{product.id}").to_h.to_json)
+        end
+      end
+
+      context "Reference doesn't exist for the product" do
+        it 'should return 404 HTTP Status' do
+          shop = create(:shop)
+          product = create(:product)
+          ref1 = create(:reference)
+          ref2 = create(:reference)
+          product.references << ref2
+          product.save
+          shop.products << product
+
+          delete :destroy_offline, params: {product_id: product.id, id: ref1.id}
+
+          expect(response).to have_http_status(:not_found)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Reference with 'id'=#{ref1.id} [WHERE \"pr_references\".\"product_id\" = $1]").to_h.to_json)
+        end
+      end
+    end
+  end
 end
 
