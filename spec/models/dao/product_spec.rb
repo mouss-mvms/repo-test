@@ -124,4 +124,106 @@ RSpec.describe Dao::Product, :type => :model do
       Dao::Product.create_async(create_params)
     end
   end
+
+  context '#update' do
+    it 'should update a product' do
+      shop = create(:shop)
+      category = create(:category)
+      reference = create(:reference, shop: shop)
+      product = reference.product
+      create(:api_provider, name: 'wynd')
+      provider = {
+        name: 'wynd',
+        external_product_id: '33rt'
+      }
+      update_params = {
+        name: "update de ses morts",
+        shop_id: shop.id,
+        description: "Chaise longue pour jardin extérieur.",
+        category_id: category.id,
+        brand: "Lafuma",
+        status: "online",
+        seller_advice: "Nettoyez votre mobilier à l’eau claire ou savonneuse sans détergent.",
+        is_service: false,
+        image_urls: [
+          "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr"
+        ],
+        origin: "france",
+        composition: "oeuf",
+        allergens: "Eric Zemmour",
+        variants: [
+          {
+            base_price: 20.5,
+            weight: 20.5,
+            quantity: 20,
+            is_default: false,
+            image_urls: [
+              "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr"
+            ],
+            good_deal: {
+              start_at: "20/01/2021",
+              end_at: "16/02/2021",
+              discount: "20"
+            },
+            characteristics: [
+              {
+                name: "color",
+                value: "blue"
+              },
+              {
+                name: "size",
+                value: "S"
+              }
+            ],
+            external_variant_id: 'tre89'
+          },
+          {
+            id: reference.id,
+            base_price: 20.5,
+            weight: 20.5,
+            quantity: 20,
+            is_default: false,
+            image_urls: [
+              "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr"
+            ],
+            good_deal: {
+              start_at: "20/01/2021",
+              end_at: "16/02/2021",
+              discount: "20"
+            },
+            characteristics: [
+              {
+                name: "color",
+                value: "blue"
+              },
+              {
+                name: "size",
+                value: "S"
+              }
+            ],
+            external_variant_id: 'tre91'
+          },
+        ],
+        provider: provider
+      }
+
+
+      dto_product_request = Dto::V1::Product::Request.new(update_params.merge(id: product.id))
+      updated_product = Dao::Product.update(dto_product_request: dto_product_request)
+
+      expect(updated_product.name).to eq(update_params[:name])
+      expect(updated_product.category_id).to eq(update_params[:category_id])
+      expect(updated_product.brand.name).to eq(update_params[:brand])
+      expect(updated_product.is_a_service).to eq(update_params[:is_service])
+      expect(updated_product.pro_advice).to eq(update_params[:seller_advice])
+      expect(updated_product.description).to eq(update_params[:description])
+      expect(updated_product.origin).to eq(update_params[:origin])
+      expect(updated_product.allergens).to eq(update_params[:allergens])
+      expect(updated_product.composition).to eq(update_params[:composition])
+      expect(updated_product.samples.first.images.first.file_url).to_not be_empty
+      expect(updated_product.api_provider_product).to_not be_nil
+      expect(updated_product.api_provider_product.api_provider.name).to eq(provider[:name])
+      expect(updated_product.api_provider_product.external_product_id).to eq(provider[:external_product_id])
+    end
+  end
 end
