@@ -24,7 +24,6 @@ module Api
           set_close_to_you_criterias(search_criterias, params[:more])
           search_criterias = filter_by(search_criterias)
 
-
           unless params[:more] || params[:q].present?
             highest_scored_shops = ::Requests::ShopSearches.search_highest_scored_shops(params[:q], search_criterias)
             search_criterias = filter_shops(search_criterias, highest_scored_shops)
@@ -35,7 +34,6 @@ module Api
           if params[:q]
             product_shops = shops_from_product(search_criterias, params[:q], random_shops)
           end
-
 
           if highest_scored_shops.blank? && random_shops.blank?
             set_close_to_you_criterias(search_criterias, true)
@@ -55,7 +53,7 @@ module Api
           aggs = params[:more] || params[:q] ? random_shops.aggs : highest_scored_shops.aggs
           aggs = aggs.merge!(product_shops.aggs) if params[:q]
 
-          render json: Dto::V1::Shop::Search::Response.new({ shops: shop_summaries, aggs: aggs, page: random_shops.options[:page] }).to_h, status: :ok
+          render json: Dto::V1::Shop::Search::Response.new({ shops: shop_summaries, aggs: aggs, page: random_shops.options[:page], total_pages: random_shops.total_pages }).to_h, status: :ok
         end
 
         private
@@ -66,19 +64,30 @@ module Api
         end
 
         def set_location
-          raise ActionController::ParameterMissing.new('location.') if params[:location].blank?
-          @territory = Territory.find_by(slug: params[:location])
-          @city = City.find_by(slug: params[:location])
-          raise ApplicationController::NotFound.new('Location not found.') unless @city || @territory
+          if params[:location].present? && params[:geolocOptions].present?
+            raise ActionController::BadRequest.new("you can't have location and geolocOptions.")
+          elsif params[:location].present?
+            @territory = Territory.find_by(slug: params[:location])
+            @city = City.find_by(slug: params[:location])
+            raise ApplicationController::NotFound.new('Location not found.') unless @city || @territory
+          elsif params[:geolocOptions].present?
+            check_geoloc_options
+          else
+            raise ActionController::BadRequest.new('You should have location or geolocOptions.')
+          end
         end
 
         def set_close_to_you_criterias(search_criterias, see_more)
-          insee_codes = @territory ? @territory.insee_codes : @city.insee_codes
-
-          if see_more
-            return search_criterias.and(::Criterias::CloseToYou.new(@city, insee_codes))
+          if @territory || @city
+            insee_codes = @territory ? @territory.insee_codes : @city.insee_codes
+            if see_more
+              return search_criterias.and(::Criterias::CloseToYou.new(@city, insee_codes))
+            else
+              return set_perimeter(search_criterias, insee_codes)
+            end
           else
-            return set_perimeter(search_criterias, insee_codes)
+            radius_in_km = (params[:geolocOptions][:radius]/1000).truncate(2)
+            search_criterias.and(::Criterias::Shops::InPerimeter.new(params[:geolocOptions][:lat],params[:geolocOptions][:long], radius_in_km))
           end
         end
 
@@ -137,6 +146,10 @@ module Api
           shop_ids = products.aggs["shop_id"]["buckets"].map { |item| item["key"] }
           search_criterias.and(::Criterias::ByIds.new(shop_ids - shops_ids_excluded))
           ::Requests::ShopSearches.search(search_criterias, params[:page])
+        end
+
+        def check_geoloc_options
+          raise ActionController::BadRequest.new('lat && long && radius params are required with geolocOptions.') if params[:geolocOptions][:lat].blank? || params[:geolocOptions][:long].blank? || params[:geolocOptions][:radius].blank?
         end
       end
     end
