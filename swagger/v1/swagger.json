@@ -1031,7 +1031,195 @@
         }
       }
     },
-    "/api/v1/auth/products/{product_id}/search/{id}": {
+    "/api/v1/products/summaries/search": {
+      "post": {
+        "summary": "Return product-summaries list with filters",
+        "tags": [
+          "Products"
+        ],
+        "description": "Return product-summaries list with filters",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/ProductSearch"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "location": {
+                    "type": "string",
+                    "example": "bordeaux",
+                    "description": "Territory or city slug."
+                  },
+                  "q": {
+                    "type": "string",
+                    "example": "Chaussures",
+                    "description": "Query for search."
+                  },
+                  "categories": {
+                    "type": "string",
+                    "example": "homme",
+                    "description": "Categories slugs concatened with double \"_\" if more than one."
+                  },
+                  "prices": {
+                    "type": "string",
+                    "example": "1__100",
+                    "description": "Prices range"
+                  },
+                  "sharedProducts": {
+                    "type": "boolean",
+                    "description": "Only shared products",
+                    "example": false
+                  },
+                  "services": {
+                    "type": "string",
+                    "example": "livraison-par-la-poste__livraison-france-metropolitaine",
+                    "description": "Service slugs concatened with double \"_\" if more than one."
+                  },
+                  "sortBy": {
+                    "type": "string",
+                    "enum": [
+                      "price-asc",
+                      "price-desc",
+                      "newest"
+                    ]
+                  },
+                  "page": {
+                    "type": "string",
+                    "example": "1",
+                    "description": "Search page number."
+                  },
+                  "more": {
+                    "type": "boolean",
+                    "description": "Increase research perimeter scope"
+                  }
+                },
+                "required": [
+                  "location"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/products/{product_id}/variants/{id}": {
+      "parameters": [
+        {
+          "name": "product_id",
+          "in": "path",
+          "required": true,
+          "description": "Id of the product requested",
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "Id of the variant to destroy",
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "delete": {
+        "summary": "Delete a variant for a product (offline)",
+        "tags": [
+          "Variants"
+        ],
+        "description": "Delete a variant for a product (offline)",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "successful"
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "The syntax of the query is incorrect.",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Bad Request",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 400,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Resource not found",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Not found",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/products/{product_id}/variants/{id}": {
       "parameters": [
         {
           "name": "product_id",
@@ -4743,7 +4931,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000/"
+      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
     }
   ],
   "components": {
