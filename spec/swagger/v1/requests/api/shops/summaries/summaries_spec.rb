@@ -25,16 +25,15 @@ RSpec.describe 'api/v1/shops/summaries', swagger_doc: 'v1/swagger.json', type: :
               "all"
             ]
           },
-          geolocOptions: {
-            type: :object,
-            properties: {
-              lat: { type: :number, example: "-1.678979", description: "Shop address latitude." },
-              long: { type: :number, example: "4.672382", description: "Shop address longitude." },
-              radius: { type: :integer, example: "1200", description: "Research radius in meters.", minimum: 50, maximum: 100000 },
-            }
-          }
-        },
-        required: %w[location]
+          # geolocOptions: {
+          #   type: :object,
+          #   properties: {
+          #     lat: { type: :number, example: "-1.678979", description: "Shop address latitude." },
+          #     long: { type: :number, example: "4.672382", description: "Shop address longitude." },
+          #     radius: { type: :integer, example: "1200", description: "Research radius in meters.", minimum: 50, maximum: 100000 },
+          #   }
+          # }
+        }
       }
 
       response(200, 'Successful') do
