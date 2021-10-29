@@ -1,10 +1,9 @@
 require "spec_helper"
 
 RSpec.describe "api/v1/products/variants", swagger_doc: "v1/swagger.json", type: :request do
-<<<<<<< HEAD
   path '/api/v1/products/{id}/variants' do
-    post('Create a variant for a product.') do
-      tags 'Products'
+    post('Create a variant for a product. (offline)') do
+      tags 'Variants'
       consumes 'application/json'
       produces 'application/json'
       description 'Create a variant for a product.'
@@ -40,12 +39,26 @@ RSpec.describe "api/v1/products/variants", swagger_doc: "v1/swagger.json", type:
           },
           externalVariantId: { type: :string, example: '67ty7', description: 'Id of variant saved by the provider' },
         },
-        required: %w[basePrice weight quantity isDefault externalVariantId]
+        required: %w[basePrice weight quantity isDefault characteristics externalVariantId]
       }
 
       response(201, 'Succesfull') do
         schema type: :object, '$ref': '#/components/schemas/Variant'
-=======
+        run_test!
+      end
+
+      response(400, 'Bad request') do
+        schema Examples::Errors::BadRequest.new.error
+        run_test!
+      end
+
+      response(404, 'Not found') do
+        schema Examples::Errors::NotFound.new.error
+        run_test!
+      end
+    end
+  end
+
   path "/api/v1/products/{product_id}/variants/{id}" do
     parameter name: 'product_id', in: :path, type: :integer, required: true, description: "Id of the product requested"
     parameter name: 'id', in: :path, type: :integer, required: true, description: "Id of the variant to destroy"
@@ -87,7 +100,6 @@ RSpec.describe "api/v1/products/variants", swagger_doc: "v1/swagger.json", type:
       security [{ authorization: [] }]
 
       response(204, 'successful') do
->>>>>>> dev
         run_test!
       end
 
@@ -96,9 +108,6 @@ RSpec.describe "api/v1/products/variants", swagger_doc: "v1/swagger.json", type:
         run_test!
       end
 
-<<<<<<< HEAD
-      response(404, 'Product not found') do
-=======
       response(401, 'Unauthorized') do
         schema Examples::Errors::Unauthorized.new.error
         run_test!
@@ -110,14 +119,9 @@ RSpec.describe "api/v1/products/variants", swagger_doc: "v1/swagger.json", type:
       end
 
       response(404, 'Not found') do
->>>>>>> dev
         schema Examples::Errors::NotFound.new.error
         run_test!
       end
     end
   end
-<<<<<<< HEAD
 end
-=======
-end
->>>>>>> dev

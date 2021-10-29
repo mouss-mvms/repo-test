@@ -1370,6 +1370,15 @@
                     }
                   }
                 }
+                },
+                "required": [
+                  "basePrice",
+                  "weight",
+                  "quantity",
+                  "isDefault",
+                  "characteristics",
+                  "externalVariantId"
+                ]
               }
             }
           }

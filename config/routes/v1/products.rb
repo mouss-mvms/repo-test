@@ -13,6 +13,8 @@ scope :products do
   get ':id', to: 'products#show'
   delete ':id', to: 'products#destroy_offline'
   get ':id/reviews', to: 'products/reviews#index'
+  post ':id/variants', to: 'products/variants#create_offline'
+
 end
 
 scope :auth do
