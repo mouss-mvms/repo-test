@@ -4,6 +4,7 @@ namespace :products do
   resources :summaries do
     post :search, on: :collection
   end
+  delete ':product_id/variants/:id', to: "variants#destroy_offline"
 end
 
 scope :products do
@@ -19,6 +20,7 @@ scope :auth do
   delete 'products/:id', to: 'products#destroy'
   namespace :products do
     post ":id/reviews", to: "reviews#create"
+    delete ':product_id/variants/:id', to: "variants#destroy"
   end
   post '/citizens/self/products', to: 'citizens/products#create'
   post '/shops/self/products', to: 'shops/products#create'
