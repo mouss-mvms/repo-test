@@ -4057,6 +4057,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           reference = create(:reference)
           patch :update, params: {id: reference.id}
           expect(response).to have_http_status(403)
+          expect(response.body).to eq(Dto::Errors::Forbidden.new("ApplicationController::Forbidden").to_h.to_json)
         end
       end
 
@@ -4128,6 +4129,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           patch :update, params: product_params.merge(id: product.id)
 
           expect(response).to have_http_status(403)
+          expect(response.body).to eq(Dto::Errors::Forbidden.new("ApplicationController::Forbidden").to_h.to_json)
         end
       end
     end
@@ -4199,6 +4201,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           request.headers["x-client-id"] = generate_token(user_shop_employee)
           patch :patch_auth, params: product_params.merge(id: product.id)
           should respond_with(400)
+          expect(response.body).to eq(Dto::Errors::BadRequest.new("param is missing or the value is empty: weight").to_h.to_json)
         end
       end
 
@@ -4241,6 +4244,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           patch :patch, params: update_params.merge(id: 12)
 
           should respond_with(404)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Product with 'id'=12").to_h.to_json)
         end
       end
 
@@ -4289,6 +4293,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           patch :patch, params: update_params.merge(id: product.id)
 
           should respond_with(404)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Category with 'id'=1").to_h.to_json)
         end
       end
 
@@ -4334,8 +4339,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
           end
         end
 
@@ -4378,8 +4382,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
           end
         end
 
@@ -4423,8 +4426,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("allergens is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("allergens is required").to_h.to_json)
           end
         end
       end
@@ -4471,8 +4473,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
           end
         end
 
@@ -4513,10 +4514,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             }
 
             patch :patch, params: update_params.merge(id: product.id)
-
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
           end
         end
 
@@ -4560,8 +4559,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("allergens is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("allergens is required").to_h.to_json)
           end
         end
       end
@@ -4608,8 +4606,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
           end
         end
 
@@ -4652,8 +4649,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
           end
         end
 
@@ -4697,8 +4693,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("allergens is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("allergens is required").to_h.to_json)
           end
         end
       end
@@ -4745,8 +4740,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
           end
         end
 
@@ -4789,8 +4783,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
           end
         end
 
@@ -4834,8 +4827,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("allergens is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("allergens is required").to_h.to_json)
           end
         end
       end
@@ -4882,8 +4874,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
           end
         end
 
@@ -4926,8 +4917,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
           end
         end
 
@@ -4971,8 +4961,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("allergens is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("allergens is required").to_h.to_json)
           end
         end
       end
@@ -5019,8 +5008,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
           end
         end
 
@@ -5063,8 +5051,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
           end
         end
 
@@ -5108,8 +5095,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("allergens is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("allergens is required").to_h.to_json)
           end
         end
       end
@@ -5156,8 +5142,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
           end
         end
 
@@ -5201,7 +5186,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
           end
         end
       end
@@ -5327,8 +5312,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
       end
     end
 
-    context "Incorrect Params" do
-
+    context 'Bad params' do
       context "Missing params on variant without id" do
         it "should respond with HTTP STATUS 400 - PARAMS MISSING" do
           user_shop_employee = create(:shop_employee_user, email: "shop.employee3@ecity.fr")
@@ -5395,6 +5379,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           request.headers["x-client-id"] = generate_token(user_shop_employee)
           patch :patch_auth, params: product_params.merge(id: product.id)
           should respond_with(400)
+          expect(response.body).to eq(Dto::Errors::BadRequest.new("param is missing or the value is empty: weight").to_h.to_json)
         end
       end
 
@@ -5437,6 +5422,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           patch :patch, params: update_params.merge(id: 12)
 
           should respond_with(404)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Product with 'id'=12").to_h.to_json)
         end
       end
 
@@ -5485,6 +5471,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           patch :patch, params: update_params.merge(id: product.id)
 
           should respond_with(404)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Category with 'id'=1").to_h.to_json)
         end
       end
 
@@ -5530,8 +5517,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
           end
         end
 
@@ -5574,8 +5560,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
           end
         end
 
@@ -5619,8 +5604,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("allergens is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("allergens is required").to_h.to_json)
           end
         end
       end
@@ -5667,8 +5651,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
           end
         end
 
@@ -5709,10 +5692,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             }
 
             patch :patch, params: update_params.merge(id: product.id)
-
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
           end
         end
 
@@ -5756,8 +5737,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("allergens is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("allergens is required").to_h.to_json)
           end
         end
       end
@@ -5804,8 +5784,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
           end
         end
 
@@ -5848,8 +5827,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
           end
         end
 
@@ -5893,8 +5871,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("allergens is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("allergens is required").to_h.to_json)
           end
         end
       end
@@ -5941,8 +5918,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
           end
         end
 
@@ -5985,8 +5961,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
           end
         end
 
@@ -6030,8 +6005,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("allergens is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("allergens is required").to_h.to_json)
           end
         end
       end
@@ -6078,8 +6052,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
           end
         end
 
@@ -6122,8 +6095,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
           end
         end
 
@@ -6167,8 +6139,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("allergens is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("allergens is required").to_h.to_json)
           end
         end
       end
@@ -6215,8 +6186,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
           end
         end
 
@@ -6259,8 +6229,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
           end
         end
 
@@ -6304,8 +6273,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("allergens is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("allergens is required").to_h.to_json)
           end
         end
       end
@@ -6352,8 +6320,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
           end
         end
 
@@ -6397,7 +6364,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
           end
         end
       end

@@ -41,6 +41,7 @@ RSpec.describe 'api/v1/shops/products', swagger_doc: 'v1/swagger.json', type: :r
     parameter name: 'X-client-id', in: :header, type: :string, required: true
 
     post('Create a product for a shop.') do
+      tags 'Products'
       produces 'application/json'
       consumes 'application/json'
       description 'Return created product polling url.'

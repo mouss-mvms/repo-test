@@ -37,7 +37,7 @@ module Api
 
       def patch_auth
         ActiveRecord::Base.transaction do
-          raise ApplicationController::Forbidden unless @user.is_a_business_user?
+          raise ApplicationController::Forbidden.new unless @user.is_a_business_user?
           dto_product_request = Dto::V1::Product::Request.new(product_params_update)
           product = Product.find(dto_product_request.id)
           category = Category.find(dto_product_request.category_id)
