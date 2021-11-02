@@ -2,8 +2,8 @@ module Api
   module V1
     module Products
       class VariantsController < ApplicationController
-        before_action :uncrypt_token, only: :destroy
-        before_action :retrieve_user, only: :destroy
+        before_action :uncrypt_token, only: [:create, :destroy]
+        before_action :retrieve_user, only: [:create, :destroy]
 
         def destroy
           raise ApplicationController::Forbidden unless @user.is_a_business_user?
@@ -18,6 +18,19 @@ module Api
 
         def create_offline
           variant_params[:external_variant_id] = params.require(:externalVariantId)
+          dto_variant_request = Dto::V1::Variant::Request.new(variant_params)
+          ActiveRecord::Base.transaction do
+            variant = Dao::Variant.create(dto_variant_request: dto_variant_request)
+            response = Dto::V1::Variant::Response.create(variant).to_h
+            return render json: response, status: 201
+          end
+        end
+
+        def create
+          raise ApplicationController::Forbidden unless @user.is_a_business_user?
+          product = Product.find(variant_params[:product_id])
+          raise ApplicationController::Forbidden if product.shop.owner != @user.shop_employee
+
           dto_variant_request = Dto::V1::Variant::Request.new(variant_params)
           ActiveRecord::Base.transaction do
             variant = Dao::Variant.create(dto_variant_request: dto_variant_request)

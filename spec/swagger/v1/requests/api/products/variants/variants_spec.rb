@@ -18,6 +18,18 @@ RSpec.describe "api/v1/products/variants", swagger_doc: "v1/swagger.json", type:
           weight: { type: :number, example: 0.56, description: "Weight of product's variant (in Kg)" },
           quantity: { type: :integer, example: 9, description: "Stock of product's variant" },
           isDefault: { type: :boolean, example: true, description: "Tell if this variant is the product's default variant" },
+          imageUrls: {
+            type: 'array',
+            items: {
+              type: 'string'
+            },
+            example: [
+              'https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr',
+              'https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg'
+            ],
+            default: [],
+            description: 'List of variant images urls'
+          },
           goodDeal: {
             type: :object,
             properties: {
@@ -79,6 +91,18 @@ RSpec.describe "api/v1/products/variants", swagger_doc: "v1/swagger.json", type:
           weight: { type: :number, example: 0.56, description: "Weight of product's variant (in Kg)" },
           quantity: { type: :integer, example: 9, description: "Stock of product's variant" },
           isDefault: { type: :boolean, example: true, description: "Tell if this variant is the product's default variant" },
+          imageUrls: {
+            type: 'array',
+            items: {
+              type: 'string'
+            },
+            example: [
+              'https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr',
+              'https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg'
+            ],
+            default: [],
+            description: 'List of variant images urls'
+          },
           goodDeal: {
             type: :object,
             properties: {
