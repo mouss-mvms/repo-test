@@ -97,7 +97,6 @@ RSpec.describe Dao::Variant, :type => :model do
       expect(reference.sample.images).not_to be_empty
       expect(reference.good_deal.starts_at).to eq(date_from_string(date_string: dto_variant.good_deal.start_at))
       expect(reference.good_deal.discount).to eq(dto_variant.good_deal.discount)
-      binding.pry
       expect(reference.api_provider_variant.external_variant_id).to eq(dto_variant.external_variant_id)
       characteristics = []
       characteristics << { name: 'color', value: reference.color.name }

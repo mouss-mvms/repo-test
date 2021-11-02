@@ -58,6 +58,22 @@ module Dao
           @reference.sample.images << image
         end
       end
+
+      if dto_variant_request.image_urls.present?
+        dto_variant_request.image_urls.each do |image_url|
+          Dao::Variant.set_image(object: @reference.sample, image_url: image_url)
+        end
+      end
+
+      if dto_variant_request.external_variant_id
+        api_provider_product = @reference.product.api_provider_product
+        if api_provider_product
+          @reference.api_provider_variant = ApiProviderVariant.create!(api_provider: api_provider_product.api_provider,
+                                                                      external_variant_id: dto_variant_request.external_variant_id)
+          @reference.save!
+        end
+      end
+
       @reference.base_price = dto_variant_request.base_price if dto_variant_request.base_price
       @reference.weight = dto_variant_request.weight if dto_variant_request.weight
       @reference.quantity = dto_variant_request.quantity if dto_variant_request.quantity
