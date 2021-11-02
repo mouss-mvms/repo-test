@@ -1654,6 +1654,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
             should respond_with(403)
           end
         end
+
       end
     end
   end

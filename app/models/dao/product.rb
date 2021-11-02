@@ -41,10 +41,9 @@ module Dao
       if product_params.provider
         api_provider = ApiProvider.where(name: product_params.provider[:name]).first
         if api_provider
-          product.api_provider_products << ApiProviderProduct.create!(api_provider: api_provider,
+          product.api_provider_product = ApiProviderProduct.create!(api_provider: api_provider,
                                                                       external_product_id: product_params.provider[:external_product_id])
         end
-        product.save!
       end
 
       product_params.variants.each do |variant_params|
@@ -74,6 +73,11 @@ module Dao
 
         good_deal_params = variant_params.good_deal ? OpenStruct.new(variant_params.good_deal) : nil
 
+        if variant_params.external_variant_id
+          reference.api_provider_variant = ApiProviderVariant.create!(api_provider: product.api_provider_product.api_provider,
+                                                                     external_variant_id: variant_params.external_variant_id)
+        end
+
         if good_deal_params && good_deal_params&.discount && good_deal_params&.end_at && good_deal_params&.start_at
           reference.good_deal = ::GoodDeal.new
           reference.good_deal.starts_at = date_from_string(date_string: good_deal_params.start_at)
@@ -90,7 +94,44 @@ module Dao
       CreateProductJob.perform_async(JSON.dump(product_params))
     end
 
+    def self.update(dto_product_request:)
+      product = ::Product.find(dto_product_request.id)
+      product.name = dto_product_request.name if dto_product_request.name.present?
+      product.category_id = dto_product_request.category_id if dto_product_request.category_id.present?
+      product.brand_id =  ::Brand.where(name: dto_product_request.brand).first_or_create.id if dto_product_request.brand.present?
+      product.is_a_service = dto_product_request.is_service unless dto_product_request.is_service.nil?
+      product.status = dto_product_request.status if dto_product_request.status.present?
+      product.origin = dto_product_request.origin if dto_product_request.origin.present?
+      product.pro_advice = dto_product_request.seller_advice if dto_product_request.seller_advice.present?
+      product.allergens = dto_product_request.allergens if dto_product_request.allergens.present?
+      product.composition = dto_product_request.composition if dto_product_request.composition.present?
+      product.fields_attributes = [
+        { lang: "fr", field: "description", content: dto_product_request.description },
+        { lang: "en", field: "description", content: "" }
+      ] if dto_product_request.description.present?
+
+      update_or_create_variant(variant_dtos: dto_product_request.variants, product: product) if dto_product_request.variants.present?
+
+      if dto_product_request.provider
+        api_provider = ApiProvider.where(name: dto_product_request.provider[:name]).first
+        if api_provider
+          product.api_provider_product = ApiProviderProduct.create!(api_provider: api_provider,
+                                                                    external_product_id: dto_product_request.provider[:external_product_id])
+        end
+        product.save!
+      end
+      product.save!
+      product
+    end
+
     private
+
+    def self.update_or_create_variant(variant_dtos:, product:)
+      variant_dtos.each do |variant_dto|
+        variant_dto.product_id = product.id
+        variant_dto.id.present? ? Dao::Variant.update(dto_variant_request: variant_dto) : Dao::Variant.create(dto_variant_request: variant_dto)
+      end
+    end
 
     def self.set_image(object:, image_url:)
       begin
