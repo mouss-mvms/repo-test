@@ -15,29 +15,9 @@ RSpec.describe Api::V1::VariantsController, type: :controller do
           request.headers["x-client-id"] = generate_token(user_shop_employee)
           request.env["CONTENT_TYPE"] = "multipart/form-data"
           uploaded_file = fixture_file_upload(Rails.root.join("spec/fixtures/files/images/harry-and-marv.jpg"), 'image/jpeg')
-          body = { id: reference.id, files: [uploaded_file],
-                   basePrice: 19.9,
-                   weight: 0.24,
-                   quantity: 4,
-                   isDefault: true,
-                   goodDeal: {
-                     startAt: "17/05/2021",
-                     endAt: "18/06/2021",
-                     discount: 20.0,
-                   }.to_json,
-                   characteristics: [
-                     {
-                       value: "coloris black",
-                       name: "color",
-                     },
-                     {
-                       value: "S",
-                       name: "size",
-                     },
-                   ].to_json
-          }
 
-          patch :update, params: body
+          patch :update, params: variant_params.merge(id: reference.id, files: [uploaded_file])
+
           should respond_with(200)
           result = JSON.parse(response.body, symbolize_names: true)
           expect(result[:basePrice]).to eq(variant_params[:basePrice])
@@ -170,7 +150,7 @@ def variant_params
       {
         value: "S",
         name: "size",
-      }.to_json,
-    ],
+      },
+    ]
   }
 end

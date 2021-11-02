@@ -56,7 +56,8 @@ module V1
                   '$ref': '#/components/schemas/Characteristic'
                 },
                 description: 'List of characteristics.'
-              }
+              },
+              externalVariantId: { type: :string, example: '67ty7', description: 'Id of variant saved by the provider' }
             }
           }
         end
