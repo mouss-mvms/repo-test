@@ -26,7 +26,7 @@ RSpec.describe Api::V1::VariantsController, type: :controller do
           expect(result[:isDefault]).to eq(variant_params[:isDefault])
           expect(result[:goodDeal]).to eq(JSON.parse(variant_params[:goodDeal], symbolize_names: true))
           expect(result[:imageUrls]).to_not be_nil
-          hash_variant_params = variant_params[:characteristics].map { |c| JSON.parse(c, symbolize_names: true) }
+          hash_variant_params = JSON.parse(variant_params[:characteristics], symbolize_names: true)
           variant_params_mapped = hash_variant_params.map { |c| [c[:value], c[:name]] }
           result[:characteristics].each do |charac|
             expect(variant_params_mapped.include?([charac[:name], charac[:type]])).to eq(true)
@@ -45,29 +45,8 @@ RSpec.describe Api::V1::VariantsController, type: :controller do
           request.headers["CONTENT_TYPE"] = 'application/x-www-form-urlencoded'
           request.env["CONTENT_TYPE"] = "multipart/form-data"
           uploaded_file = fixture_file_upload(Rails.root.join("spec/fixtures/files/images/harry-and-marv.jpg"), 'image/jpeg')
-          body = { id: reference.id, files: [uploaded_file],
-                   basePrice: 19.9,
-                   weight: 0.24,
-                   quantity: 4,
-                   isDefault: true,
-                   goodDeal: {
-                     startAt: "17/05/2021",
-                     endAt: "18/06/2021",
-                     discount: 20.0,
-                   }.to_json,
-                   characteristics: [
-                     {
-                       value: "coloris black",
-                       name: "color",
-                     },
-                     {
-                       value: "S",
-                       name: "size",
-                     },
-                   ].to_json
-          }
 
-          patch :update, params: body
+          patch :update, params: variant_params.merge(id:  reference.id, file: uploaded_file)
           should respond_with(200)
           result = JSON.parse(response.body, symbolize_names: true)
           expect(result[:basePrice]).to eq(variant_params[:basePrice])
@@ -76,7 +55,7 @@ RSpec.describe Api::V1::VariantsController, type: :controller do
           expect(result[:isDefault]).to eq(variant_params[:isDefault])
           expect(result[:goodDeal]).to eq(JSON.parse(variant_params[:goodDeal], symbolize_names: true))
           expect(result[:imageUrls]).to_not be_nil
-          hash_variant_params = variant_params[:characteristics].map { |c| JSON.parse(c, symbolize_names: true) }
+          hash_variant_params = JSON.parse(variant_params[:characteristics], symbolize_names: true)
           variant_params_mapped = hash_variant_params.map { |c| [c[:value], c[:name]] }
           result[:characteristics].each do |charac|
             expect(variant_params_mapped.include?([charac[:name], charac[:type]])).to eq(true)
@@ -145,12 +124,12 @@ def variant_params
     characteristics: [
       {
         value: "coloris black",
-        name: "color",
-      }.to_json,
+        name: "color"
+      },
       {
         value: "S",
-        name: "size",
-      },
-    ]
+        name: "size"
+      }
+    ].to_json
   }
 end
