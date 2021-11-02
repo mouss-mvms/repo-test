@@ -33,7 +33,8 @@ RSpec.describe 'api/v1/shops/summaries', swagger_doc: 'v1/swagger.json', type: :
               radius: { type: :integer, example: "1200", description: "Research radius in meters.", minimum: 50, maximum: 100000 },
             }
           }
-        }
+        },
+        required: %w[location]
       }
 
       response(200, 'Successful') do

@@ -2915,7 +2915,8 @@
                   "categoryId",
                   "variants",
                   "characteristics",
-                  "provider"
+                  "provider",
+                  "shopId"
                 ]
               }
             }
@@ -3934,7 +3935,8 @@
                   "isService",
                   "categoryId",
                   "variants",
-                  "characteristics"
+                  "characteristics",
+                  "shopId"
                 ]
               }
             }
@@ -5086,7 +5088,10 @@
                       }
                     }
                   }
-                }
+                },
+                "required": [
+                  "location"
+                ]
               }
             }
           }
