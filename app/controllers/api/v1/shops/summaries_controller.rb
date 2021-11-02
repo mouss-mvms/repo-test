@@ -86,8 +86,10 @@ module Api
               return set_perimeter(search_criterias, insee_codes)
             end
           else
-            radius_in_km = (params[:geolocOptions][:radius]/1000).truncate(2)
-            search_criterias.and(::Criterias::Shops::InPerimeter.new(params[:geolocOptions][:lat],params[:geolocOptions][:long], radius_in_km))
+            if Rails.env.local? || Rails.env.development?
+              radius_in_km = (params[:geolocOptions][:radius]/1000).truncate(2)
+              search_criterias.and(::Criterias::Shops::InPerimeter.new(params[:geolocOptions][:lat],params[:geolocOptions][:long], radius_in_km))
+            end
           end
         end
 
