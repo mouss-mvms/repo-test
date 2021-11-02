@@ -13,6 +13,7 @@ RSpec.describe Api::V1::VariantsController, type: :controller do
           user_shop_employee.shop_employee.shops << product.shop
           user_shop_employee.shop_employee.save
           request.headers["x-client-id"] = generate_token(user_shop_employee)
+          request.env["CONTENT_TYPE"] = "multipart/form-data"
           uploaded_file = fixture_file_upload(Rails.root.join("spec/fixtures/files/images/harry-and-marv.jpg"), 'image/jpeg')
 
           patch :update, params: variant_params.merge(id: reference.id, files: [uploaded_file])
@@ -41,6 +42,8 @@ RSpec.describe Api::V1::VariantsController, type: :controller do
           user_citizen.citizen.products << product
           user_citizen.citizen.save
           request.headers["x-client-id"] = generate_token(user_citizen)
+          request.headers["CONTENT_TYPE"] = 'application/x-www-form-urlencoded'
+          request.env["CONTENT_TYPE"] = "multipart/form-data"
           uploaded_file = fixture_file_upload(Rails.root.join("spec/fixtures/files/images/harry-and-marv.jpg"), 'image/jpeg')
 
           patch :update, params: variant_params.merge(id:  reference.id, file: uploaded_file)
@@ -76,7 +79,7 @@ RSpec.describe Api::V1::VariantsController, type: :controller do
         it "should return 403" do
           request.headers['HTTP_X_CLIENT_ID'] = generate_token(@admin_user)
           reference = create(:reference)
-          patch :update, params: {id: reference.id}
+          patch :update, params: { id: reference.id }
           expect(response).to have_http_status(403)
         end
       end
@@ -87,7 +90,7 @@ RSpec.describe Api::V1::VariantsController, type: :controller do
           reference = create(:reference)
           @shop = reference.shop
           request.headers["HTTP_X_CLIENT_ID"] = generate_token(shop_employee_user)
-          patch :update, params: variant_params.merge(id:  reference.id)
+          patch :update, params: variant_params.merge(id: reference.id)
 
           expect(response).to have_http_status(403)
         end
@@ -99,7 +102,7 @@ RSpec.describe Api::V1::VariantsController, type: :controller do
           reference = create(:reference)
           request.headers["x-client-id"] = generate_token(user_citizen)
 
-          patch :update, params: variant_params.merge(id:  reference.id)
+          patch :update, params: variant_params.merge(id: reference.id)
           should respond_with(403)
         end
       end
