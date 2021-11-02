@@ -2450,7 +2450,8 @@
                   "categoryId",
                   "variants",
                   "characteristics",
-                  "provider"
+                  "provider",
+                  "shopId"
                 ]
               }
             }
@@ -3469,7 +3470,8 @@
                   "isService",
                   "categoryId",
                   "variants",
-                  "characteristics"
+                  "characteristics",
+                  "shopId"
                 ]
               }
             }
@@ -4621,7 +4623,10 @@
                       }
                     }
                   }
-                }
+                },
+                "required": [
+                  "location"
+                ]
               }
             }
           }
@@ -4928,7 +4933,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {

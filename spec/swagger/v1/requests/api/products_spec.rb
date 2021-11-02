@@ -309,7 +309,7 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
             required: %w[name]
           }
         },
-        required: %w[name description brand status sellerAdvice isService categoryId variants characteristics provider]
+        required: %w[name description brand status sellerAdvice isService categoryId variants characteristics provider shopId]
       }
 
       response(202, 'Accepted') do
