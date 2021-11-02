@@ -4057,7 +4057,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           reference = create(:reference)
           patch :update, params: {id: reference.id}
           expect(response).to have_http_status(403)
-          expect(response.body).to eq(Dto::Errors::Forbidden.new("ApplicationController::Forbidden").to_h.to_json)
+          expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
         end
       end
 
@@ -4129,7 +4129,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           patch :update, params: product_params.merge(id: product.id)
 
           expect(response).to have_http_status(403)
-          expect(response.body).to eq(Dto::Errors::Forbidden.new("ApplicationController::Forbidden").to_h.to_json)
+          expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
         end
       end
     end
