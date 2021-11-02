@@ -3745,6 +3745,9 @@
       ],
       "post": {
         "summary": "Create a product for a shop.",
+        "tags": [
+          "Products"
+        ],
         "description": "Return created product polling url.",
         "security": [
           {
@@ -5486,7 +5489,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {
