@@ -94,7 +94,7 @@ module Dao
       product = ::Product.find(dto_product_request.id)
       product.name = dto_product_request.name if dto_product_request.name.present?
       product.category_id = dto_product_request.category_id if dto_product_request.category_id.present?
-      product.brand_id =  ::Brand.where(name: dto_product_request.brand).first_or_create.id if dto_product_request.name.present?
+      product.brand_id =  ::Brand.where(name: dto_product_request.brand).first_or_create.id if dto_product_request.brand.present?
       product.is_a_service = dto_product_request.is_service unless dto_product_request.is_service.nil?
       product.status = dto_product_request.status if dto_product_request.status.present?
       product.origin = dto_product_request.origin if dto_product_request.origin.present?
