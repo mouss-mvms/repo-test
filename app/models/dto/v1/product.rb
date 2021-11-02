@@ -26,9 +26,10 @@ module Dto
 =end
 
         if dto_product_request.provider && product.api_provider_product.nil?
-          provider = ApiProvider.find_by(name: dto_product_request.provider.name)
-          product.api_provider_product = ApiProviderProduct.new(external_product_id: dto_product_request.provider.external_product_id, api_provider: provider) if provider
-          product.api_provider_product.save!
+          provider = ApiProvider.where(name: dto_product_request.provider[:name]).first
+          if provider
+            product.api_provider_product = ApiProviderProduct.create(external_product_id: dto_product_request.provider[:external_product_id], api_provider: provider)
+          end
         end
 
         dto_product_request.variants.each do |dto_variant|
@@ -55,8 +56,7 @@ module Dto
           )
 
           if dto_variant.external_variant_id && reference.api_provider_variant.nil?
-            reference.api_provider_variant = ApiProviderVariant.new(external_variant_id: dto_variant.external_variant_id, api_provider: product.api_provider_product.api_provider)
-            reference.api_provider_variant.save!
+            reference.api_provider_variant = ApiProviderVariant.create!(external_variant_id: dto_variant.external_variant_id, api_provider: product.api_provider_product.api_provider)
           end
 
           dto_good_deal = dto_variant.good_deal if dto_variant.good_deal&.discount && dto_variant.good_deal&.end_at && dto_variant.good_deal&.start_at
