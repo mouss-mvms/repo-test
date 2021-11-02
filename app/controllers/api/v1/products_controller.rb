@@ -37,13 +37,44 @@ module Api
 
       def patch_auth
         ActiveRecord::Base.transaction do
-            raise ApplicationController::Forbidden unless @user.is_a_business_user?
-            dto_product_request = Dto::V1::Product::Request.new(product_params_update)
-            product = Product.find(dto_product_request.id)
-            category = Category.find(dto_product_request.category_id) if dto_product_request.category_id
+          raise ApplicationController::Forbidden unless @user.is_a_business_user?
+          dto_product_request = Dto::V1::Product::Request.new(product_params_update)
+          product = Product.find(dto_product_request.id)
+          category = Category.find(dto_product_request.category_id)
+          if category
             raise ActionController::BadRequest.new('origin and composition is required') if ::Products::CategoriesSpecifications::MustHaveLabelling.new.is_satisfied_by?(category) && (dto_product_request.origin.blank? || dto_product_request.composition.blank?)
             raise ActionController::BadRequest.new('allergens is required') if ::Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
-            raise ApplicationController::Forbidden.new("You could not create a product for this shop.") unless @user.shops.include?(product.shop)
+          end
+          raise ApplicationController::Forbidden.new("You could not create a product for this shop.") unless @user.shops.include?(product.shop)
+          begin
+            product = Dao::Product.update(dto_product_request: dto_product_request)
+          rescue => e
+            Rails.logger.error(e.message)
+            error = Dto::Errors::InternalServer.new(detail: e.message)
+            return render json: error.to_h, status: error.status
+          else
+            return render json: Dto::V1::Product::Response.create(product), status: :ok
+          end
+        end
+      end
+
+      def patch
+        ActiveRecord::Base.transaction do
+          if product_params[:provider] && product_params[:provider][:name] == 'wynd'
+            raise ActionController::ParameterMissing.new('provider.externalProductId') unless product_params[:provider][:external_product_id]
+          end
+          product_params[:variants].each do |variant|
+            if variant[:provider] && variant[:provider][:name] == 'wynd'
+              raise ActionController::ParameterMissing.new('variant.provider.externalVariantId') unless variant[:provider][:external_variant_id]
+            end
+          end
+          dto_product_request = Dto::V1::Product::Request.new(product_params_update)
+          product = Product.find(dto_product_request.id)
+          category = Category.find(dto_product_request.category_id)
+          if category
+            raise ActionController::BadRequest.new('origin and composition is required') if ::Products::CategoriesSpecifications::MustHaveLabelling.new.is_satisfied_by?(category) && (dto_product_request.origin.blank? || dto_product_request.composition.blank?)
+            raise ActionController::BadRequest.new('allergens is required') if ::Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
+          end
           begin
             product = Dao::Product.update(dto_product_request: dto_product_request)
           rescue => e
@@ -193,29 +224,45 @@ module Api
         if params[:variants]
           params[:variants].each { |v|
             hash = {}
-            hash[:id] = v[:id]
-            hash[:base_price] = v[:basePrice]
-            hash[:weight] = v[:weight]
-            hash[:quantity] = v[:quantity]
-            hash[:is_default] = v[:isDefault]
-            hash[:image_urls] = v[:imageUrls]
+            if v[:id]
+              hash[:id] = v[:id]
+              hash[:base_price] = v[:basePrice]
+              hash[:weight] = v[:weight]
+              hash[:quantity] = v[:quantity]
+              hash[:is_default] = v[:isDefault]
+              hash[:image_urls] = v[:imageUrls]
+              hash[:characteristics] = []
+              if v[:characteristics]
+                v.require(:characteristics).each { |c|
+                  characteristic = {}
+                  characteristic[:name] = c.require(:name)
+                  characteristic[:value] = c.require(:value)
+                  hash[:characteristics] << characteristic
+                }
+              end
+              hash[:external_variant_id] = v[:externalVariantId]
+              hash
+            else
+              hash[:base_price] = v.require(:basePrice)
+              hash[:weight] = v.require(:weight)
+              hash[:quantity] = v.require(:quantity)
+              hash[:is_default] = v.require(:isDefault)
+              hash[:image_urls] = v[:imageUrls]
+              hash[:characteristics] = []
+              v.require(:characteristics).each { |c|
+                characteristic = {}
+                characteristic[:name] = c.require(:name)
+                characteristic[:value] = c.require(:value)
+                hash[:characteristics] << characteristic
+              }
+              hash[:external_variant_id] = v[:externalVariantId] if v[:externalVariantId]
+            end
             if v[:goodDeal]
               hash[:good_deal] = {}
               hash[:good_deal][:start_at] = v[:goodDeal].require(:startAt)
               hash[:good_deal][:end_at] = v[:goodDeal].require(:endAt)
               hash[:good_deal][:discount] = v[:goodDeal].require(:discount)
             end
-            hash[:characteristics] = []
-            if params[:characteristics]
-              params.require(:characteristics).each { |c|
-                characteristic = {}
-                characteristic[:name] = c.require(:name)
-                characteristic[:value] = c.require(:value)
-                hash[:characteristics] << characteristic
-              }
-            end
-            hash[:external_variant_id] = params[:externalVariantId]
-            hash
             product_params[:variants] << hash
           }
         end

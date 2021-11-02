@@ -9,6 +9,7 @@ end
 scope :products do
   post '', to: 'products#create_offline'
   put ':id', to: 'products#update_offline'
+  patch ':id', to: 'products#patch'
   get ':id', to: 'products#show'
   delete ':id', to: 'products#destroy_offline'
   get ':id/reviews', to: 'products/reviews#index'

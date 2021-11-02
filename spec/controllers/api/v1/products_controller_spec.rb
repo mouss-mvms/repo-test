@@ -4131,6 +4131,2327 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
         end
       end
     end
+
+    context 'Bad params' do
+      context "Missing params on variant without id" do
+        it "should respond with HTTP STATUS 400 - PARAMS MISSING" do
+          user_shop_employee = create(:shop_employee_user, email: "shop.employee3@ecity.fr")
+          reference = create(:reference)
+          product = reference.product
+          product_params = {
+            name: "manteau MAC",
+            slug: "manteau-mac",
+            categoryId: create(:category).id,
+            brand: "3sixteen",
+            status: "online",
+            isService: true,
+            sellerAdvice: "pouet",
+            description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+            variants: [
+              {
+                basePrice: 379,
+                quantity: 0,
+                imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                isDefault: false,
+                goodDeal: {
+                  startAt: "17/05/2021",
+                  endAt: "18/06/2021",
+                  discount: 20,
+                },
+                characteristics: [
+                  {
+                    value: "coloris black",
+                    name: "color",
+                  },
+                  {
+                    value: "S",
+                    name: "size",
+                  },
+                ],
+              },
+              {
+                id: reference.id,
+                basePrice: 379,
+                weight: 1,
+                quantity: 0,
+                imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                isDefault: false,
+                goodDeal: {
+                  startAt: "17/05/2021",
+                  endAt: "18/06/2021",
+                  discount: 20,
+                },
+                characteristics: [
+                  {
+                    value: "coloris black",
+                    name: "color",
+                  },
+                  {
+                    value: "S",
+                    name: "size",
+                  },
+                ],
+              },
+            ],
+          }
+          user_shop_employee.shop_employee.shops << product.shop
+          user_shop_employee.shop_employee.save
+          request.headers["x-client-id"] = generate_token(user_shop_employee)
+          patch :patch_auth, params: product_params.merge(id: product.id)
+          should respond_with(400)
+        end
+      end
+
+      context "Product not found" do
+        it "should return 404 HTTP Status" do
+          update_params = {
+            name: "Lot de 4 tasses à café style rétro AOC",
+            categoryId: create(:category).id,
+            brand: "AOC",
+            status: "online",
+            isService: false,
+            sellerAdvice: "Les tasses donneront du style à votre pause café !",
+            description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+            variants: [
+              {
+                basePrice: 19.9,
+                weight: 0.24,
+                quantity: 4,
+                isDefault: true,
+                goodDeal: {
+                  startAt: "17/05/2021",
+                  endAt: "18/06/2021",
+                  discount: 20,
+                },
+                characteristics: [
+                  {
+                    value: "coloris black",
+                    name: "color",
+                  },
+                  {
+                    value: "S",
+                    name: "size",
+                  },
+                ],
+              },
+            ],
+          }
+          Product.destroy_all
+
+          patch :patch, params: update_params.merge(id: 12)
+
+          should respond_with(404)
+        end
+      end
+
+      context "Category not found" do
+        it "should return 404 HTTP status" do
+          product = create(:product)
+          update_params = {
+            name: "Lot de 4 tasses à café style rétro AOC",
+            categoryId: nil,
+            brand: "AOC",
+            status: "online",
+            isService: false,
+            sellerAdvice: "Les tasses donneront du style à votre pause café !",
+            description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+            variants: [
+              {
+                basePrice: 19.9,
+                weight: 0.24,
+                quantity: 4,
+                isDefault: true,
+                goodDeal: {
+                  startAt: "17/05/2021",
+                  endAt: "18/06/2021",
+                  discount: 20,
+                },
+                characteristics: [
+                  {
+                    value: "coloris black",
+                    name: "color",
+                  },
+                  {
+                    value: "S",
+                    name: "size",
+                  },
+                ],
+              },
+            ],
+          }
+          i = 1
+          Category.all.each do |category|
+            break if category.id != i
+            i = i + 1
+          end
+          update_params[:categoryId] = i
+
+          patch :patch, params: update_params.merge(id: product.id)
+
+          should respond_with(404)
+        end
+      end
+
+      context "Category is dry-fresh group" do
+        let(:product) { create(:product) }
+        let(:category) { create(:category, group: "dry-food") }
+
+        context "Origin of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("origin and composition is required")
+          end
+        end
+
+        context "Composition of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: "France",
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("origin and composition is required")
+          end
+        end
+
+        context "Allergens of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: "France",
+              composition: "Avec de la matière",
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("allergens is required")
+          end
+        end
+      end
+
+      context "Category is fresh-food group" do
+        let(:product) { create(:product) }
+        let(:category) { create(:category, group: "fresh-food") }
+
+        context "Origin of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("origin and composition is required")
+          end
+        end
+
+        context "Composition of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: "France",
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("origin and composition is required")
+          end
+        end
+
+        context "Allergens of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: "France",
+              composition: "Avec de la matière",
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("allergens is required")
+          end
+        end
+      end
+
+      context "Category is frozen-food group" do
+        let(:product) { create(:product) }
+        let(:category) { create(:category, group: "frozen-food") }
+
+        context "Origin of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("origin and composition is required")
+          end
+        end
+
+        context "Composition of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: "France",
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("origin and composition is required")
+          end
+        end
+
+        context "Allergens of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: "France",
+              composition: "Avec de la matière",
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("allergens is required")
+          end
+        end
+      end
+
+      context "Category is alcohol group" do
+        let(:product) { create(:product) }
+        let(:category) { create(:category, group: "alcohol") }
+
+        context "Origin of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("origin and composition is required")
+          end
+        end
+
+        context "Composition of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: "France",
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("origin and composition is required")
+          end
+        end
+
+        context "Allergens of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: "France",
+              composition: "Avec de la matière",
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("allergens is required")
+          end
+        end
+      end
+
+      context "Category is cosmetic group" do
+        let(:product) { create(:product) }
+        let(:category) { create(:category, group: "cosmetic") }
+
+        context "Origin of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("origin and composition is required")
+          end
+        end
+
+        context "Composition of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: "France",
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("origin and composition is required")
+          end
+        end
+
+        context "Allergens of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: "France",
+              composition: "Avec de la matière",
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("allergens is required")
+          end
+        end
+      end
+
+      context "Category is food group" do
+        let(:product) { create(:product) }
+        let(:category) { create(:category, group: "food") }
+
+        context "Origin of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("origin and composition is required")
+          end
+        end
+
+        context "Composition of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: "France",
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("origin and composition is required")
+          end
+        end
+
+        context "Allergens of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: "France",
+              composition: "Avec de la matière",
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("allergens is required")
+          end
+        end
+      end
+
+      context "Category is clothing group" do
+        let(:product) { create(:product) }
+        let(:category) { create(:category, group: "clothing") }
+
+        context "Origin of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("origin and composition is required")
+          end
+        end
+
+        context "Composition of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: "France",
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("origin and composition is required")
+          end
+        end
+      end
+
+      context "In Provider" do
+        context 'If provider is wynd and externalProductId is missing in product' do
+          it 'should return 400 HTTP Status' do
+            product = create(:product)
+
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: product.category_id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+              provider: {
+                name: "wynd"
+              }
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            expect(response).to have_http_status(:bad_request)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new('param is missing or the value is empty: provider.externalProductId').to_h.to_json)
+          end
+        end
+
+      end
+    end
+  end
+
+  describe "PATCH #patch" do
+    context "All ok" do
+      context "when request comme from over provider" do
+        it 'should return 200 HTTP status code with the updated product' do
+          reference = create(:reference)
+          product = reference.product
+          product_params = {
+            name: "manteau MAC",
+            slug: "manteau-mac",
+            categoryId: create(:category).id,
+            brand: "3sixteen",
+            status: "online",
+            isService: true,
+            sellerAdvice: "pouet",
+            description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+            variants: [
+              {
+                basePrice: 379,
+                weight: 1,
+                quantity: 0,
+                imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                isDefault: false,
+                goodDeal: {
+                  startAt: "17/05/2021",
+                  endAt: "18/06/2021",
+                  discount: 20,
+                },
+                characteristics: [
+                  {
+                    value: "coloris black",
+                    name: "color",
+                  },
+                  {
+                    value: "S",
+                    name: "size",
+                  },
+                ],
+              },
+              {
+                id: reference.id,
+                basePrice: 379,
+                weight: 1,
+                quantity: 0,
+                imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                isDefault: false,
+                goodDeal: {
+                  startAt: "17/05/2021",
+                  endAt: "18/06/2021",
+                  discount: 20,
+                },
+                characteristics: [
+                  {
+                    value: "coloris black",
+                    name: "color",
+                  },
+                  {
+                    value: "S",
+                    name: "size",
+                  },
+                ],
+              },
+            ],
+          }
+          patch :patch, params: product_params.merge(id: product.id)
+          should respond_with(200)
+        end
+      end
+    end
+
+    context "Incorrect Params" do
+
+      context "Missing params on variant without id" do
+        it "should respond with HTTP STATUS 400 - PARAMS MISSING" do
+          user_shop_employee = create(:shop_employee_user, email: "shop.employee3@ecity.fr")
+          reference = create(:reference)
+          product = reference.product
+          product_params = {
+            name: "manteau MAC",
+            slug: "manteau-mac",
+            categoryId: create(:category).id,
+            brand: "3sixteen",
+            status: "online",
+            isService: true,
+            sellerAdvice: "pouet",
+            description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+            variants: [
+              {
+                basePrice: 379,
+                quantity: 0,
+                imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                isDefault: false,
+                goodDeal: {
+                  startAt: "17/05/2021",
+                  endAt: "18/06/2021",
+                  discount: 20,
+                },
+                characteristics: [
+                  {
+                    value: "coloris black",
+                    name: "color",
+                  },
+                  {
+                    value: "S",
+                    name: "size",
+                  },
+                ],
+              },
+              {
+                id: reference.id,
+                basePrice: 379,
+                weight: 1,
+                quantity: 0,
+                imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                isDefault: false,
+                goodDeal: {
+                  startAt: "17/05/2021",
+                  endAt: "18/06/2021",
+                  discount: 20,
+                },
+                characteristics: [
+                  {
+                    value: "coloris black",
+                    name: "color",
+                  },
+                  {
+                    value: "S",
+                    name: "size",
+                  },
+                ],
+              },
+            ],
+          }
+          user_shop_employee.shop_employee.shops << product.shop
+          user_shop_employee.shop_employee.save
+          request.headers["x-client-id"] = generate_token(user_shop_employee)
+          patch :patch_auth, params: product_params.merge(id: product.id)
+          should respond_with(400)
+        end
+      end
+
+      context "Product not found" do
+        it "should return 404 HTTP Status" do
+          update_params = {
+            name: "Lot de 4 tasses à café style rétro AOC",
+            categoryId: create(:category).id,
+            brand: "AOC",
+            status: "online",
+            isService: false,
+            sellerAdvice: "Les tasses donneront du style à votre pause café !",
+            description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+            variants: [
+              {
+                basePrice: 19.9,
+                weight: 0.24,
+                quantity: 4,
+                isDefault: true,
+                goodDeal: {
+                  startAt: "17/05/2021",
+                  endAt: "18/06/2021",
+                  discount: 20,
+                },
+                characteristics: [
+                  {
+                    value: "coloris black",
+                    name: "color",
+                  },
+                  {
+                    value: "S",
+                    name: "size",
+                  },
+                ],
+              },
+            ],
+          }
+          Product.destroy_all
+
+          patch :patch, params: update_params.merge(id: 12)
+
+          should respond_with(404)
+        end
+      end
+
+      context "Category not found" do
+        it "should return 404 HTTP status" do
+          product = create(:product)
+          update_params = {
+            name: "Lot de 4 tasses à café style rétro AOC",
+            categoryId: nil,
+            brand: "AOC",
+            status: "online",
+            isService: false,
+            sellerAdvice: "Les tasses donneront du style à votre pause café !",
+            description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+            variants: [
+              {
+                basePrice: 19.9,
+                weight: 0.24,
+                quantity: 4,
+                isDefault: true,
+                goodDeal: {
+                  startAt: "17/05/2021",
+                  endAt: "18/06/2021",
+                  discount: 20,
+                },
+                characteristics: [
+                  {
+                    value: "coloris black",
+                    name: "color",
+                  },
+                  {
+                    value: "S",
+                    name: "size",
+                  },
+                ],
+              },
+            ],
+          }
+          i = 1
+          Category.all.each do |category|
+            break if category.id != i
+            i = i + 1
+          end
+          update_params[:categoryId] = i
+
+          patch :patch, params: update_params.merge(id: product.id)
+
+          should respond_with(404)
+        end
+      end
+
+      context "Category is dry-fresh group" do
+        let(:product) { create(:product) }
+        let(:category) { create(:category, group: "dry-food") }
+
+        context "Origin of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("origin and composition is required")
+          end
+        end
+
+        context "Composition of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: "France",
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("origin and composition is required")
+          end
+        end
+
+        context "Allergens of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: "France",
+              composition: "Avec de la matière",
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("allergens is required")
+          end
+        end
+      end
+
+      context "Category is fresh-food group" do
+        let(:product) { create(:product) }
+        let(:category) { create(:category, group: "fresh-food") }
+
+        context "Origin of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("origin and composition is required")
+          end
+        end
+
+        context "Composition of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: "France",
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("origin and composition is required")
+          end
+        end
+
+        context "Allergens of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: "France",
+              composition: "Avec de la matière",
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("allergens is required")
+          end
+        end
+      end
+
+      context "Category is frozen-food group" do
+        let(:product) { create(:product) }
+        let(:category) { create(:category, group: "frozen-food") }
+
+        context "Origin of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("origin and composition is required")
+          end
+        end
+
+        context "Composition of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: "France",
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("origin and composition is required")
+          end
+        end
+
+        context "Allergens of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: "France",
+              composition: "Avec de la matière",
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("allergens is required")
+          end
+        end
+      end
+
+      context "Category is alcohol group" do
+        let(:product) { create(:product) }
+        let(:category) { create(:category, group: "alcohol") }
+
+        context "Origin of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("origin and composition is required")
+          end
+        end
+
+        context "Composition of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: "France",
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("origin and composition is required")
+          end
+        end
+
+        context "Allergens of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: "France",
+              composition: "Avec de la matière",
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("allergens is required")
+          end
+        end
+      end
+
+      context "Category is cosmetic group" do
+        let(:product) { create(:product) }
+        let(:category) { create(:category, group: "cosmetic") }
+
+        context "Origin of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("origin and composition is required")
+          end
+        end
+
+        context "Composition of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: "France",
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("origin and composition is required")
+          end
+        end
+
+        context "Allergens of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: "France",
+              composition: "Avec de la matière",
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("allergens is required")
+          end
+        end
+      end
+
+      context "Category is food group" do
+        let(:product) { create(:product) }
+        let(:category) { create(:category, group: "food") }
+
+        context "Origin of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("origin and composition is required")
+          end
+        end
+
+        context "Composition of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: "France",
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("origin and composition is required")
+          end
+        end
+
+        context "Allergens of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: "France",
+              composition: "Avec de la matière",
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("allergens is required")
+          end
+        end
+      end
+
+      context "Category is clothing group" do
+        let(:product) { create(:product) }
+        let(:category) { create(:category, group: "clothing") }
+
+        context "Origin of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("origin and composition is required")
+          end
+        end
+
+        context "Composition of product is missing" do
+          it "should return 400 HTTP Status" do
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: category.id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              origin: "France",
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            should respond_with(400)
+            result = JSON.parse(response.body)
+            expect(result["detail"]).to eq("origin and composition is required")
+          end
+        end
+      end
+
+      context "In Provider" do
+        context 'If provider is wynd and externalProductId is missing in product' do
+          it 'should return 400 HTTP Status' do
+            product = create(:product)
+
+            update_params = {
+              name: "Lot de 4 tasses à café style rétro AOC",
+              categoryId: product.category_id,
+              brand: "AOC",
+              status: "online",
+              isService: false,
+              sellerAdvice: "Les tasses donneront du style à votre pause café !",
+              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+              variants: [
+                {
+                  basePrice: 19.9,
+                  weight: 0.24,
+                  quantity: 4,
+                  isDefault: true,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+              provider: {
+                name: "wynd"
+              }
+            }
+
+            patch :patch, params: update_params.merge(id: product.id)
+
+            expect(response).to have_http_status(:bad_request)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new('param is missing or the value is empty: provider.externalProductId').to_h.to_json)
+          end
+        end
+
+      end
+    end
   end
 
   describe "GET #show" do
