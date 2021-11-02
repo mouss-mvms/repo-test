@@ -4211,6 +4211,9 @@
       ],
       "post": {
         "summary": "Create a product for a shop.",
+        "tags": [
+          "Products"
+        ],
         "description": "Return created product polling url.",
         "security": [
           {
