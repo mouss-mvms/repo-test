@@ -2,14 +2,7 @@ module Dto
   module V1
     module Product
       class Request
-        class Provider
-          attr_accessor :name, :external_product_id
 
-          def initialize(name, external_product_id)
-            @name = name
-            @external_product_id = external_product_id
-          end
-        end
         attr_accessor :id, :name, :slug, :category_id, :brand, :status, :seller_advice, :is_service, :description, :variants, :image_urls, :citizen_advice, :citizen_id, :shop_id, :origin, :composition, :allergens, :provider
 
         def initialize(**args)
@@ -33,7 +26,10 @@ module Dto
           @allergens = args[:allergens]
           @composition = args[:composition]
           if args[:provider]
-            @provider = Provider.new(args[:provider][:name], args[:provider][:external_product_id])
+            @provider = {
+              name: args[:provider][:name],
+              external_product_id: args[:provider][:external_product_id]
+            }
           end
         end
 

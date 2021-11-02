@@ -44,7 +44,6 @@ module Dao
           product.api_provider_product = ApiProviderProduct.create!(api_provider: api_provider,
                                                                       external_product_id: product_params.provider[:external_product_id])
         end
-        product.save!
       end
 
       product_params.variants.each do |variant_params|
@@ -73,6 +72,11 @@ module Dao
         )
 
         good_deal_params = variant_params.good_deal ? OpenStruct.new(variant_params.good_deal) : nil
+
+        if variant_params.external_variant_id
+          reference.api_provider_variant = ApiProviderVariant.create!(api_provider: product.api_provider_product.api_provider,
+                                                                     external_variant_id: variant_params.external_variant_id)
+        end
 
         if good_deal_params && good_deal_params&.discount && good_deal_params&.end_at && good_deal_params&.start_at
           reference.good_deal = ::GoodDeal.new
@@ -109,10 +113,10 @@ module Dao
       update_or_create_variant(variant_dtos: dto_product_request.variants, product: product) if dto_product_request.variants.present?
 
       if dto_product_request.provider
-        api_provider = ApiProvider.where(name: dto_product_request.provider.name).first
+        api_provider = ApiProvider.where(name: dto_product_request.provider[:name]).first
         if api_provider
           product.api_provider_product = ApiProviderProduct.create!(api_provider: api_provider,
-                                                                    external_product_id: dto_product_request.provider.external_product_id)
+                                                                    external_product_id: dto_product_request.provider[:external_product_id])
         end
         product.save!
       end
