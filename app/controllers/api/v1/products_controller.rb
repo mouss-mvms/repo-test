@@ -40,7 +40,7 @@ module Api
           raise ApplicationController::Forbidden.new unless @user.is_a_business_user?
           dto_product_request = Dto::V1::Product::Request.new(product_params_update)
           product = Product.find(dto_product_request.id)
-          category = Category.find(dto_product_request.category_id)
+          category = Category.find(dto_product_request.category_id) if dto_product_request.category_id.present?
           if category
             raise ActionController::BadRequest.new('origin and composition is required') if ::Products::CategoriesSpecifications::MustHaveLabelling.new.is_satisfied_by?(category) && (dto_product_request.origin.blank? || dto_product_request.composition.blank?)
             raise ActionController::BadRequest.new('allergens is required') if ::Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
@@ -70,7 +70,7 @@ module Api
           end
           dto_product_request = Dto::V1::Product::Request.new(product_params_update)
           product = Product.find(dto_product_request.id)
-          category = Category.find(dto_product_request.category_id)
+          category = Category.find(dto_product_request.category_id) if dto_product_request.category_id.present?
           if category
             raise ActionController::BadRequest.new('origin and composition is required') if ::Products::CategoriesSpecifications::MustHaveLabelling.new.is_satisfied_by?(category) && (dto_product_request.origin.blank? || dto_product_request.composition.blank?)
             raise ActionController::BadRequest.new('allergens is required') if ::Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
