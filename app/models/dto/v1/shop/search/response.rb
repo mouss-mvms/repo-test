@@ -3,12 +3,13 @@ module Dto
     module Shop
       module Search
         class Response
-          attr_accessor :shops, :filters, :page
+          attr_accessor :shops, :filters, :page, :total_pages
 
           def initialize(**args)
             @shops = args[:shops].map { |shop| Dto::V1::ShopSummary::Response.create(shop.deep_symbolize_keys) }
             @filters = ::Dto::V1::Search::Filter::Response.create(args[:aggs])
             @page = args[:page]
+            @total_pages = args[:total_pages]
           end
 
           def self.create(searchkick_product_response)
@@ -20,6 +21,7 @@ module Dto
               shops: @shops.map(&:to_h),
               filters: @filters.to_h,
               page: @page,
+              totalPages: @total_pages
             }
           end
         end
