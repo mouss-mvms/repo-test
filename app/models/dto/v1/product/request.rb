@@ -10,9 +10,10 @@ module Dto
             @external_product_id = external_product_id
           end
         end
-        attr_accessor :name, :slug, :category_id, :brand, :status, :seller_advice, :is_service, :description, :variants, :image_urls, :citizen_advice, :citizen_id, :shop_id, :origin, :composition, :allergens, :provider
+        attr_accessor :id, :name, :slug, :category_id, :brand, :status, :seller_advice, :is_service, :description, :variants, :image_urls, :citizen_advice, :citizen_id, :shop_id, :origin, :composition, :allergens, :provider
 
         def initialize(**args)
+          @id = args[:id]
           @name = args[:name]
           @slug = args[:slug]
           @brand = args[:brand]
@@ -38,6 +39,7 @@ module Dto
 
         def to_h
           {
+            id: @id,
             name: @name,
             slug: @slug,
             shop_id: @shop_id,

@@ -8,7 +8,7 @@ RSpec.describe 'api/v1/shops/products', swagger_doc: 'v1/swagger.json', type: :r
     parameter name: :search_query, in: :query, type: :string, description: 'Query for search.', example: 'Air jordan'
     parameter name: :categories, in: :query, type: :string, description: 'Categories slugs concatened with double "_" if more than one.', example: "vin-et-spiritueux/aperitif-et-spiritueux/rhum__maison-et-bricolage/cuisine"
     parameter name: :prices, in: :query, type: :string, description: 'Prices range', example: '4__19'
-    parameter name: :services, in: :query,type: :string, example: "livraison-par-la-poste__click-collect", description: 'Service slugs concatened with double "_" if more than one.'
+    parameter name: :services, in: :query, type: :string, example: "livraison-par-la-poste__click-collect", description: 'Service slugs concatened with double "_" if more than one.'
     parameter name: :sort_by, in: :query, schema: {
       type: :string,
       enum: [
@@ -23,10 +23,10 @@ RSpec.describe 'api/v1/shops/products', swagger_doc: 'v1/swagger.json', type: :r
       tags 'Products'
       produces 'application/json'
       description 'Retrieve all products from the given shop.'
-      security [{authorization: []}]
+      security [{ authorization: [] }]
 
       response(200, 'Successful') do
-        schema type: :array, items: {'$ref': '#/components/schemas/Product'}
+        schema type: :array, items: { '$ref': '#/components/schemas/Product' }
         run_test!
       end
 

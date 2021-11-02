@@ -48,8 +48,40 @@ module Dao
       return reference
     end
 
-    def self.update(product, product_params)
+    def self.update(dto_variant_request:)
+      @reference = Reference.find(dto_variant_request.id)
+      if dto_variant_request.files
+        dto_variant_request.files.each do |file|
+          raise ApplicationController::UnpermittedParameter.new("Incorrect file format") unless file.is_a?(ActionDispatch::Http::UploadedFile)
+          image_dto = Dto::V1::Image::Request.create(image: file)
+          image = ::Image.create!(file: image_dto.tempfile)
+          @reference.sample.images << image
+        end
+      end
 
+      if dto_variant_request.image_urls.present?
+        dto_variant_request.image_urls.each do |image_url|
+          Dao::Variant.set_image(object: @reference.sample, image_url: image_url)
+        end
+      end
+
+      if dto_variant_request.external_variant_id
+        api_provider_product = @reference.product.api_provider_product
+        if api_provider_product
+          @reference.api_provider_variant = ApiProviderVariant.create!(api_provider: api_provider_product.api_provider,
+                                                                      external_variant_id: dto_variant_request.external_variant_id)
+          @reference.save!
+        end
+      end
+
+      @reference.base_price = dto_variant_request.base_price if dto_variant_request.base_price
+      @reference.weight = dto_variant_request.weight if dto_variant_request.weight
+      @reference.quantity = dto_variant_request.quantity if dto_variant_request.quantity
+      @reference.sample.default = dto_variant_request.is_default unless dto_variant_request.is_default.nil?
+      @reference.good_deal.update(starts_at: dto_variant_request.good_deal.start_at, ends_at: dto_variant_request.good_deal.end_at, discount: dto_variant_request.good_deal.discount) if dto_variant_request.good_deal
+      update_characteristics(dto_variant_request: dto_variant_request) if dto_variant_request.characteristics
+      @reference.save!
+      @reference
     end
 
     private
@@ -69,6 +101,16 @@ module Dao
 
       date_array = date_string.split('/').map(&:to_i).reverse
       DateTime.new(date_array[0], date_array[1], date_array[2])
+    end
+
+    def self.update_characteristics(dto_variant_request:)
+      return unless dto_variant_request.characteristics
+      color_characteristic = dto_variant_request.characteristics.detect { |char| char.name == "color" }
+      size_characteristic = dto_variant_request.characteristics.detect { |char| char.name == "size" }
+
+      @reference.color_id = color_characteristic ? ::Color.where(name: color_characteristic.value).first_or_create.id : nil
+      @reference.size_id = size_characteristic ? ::Size.where(name: size_characteristic.value).first_or_create.id : nil
+      @reference
     end
   end
 end
