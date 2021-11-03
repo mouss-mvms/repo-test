@@ -105,10 +105,7 @@ module Dao
       product.pro_advice = dto_product_request.seller_advice if dto_product_request.seller_advice.present?
       product.allergens = dto_product_request.allergens if dto_product_request.allergens.present?
       product.composition = dto_product_request.composition if dto_product_request.composition.present?
-      product.fields_attributes = [
-        { lang: "fr", field: "description", content: dto_product_request.description },
-        { lang: "en", field: "description", content: "" }
-      ] if dto_product_request.description.present?
+      set_description(product, dto_product_request.description) if dto_product_request.description.present?
 
       update_or_create_variant(variant_dtos: dto_product_request.variants, product: product) if dto_product_request.variants.present?
 
@@ -129,8 +126,21 @@ module Dao
     def self.update_or_create_variant(variant_dtos:, product:)
       variant_dtos.each do |variant_dto|
         variant_dto.product_id = product.id
-        variant_dto.id.present? ? Dao::Variant.update(dto_variant_request: variant_dto) : Dao::Variant.create(dto_variant_request: variant_dto)
+        if variant_dto.id.present?
+          product.references.find(variant_dto.id)
+          Dao::Variant.update(dto_variant_request: variant_dto)
+        else
+          Dao::Variant.create(dto_variant_request: variant_dto)
+        end
       end
+    end
+
+    def self.set_description(product, description)
+      product.descriptions.destroy_all
+      product.fields_attributes = [
+        { lang: "fr", field: "description", content: description },
+        { lang: "en", field: "description", content: "" }
+      ]
     end
 
     def self.set_image(object:, image_url:)
