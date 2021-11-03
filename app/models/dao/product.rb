@@ -107,8 +107,6 @@ module Dao
       product.composition = dto_product_request.composition if dto_product_request.composition.present?
       set_description(product, dto_product_request.description) if dto_product_request.description.present?
 
-      update_or_create_variant(variant_dtos: dto_product_request.variants, product: product) if dto_product_request.variants.present?
-
       if dto_product_request.provider
         api_provider = ApiProvider.where(name: dto_product_request.provider[:name]).first
         if api_provider
@@ -117,6 +115,7 @@ module Dao
         end
         product.save!
       end
+      update_or_create_variant(variant_dtos: dto_product_request.variants, product: product) if dto_product_request.variants.present?
       product.save!
       product
     end
