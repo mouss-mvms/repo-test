@@ -24,17 +24,19 @@ module Api
           hash[:is_default] = params[:isDefault]
           hash[:image_urls] = params[:imageUrls]
           if params[:goodDeal]
+            good_deal_params = ActionController::Parameters.new(JSON.parse(params[:goodDeal]))
             hash[:good_deal] = {}
-            hash[:good_deal][:start_at] = params[:goodDeal].require(:startAt)
-            hash[:good_deal][:end_at] = params[:goodDeal].require(:endAt)
-            hash[:good_deal][:discount] = params[:goodDeal].require(:discount)
+            hash[:good_deal][:start_at] = good_deal_params.require(:startAt)
+            hash[:good_deal][:end_at] = good_deal_params.require(:endAt)
+            hash[:good_deal][:discount] = good_deal_params.require(:discount)
           end
           hash[:characteristics] = []
-          if params[:characteristics]
-            params.require(:characteristics).each { |c|
+          if params[:characteristics].present?
+            JSON.parse(params[:characteristics]).each { |c|
+              characteristic_params = ActionController::Parameters.new(c)
               characteristic = {}
-              characteristic[:name] = c.require(:name)
-              characteristic[:value] = c.require(:value)
+              characteristic[:name] = characteristic_params.require(:name)
+              characteristic[:value] = characteristic_params.require(:value)
               hash[:characteristics] << characteristic
             }
           end
