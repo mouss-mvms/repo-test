@@ -226,7 +226,7 @@ RSpec.describe Api::V1::Shops::SummariesController, type: :controller do
                     "created_at" => "2020-03-26T09:09:09.639+01:00",
                     "updated_at" => "2020-04-07T13:51:18.309+02:00",
                     "slug" => "2e-chance",
-                    "location"=>{"lat"=>45.79923399999999, "lon"=>4.8470666},
+                      "location"=>{"lat"=>45.79923399999999, "lon"=>4.8470666},
                     "shop_url" => "/fr/saint-orens-de-gameville/boutiques/2e-chance",
                     "category_tree_ids" => [2565, 2579, 2580, 2649, 2666, 2835, 2836, 2837, 2853, 2895, 2906],
                     "category_tree_names" =>
