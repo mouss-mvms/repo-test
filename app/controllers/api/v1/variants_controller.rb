@@ -29,13 +29,14 @@ module Api
             hash[:good_deal][:end_at] = params[:goodDeal].require(:endAt)
             hash[:good_deal][:discount] = params[:goodDeal].require(:discount)
           end
-          hash[:characteristics] = []
-          if params[:characteristics]
-            params.require(:characteristics).each { |c|
+          @hash[:characteristics] = []
+          if params[:characteristics].present?
+            JSON.parse(params[:characteristics]).each { |c|
+              characteristic_params = ActionController::Parameters.new(c)
               characteristic = {}
-              characteristic[:name] = c.require(:name)
-              characteristic[:value] = c.require(:value)
-              hash[:characteristics] << characteristic
+              characteristic[:name] = characteristic_params.require(:name)
+              characteristic[:value] = characteristic_params.require(:value)
+              @hash[:characteristics] << characteristic
             }
           end
           hash[:external_variant_id] = params[:externalVariantId]
