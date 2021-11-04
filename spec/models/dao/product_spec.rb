@@ -138,7 +138,6 @@ RSpec.describe Dao::Product, :type => :model do
       }
       update_params = {
         name: "update de ses morts",
-        shop_id: shop.id,
         description: "Chaise longue pour jardin extérieur.",
         category_id: category.id,
         brand: "Lafuma",

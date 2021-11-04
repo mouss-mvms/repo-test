@@ -3976,14 +3976,14 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           product = reference.product
           product_params = {
             name: "manteau MAC",
-              slug: "manteau-mac",
-              categoryId: create(:category).id,
-              brand: "3sixteen",
-              status: "online",
-              isService: true,
-              sellerAdvice: "pouet",
-              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
-              variants: [
+            slug: "manteau-mac",
+            categoryId: create(:category).id,
+            brand: "3sixteen",
+            status: "online",
+            isService: true,
+            sellerAdvice: "pouet",
+            description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+            variants: [
               {
                 basePrice: 379,
                 weight: 1,
@@ -4036,6 +4036,28 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           request.headers["x-client-id"] = generate_token(user_shop_employee)
           patch :patch_auth, params: product_params.merge(id: product.id)
           should respond_with(200)
+
+        end
+      end
+
+      context "when a description already exist" do
+        it "should update product description" do
+          user_shop_employee = create(:shop_employee_user, email: "shop.employee3@ecity.fr")
+          reference = create(:reference)
+          product = reference.product
+          product.update!(fields_attributes: [
+            { lang: "fr", field: "description", content: "FIIIIXXX CHAUD"},
+            { lang: "en", field: "description", content: "HOTFIXXXX" }])
+          product_params = {
+            description: "Mon coup n'est pas fatal mais fait parfois mal, souvent je suis dressé et sens bon la marrée. QUI SUIS JE???"
+          }
+          user_shop_employee.shop_employee.shops << product.shop
+          user_shop_employee.shop_employee.save
+          request.headers["x-client-id"] = generate_token(user_shop_employee)
+          patch :patch_auth, params: product_params.merge(id: product.id)
+          should respond_with(200)
+          result = JSON.parse(response.body)
+          expect(result["description"]).to eq(product_params[:description])
         end
       end
     end
@@ -4055,7 +4077,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
         it "should return 403" do
           request.headers['HTTP_X_CLIENT_ID'] = generate_token(@admin_user)
           reference = create(:reference)
-          patch :update, params: {id: reference.id}
+          patch :update, params: { id: reference.id }
           expect(response).to have_http_status(403)
           expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
         end
@@ -5240,15 +5262,17 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
         end
 
       end
-    end
-  end
 
-  describe "PATCH #patch" do
-    context "All ok" do
-      context "when request comme from over provider" do
-        it 'should return 200 HTTP status code with the updated product' do
-          reference = create(:reference)
-          product = reference.product
+      context "variant dont belongs to product" do
+        it 'should return 404 HTTP Status' do
+          shop = create(:shop)
+          product = create(:product)
+          ref1 = create(:reference)
+          ref2 = create(:reference)
+          product.references << ref2
+          product.save
+          shop.products << product
+
           product_params = {
             name: "manteau MAC",
             slug: "manteau-mac",
@@ -5260,29 +5284,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
             variants: [
               {
-                basePrice: 379,
-                weight: 1,
-                quantity: 0,
-                imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
-                isDefault: false,
-                goodDeal: {
-                  startAt: "17/05/2021",
-                  endAt: "18/06/2021",
-                  discount: 20,
-                },
-                characteristics: [
-                  {
-                    value: "coloris black",
-                    name: "color",
-                  },
-                  {
-                    value: "S",
-                    name: "size",
-                  },
-                ],
-              },
-              {
-                id: reference.id,
+                id: ref1.id,
                 basePrice: 379,
                 weight: 1,
                 quantity: 0,
@@ -5306,8 +5308,122 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               },
             ],
           }
+
+          user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
+          user_shop_employee.shop_employee.shops << shop
+          user_shop_employee.shop_employee.save
+
+          shop.owner = user_shop_employee.shop_employee
+          shop.save
+
+          request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+          patch :patch_auth, params: product_params.merge(id: product.id)
+
+          expect(response).to have_http_status(:not_found)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Reference with 'id'=#{ref1.id} [WHERE \"pr_references\".\"product_id\" = $1]").to_h.to_json)
+        end
+      end
+    end
+  end
+
+  describe "PATCH #patch" do
+    context "All ok" do
+      context "when request comme from over provider" do
+        it 'should return 200 HTTP status code with the updated product' do
+          reference = create(:reference)
+          provider = create(:api_provider, name: 'wynd')
+          product = reference.product
+          product_params = {
+            name: "manteau MAC",
+            slug: "manteau-mac",
+            categoryId: create(:category).id,
+            brand: "3sixteen",
+            status: "online",
+            isService: true,
+            sellerAdvice: "pouet",
+            description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+            variants: [
+              {
+                basePrice: 379,
+                weight: 1,
+                quantity: 0,
+                imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                isDefault: false,
+                externalVariantId: "72",
+                goodDeal: {
+                  startAt: "17/05/2021",
+                  endAt: "18/06/2021",
+                  discount: 20,
+                },
+                characteristics: [
+                  {
+                    value: "coloris red",
+                    name: "color",
+                  },
+                  {
+                    value: "42",
+                    name: "size",
+                  },
+                ],
+              },
+              {
+                id: reference.id,
+                basePrice: 379,
+                weight: 1,
+                quantity: 0,
+                imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                isDefault: false,
+                goodDeal: {
+                  startAt: "17/05/2021",
+                  endAt: "18/06/2021",
+                  discount: 20,
+                },
+                externalVariantId: "42",
+                characteristics: [
+                  {
+                    value: "coloris black",
+                    name: "color",
+                  },
+                  {
+                    value: "S",
+                    name: "size",
+                  },
+                ],
+              }
+            ],
+            provider: {
+              name: provider.name,
+              externalProductId: 'tye65'
+            }
+          }
+
           patch :patch, params: product_params.merge(id: product.id)
           should respond_with(200)
+
+          result = JSON.parse(response.body)
+          expect(result["name"]).to eq(product_params[:name])
+          expect(Product.find(result["id"]).name).to eq(product_params[:name])
+          expect(result["category"]["id"]).to eq(product_params[:categoryId])
+          expect(Category.find(result["category"]["id"]).name).to eq(product.category.name)
+          expect(result["brand"]).to eq(product_params[:brand])
+          expect(result["status"]).to eq(product_params[:status])
+          expect(result["isService"]).to eq(product_params[:isService])
+          expect(result["sellerAdvice"]).to eq(product_params[:sellerAdvice])
+          expect(result["description"]).to eq(product_params[:description])
+          expect(result["origin"]).to eq(product_params[:origin])
+          expect(result["allergens"]).to eq(product_params[:allergens])
+          expect(result["composition"]).to eq(product_params[:composition])
+          expect(product.reload.api_provider_product.external_product_id).to eq(product_params[:provider][:externalProductId])
+          product_params[:variants].each do |variant_param|
+            to_compare = result["variants"].find { |r_variant|
+              r_variant["externalVariantId"] == variant_param[:externalVariantId]
+            }
+            expect(to_compare).to_not be_nil
+            expect(to_compare["basePrice"]).to eq(variant_param[:basePrice])
+            expect(to_compare["quantity"]).to eq(variant_param[:quantity])
+            expect(to_compare["weight"]).to eq(variant_param[:weight])
+          end
         end
       end
     end
@@ -6417,6 +6533,68 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           end
         end
 
+      end
+
+      context "variant dont belongs to product" do
+        it 'should return 404 HTTP Status' do
+          shop = create(:shop)
+          product = create(:product)
+          ref1 = create(:reference)
+          ref2 = create(:reference)
+          product.references << ref2
+          product.save
+          shop.products << product
+
+          product_params = {
+            name: "manteau MAC",
+            slug: "manteau-mac",
+            categoryId: create(:category).id,
+            brand: "3sixteen",
+            status: "online",
+            isService: true,
+            sellerAdvice: "pouet",
+            description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+            variants: [
+              {
+                id: ref1.id,
+                basePrice: 379,
+                weight: 1,
+                quantity: 0,
+                imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                isDefault: false,
+                goodDeal: {
+                  startAt: "17/05/2021",
+                  endAt: "18/06/2021",
+                  discount: 20,
+                },
+                characteristics: [
+                  {
+                    value: "coloris black",
+                    name: "color",
+                  },
+                  {
+                    value: "S",
+                    name: "size",
+                  },
+                ],
+              },
+            ],
+          }
+
+          user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
+          user_shop_employee.shop_employee.shops << shop
+          user_shop_employee.shop_employee.save
+
+          shop.owner = user_shop_employee.shop_employee
+          shop.save
+
+          request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+          patch :patch_auth, params: product_params.merge(id: product.id)
+
+          expect(response).to have_http_status(:not_found)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Reference with 'id'=#{ref1.id} [WHERE \"pr_references\".\"product_id\" = $1]").to_h.to_json)
+        end
       end
     end
   end
