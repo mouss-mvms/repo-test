@@ -23,16 +23,16 @@ module Api
           raise ApplicationController::Forbidden if @user.shop_employee.shops.to_a.find { |s| s.id == product.shop.id }.nil?
         end
 
-        begin
+        #begin
           product = Dto::V1::Product.build(dto_product_request: dto_product_request, product: product)
-        rescue => e
-          Rails.logger.error(e)
-          error = Dto::Errors::InternalServer.new
-          return render json: error.to_h, status: error.status
-        else
+        # rescue => e
+        #   Rails.logger.error(e)
+        #   error = Dto::Errors::InternalServer.new
+        #   return render json: error.to_h, status: error.status
+        # else
           dto_product_response = Dto::V1::Product::Response.create(product)
           return render json: dto_product_response.to_h, status: :ok
-        end
+        #end
       end
 
       def patch_auth
@@ -178,6 +178,7 @@ module Api
         product_params[:variants] = []
         params.require(:variants).each { |v|
           hash = {}
+          hash[:id] = v[:id]
           hash[:base_price] = v.require(:basePrice)
           hash[:weight] = v.require(:weight)
           hash[:quantity] = v.require(:quantity)
