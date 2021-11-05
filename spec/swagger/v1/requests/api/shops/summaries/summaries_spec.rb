@@ -2,11 +2,11 @@ require 'swagger_helper'
 
 RSpec.describe 'api/v1/shops/summaries', swagger_doc: 'v1/swagger.json', type: :request do
   path '/api/v1/shops/summaries/search' do
-    post("List of shop summaries with filters") do
+    post("Search shops") do
       tags 'Shops'
       consumes 'application/json'
       produces 'application/json'
-      description 'List of shop summaries with filters'
+      description 'Search list of shops'
       security [{authorization: []}]
 
       parameter name: :shops, in: :body, schema: {
@@ -14,27 +14,25 @@ RSpec.describe 'api/v1/shops/summaries', swagger_doc: 'v1/swagger.json', type: :
         properties: {
           location: { type: :string, example: "bordeaux", description: 'Territory or city slug.' },
           q: { type: :string, example: "Chaussures", description: 'Query for search.' },
-          categories: { type: :string, example: "homme", description: 'Categories slugs concatened with double "_" if more than one.' },
-          services: { type: :string, example: "livraison-par-la-poste__livraison-france-metropolitaine", description: 'Service slugs concatened with double "_" if more than one.' },
+          category: { type: :string, example: "homme", description: 'Category slug' },
+          services: { type: :array, items: { type: 'string', example: "livraison-par-la-poste", description: 'Delivery service slug' } },
           page: { type: :string, example: '1', description: 'Search page number.' },
-          more: { type: :boolean, description: 'Increase research perimeter scope' },
-          name: {
+          perimeter: {
             type: :string,
             enum: [
-              "around_me",
-              "all"
+              "department",
+              "country"
             ]
           },
           geolocOptions: {
             type: :object,
             properties: {
-              lat: { type: :number, example: "-1.678979", description: "Shop address latitude." },
-              long: { type: :number, example: "4.672382", description: "Shop address longitude." },
-              radius: { type: :integer, example: "1200", description: "Research radius in meters.", minimum: 50, maximum: 100000 },
+              lat: { type: :number, example: "-1.678979", description: "Shop address latitude.", required: true },
+              long: { type: :number, example: "4.672382", description: "Shop address longitude.", required: true },
+              radius: { type: :integer, example: 1200, description: "Research radius in meters.", minimum: 1 },
             }
           }
-        },
-        required: %w[location]
+        }
       }
 
       response(200, 'Successful') do

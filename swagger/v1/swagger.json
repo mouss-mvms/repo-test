@@ -4942,11 +4942,11 @@
     },
     "/api/v1/shops/summaries/search": {
       "post": {
-        "summary": "List of shop summaries with filters",
+        "summary": "Search shops",
         "tags": [
           "Shops"
         ],
-        "description": "List of shop summaries with filters",
+        "description": "Search list of shops",
         "security": [
           {
             "authorization": [
@@ -5040,30 +5040,29 @@
                     "example": "Chaussures",
                     "description": "Query for search."
                   },
-                  "categories": {
+                  "category": {
                     "type": "string",
                     "example": "homme",
-                    "description": "Categories slugs concatened with double \"_\" if more than one."
+                    "description": "Category slug"
                   },
                   "services": {
-                    "type": "string",
-                    "example": "livraison-par-la-poste__livraison-france-metropolitaine",
-                    "description": "Service slugs concatened with double \"_\" if more than one."
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "example": "livraison-par-la-poste",
+                      "description": "Delivery service slug"
+                    }
                   },
                   "page": {
                     "type": "string",
                     "example": "1",
                     "description": "Search page number."
                   },
-                  "more": {
-                    "type": "boolean",
-                    "description": "Increase research perimeter scope"
-                  },
-                  "name": {
+                  "perimeter": {
                     "type": "string",
                     "enum": [
-                      "around_me",
-                      "all"
+                      "department",
+                      "country"
                     ]
                   },
                   "geolocOptions": {
@@ -5072,26 +5071,25 @@
                       "lat": {
                         "type": "number",
                         "example": "-1.678979",
-                        "description": "Shop address latitude."
+                        "description": "Shop address latitude.",
+                        "required": true
                       },
                       "long": {
                         "type": "number",
                         "example": "4.672382",
-                        "description": "Shop address longitude."
+                        "description": "Shop address longitude.",
+                        "required": true
                       },
                       "radius": {
                         "type": "integer",
-                        "example": "1200",
+                        "example": 1200,
                         "description": "Research radius in meters.",
                         "minimum": 50,
                         "maximum": 100000
                       }
                     }
                   }
-                },
-                "required": [
-                  "location"
-                ]
+                }
               }
             }
           }
@@ -5395,7 +5393,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://0.0.0.0:3000"
     }
   ],
   "components": {
