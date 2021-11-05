@@ -134,7 +134,7 @@ module Dto
           reference.good_deal.discount = dto_good_deal.discount
           reference.good_deal.kind = "percentage"
         end
-        reference.good_deal.save!
+        reference.save!
         reference
       end
 
@@ -144,6 +144,7 @@ module Dto
         sample.update!(name: dto_product_request.name, default: dto_variant.is_default, product_id: product.id)
 
         if dto_variant.image_urls.present?
+          sample.images.destroy_all
           dto_variant.image_urls.each do |image_url|
             Dto::V1::Product.set_image(object: sample, image_url: image_url)
           end
