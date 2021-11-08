@@ -31,6 +31,10 @@ RSpec.describe 'api/v1/shops/summaries', swagger_doc: 'v1/swagger.json', type: :
               "country"
             ]
           },
+          sortBy: {
+            type: :string,
+            enum: ["name-asc", "name-desc", "random", "distance", "highest-score", "best-sells"]
+          }
           geolocOptions: {
             type: :object,
             properties: {
