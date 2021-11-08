@@ -5,6 +5,7 @@ module Api
         before_action :render_cache, only: [:search]
 
         DEFAULT_FILTERS_PRODUCTS = [:prices, :brands, :colors, :sizes]
+        PER_PAGE = 16
 
         def search
           search_criterias = ::Criterias::Composite.new(::Criterias::Products::Online)
@@ -38,11 +39,10 @@ module Api
 
           search_criterias.and(::Criterias::NotInCategories.new(Category.excluded_from_catalog.pluck(:id))) unless search_params[:q]
           search_criterias.and(::Criterias::Products::SharedByCitizen) if search_params[:shared_products] == true
-          search_criterias.and(::Criterias::Products::FromServices.new(search_params[:services])) if params[:services]
+          search_criterias.and(::Criterias::Products::FromServices.new(search_params[:services])) if search_params[:services]
 
           if search_params[:category]
-            category = Category.find_by(slug: search_params[:category])
-            raise ApplicationController::NotFound.new('Category not found.') unless category
+            category = Category.find_by!(slug: search_params[:category])
             search_criterias.and(::Criterias::InCategories.new([category.id]))
           end
 
@@ -54,7 +54,7 @@ module Api
             sort_params: search_params[:sort_by],
             random: search_params[:random],
             aggs: [:base_price, :brand_name, :colors, :sizes, :services, :category_tree_ids],
-            pagination: { page: search_params[:page], per_page: 15 }
+            pagination: { page: search_params[:page], per_page: PER_PAGE }
           ).call
 
           search = { products: search_results.map { |p| p }, aggs: search_results.aggs, page: search_results.options[:page], total_pages: search_results.total_pages }
@@ -76,9 +76,9 @@ module Api
           search_params[:shared_products] = params[:sharedProducts] if params[:sharedProducts]
           search_params[:category] = params[:category] if params[:category].present?
           search_params[:services] = params[:services] if params[:services]
-          search_params[:sort_by] = params[:sortBy] if params[:sortBy]
+          search_params[:sort_by] = params[:sortBy] ? params[:sortBy] : 'name-asc'
           search_params[:random] = params[:sortBy] == 'random'
-          search_params[:page] = params[:page] if params[:page]
+          search_params[:page] = params[:page] ? params[:page] : "1"
           search_params
         end
 

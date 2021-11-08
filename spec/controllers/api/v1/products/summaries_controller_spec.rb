@@ -57,7 +57,7 @@ RSpec.describe Api::V1::Products::SummariesController do
           location = create(:city)
           post :search, params: { location: location.slug, category: "casque-radio-star-wars" }
           should respond_with(404)
-          expect(response.body).to eq(Dto::Errors::NotFound.new("Category not found.").to_h.to_json)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Category").to_h.to_json)
         end
       end
     end

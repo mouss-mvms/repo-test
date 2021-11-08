@@ -1126,8 +1126,8 @@
                     ]
                   },
                   "page": {
-                    "type": "string",
-                    "example": "1",
+                    "type": "integer",
+                    "example": 1,
                     "description": "Search page number."
                   }
                 }
@@ -5979,7 +5979,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {
@@ -6769,14 +6769,14 @@
             }
           },
           "page": {
-            "type": "string",
+            "type": "integer",
             "description": "Search page number.",
-            "example": "2"
+            "example": 2
           },
           "totalPages": {
-            "type": "string",
+            "type": "integer",
             "description": "Total search page number.",
-            "example": "15"
+            "example": 15
           }
         }
       },

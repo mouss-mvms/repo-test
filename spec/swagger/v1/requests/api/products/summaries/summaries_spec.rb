@@ -32,7 +32,7 @@ RSpec.describe "api/v1/products/summaries", swagger_doc: "v1/swagger.json", type
             enum: ["highest-score", "price-asc", "price-desc", "newest", "position", "name-asc", "name-desc", "random"]
           },
 
-          page: { type: :string, example: '1', description: 'Search page number.' },
+          page: { type: :integer, example: 1, description: 'Search page number.' },
         }
       }
       response(200, 'successful') do
