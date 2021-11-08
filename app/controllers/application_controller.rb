@@ -72,7 +72,7 @@ class ApplicationController < ActionController::API
     def cache_path
       controller = params[:controller]
       action = params[:action]
-      rest = permitted_params.sort_by { |k, v| k }.to_h.values.compact.join('-')
+      rest = cache_params.sort_by { |k, v| k }.to_h.values.compact.join('-')
       "#{controller}-#{action}-#{rest}"
     end
 
