@@ -14,8 +14,15 @@ RSpec.describe 'api/v1/shops/summaries', swagger_doc: 'v1/swagger.json', type: :
         properties: {
           location: { type: :string, example: "bordeaux", description: 'Territory or city slug.' },
           q: { type: :string, example: "Chaussures", description: 'Query for search.' },
-          category: { type: :string, example: "homme", description: 'Category slug' },
-          services: { type: :array, items: { type: 'string', example: "livraison-par-la-poste", description: 'Delivery service slug' } },
+          category: { type: :string, example: "alimentation", description: 'Category slug' },
+          services: { type: :array, items:
+            {
+              type: 'string',
+              example: "livraison-par-la-poste",
+              description: 'Delivery service slug',
+              enum: Service.enabled.map{|service| service.slug }
+            }
+          },
           page: { type: :integer, example: 1, description: 'Search page number.' },
           perimeter: {
             type: :string,
@@ -27,10 +34,11 @@ RSpec.describe 'api/v1/shops/summaries', swagger_doc: 'v1/swagger.json', type: :
           geolocOptions: {
             type: :object,
             properties: {
-              lat: { type: :number, example: "-1.678979", description: "Shop address latitude.", required: true },
-              long: { type: :number, example: "4.672382", description: "Shop address longitude.", required: true },
-              radius: { type: :integer, example: 1200, description: "Research radius in meters.", minimum: 1 },
-            }
+              lat: { type: :number, example: "-0.5862431", description: "Shop address latitude." },
+              long: { type: :number, example: "44.8399608", description: "Shop address longitude."},
+              radius: { type: :integer, example: 50000, description: "Research radius in meters.", minimum: 1 },
+            },
+            required: %w[lat long]
           }
         }
       }

@@ -5613,7 +5613,7 @@
                   },
                   "category": {
                     "type": "string",
-                    "example": "homme",
+                    "example": "alimentation",
                     "description": "Category slug"
                   },
                   "services": {
@@ -5621,7 +5621,20 @@
                     "items": {
                       "type": "string",
                       "example": "livraison-par-la-poste",
-                      "description": "Delivery service slug"
+                      "description": "Delivery service slug",
+                      "enum": [
+                        "e-reservation",
+                        "livraison-par-colissimo",
+                        "livraison-express-par-stuart",
+                        "click-collect",
+                        "retrait-drive",
+                        "livraison-france-metropolitaine",
+                        "diagana-youssouf",
+                        "livraison-de-proximite",
+                        "point-de-retrait-conciergerie-maif-siege-social",
+                        "livraison-par-la-poste",
+                        "livraison-par-le-commercant"
+                      ]
                     }
                   },
                   "page": {
@@ -5641,23 +5654,25 @@
                     "properties": {
                       "lat": {
                         "type": "number",
-                        "example": "-1.678979",
-                        "description": "Shop address latitude.",
-                        "required": true
+                        "example": "-0.5862431",
+                        "description": "Shop address latitude."
                       },
                       "long": {
                         "type": "number",
-                        "example": "4.672382",
-                        "description": "Shop address longitude.",
-                        "required": true
+                        "example": "44.8399608",
+                        "description": "Shop address longitude."
                       },
                       "radius": {
                         "type": "integer",
-                        "example": 1200,
+                        "example": 50000,
                         "description": "Research radius in meters.",
                         "minimum": 1
                       }
-                    }
+                    },
+                    "required": [
+                      "lat",
+                      "long"
+                    ]
                   }
                 }
               }
@@ -5963,7 +5978,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://0.0.0.0:3000"
     }
   ],
   "components": {

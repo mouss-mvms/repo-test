@@ -13,7 +13,8 @@ module Api
 
           if search_params[:geoloc]
             geoloc_params = search_params[:geoloc]
-            search_criterias.and(::Criterias::Shops::InPerimeter.new(geoloc_params[:latitude], geoloc_params[:longitude], geoloc_params[:radius]))
+            radius_in_km = (geoloc_params[:radius].to_f/1000)
+            search_criterias.and(::Criterias::Shops::InPerimeter.new(geoloc_params[:latitude], geoloc_params[:longitude], radius_in_km))
           elsif search_params[:location]
             territory = Territory.find_by(slug: search_params[:location])
             city = City.find_by(slug: search_params[:location])
@@ -31,6 +32,7 @@ module Api
               when 'department'
                 search_criterias.and(::Criterias::CloseToYou.new(nil, insee_code, except_current_cities: true))
               when 'country'
+                search_criterias.remove(:insee_code, :territory_slug)
                 search_criterias.and(::Criterias::InCountry.new(nil))
               end
             end
