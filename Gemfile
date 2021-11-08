@@ -68,4 +68,7 @@ gem 'jwt'
 gem 'dalli'
 gem 'memcachier'
 
-gem 'mvms-core', path: '../../mvms-core'
+source 'https://gem.fury.io/mvms/' do
+  gem 'mvms-core', '2.5.328'
+end
+

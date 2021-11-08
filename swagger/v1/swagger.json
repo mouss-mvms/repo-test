@@ -5054,8 +5054,8 @@
                     }
                   },
                   "page": {
-                    "type": "string",
-                    "example": "1",
+                    "type": "integer",
+                    "example": 1,
                     "description": "Search page number."
                   },
                   "perimeter": {
@@ -5084,8 +5084,7 @@
                         "type": "integer",
                         "example": 1200,
                         "description": "Research radius in meters.",
-                        "minimum": 50,
-                        "maximum": 100000
+                        "minimum": 1
                       }
                     }
                   }

@@ -16,7 +16,7 @@ RSpec.describe 'api/v1/shops/summaries', swagger_doc: 'v1/swagger.json', type: :
           q: { type: :string, example: "Chaussures", description: 'Query for search.' },
           category: { type: :string, example: "homme", description: 'Category slug' },
           services: { type: :array, items: { type: 'string', example: "livraison-par-la-poste", description: 'Delivery service slug' } },
-          page: { type: :string, example: '1', description: 'Search page number.' },
+          page: { type: :integer, example: 1, description: 'Search page number.' },
           perimeter: {
             type: :string,
             enum: [
