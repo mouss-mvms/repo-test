@@ -3,9 +3,86 @@ require "rails_helper"
 RSpec.describe Api::V1::ProductsController, type: :controller do
   describe "PUT #update_offline" do
     context "All ok" do
-      it "should return 200 HTTP status with product updated" do
+
+      it "should return 200 HTTP Status with product updated" do
+        user_shop_employee = create(:shop_employee_user, email: "shop.employee3@ecity.fr")
         product = create(:product)
         provider = create(:api_provider, name: 'wynd')
+        ref1 = create(:reference, product: product)
+        ref2 = create(:reference, product: product)
+        ref3 = create(:reference, product: product)
+        ref1_update_params = {
+          id: ref1.id,
+          basePrice: 20,
+          weight: 13,
+          quantity: 42,
+          isDefault: false,
+          externalVariantId: 'rzsd12',
+          imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+          goodDeal: {
+            startAt: "17/05/2015",
+            endAt: "18/06/2031",
+            discount: 10,
+          },
+          characteristics: [
+            {
+              value: "coloris oaijf",
+              name: "color",
+            },
+            {
+              value: "beaucoup",
+              name: "size",
+            },
+          ],
+        }
+        ref2_update_params = {
+          id: ref2.id,
+          basePrice: 199.9,
+          weight: 1111111.24,
+          quantity: 412,
+          isDefault: false,
+          externalVariantId: 'rzsd42',
+          goodDeal: {
+            startAt: "17/05/2011",
+            endAt: "18/06/2011",
+            discount: 99,
+          },
+          characteristics: [
+            {
+              value: "coloris black",
+              name: "color",
+            },
+            {
+              value: "S",
+              name: "size",
+            },
+          ],
+        }
+        new_ref_update_params = {
+          basePrice: 19.9,
+          weight: 0.24,
+          quantity: 4,
+          isDefault: true,
+          imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+          externalVariantId: 'iuhzfiuh21',
+          goodDeal: {
+            startAt: "17/05/2021",
+            endAt: "18/06/2021",
+            discount: 20,
+          },
+          characteristics: [
+            {
+              value: "coloris black",
+              name: "color",
+            },
+            {
+              value: "S",
+              name: "size",
+            },
+          ],
+        }
+        user_shop_employee.shop_employee.shops << product.shop
+        user_shop_employee.shop_employee.save
         update_params = {
           name: "Lot de 4 tasses à café style rétro AOC",
           categoryId: product.category_id,
@@ -15,50 +92,9 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           sellerAdvice: "Les tasses donneront du style à votre pause café !",
           description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
           variants: [
-            {
-              basePrice: 19.9,
-              weight: 0.24,
-              quantity: 4,
-              isDefault: true,
-              goodDeal: {
-                startAt: "17/05/2021",
-                endAt: "18/06/2021",
-                discount: 20,
-              },
-              characteristics: [
-                {
-                  value: "coloris black",
-                  name: "color",
-                },
-                {
-                  value: "S",
-                  name: "size",
-                },
-              ],
-              externalVariantId: 'trd54'
-            },
-            {
-              basePrice: 30,
-              weight: 0.24,
-              quantity: 4,
-              isDefault: true,
-              goodDeal: {
-                startAt: "17/05/2021",
-                endAt: "18/06/2021",
-                discount: 20,
-              },
-              characteristics: [
-                {
-                  value: "coloris black",
-                  name: "color",
-                },
-                {
-                  value: "S",
-                  name: "size",
-                },
-              ],
-              externalVariantId: 'rzsd98'
-            },
+            new_ref_update_params,
+            ref1_update_params,
+            ref2_update_params,
           ],
           provider: {
             name: provider.name,
@@ -66,7 +102,9 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           }
         }
 
-        put :update_offline, params: update_params.merge(id: product.id)
+        request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+        put :update, params: update_params.merge(id: product.id)
 
         should respond_with(200)
         result = JSON.parse(response.body)
@@ -84,15 +122,50 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
         expect(result["origin"]).to eq(update_params[:origin])
         expect(result["allergens"]).to eq(update_params[:allergens])
         expect(result["composition"]).to eq(update_params[:composition])
-        update_params[:variants].each do |variant_param|
-          to_compare = result["variants"].find{ |r_variant|
-            r_variant["externalVariantId"] == variant_param[:externalVariantId]
-          }
-          expect(to_compare).to_not be_nil
-          expect(to_compare["basePrice"]).to eq(variant_param[:basePrice])
-          expect(to_compare["quantity"]).to eq(variant_param[:quantity])
-          expect(to_compare["weight"]).to eq(variant_param[:weight])
-        end
+        expect(product.references.count).to eq(3)
+
+        ref1_updated = Reference.where(id: ref1.id).first
+        expect(ref1_updated).to_not be_nil
+        expect(ref1_updated.base_price).to eq(ref1_update_params[:basePrice])
+        expect(ref1_updated.weight).to eq(ref1_update_params[:weight])
+        expect(ref1_updated.quantity).to eq(ref1_update_params[:quantity])
+        expect(ref1_updated.sample.default).to eq(ref1_update_params[:isDefault])
+        expect(ref1_updated.sample.images).not_to be_empty
+        expect(ref1_updated.good_deal.starts_at).to eq(date_from_string(date_string:ref1_update_params[:goodDeal][:startAt]))
+        expect(ref1_updated.good_deal.discount).to eq(ref1_update_params[:goodDeal][:discount])
+        expect(ref1_updated.size.name ).to eq(ref1_update_params[:characteristics].last[:value])
+        expect(ref1_updated.color.name ).to eq(ref1_update_params[:characteristics].first[:value])
+        expect(ref1_updated.api_provider_variant.external_variant_id).to eq(ref1_update_params[:externalVariantId])
+
+
+        ref2_updated = Reference.where(id: ref2.id).first
+        expect(ref2_updated).to_not be_nil
+        expect(ref2_updated.base_price).to eq(ref2_update_params[:basePrice])
+        expect(ref2_updated.weight).to eq(ref2_update_params[:weight])
+        expect(ref2_updated.quantity).to eq(ref2_update_params[:quantity])
+        expect(ref2_updated.sample.default).to eq(ref2_update_params[:isDefault])
+        expect(ref2_updated.sample.images).to be_empty
+        expect(ref2_updated.good_deal.starts_at).to eq(date_from_string(date_string:ref2_update_params[:goodDeal][:startAt]))
+        expect(ref2_updated.good_deal.discount).to eq(ref2_update_params[:goodDeal][:discount])
+        expect(ref2_updated.size.name ).to eq(ref2_update_params[:characteristics].last[:value])
+        expect(ref2_updated.color.name ).to eq(ref2_update_params[:characteristics].first[:value])
+        expect(ref2_updated.api_provider_variant.external_variant_id).to eq(ref2_update_params[:externalVariantId])
+
+        new_variant = Reference.where(product_id: product.id).where.not(id: [ref1.id, ref2.id]).first
+        expect(new_variant).to_not be_nil
+        expect(new_variant.base_price).to eq(new_ref_update_params[:basePrice])
+        expect(new_variant.weight).to eq(new_ref_update_params[:weight])
+        expect(new_variant.quantity).to eq(new_ref_update_params[:quantity])
+        expect(new_variant.sample.default).to eq(new_ref_update_params[:isDefault])
+        expect(new_variant.sample.images).not_to be_empty
+        expect(new_variant.good_deal.starts_at).to eq(date_from_string(date_string: new_ref_update_params[:goodDeal][:startAt]))
+        expect(new_variant.good_deal.discount).to eq(new_ref_update_params[:goodDeal][:discount])
+        expect(new_variant.size.name ).to eq(new_ref_update_params[:characteristics].last[:value])
+        expect(new_variant.color.name ).to eq(new_ref_update_params[:characteristics].first[:value])
+        expect(new_variant.color.name ).to eq(new_ref_update_params[:characteristics].first[:value])
+        expect(new_variant.api_provider_variant.external_variant_id).to eq(new_ref_update_params[:externalVariantId])
+
+        expect(Reference.where(id: ref3.id).first).to be_nil
       end
     end
 
@@ -2573,6 +2646,76 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
         it "should return 200 HTTP Status with product updated" do
           user_shop_employee = create(:shop_employee_user, email: "shop.employee3@ecity.fr")
           product = create(:product)
+          ref1 = create(:reference, product: product)
+          ref2 = create(:reference, product: product)
+          ref3 = create(:reference, product: product)
+          ref1_update_params = {
+            id: ref1.id,
+            basePrice: 20,
+            weight: 13,
+            quantity: 42,
+            isDefault: false,
+            imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+            goodDeal: {
+              startAt: "17/05/2015",
+              endAt: "18/06/2031",
+              discount: 10,
+            },
+            characteristics: [
+              {
+                value: "coloris oaijf",
+                name: "color",
+              },
+              {
+                value: "beaucoup",
+                name: "size",
+              },
+            ],
+          }
+          ref2_update_params = {
+            id: ref2.id,
+            basePrice: 199.9,
+            weight: 1111111.24,
+            quantity: 412,
+            isDefault: false,
+            goodDeal: {
+              startAt: "17/05/2011",
+              endAt: "18/06/2011",
+              discount: 99,
+            },
+            characteristics: [
+              {
+                value: "coloris black",
+                name: "color",
+              },
+              {
+                value: "S",
+                name: "size",
+              },
+            ],
+          }
+          new_ref_update_params = {
+            basePrice: 19.9,
+            weight: 0.24,
+            quantity: 4,
+            isDefault: true,
+            imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+            goodDeal: {
+              startAt: "17/05/2021",
+              endAt: "18/06/2021",
+              discount: 20,
+            },
+            characteristics: [
+              {
+                value: "coloris black",
+                name: "color",
+              },
+              {
+                value: "S",
+                name: "size",
+              },
+            ],
+          }
           user_shop_employee.shop_employee.shops << product.shop
           user_shop_employee.shop_employee.save
           update_params = {
@@ -2584,28 +2727,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             sellerAdvice: "Les tasses donneront du style à votre pause café !",
             description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
             variants: [
-              {
-                basePrice: 19.9,
-                weight: 0.24,
-                quantity: 4,
-                isDefault: true,
-                goodDeal: {
-                  startAt: "17/05/2021",
-                  endAt: "18/06/2021",
-                  discount: 20,
-                },
-                characteristics: [
-                  {
-                    value: "coloris black",
-                    name: "color",
-                  },
-                  {
-                    value: "S",
-                    name: "size",
-                  },
-                ],
-              },
-            ],
+              new_ref_update_params,
+              ref1_update_params,
+              ref2_update_params,
+            ]
           }
 
           request.headers["x-client-id"] = generate_token(user_shop_employee)
@@ -2628,6 +2753,48 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           expect(result["origin"]).to eq(update_params[:origin])
           expect(result["allergens"]).to eq(update_params[:allergens])
           expect(result["composition"]).to eq(update_params[:composition])
+          expect(product.references.count).to eq(3)
+
+          ref1_updated = Reference.where(id: ref1.id).first
+          expect(ref1_updated).to_not be_nil
+          expect(ref1_updated.base_price).to eq(ref1_update_params[:basePrice])
+          expect(ref1_updated.weight).to eq(ref1_update_params[:weight])
+          expect(ref1_updated.quantity).to eq(ref1_update_params[:quantity])
+          expect(ref1_updated.sample.default).to eq(ref1_update_params[:isDefault])
+          expect(ref1_updated.sample.images).not_to be_empty
+          expect(ref1_updated.good_deal.starts_at).to eq(date_from_string(date_string:ref1_update_params[:goodDeal][:startAt]))
+          expect(ref1_updated.good_deal.discount).to eq(ref1_update_params[:goodDeal][:discount])
+          expect(ref1_updated.size.name ).to eq(ref1_update_params[:characteristics].last[:value])
+          expect(ref1_updated.color.name ).to eq(ref1_update_params[:characteristics].first[:value])
+
+
+          ref2_updated = Reference.where(id: ref2.id).first
+          expect(ref2_updated).to_not be_nil
+          expect(ref2_updated.base_price).to eq(ref2_update_params[:basePrice])
+          expect(ref2_updated.weight).to eq(ref2_update_params[:weight])
+          expect(ref2_updated.quantity).to eq(ref2_update_params[:quantity])
+          expect(ref2_updated.sample.default).to eq(ref2_update_params[:isDefault])
+          expect(ref2_updated.sample.images).to be_empty
+          expect(ref2_updated.good_deal.starts_at).to eq(date_from_string(date_string:ref2_update_params[:goodDeal][:startAt]))
+          expect(ref2_updated.good_deal.discount).to eq(ref2_update_params[:goodDeal][:discount])
+          expect(ref2_updated.size.name ).to eq(ref2_update_params[:characteristics].last[:value])
+          expect(ref2_updated.color.name ).to eq(ref2_update_params[:characteristics].first[:value])
+
+          new_variant = Reference.where(product_id: product.id).where.not(id: [ref1.id, ref2.id]).first
+          expect(new_variant).to_not be_nil
+          expect(new_variant.base_price).to eq(new_ref_update_params[:basePrice])
+          expect(new_variant.weight).to eq(new_ref_update_params[:weight])
+          expect(new_variant.quantity).to eq(new_ref_update_params[:quantity])
+          expect(new_variant.sample.default).to eq(new_ref_update_params[:isDefault])
+          expect(new_variant.sample.images).not_to be_empty
+          expect(new_variant.good_deal.starts_at).to eq(date_from_string(date_string: new_ref_update_params[:goodDeal][:startAt]))
+          expect(new_variant.good_deal.discount).to eq(new_ref_update_params[:goodDeal][:discount])
+          expect(new_variant.size.name ).to eq(new_ref_update_params[:characteristics].last[:value])
+          expect(new_variant.color.name ).to eq(new_ref_update_params[:characteristics].first[:value])
+
+
+
+          expect(Reference.where(id: ref3.id).first).to be_nil
         end
       end
 
@@ -8168,4 +8335,11 @@ end
 def generate_token(user)
   exp_payload = { id: user.id, exp: Time.now.to_i + 1 * 3600 * 24 }
   JWT.encode exp_payload, ENV["JWT_SECRET"], "HS256"
+end
+
+def date_from_string(date_string:)
+  return nil unless date_string
+
+  date_array = date_string.split('/').map(&:to_i).reverse
+  DateTime.new(date_array[0], date_array[1], date_array[2])
 end

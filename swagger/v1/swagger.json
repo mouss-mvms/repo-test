@@ -2000,6 +2000,11 @@
                     "items": {
                       "type": "object",
                       "properties": {
+                        "id": {
+                          "type": "number",
+                          "example": 12,
+                          "description": "Unique identifier of a variant of the product."
+                        },
                         "basePrice": {
                           "type": "number",
                           "example": 44.99,
@@ -2471,6 +2476,11 @@
                     "items": {
                       "type": "object",
                       "properties": {
+                        "id": {
+                          "type": "number",
+                          "example": 12,
+                          "description": "Unique identifier of a variant of the product."
+                        },
                         "basePrice": {
                           "type": "number",
                           "example": 44.99,
