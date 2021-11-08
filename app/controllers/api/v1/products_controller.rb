@@ -186,6 +186,7 @@ module Api
         product_params[:variants] = []
         params.require(:variants).each { |v|
           hash = {}
+          hash[:id] = v[:id]
           hash[:base_price] = v.require(:basePrice)
           hash[:weight] = v.require(:weight)
           hash[:quantity] = v.require(:quantity)

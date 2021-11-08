@@ -126,6 +126,7 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
             items: {
               type: :object,
               properties: {
+                id: { type: :number, example: 12, description: "Unique identifier of a variant of the product." },
                 basePrice: { type: :number, example: 44.99, description: "Price of product's variant" },
                 weight: { type: :number, example: 0.56, description: "Weight of product's variant (in Kg)" },
                 quantity: { type: :integer, example: 9, description: "Stock of product's variant" },
@@ -253,6 +254,7 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
             items: {
               type: :object,
               properties: {
+                id: { type: :number, example: 12, description: "Unique identifier of a variant of the product." },
                 basePrice: { type: :number, example: 44.99, description: "Price of product's variant" },
                 weight: { type: :number, example: 0.56, description: "Weight of product's variant (in Kg)" },
                 quantity: { type: :integer, example: 9, description: "Stock of product's variant" },
