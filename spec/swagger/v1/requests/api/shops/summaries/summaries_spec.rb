@@ -19,8 +19,7 @@ RSpec.describe 'api/v1/shops/summaries', swagger_doc: 'v1/swagger.json', type: :
             {
               type: 'string',
               example: "livraison-par-la-poste",
-              description: 'Delivery service slug',
-              enum: Service.enabled.map{|service| service.slug }
+              description: 'Delivery service slug'
             }
           },
           page: { type: :integer, example: 1, description: 'Search page number.' },
