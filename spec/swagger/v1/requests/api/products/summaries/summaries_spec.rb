@@ -13,19 +13,27 @@ RSpec.describe "api/v1/products/summaries", swagger_doc: "v1/swagger.json", type
         type: :object,
         properties: {
           location: { type: :string, example: "bordeaux", description: 'Territory or city slug.' },
+          perimeter: {
+            type: :string,
+            enum: ["none", "city", "department", "country"]
+          },
           q: { type: :string, example: "Chaussures", description: 'Query for search.' },
-          categories: { type: :string, example: "homme", description: 'Categories slugs concatened with double "_" if more than one.' },
+          category: { type: :string, example: "homme", description: 'Category slug' },
           prices: { type: :string, example: "1__100", description: 'Prices range' },
           sharedProducts: { type: :boolean, description: "Only shared products", example: false },
-          services: { type: :string, example: "livraison-par-la-poste__livraison-france-metropolitaine", description: 'Service slugs concatened with double "_" if more than one.' },
+          services: {
+            type: :array,
+            items: {
+              type: :string
+            },
+            example: ["livraison-par-la-poste", "livraison-france-metropolitaine"], description: 'Service slugs.' },
           sortBy: {
             type: :string,
-            enum: ["price-asc", "price-desc", "newest"]
+            enum: ["highest-score", "price-asc", "price-desc", "newest", "position", "name-asc", "name-desc", "random"]
           },
+
           page: { type: :string, example: '1', description: 'Search page number.' },
-          more: { type: :boolean, description: 'Increase research perimeter scope' },
-        },
-        required: %w[location]
+        }
       }
       response(200, 'successful') do
         schema type: :object, '$ref': '#/components/schemas/ProductSearch'
