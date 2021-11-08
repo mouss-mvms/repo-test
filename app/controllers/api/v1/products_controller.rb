@@ -45,25 +45,29 @@ module Api
             raise ActionController::BadRequest.new('origin and composition is required') if ::Products::CategoriesSpecifications::MustHaveLabelling.new.is_satisfied_by?(category) && (dto_product_request.origin.blank? || dto_product_request.composition.blank?)
             raise ActionController::BadRequest.new('allergens is required') if ::Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
           end
-          raise ApplicationController::Forbidden.new("You could not create a product for this shop.") unless @user.shops.include?(product.shop)
+          raise ApplicationController::Forbidden.new("You cannot create a product for this shop.") unless @user.shops.include?(product.shop)
           begin
             product = Dao::Product.update(dto_product_request: dto_product_request)
+          rescue ActiveRecord::RecordNotFound => e
+            Rails.logger.error(e.message)
+            error = Dto::Errors::NotFound.new(e.message)
+            return render json: error.to_h, status: error.status
           rescue => e
             Rails.logger.error(e.message)
             error = Dto::Errors::InternalServer.new(detail: e.message)
             return render json: error.to_h, status: error.status
           else
-            return render json: Dto::V1::Product::Response.create(product), status: :ok
+            return render json: Dto::V1::Product::Response.create(product).to_h, status: :ok
           end
         end
       end
 
       def patch
         ActiveRecord::Base.transaction do
-          if product_params[:provider] && product_params[:provider][:name] == 'wynd'
-            raise ActionController::ParameterMissing.new('provider.externalProductId') unless product_params[:provider][:external_product_id]
+          if product_params_update[:provider] && product_params_update[:provider][:name] == 'wynd'
+            raise ActionController::ParameterMissing.new('provider.externalProductId') unless product_params_update[:provider][:external_product_id]
           end
-          product_params[:variants].each do |variant|
+          product_params_update[:variants].each do |variant|
             if variant[:provider] && variant[:provider][:name] == 'wynd'
               raise ActionController::ParameterMissing.new('variant.provider.externalVariantId') unless variant[:provider][:external_variant_id]
             end
@@ -77,12 +81,16 @@ module Api
           end
           begin
             product = Dao::Product.update(dto_product_request: dto_product_request)
+          rescue ActiveRecord::RecordNotFound => e
+            Rails.logger.error(e.message)
+            error = Dto::Errors::NotFound.new(e.message)
+            return render json: error.to_h, status: error.status
           rescue => e
             Rails.logger.error(e.message)
             error = Dto::Errors::InternalServer.new(detail: e.message)
             return render json: error.to_h, status: error.status
           else
-            return render json: Dto::V1::Product::Response.create(product), status: :ok
+            return render json: Dto::V1::Product::Response.create(product).to_h, status: :ok
           end
         end
       end
@@ -223,7 +231,7 @@ module Api
         product_params[:composition] = params[:composition]
         product_params[:variants] = []
         if params[:variants]
-          params[:variants].each { |v|
+          params[:variants].each do |v|
             hash = {}
             if v[:id]
               hash[:id] = v[:id]
@@ -265,7 +273,7 @@ module Api
               hash[:good_deal][:discount] = v[:goodDeal].require(:discount)
             end
             product_params[:variants] << hash
-          }
+          end
         end
 
         if params[:provider]
