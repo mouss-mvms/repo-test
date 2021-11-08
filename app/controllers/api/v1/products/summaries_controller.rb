@@ -4,8 +4,7 @@ module Api
       class SummariesController < ApplicationController
         before_action :render_cache, only: [:search]
 
-        DEFAULT_FILTERS_PRODUCTS = [:prices, :brands, :colors, :sizes]
-        PER_PAGE = 16
+        RESULTS_PER_PAGE = 16
 
         def search
           search_criterias = ::Criterias::Composite.new(::Criterias::Products::Online)
@@ -46,15 +45,13 @@ module Api
             search_criterias.and(::Criterias::InCategories.new([category.id]))
           end
 
-          filter_by(search_criterias)
-
           search_results = ::Requests::ProductSearches.new(
             query: search_params[:q],
             criterias: search_criterias.create,
             sort_params: search_params[:sort_by],
             random: search_params[:random],
             aggs: [:base_price, :brand_name, :colors, :sizes, :services, :category_tree_ids],
-            pagination: { page: search_params[:page], per_page: PER_PAGE }
+            pagination: { page: search_params[:page], per_page: RESULTS_PER_PAGE }
           ).call
 
           search = { products: search_results.map { |p| p }, aggs: search_results.aggs, page: search_results.options[:page], total_pages: search_results.total_pages }
@@ -84,22 +81,6 @@ module Api
 
         def cache_params
           search_params
-        end
-
-        def filter_by(search_criterias)
-          DEFAULT_FILTERS_PRODUCTS.each do |key|
-            splited_values = params[key.to_s]&.split('__')
-            if splited_values
-              splited_values = splited_values.map { |value| value == "without_#{key.to_s}" ? "" : value }
-              module_name = key.to_s.titleize
-              begin
-                search_criterias.and("::Criterias::Products::From#{module_name}".constantize.new(splited_values))
-              rescue
-                raise ApplicationController::InternalServerError.new
-              end
-            end
-          end
-          search_criterias
         end
       end
     end
