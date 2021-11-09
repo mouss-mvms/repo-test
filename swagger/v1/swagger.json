@@ -5985,11 +5985,302 @@
           }
         }
       }
+    },
+    "/api/v1/variants/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of the variant of a product.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "patch": {
+        "summary": "Update a variant (offline)",
+        "tags": [
+          "Variants"
+        ],
+        "description": "Return the variant updated",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "example": 1,
+                      "description": "Unique identifier of a variant."
+                    },
+                    "basePrice": {
+                      "type": "number",
+                      "format": "double",
+                      "example": 20.5,
+                      "description": "Base price of a variant."
+                    },
+                    "weight": {
+                      "type": "number",
+                      "format": "double",
+                      "nullable": true,
+                      "example": 20.5,
+                      "description": "Weight in grams of a variant."
+                    },
+                    "quantity": {
+                      "type": "integer",
+                      "example": 20,
+                      "description": "Quantity in stock of a variant."
+                    },
+                    "imageUrls": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": [
+                        "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr",
+                        "https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg"
+                      ],
+                      "default": [
+
+                      ],
+                      "description": "List of variant images urls"
+                    },
+                    "isDefault": {
+                      "type": "boolean",
+                      "default": false,
+                      "description": "Default state of a variant."
+                    },
+                    "goodDeal": {
+                      "$ref": "#/components/schemas/GoodDeal",
+                      "description": "Good deal of a variant."
+                    },
+                    "characteristics": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Characteristic"
+                      },
+                      "description": "List of characteristics."
+                    },
+                    "externalVariantId": {
+                      "type": "string",
+                      "example": "67ty7",
+                      "description": "Id of variant saved by the provider"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "The syntax of the query is incorrect.",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Bad Request",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 400,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 401,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 403,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Resource not found",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Not found",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "basePrice": {
+                    "type": "number",
+                    "example": 44.99,
+                    "description": "Price of product's variant"
+                  },
+                  "weight": {
+                    "type": "number",
+                    "example": 0.56,
+                    "description": "Weight of product's variant (in Kg)"
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "example": 9,
+                    "description": "Stock of product's variant"
+                  },
+                  "isDefault": {
+                    "type": "boolean",
+                    "example": true,
+                    "description": "Tell if this variant is the product's default variant"
+                  },
+                  "goodDeal": {
+                    "type": "object",
+                    "description": "Set a good deal for the variant",
+                    "properties": {
+                      "startAt": {
+                        "type": "string",
+                        "example": "20/07/2021",
+                        "description": "Date of start of good deal"
+                      },
+                      "endAt": {
+                        "type": "string",
+                        "example": "27/07/2021",
+                        "description": "Date of end of good deal"
+                      },
+                      "discount": {
+                        "type": "integer",
+                        "example": 45,
+                        "description": "Amount of discount (in %)"
+                      }
+                    }
+                  },
+                  "characteristics": {
+                    "type": "object",
+                    "description": "Set the characteristics of variant (Set as an array)",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "example": "color",
+                        "description": "Name of characteristic"
+                      },
+                      "value": {
+                        "type": "string",
+                        "example": "Bleu",
+                        "description": "Value of characteristic"
+                      }
+                    }
+                  },
+                  "files[]": {
+                    "type": "array",
+                    "description": "Variant's pictures",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  },
+                  "externalVariantId": {
+                    "type": "string",
+                    "example": "'iuhzfiuh21'",
+                    "description": "Provider variant ID"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {
