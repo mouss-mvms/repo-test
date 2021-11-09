@@ -5,6 +5,7 @@ class ApplicationController < ActionController::API
     InternalServerError = Class.new(ActionController::ActionControllerError)
     NotFound = Class.new(ActionController::ActionControllerError)
     Conflict = Class.new(ActionController::ActionControllerError)
+    UnprocessableEntity = Class.new(ActionController::ActionControllerError)
 
     rescue_from ActiveRecord::RecordNotFound, ApplicationController::NotFound, with: :render_record_not_found
     rescue_from ActionController::ParameterMissing, ApplicationController::UnpermittedParameter, ActionController::BadRequest, with: :render_bad_request
@@ -12,6 +13,7 @@ class ApplicationController < ActionController::API
     rescue_from ApplicationController::InternalServerError, with: :render_internal_server_error
     rescue_from ApplicationController::Conflict, with: :render_conflict
     rescue_from ActiveRecord::RecordNotSaved, with: :render_internal_server_error
+    rescue_from ApplicationController::UnprocessableEntity, with: :render_unprocessable_entity
 
     def render_record_not_found(exception)
       Rails.logger.error(exception)
@@ -34,6 +36,12 @@ class ApplicationController < ActionController::API
     def render_conflict(exception)
       Rails.logger.error
       error = Dto::Errors::Conflict.new(exception.message)
+      return render json: error.to_h, status: error.status
+    end
+
+    def render_unprocessable_entity(exception)
+      Rails.logger.error(exception)
+      error = Dto::Errors::UnprocessableEntity.new(exception.message)
       return render json: error.to_h, status: error.status
     end
 
