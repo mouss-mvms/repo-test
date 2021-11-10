@@ -2,102 +2,46 @@ require "rails_helper"
 
 RSpec.describe Api::V1::Shops::SummariesController, type: :controller do
   describe "POST #search" do
-    context "All ok" do
-      context "when location" do
-        it 'returns a searchkick result' do
-          city = create(:city, slug: 'bordeaux')
-          highest_shops = Searchkick::Results.new(Shop, random_shops_response, highest_shops_options)
-          random_shops = Searchkick::Results.new(Shop, random_shops_response, random_shops_options)
+    context 'Params incorrect' do
+      context 'Location' do
+        context 'Territory and city does not exist' do
+          it 'should return 400 HTTP Status' do
+            post :search, params: { location: 'petaouchnok' }
 
-          allow(::Requests::ShopSearches).to receive(:search_highest_scored_shops).and_return(highest_shops)
-          allow(::Requests::ShopSearches).to receive(:search_random_shops).and_return(random_shops)
-          shop_summaries = highest_shops.map {|p| p } + random_shops.map { |p| p }
-          post :search, params: { location: city.slug }
-          should respond_with(200)
-          expect(response.body).to eq(Dto::V1::Shop::Search::Response.new({ shops: shop_summaries, aggs: highest_shops.aggs, page:  random_shops.options[:page], total_pages: random_shops.total_pages }).to_h.to_json)
+            expect(response).to have_http_status(:not_found)
+            expect(response.body).to eq(Dto::Errors::NotFound.new('Location not found').to_h.to_json)
+          end
         end
       end
+      context 'GeolocOptions' do
+        context 'longitude is missing' do
+          it 'should return 400 HTTP Status' do
+            post :search, params: {geolocOptions: { lat: -1.678979, radius: 1200 }}
 
-      context "with params :q || :page || :more" do
-        it 'should return response without highest scored shops' do
-          city = create(:city, slug: 'bordeaux')
-          random_shops = Searchkick::Results.new(Shop, random_shops_response, random_shops_options)
-          product_shops = Searchkick::Results.new(Shop, product_shops_response, product_shops_options)
+            expect(response).to have_http_status(:bad_request)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new('param is missing or the value is empty: long').to_h.to_json)
+          end
+        end
 
-          allow(::Requests::ShopSearches).to receive(:search_random_shops).and_return(random_shops)
-          allow(::Requests::ShopSearches).to receive(:search).and_return(product_shops)
-          allow(::Requests::ProductSearches).to receive(:search).and_return(Searchkick::Results.new(Product, {"aggregations"=> {"shop_id"=>
-                                                                                                                                  {"doc_count"=>19,
-                                                                                                                                   "doc_count_error_upper_bound"=>0,
-                                                                                                                                   "sum_other_doc_count"=>0,
-                                                                                                                                   "buckets"=>[{"key"=>584, "doc_count"=>19}]}}}))
+        context 'latitude is missing' do
+          it 'should return 400 HTTP Status' do
+            post :search, params: {geolocOptions: { long: 4.672382, radius: 1200 }}
 
-          shop_summaries = random_shops.map { |p| p } + product_shops.map {|p| p}
-          expect(::Requests::ShopSearches).to_not receive(:search_highest_scored_shops)
-          post :search, params: { location: city.slug, q: "cbd" }
-          should respond_with(200)
-
-          expect(response.body).to eq(Dto::V1::Shop::Search::Response.new({ shops: shop_summaries, aggs: random_shops.aggs.merge(product_shops.aggs), page:  random_shops.options[:page], total_pages: random_shops.total_pages}).to_h.to_json)
+            expect(response).to have_http_status(:bad_request)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new('param is missing or the value is empty: lat').to_h.to_json)
+          end
         end
       end
+      context 'Category' do
+        context 'Category not found' do
+          it 'should return 404 HTTP Status' do
+            Category.destroy_all
 
-      context "geoloc_options" do
-        it "should returns a searchkick result" do
-          address = create(:address)
-          highest_shops = Searchkick::Results.new(Shop, random_shops_response, highest_shops_options)
-          random_shops = Searchkick::Results.new(Shop, random_shops_response, random_shops_options)
-          allow(::Requests::ShopSearches).to receive(:search_highest_scored_shops).and_return(highest_shops)
-          allow(::Requests::ShopSearches).to receive(:search_random_shops).and_return(random_shops)
-          shop_summaries = highest_shops.map { |p| p } + random_shops.map { |p| p }
-          post :search, params: { geolocOptions: { lat: address.latitude, long: address.longitude, radius: 1200 } }
-          should respond_with(200)
-          expect(response.body).to eq(Dto::V1::Shop::Search::Response.new({ shops: shop_summaries, aggs: highest_shops.aggs, page:  random_shops.options[:page], total_pages: random_shops.total_pages}).to_h.to_json)
-        end
-      end
+            post :search, params: { category: 'test' }
 
-    end
-    context "when problems" do
-      context "location && geoloc_options param is missing" do
-        it "it returns a 400 http status" do
-          post :search
-          should respond_with(400)
-          expect(response.body).to eq(Dto::Errors::BadRequest.new('You should have location or geolocOptions.').to_h.to_json)
-        end
-      end
-
-      context "when geolocOptions is present but lat || long || radius" do
-        it "should return HTTP status 400" do
-          post :search, params: { location: "bordeaux", geolocOptions: { lat: 10, long: 12, radius: 13 } }
-          should respond_with(400)
-          expect(response.body).to eq(Dto::Errors::BadRequest.new("you can't have location and geolocOptions.").to_h.to_json)
-        end
-      end
-
-      context "when geolocOptions is present but lat || long || radius" do
-        it "should return HTTP status 400" do
-          post :search, params: { geolocOptions: { long: 12, radius: 13 } }
-          should respond_with(400)
-          expect(response.body).to eq(Dto::Errors::BadRequest.new('lat && long && radius params are required with geolocOptions.').to_h.to_json)
-        end
-
-        it "should return HTTP status 400" do
-          post :search, params: { geolocOptions: { lat: 11, radius: 13 } }
-          should respond_with(400)
-          expect(response.body).to eq(Dto::Errors::BadRequest.new('lat && long && radius params are required with geolocOptions.').to_h.to_json)
-        end
-
-        it "should return HTTP status 400" do
-          post :search, params: { geolocOptions: { lat: 11, long: 12 } }
-          should respond_with(400)
-          expect(response.body).to eq(Dto::Errors::BadRequest.new('lat && long && radius params are required with geolocOptions.').to_h.to_json)
-        end
-      end
-
-      context "location can't be found" do
-        it "it returns a 404 http status" do
-          post :search, params: { location: 'Neo Detroit' }
-          should respond_with(404)
-          expect(response.body).to eq(Dto::Errors::NotFound.new('Location not found.').to_h.to_json)
+            expect(response).to have_http_status(:not_found)
+            expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Category").to_h.to_json)
+          end
         end
       end
     end

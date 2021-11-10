@@ -12,8 +12,8 @@ module V1
                   items: V1::Examples::Response::ShopSummary.to_h
                 },
                 filters: ::V1::Examples::Response::Searches::Filter.to_h,
-                page: { type: :string, description: 'Search page number.', example: "2" },
-                totalPages: { type: :string, description: 'Total search page number.', example: "15" }
+                page: { type: :integer, description: 'Search page number.', example: 1 },
+                totalPages: { type: :integer, description: 'Total search page number.', example: 15 }
               },
             }
           end

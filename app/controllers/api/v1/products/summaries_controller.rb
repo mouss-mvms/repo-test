@@ -2,62 +2,59 @@ module Api
   module V1
     module Products
       class SummariesController < ApplicationController
-        before_action :set_location, only: [:index, :search]
         before_action :render_cache, only: [:search]
 
-        DEFAULT_FILTERS_PRODUCTS = [:prices, :brands, :colors, :sizes, :services]
+        RESULTS_PER_PAGE = 16
 
         def search
           search_criterias = ::Criterias::Composite.new(::Criterias::Products::Online)
                                                    .and(::Criterias::Products::NotInShopTemplate)
                                                    .and(::Criterias::NotInHolidays)
 
-          search_criterias.and(::Criterias::Products::OnDiscount) if params[:sortBy] == 'discount'
-
-          search_criterias.and(::Criterias::NotInCategories.new(Category.excluded_from_catalog.pluck(:id))) unless params[:q]
-
-
-          search_criterias.and(::Criterias::Products::SharedByCitizen) if params[:sharedProducts] == true
-
-          if params[:categories]
-            @category = Category.find_by(slug: params[:categories])
-            raise ApplicationController::NotFound.new('Category not found.') unless @category
-            search_criterias.and(::Criterias::InCategories.new([@category.id]))
-          end
-
-          set_close_to_you_criterias(search_criterias, params[:more])
-          search_criterias = filter_by(search_criterias)
-
-          unless params[:q]
-            search_highest = ::Requests::ProductSearches.search_highest_scored_products(params[:q], search_criterias)
-            highest_scored_products = search_highest.products
-
-            unless params[:sortBy] || params[:more]
-              search = search_highest
-              search_criterias = filter_products(search_criterias, highest_scored_products)
+          if search_params[:location]
+            territory = Territory.find_by(slug: search_params[:location])
+            city = City.find_by(slug: search_params[:location])
+            if territory
+              search_criterias.and(::Criterias::InTerritory.new(territory.slug))
+              insee_codes = territory.insee_codes
+            elsif city
+              search_criterias.and(::Criterias::InCities.new(city.insee_codes))
+              insee_codes = city.insee_codes
+            else
+              raise ApplicationController::NotFound.new('Location not found')
             end
-
-            search_criterias.and(::Criterias::Products::ExceptProducts.new(highest_scored_products.map(&:id)))
+            if search_params[:perimeter]
+              case search_params[:perimeter]
+              when 'department'
+                search_criterias.and(::Criterias::CloseToYou.new(nil, insee_codes, except_current_cities: true))
+              when 'country'
+                search_criterias.remove(:insee_code, :territory_slug)
+                search_criterias.and(::Criterias::InCountry.new(nil))
+              end
+            end
+          else
+            search_criterias.and(::Criterias::InCountry.new(nil))
           end
 
-          random_products = ::Requests::ProductSearches.search_random_products(params[:q], search_criterias, params[:sortBy], params[:page])
+          search_criterias.and(::Criterias::NotInCategories.new(Category.excluded_from_catalog.pluck(:id))) unless search_params[:q]
+          search_criterias.and(::Criterias::Products::SharedByCitizen) if search_params[:shared_products] == true
+          search_criterias.and(::Criterias::Products::FromServices.new(search_params[:services])) if search_params[:services]
 
-          if params[:more] && random_products.empty?
-            search_criterias.remove(:insee_code, :department_number)
-            random_products = ::Requests::ProductSearches.search_random_products(params[:q], search_criterias, params[:sortBy], params[:page])
+          if search_params[:category]
+            category = Category.find_by!(slug: search_params[:category])
+            search_criterias.and(::Criterias::InCategories.new([category.id]))
           end
 
-          aggs = params[:sortBy] || params[:more] || params[:q] ? random_products.aggs : search_highest.aggs
+          search_results = ::Requests::ProductSearches.new(
+            query: search_params[:q],
+            criterias: search_criterias.create,
+            sort_params: search_params[:sort_by],
+            random: search_params[:random],
+            aggs: [:base_price, :brand_name, :colors, :sizes, :services, :category_tree_ids],
+            pagination: { page: search_params[:page], per_page: RESULTS_PER_PAGE }
+          ).call
 
-          if highest_scored_products.blank? && random_products.blank?
-            set_close_to_you_criterias(search_criterias, true)
-            random_products = ::Requests::ProductSearches.search_random_products(params[:q], search_criterias, params[:sortBy], params[:page])
-            aggs = random_products.aggs
-          end
-
-          products_search = (params[:sortBy] || params[:more] || params[:q]) ? random_products.map { |p| p } : highest_scored_products.concat(random_products.map { |p| p })
-
-          search = { products: products_search, aggs: aggs, page: random_products.options[:page] }
+          search = { products: search_results.map { |p| p }, aggs: search_results.aggs, page: search_results.options[:page], total_pages: search_results.total_pages }
 
           response = ::Dto::V1::Product::Search::Response.create(search).to_h
 
@@ -68,79 +65,22 @@ module Api
 
         private
 
-        def permitted_params
-          permitted_params = {}
-          permitted_params[:location] = params[:location]
-          permitted_params[:q] = params[:q]
-          permitted_params[:categories] = params[:categories]
-          permitted_params[:prices] = params[:prices]
-          permitted_params[:shared_products] = params[:sharedProducts]
-          permitted_params[:services] = params[:services]
-          permitted_params[:sort_by] = params[:sortBy]
-          permitted_params[:page] = params[:page]
-          permitted_params[:more] = params[:more].to_s
-          permitted_params
+        def search_params
+          search_params = {}
+          search_params[:location] = params[:location].parameterize if params[:location].present?
+          search_params[:perimeter] = params[:perimeter] if params[:perimeter]
+          search_params[:q] = params[:q] if params[:q].present?
+          search_params[:shared_products] = params[:sharedProducts] if params[:sharedProducts]
+          search_params[:category] = params[:category] if params[:category].present?
+          search_params[:services] = params[:services] if params[:services]
+          search_params[:sort_by] = params[:sortBy] ? params[:sortBy] : 'name-asc'
+          search_params[:random] = params[:sortBy] == 'random'
+          search_params[:page] = params[:page] ? params[:page] : "1"
+          search_params
         end
 
-        def set_location
-          raise ActionController::ParameterMissing.new('location') if params[:location].blank?
-          @territory = Territory.find_by(slug: params[:location])
-          @city = City.find_by(slug: params[:location])
-          raise ApplicationController::NotFound.new('Location not found.') unless @city || @territory
-        end
-
-        def set_close_to_you_criterias(search_criterias, see_more)
-          insee_codes = @territory ? @territory.insee_codes : @city.insee_codes
-          if see_more
-            return search_criterias.and(::Criterias::CloseToYou.new(@city, insee_codes))
-          else
-            return set_perimeter(search_criterias, insee_codes)
-          end
-        end
-
-        def set_perimeter(search_criterias, insee_codes)
-          if params[:q] && !@category
-            search_criterias.and(::Criterias::InCities.new(insee_codes))
-          else
-            case params[:perimeter]
-            when "around_me" then search_criterias.and(::Criterias::CloseToYou.new(@city, insee_codes, current_cities_accepted: true))
-            when "all" then search_criterias.and(::Criterias::HasServices.new(["livraison-par-colissimo"]))
-            else search_criterias.and(::Criterias::InCities.new(insee_codes))
-            end
-          end
-
-          return search_criterias
-        end
-
-        def filter_by(search_criterias)
-          DEFAULT_FILTERS_PRODUCTS.each do |key|
-            splited_values = params[key.to_s]&.split('__')
-            if splited_values
-              splited_values = splited_values.map { |value| value == "without_#{key.to_s}" ? "" : value }
-              module_name = key.to_s.titleize
-              begin
-                search_criterias.and("::Criterias::Products::From#{module_name}".constantize.new(splited_values))
-              rescue
-                raise ApplicationController::InternalServerError.new
-              end
-            end
-          end
-          search_criterias
-        end
-
-        def filter_products(search_criterias, products)
-          ids = products.pluck(:id).map(&:to_i)
-          search_criterias.and(::Criterias::Products::ExceptProducts.new(ids))
-        end
-
-        def set_products!(highest_scored_products, random_products, page, see_more, sort_by)
-          product_summaries = random_products.map { |product| Dto::V1::ProductSummary::Response.create(product.deep_symbolize_keys).to_h }
-          if page || see_more || sort_by
-            product_summaries
-          else
-            highest_scored_product_summaries = highest_scored_products.map { |product| Dto::V1::ProductSummary::Response.create(product.deep_symbolize_keys).to_h }
-            highest_scored_product_summaries.concat(product_summaries)
-          end
+        def cache_params
+          search_params
         end
       end
     end
