@@ -3,8 +3,8 @@ module Api
     module Shops
       class ProductsController < ApplicationController
         before_action :check_shop, only: [:index]
-        before_action :uncrypt_token, only: [:create]
-        before_action :retrieve_user, only: [:create]
+        before_action :uncrypt_token, only: [:create, :update]
+        before_action :retrieve_user, only: [:create, :update]
         DEFAULT_FILTERS_PRODUCTS = [:prices, :brands, :colors, :sizes, :services]
         PER_PAGE = 15
         QUERY_ALL = '*'
@@ -49,6 +49,26 @@ module Api
           end
         end
 
+        def update
+          raise ApplicationController::Forbidden.new unless @user.is_a_business_user?
+          dto_product_request = Dto::V1::Product::Request.new(product_params_update)
+          raise ApplicationController::Forbidden.new if dto_product_request.citizen_advice
+          @user.shop_employee.shops.last.products.find(dto_product_request.id)
+          begin
+            product = Dao::Product.update(dto_product_request: dto_product_request)
+          rescue ActiveRecord::RecordNotFound => e
+            Rails.logger.error(e.message)
+            error = Dto::Errors::NotFound.new(e.message)
+            return render json: error.to_h, status: error.status
+          rescue => e
+            Rails.logger.error(e.message)
+            error = Dto::Errors::InternalServer.new(detail: e.message)
+            return render json: error.to_h, status: error.status
+          else
+            return render json: Dto::V1::Product::Response.create(product).to_h, status: :ok
+          end
+        end
+
         private
 
         def check_shop
@@ -76,6 +96,66 @@ module Api
             end
           end
           search_criterias
+        end
+
+        def product_params_update
+          product_params = {}
+          product_params[:id] = params[:id]
+          product_params[:name] = params[:name]
+          product_params[:description] = params[:description]
+          product_params[:brand] = params[:brand]
+          product_params[:status] = params[:status]
+          product_params[:seller_advice] = params[:sellerAdvice]
+          product_params[:is_service] = params[:isService]
+          product_params[:category_id] = params[:categoryId]
+          product_params[:allergens] = params[:allergens]
+          product_params[:origin] = params[:origin]
+          product_params[:composition] = params[:composition]
+          product_params[:variants] = []
+          if params[:variants]
+            params[:variants].each do |v|
+              hash = {}
+              if v[:id]
+                hash[:id] = v[:id]
+                hash[:base_price] = v[:basePrice]
+                hash[:weight] = v[:weight]
+                hash[:quantity] = v[:quantity]
+                hash[:is_default] = v[:isDefault]
+                hash[:image_urls] = v[:imageUrls]
+                hash[:characteristics] = []
+                if v[:characteristics]
+                  v.require(:characteristics).each { |c|
+                    characteristic = {}
+                    characteristic[:name] = c.require(:name)
+                    characteristic[:value] = c.require(:value)
+                    hash[:characteristics] << characteristic
+                  }
+                end
+                hash
+              else
+                hash[:base_price] = v.require(:basePrice)
+                hash[:weight] = v.require(:weight)
+                hash[:quantity] = v.require(:quantity)
+                hash[:is_default] = v.require(:isDefault)
+                hash[:image_urls] = v[:imageUrls]
+                hash[:characteristics] = []
+                v.require(:characteristics).each { |c|
+                  characteristic = {}
+                  characteristic[:name] = c.require(:name)
+                  characteristic[:value] = c.require(:value)
+                  hash[:characteristics] << characteristic
+                }
+              end
+              if v[:goodDeal]
+                hash[:good_deal] = {}
+                hash[:good_deal][:start_at] = v[:goodDeal].require(:startAt)
+                hash[:good_deal][:end_at] = v[:goodDeal].require(:endAt)
+                hash[:good_deal][:discount] = v[:goodDeal].require(:discount)
+              end
+              product_params[:variants] << hash
+            end
+          end
+          product_params
         end
 
         def product_params
