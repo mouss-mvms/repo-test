@@ -691,6 +691,316 @@
         }
       }
     },
+    "/api/v1/auth/citizens/self/products/{id}": {
+      "parameters": [
+        {
+          "name": "X-client-id",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "patch": {
+        "summary": "Update a product",
+        "tags": [
+          "Products"
+        ],
+        "description": "Update product",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "example": 1,
+                      "description": "Unique identifier of a shop"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "Air jordan",
+                      "description": "Name of product"
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Chaussures trop bien",
+                      "description": "Description of product"
+                    },
+                    "brand": {
+                      "type": "string",
+                      "example": "Nike",
+                      "description": "Brand of product"
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "online",
+                      "description": "Status of product",
+                      "enum": [
+                        "online",
+                        "offline"
+                      ]
+                    },
+                    "sellerAdvice": {
+                      "type": "string",
+                      "example": "Taille petite, prendre une demi pointure au dessus",
+                      "description": "Advice from seller of product"
+                    },
+                    "isService": {
+                      "type": "boolean",
+                      "example": false,
+                      "description": "Tell if the product is a service"
+                    },
+                    "citizenAdvice": {
+                      "type": "string",
+                      "example": "Produit trouvé un commercant trop sympa",
+                      "description": "Advice from citizen of product"
+                    },
+                    "category": {
+                      "$ref": "#/components/schemas/Category",
+                      "description": "Category of a product"
+                    },
+                    "variants": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Variant"
+                      }
+                    },
+                    "origin": {
+                      "type": "string",
+                      "example": "France",
+                      "description": "Origin of product. (This field is mandatory for some categories)"
+                    },
+                    "allergens": {
+                      "type": "string",
+                      "example": "Contient des traces de fruit à coques",
+                      "description": "Advice of potencial allergens. (This field is mandatory for some categories)"
+                    },
+                    "composition": {
+                      "type": "string",
+                      "example": "Oeuf, sucre",
+                      "description": "Composition of product. (This field is mandatory for some categories)"
+                    },
+                    "provider": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "example": "wynd",
+                          "description": "Name of provider"
+                        },
+                        "externalProductId": {
+                          "type": "string",
+                          "example": "33ur",
+                          "description": "Id used by the provider"
+                        }
+                      },
+                      "required": [
+                        "name,",
+                        "externalProductId"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "The syntax of the query is incorrect.",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Bad Request",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 400,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 401,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 403,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Resource not found",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Not found",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Air jordan",
+                    "description": "Name of product"
+                  },
+                  "brand": {
+                    "type": "string",
+                    "example": "Nike",
+                    "description": "Brand of product"
+                  },
+                  "isService": {
+                    "type": "boolean",
+                    "example": false,
+                    "description": "Tell if the product is a service"
+                  },
+                  "citizenAdvice": {
+                    "type": "string",
+                    "example": "Ce produit est super, je recommande !",
+                    "description": "Citizen advice of product"
+                  },
+                  "variants": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "example": 67,
+                          "description": "Id of product's variant wanted to update (No id means new variant for the product)"
+                        },
+                        "basePrice": {
+                          "type": "number",
+                          "example": 44.99,
+                          "description": "Price of product's variant (Required if new variant)"
+                        },
+                        "imageUrls": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": [
+                            "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr",
+                            "https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg"
+                          ],
+                          "default": [
+
+                          ],
+                          "description": "List of product images urls"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/auth/products/{id}/reviews": {
       "parameters": [
         {
@@ -4528,6 +4838,416 @@
         }
       }
     },
+    "/api/v1/auth/shops/self/products/{id}": {
+      "parameters": [
+        {
+          "name": "X-client-id",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "patch": {
+        "summary": "Update a product",
+        "tags": [
+          "Products"
+        ],
+        "description": "Update product",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "example": 1,
+                      "description": "Unique identifier of a shop"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "Air jordan",
+                      "description": "Name of product"
+                    },
+                    "description": {
+                      "type": "string",
+                      "example": "Chaussures trop bien",
+                      "description": "Description of product"
+                    },
+                    "brand": {
+                      "type": "string",
+                      "example": "Nike",
+                      "description": "Brand of product"
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "online",
+                      "description": "Status of product",
+                      "enum": [
+                        "online",
+                        "offline"
+                      ]
+                    },
+                    "sellerAdvice": {
+                      "type": "string",
+                      "example": "Taille petite, prendre une demi pointure au dessus",
+                      "description": "Advice from seller of product"
+                    },
+                    "isService": {
+                      "type": "boolean",
+                      "example": false,
+                      "description": "Tell if the product is a service"
+                    },
+                    "citizenAdvice": {
+                      "type": "string",
+                      "example": "Produit trouvé un commercant trop sympa",
+                      "description": "Advice from citizen of product"
+                    },
+                    "category": {
+                      "$ref": "#/components/schemas/Category",
+                      "description": "Category of a product"
+                    },
+                    "variants": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Variant"
+                      }
+                    },
+                    "origin": {
+                      "type": "string",
+                      "example": "France",
+                      "description": "Origin of product. (This field is mandatory for some categories)"
+                    },
+                    "allergens": {
+                      "type": "string",
+                      "example": "Contient des traces de fruit à coques",
+                      "description": "Advice of potencial allergens. (This field is mandatory for some categories)"
+                    },
+                    "composition": {
+                      "type": "string",
+                      "example": "Oeuf, sucre",
+                      "description": "Composition of product. (This field is mandatory for some categories)"
+                    },
+                    "provider": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "example": "wynd",
+                          "description": "Name of provider"
+                        },
+                        "externalProductId": {
+                          "type": "string",
+                          "example": "33ur",
+                          "description": "Id used by the provider"
+                        }
+                      },
+                      "required": [
+                        "name,",
+                        "externalProductId"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "The syntax of the query is incorrect.",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Bad Request",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 400,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 401,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 403,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Resource not found",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Not found",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Air jordan",
+                    "description": "Name of product"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Chaussures trop bien",
+                    "description": "Description of product"
+                  },
+                  "brand": {
+                    "type": "string",
+                    "example": "Nike",
+                    "description": "Brand of product"
+                  },
+                  "status": {
+                    "type": "string",
+                    "example": "online",
+                    "description": "Status of product",
+                    "enum": [
+                      "online",
+                      "offline",
+                      "submitted",
+                      "draft_cityzen",
+                      "refused"
+                    ]
+                  },
+                  "sellerAdvice": {
+                    "type": "string",
+                    "example": "Taille petite, prendre une demi pointure au dessus",
+                    "description": "Advice from seller of product"
+                  },
+                  "isService": {
+                    "type": "boolean",
+                    "example": false,
+                    "description": "Tell if the product is a service"
+                  },
+                  "categoryId": {
+                    "type": "integer",
+                    "example": 4,
+                    "description": "Category id of product"
+                  },
+                  "variants": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "example": 67,
+                          "description": "Id of product's variant wanted to update (No id means new variant for the product)"
+                        },
+                        "basePrice": {
+                          "type": "number",
+                          "example": 44.99,
+                          "description": "Price of product's variant (Required if new variant)"
+                        },
+                        "weight": {
+                          "type": "number",
+                          "example": 0.56,
+                          "description": "Weight of product's variant (in Kg) (Required if new variant)"
+                        },
+                        "quantity": {
+                          "type": "integer",
+                          "example": 9,
+                          "description": "Stock of product's variant (Required if new variant)"
+                        },
+                        "isDefault": {
+                          "type": "boolean",
+                          "example": true,
+                          "description": "Tell if this variant is the product's default variant (Required if new variant)"
+                        },
+                        "imageUrls": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": [
+                            "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr",
+                            "https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg"
+                          ],
+                          "default": [
+
+                          ],
+                          "description": "List of product images urls"
+                        },
+                        "goodDeal": {
+                          "type": "object",
+                          "properties": {
+                            "startAt": {
+                              "type": "string",
+                              "example": "20/07/2021",
+                              "description": "Date of start of good deal"
+                            },
+                            "endAt": {
+                              "type": "string",
+                              "example": "27/07/2021",
+                              "description": "Date of end of good deal"
+                            },
+                            "discount": {
+                              "type": "integer",
+                              "example": 45,
+                              "description": "Amount of discount (in %)"
+                            }
+                          },
+                          "required": [
+                            "startAt",
+                            "endAt",
+                            "discount"
+                          ]
+                        },
+                        "characteristics": {
+                          "type": "array",
+                          "description": "Characteristics of variant (Required if new variant)",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string",
+                                "example": "color",
+                                "description": "Name of characteristic"
+                              },
+                              "value": {
+                                "type": "string",
+                                "example": "Bleu",
+                                "description": "Value of characteristic"
+                              }
+                            },
+                            "required": [
+                              "name",
+                              "value"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "origin": {
+                    "type": "string",
+                    "example": "France",
+                    "description": "Origin of product. (This field is mandatory for some categories)"
+                  },
+                  "allergens": {
+                    "type": "string",
+                    "example": "Contient des traces de fruit à coques",
+                    "description": "Advice of potencial allergens. (This field is mandatory for some categories)"
+                  },
+                  "composition": {
+                    "type": "string",
+                    "example": "Oeuf, sucre",
+                    "description": "Composition of product. (This field is mandatory for some categories)"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/auth/shops/{id}/reviews": {
       "parameters": [
         {
@@ -6280,7 +7000,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://0.0.0.0:3000"
     }
   ],
   "components": {
@@ -6560,13 +7280,17 @@
           },
           "brand": {
             "type": "string",
-            "example": "Chaussures trop bien",
-            "description": "Description of product"
+            "example": "Nike",
+            "description": "Brand of product"
           },
           "status": {
             "type": "string",
             "example": "online",
-            "description": "Status of product"
+            "description": "Status of product",
+            "enum": [
+              "online",
+              "offline"
+            ]
           },
           "sellerAdvice": {
             "type": "string",
