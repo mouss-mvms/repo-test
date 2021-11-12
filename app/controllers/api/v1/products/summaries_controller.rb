@@ -26,7 +26,7 @@ module Api
             if search_params[:perimeter]
               case search_params[:perimeter]
               when 'department'
-                search_criterias.and(::Criterias::CloseToYou.new(nil, insee_codes, except_current_cities: true))
+                search_criterias.and(::Criterias::CloseToYou.new(nil, insee_codes))
               when 'country'
                 search_criterias.remove(:insee_code, :territory_slug)
                 search_criterias.and(::Criterias::InCountry.new(nil))
