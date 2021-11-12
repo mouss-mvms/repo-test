@@ -148,4 +148,89 @@ RSpec.describe 'api/v1/citizens/products', swagger_doc: 'v1/swagger.json', type:
       end
     end
   end
+
+  path '/api/v1/auth/citizens/self/products/{id}' do
+    parameter name: 'X-client-id', in: :header, type: :string, required: true
+    parameter name: 'id', in: :path, type: :string, required: true
+
+    patch('Update a product') do
+      tags 'Products'
+      produces 'application/json'
+      consumes 'application/json'
+      description 'Update product'
+      security [{ authorization: [] }]
+
+      parameter name: :product, in: :body, schema: {
+        type: :object,
+        properties: {
+          name: { type: :string, example: "Air jordan", description: 'Name of product' },
+          brand: { type: :string, example: "Nike", description: 'Brand of product' },
+          isService: { type: :boolean, example: false, description: 'Tell if the product is a service' },
+          citizenAdvice: { type: :string, example: "Ce produit est super, je recommande !", description: 'Citizen advice of product' },
+=begin
+          imageUrls: {
+            type: 'array',
+            items: {
+              type: 'string'
+            },
+            example: [
+              'https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr',
+              'https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg'
+            ],
+            default: [],
+            description: 'List of product images urls'
+          },
+=end
+          variants: {
+            type: :array,
+            items: {
+              type: :object,
+              properties: {
+                id: { type: :integer, example: 67, description: "Id of product's variant wanted to update (No id means new variant for the product)" },
+                basePrice: { type: :number, example: 44.99, description: "Price of product's variant (Required if new variant)" },
+                imageUrls: {
+                  type: 'array',
+                  items: {
+                    type: 'string'
+                  },
+                  example: [
+                    'https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr',
+                    'https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg'
+                  ],
+                  default: [],
+                  description: 'List of product images urls'
+                },
+              },
+            }
+          }
+        }
+      }
+
+      response(200, 'Successful') do
+        schema V1::Examples::Response::Product.to_h
+        run_test!
+      end
+
+      response(400, 'Bad request') do
+        schema Examples::Errors::BadRequest.new.error
+        run_test!
+      end
+
+      response(401, 'Unauthorized') do
+        schema Examples::Errors::Unauthorized.new.error
+        run_test!
+      end
+
+      response(403, 'Forbidden') do
+        schema Examples::Errors::Forbidden.new.error
+        run_test!
+      end
+
+      response(404, 'Not found') do
+        schema Examples::Errors::NotFound.new.error
+        run_test!
+      end
+    end
+
+  end
 end

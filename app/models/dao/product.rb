@@ -98,9 +98,8 @@ module Dao
       product = ::Product.find(dto_product_request.id)
       product.name = dto_product_request.name if dto_product_request.name.present?
       product.category_id = dto_product_request.category_id if dto_product_request.category_id.present?
-      product.brand_id =  ::Brand.where(name: dto_product_request.brand).first_or_create.id if dto_product_request.brand.present?
+      product.brand_id = ::Brand.where(name: dto_product_request.brand).first_or_create.id if dto_product_request.brand.present?
       product.is_a_service = dto_product_request.is_service unless dto_product_request.is_service.nil?
-      product.status = dto_product_request.status if dto_product_request.status.present?
       product.origin = dto_product_request.origin if dto_product_request.origin.present?
       product.pro_advice = dto_product_request.seller_advice if dto_product_request.seller_advice.present?
       product.allergens = dto_product_request.allergens if dto_product_request.allergens.present?
@@ -115,7 +114,19 @@ module Dao
         end
         product.save!
       end
+
+      product.advice.content = dto_product_request.citizen_advice if dto_product_request.citizen_advice && product.advice
+
       update_or_create_variant(variant_dtos: dto_product_request.variants, product: product) if dto_product_request.variants.present?
+      if dto_product_request.status.present?
+        if dto_product_request.status == "online" && product.status != "online"
+          Products::StatusSpecifications::CanBeOnline.new.is_satisfied_by?(product) ?
+            product.status = "online" :
+            product.status = "offline"
+        else
+          product.status = dto_product_request.status
+        end
+      end
       product.save!
       product
     end
