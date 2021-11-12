@@ -22,6 +22,7 @@
            goodDeal: {
              type: :object,
              description: 'Set a good deal for the variant',
+             example: {startAt: "20/07/2021", endAt: "27/07/2021", discount: 45},
              properties: {
                startAt: { type: :string, example: "20/07/2021", description: "Date of start of good deal" },
                endAt: { type: :string, example: "27/07/2021", description: "Date of end of good deal" },
@@ -31,6 +32,7 @@
            characteristics: {
              type: :object,
              description: 'Set the characteristics of variant (Set as an array)',
+             example: [ {name: 'color', value: 'Bleu' } ],
              properties: {
                name: { type: :string, example: 'color', description: 'Name of characteristic' },
                value: { type: :string, example: 'Bleu', description: 'Value of characteristic' }
@@ -94,6 +96,7 @@
            goodDeal: {
              type: :object,
              description: 'Set a good deal for the variant',
+             example: {startAt: "20/07/2021", endAt: "27/07/2021", discount: 45},
              properties: {
                startAt: { type: :string, example: "20/07/2021", description: "Date of start of good deal" },
                endAt: { type: :string, example: "27/07/2021", description: "Date of end of good deal" },
@@ -103,6 +106,7 @@
            characteristics: {
              type: :object,
              description: 'Set the characteristics of variant (Set as an array)',
+             example: [ {name: 'color', value: 'Bleu' } ],
              properties: {
                name: { type: :string, example: 'color', description: 'Name of characteristic' },
                value: { type: :string, example: 'Bleu', description: 'Value of characteristic' }
