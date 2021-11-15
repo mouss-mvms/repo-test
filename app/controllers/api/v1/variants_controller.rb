@@ -49,6 +49,7 @@ module Api
             }
           end
           hash[:external_variant_id] = params[:externalVariantId]
+          hash[:files] = params[:files]
           hash
       end
 
