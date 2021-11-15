@@ -1390,4 +1390,214 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
       end
     end
   end
+
+  describe "PATCH #update" do
+    context "All ok" do
+      it 'should return 200 HTTP Status' do
+        user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
+        reference = create(:reference, base_price: 400)
+        product = reference.product
+        product.name = "Before MAJ"
+        product.status = "submitted"
+        product.save
+        product_params = {
+          name: "After MAJ",
+          variants: [
+            {
+              id: reference.id,
+              basePrice: 300
+            }
+          ]
+        }
+        user_citizen.citizen.products << product
+        user_citizen.citizen.save
+
+        request.headers["x-client-id"] = generate_token(user_citizen)
+        patch :update, params: product_params.merge(id: product.id)
+
+        should respond_with(200)
+        result = JSON.parse(response.body)
+        product.reload
+        expect(result["id"]).to eq(product.id)
+        expect(result["name"]).to eq(product.name)
+        expect(result["name"]).to eq(product_params[:name])
+        variant_params_expected = product_params[:variants].find { |variant| variant[:id] == reference.id}
+        variant_to_compare = result["variants"].find { |variant| variant["id"] == variant_params_expected[:id]}
+        expect(variant_to_compare).not_to be_nil
+        expect(variant_to_compare["basePrice"]).to eq(variant_params_expected[:basePrice])
+      end
+    end
+
+    context "When product'status is not submitted or refused" do
+      it 'should return 403 HTTP Status' do
+        user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
+        reference = create(:reference, base_price: 400)
+        product = reference.product
+        product.name = "Before MAJ"
+        product.status = "online"
+        product.save
+        product_params = {
+          name: "After MAJ",
+          variants: [
+            {
+              id: reference.id,
+              basePrice: 300
+            }
+          ]
+        }
+        user_citizen.citizen.products << product
+        user_citizen.citizen.save
+
+        request.headers["x-client-id"] = generate_token(user_citizen)
+        patch :update, params: product_params.merge(id: product.id)
+
+        should respond_with(403)
+        expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
+      end
+    end
+
+    context "Want to modify the product' status" do
+      it 'should return 403 HTTP Status' do
+        user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
+        reference = create(:reference, base_price: 400)
+        product = reference.product
+        product.name = "Before MAJ"
+        product.status = "submitted"
+        product.save
+        product_params = {
+          name: "After MAJ",
+          status: "online",
+          variants: [
+            {
+              id: reference.id,
+              basePrice: 300
+            }
+          ]
+        }
+        user_citizen.citizen.products << product
+        user_citizen.citizen.save
+
+        request.headers["x-client-id"] = generate_token(user_citizen)
+        patch :update, params: product_params.merge(id: product.id)
+
+        should respond_with(403)
+        expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
+      end
+    end
+
+    context "Citizen is not the product's author" do
+      it 'should return 403 HTTP status' do
+        user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
+        reference = create(:reference, base_price: 400)
+        product = reference.product
+        product.name = "Before MAJ"
+        product.status = "submitted"
+        product.save
+
+        product_params = {
+          name: "After MAJ",
+          status: "online",
+          variants: [
+            {
+              id: reference.id,
+              basePrice: 300
+            }
+          ]
+        }
+
+        request.headers["x-client-id"] = generate_token(user_citizen)
+        patch :update, params: product_params.merge(id: product.id)
+
+        should respond_with(404)
+        expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Product with 'id'=#{product.id} [WHERE \"citizen_products\".\"citizen_id\" = $1]").to_h.to_json)
+      end
+    end
+
+    context "Can't find product wanted in citizen product" do
+      it 'should return 404 HTTP Status' do
+        user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
+        reference = create(:reference, base_price: 400)
+        reference2 = create(:reference, base_price: 500)
+        product = reference.product
+        product2 = reference2.product
+        product.name = "Before MAJ"
+        product.status = "submitted"
+        product.save
+        product_params = {
+          name: "After MAJ",
+          variants: [
+            {
+              id: reference.id,
+              basePrice: 300
+            }
+          ]
+        }
+        user_citizen.citizen.products << product
+        user_citizen.citizen.save
+
+        request.headers["x-client-id"] = generate_token(user_citizen)
+        patch :update, params: product_params.merge(id: product2.id)
+
+        should respond_with(404)
+        expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Product with 'id'=#{product2.id} [WHERE \"citizen_products\".\"citizen_id\" = $1]").to_h.to_json)
+      end
+    end
+
+    context "Bad authentification" do
+      context "No user" do
+        it 'should return 401 HTTP Status' do
+          user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
+          reference = create(:reference, base_price: 400)
+          product = reference.product
+          product.name = "Before MAJ"
+          product.status = "submitted"
+          product.save
+          product_params = {
+            name: "After MAJ",
+            variants: [
+              {
+                id: reference.id,
+                basePrice: 300
+              }
+            ]
+          }
+          user_citizen.citizen.products << product
+          user_citizen.citizen.save
+
+          patch :update, params: product_params.merge(id: product.id)
+
+          should respond_with(401)
+          expect(response.body).to eq(Dto::Errors::Unauthorized.new.to_h.to_json)
+        end
+      end
+
+      context "User is not a citizen" do
+        it 'should return 403 HTTP Status' do
+          user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
+          reference = create(:reference, base_price: 400)
+          product = reference.product
+          product.name = "Before MAJ"
+          product.status = "submitted"
+          product.save
+          product_params = {
+            name: "After MAJ",
+            variants: [
+              {
+                id: reference.id,
+                basePrice: 300
+              }
+            ]
+          }
+          user_citizen.citizen.products << product
+          user_citizen.citizen.save
+
+          request.headers["x-client-id"] = generate_token(create(:shop_employee_user, email: "shop_employee7674@ecity.fr"))
+          patch :update, params: product_params.merge(id: product.id)
+
+          should respond_with(403)
+          expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
+        end
+      end
+    end
+  end
 end
