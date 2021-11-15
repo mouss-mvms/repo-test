@@ -24,11 +24,11 @@ module Api
               raise ApplicationController::NotFound.new('Location not found')
             end
             if search_params[:perimeter]
+              search_criterias.remove(:insee_code, :territory_slug)
               case search_params[:perimeter]
               when 'department'
                 search_criterias.and(::Criterias::CloseToYou.new(nil, insee_codes))
               when 'country'
-                search_criterias.remove(:insee_code, :territory_slug)
                 search_criterias.and(::Criterias::InCountry.new(nil))
               end
             end
