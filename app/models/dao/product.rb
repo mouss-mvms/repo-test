@@ -156,7 +156,8 @@ module Dao
     def self.set_image(object:, image_url:)
       begin
         image = Shrine.remote_url(image_url)
-        object.images.create(file: image, position: 1)
+        object_image = object.images.create(file: image, position: 1)
+        object_image.save!
       rescue StandardError => e
         Rails.logger.error(e)
         Rails.logger.error(e.message)
