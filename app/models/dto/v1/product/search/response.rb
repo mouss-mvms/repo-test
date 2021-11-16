@@ -9,6 +9,7 @@ module Dto
             @products = args[:products].map { |product| Dto::V1::ProductSummary::Response.create(product.deep_symbolize_keys) }
             @filters = ::Dto::V1::Search::Filter::Response.create(args[:aggs])
             @page = args[:page]
+            @total_pages = args[:total_pages]
           end
 
           def self.create(searchkick_product_response)
@@ -20,6 +21,7 @@ module Dto
               products: @products.map(&:to_h),
               filters: @filters.to_h,
               page: @page,
+              totalPages: @total_pages
             }
           end
         end

@@ -3,8 +3,8 @@ module Api
     module Citizens
       class ProductsController < ApplicationController
         before_action :check_citizen, only: [:index]
-        before_action :uncrypt_token, only: [:create]
-        before_action :retrieve_user, only: [:create]
+        before_action :uncrypt_token, only: [:create, :update]
+        before_action :retrieve_user, only: [:create, :update]
 
         def index
           products = @citizen.products.includes(:category, :brand, references: [:sample, :color, :size, :good_deal]).actives
@@ -35,12 +35,60 @@ module Api
           end
         end
 
+        def update
+          raise ApplicationController::Forbidden.new unless @user.is_a_citizen?
+          dto_product_request = Dto::V1::Product::Request.new(product_params_update)
+          product = @user.citizen.products.find(dto_product_request.id)
+          raise ApplicationController::Forbidden.new unless (product.status == "submitted" || product.status == "refused")
+          raise ApplicationController::Forbidden.new if dto_product_request.status
+          begin
+            product = Dao::Product.update(dto_product_request: dto_product_request)
+          rescue ActiveRecord::RecordNotFound => e
+            Rails.logger.error(e.message)
+            error = Dto::Errors::NotFound.new(e.message)
+            return render json: error.to_h, status: error.status
+          rescue => e
+            Rails.logger.error(e.message)
+            error = Dto::Errors::InternalServer.new(detail: e.message)
+            return render json: error.to_h, status: error.status
+          else
+            return render json: Dto::V1::Product::Response.create(product).to_h, status: :ok
+          end
+        end
+
         private
 
         def check_citizen
           raise ApplicationController::UnpermittedParameter unless params[:id].to_i > 0
 
           @citizen = Citizen.find(params[:id])
+        end
+
+        def product_params_update
+          product_params = {}
+          product_params[:id] = params[:id]
+          product_params[:name] = params[:name]
+          product_params[:brand] = params[:brand]
+          product_params[:status] = params[:status]
+          product_params[:citizen_advice] = params[:citizenAdvice]
+          product_params[:is_service] = params[:isService]
+          product_params[:variants] = []
+          if params[:variants]
+            params[:variants].each do |v|
+              hash = {}
+              if v[:id]
+                hash[:id] = v[:id]
+                hash[:base_price] = v[:basePrice]
+                hash[:image_urls] = v[:imageUrls]
+                hash
+              else
+                hash[:base_price] = v.require(:basePrice)
+                hash[:image_urls] = v[:imageUrls]
+              end
+              product_params[:variants] << hash
+            end
+          end
+          product_params
         end
 
         def product_params

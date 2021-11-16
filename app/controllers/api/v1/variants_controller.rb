@@ -1,12 +1,20 @@
 module Api
   module V1
     class VariantsController < ApplicationController
-      before_action :uncrypt_token
-      before_action :retrieve_user
+      before_action :uncrypt_token, only: [:update]
+      before_action :retrieve_user, only: [:update]
       before_action :find_variant
-      before_action :check_authorization
+      before_action :check_authorization, only: [:update]
 
       def update
+        dto_variant_request = Dto::V1::Variant::Request.new(variant_params)
+        reference = Dao::Variant.update(dto_variant_request: dto_variant_request)
+        variant = Dto::V1::Variant::Response.create(reference)
+        render json: variant.to_h, status: :ok
+      end
+
+      def update_offline
+        raise ApplicationController::UnprocessableEntity.new("Variant should have external provider.") unless @reference.api_provider_variant.present?
         dto_variant_request = Dto::V1::Variant::Request.new(variant_params)
         reference = Dao::Variant.update(dto_variant_request: dto_variant_request)
         variant = Dto::V1::Variant::Response.create(reference)
@@ -41,6 +49,7 @@ module Api
             }
           end
           hash[:external_variant_id] = params[:externalVariantId]
+          hash[:files] = params[:files]
           hash
       end
 

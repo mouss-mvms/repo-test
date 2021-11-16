@@ -15,12 +15,10 @@ scope :products do
   delete ':id', to: 'products#destroy_offline'
   get ':id/reviews', to: 'products/reviews#index'
   post ':id/variants', to: 'products/variants#create_offline'
-
 end
 
 scope :auth do
   put 'products/:id', to: 'products#update'
-  patch 'products/:id', to: 'products#patch_auth'
   delete 'products/:id', to: 'products#destroy'
   namespace :products do
     post ":id/reviews", to: "reviews#create"
@@ -29,4 +27,7 @@ scope :auth do
   end
   post '/citizens/self/products', to: 'citizens/products#create'
   post '/shops/self/products', to: 'shops/products#create'
+
+  patch '/citizens/self/products/:id', to: 'citizens/products#update'
+  patch '/shops/self/products/:id', to: 'shops/products#update'
 end
