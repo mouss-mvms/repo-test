@@ -89,7 +89,7 @@ RSpec.describe 'api/v1/citizens/products', swagger_doc: 'v1/swagger.json', type:
                   }
                 }
               },
-              required: %w[characteristics]
+              required: %w[characteristics imageIds]
             }
           },
           origin: { type: :string, example: 'France', description: 'Origin of product. (This field is mandatory for some categories)' },
@@ -101,7 +101,6 @@ RSpec.describe 'api/v1/citizens/products', swagger_doc: 'v1/swagger.json', type:
           characteristics
           shopId
           citizenAdvice
-          imageIds
           variants
         ]
 

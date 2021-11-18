@@ -48,42 +48,21 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
       context "All ok" do
         it "should return 202 HTTP Status" do
           user_citizen = create(:citizen_user, email: "citizen0@ecity.fr")
+          image = create(:image)
+          category = create(:category, name: "Non Classée", slug:"non-classee")
 
           create_params = {
             name: "manteau MAC",
-            slug: "manteau-mac",
-            categoryId: create(:category).id,
-            brand: "3sixteen",
-            status: "online",
-            isService: true,
-            sellerAdvice: "pouet",
+            citizenAdvice: "pouet",
             shopId: create(:shop).id,
-            imagesUrls: ['https://www.lesitedelasneaker.com/wp-content/images/2020/07/air-jordan-1-high-dark-mocha-555088-105-banner.jpg'],
-            description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
-            origin: "france",
-            composition: "pouet pouet",
-            allergens: "Eric Zemmour",
             variants: [
               {
-                basePrice: 379,
-                weight: 1,
-                quantity: 0,
-                imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
-                isDefault: false,
-                goodDeal: {
-                  startAt: "17/05/2021",
-                  endAt: "18/06/2021",
-                  discount: 20,
-                },
+                imageIds: [image.id],
                 characteristics: [
                   {
                     value: "coloris black",
                     name: "color",
-                  },
-                  {
-                    value: "S",
-                    name: "size",
-                  },
+                  }
                 ],
               },
             ],
@@ -97,6 +76,13 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
           should respond_with(202)
           expect(JSON.parse(response.body)["url"]).to eq(ENV["API_BASE_URL"] + api_v1_product_job_status_path(job_id))
         end
+
+        context "category is not provided" do
+          it "should set category to Non Classée" do
+
+          end
+        end
+
       end
 
       context "Param incorrect" do
@@ -118,7 +104,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                   basePrice: 379,
                   weight: 1,
                   quantity: 0,
-                  imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                  imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
                   isDefault: false,
                   goodDeal: {
                     startAt: "17/05/2021",
@@ -146,23 +132,24 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
           end
         end
 
-        context "Category id is missing" do
+        context "citizenAdvice id is missing" do
           it "should return 400 HTTP status" do
             create_params = {
               name: "manteau MAC",
               slug: "manteau-mac",
+              categoryId: create(:category).id,
+              shopId: create(:shop).id,
               brand: "3sixteen",
               status: "online",
               isService: true,
               sellerAdvice: "pouet",
-              shopId: create(:shop).id,
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
               variants: [
                 {
                   basePrice: 379,
                   weight: 1,
                   quantity: 0,
-                  imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                  imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
                   isDefault: false,
                   goodDeal: {
                     startAt: "17/05/2021",
@@ -182,7 +169,97 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                 },
               ],
             }
+            request.headers["x-client-id"] = generate_token(user_citizen)
 
+            post :create, params: create_params
+
+            should respond_with(400)
+          end
+        end
+
+        context "imageIds are missing" do
+          it "should return 400 HTTP status" do
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: create(:category).id,
+              shopId: create(:shop).id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              citizenAdvice: "double pouet",
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+            request.headers["x-client-id"] = generate_token(user_citizen)
+
+            post :create, params: create_params
+
+            should respond_with(400)
+          end
+        end
+
+        context "imageIds count > 5" do
+          it "should returns 400 HTTP status" do
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: create(:category).id,
+              shopId: create(:shop).id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              citizenAdvice: "pouet",
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageIds: [1,2,3,4,5,6],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
             request.headers["x-client-id"] = generate_token(user_citizen)
 
             post :create, params: create_params
@@ -195,20 +272,15 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
           it "should return 404 HTTP Status" do
             create_params = {
               name: "manteau MAC",
-              slug: "manteau-mac",
-              brand: "3sixteen",
-              status: "online",
               categoryId: create(:category).id,
-              isService: true,
-              sellerAdvice: "pouet",
               shopId: create(:shop).id,
-              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              citizenAdvice: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
               variants: [
                 {
                   basePrice: 379,
                   weight: 1,
                   quantity: 0,
-                  imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                  imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
                   isDefault: false,
                   goodDeal: {
                     startAt: "17/05/2021",
@@ -258,6 +330,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                 status: "online",
                 isService: true,
                 sellerAdvice: "pouet",
+                citizenAdvice: "pouet",
                 shopId: create(:shop).id,
                 description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
                 variants: [
@@ -265,7 +338,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -306,6 +379,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                 status: "online",
                 isService: true,
                 sellerAdvice: "pouet",
+                citizenAdvice: "pouet",
                 shopId: create(:shop).id,
                 origin: "France",
                 description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
@@ -314,7 +388,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -355,6 +429,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                 status: "online",
                 isService: true,
                 sellerAdvice: "pouet",
+                citizenAdvice: "pouet",
                 shopId: create(:shop).id,
                 origin: "France",
                 composition: "Tissu",
@@ -364,7 +439,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -408,6 +483,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                 status: "online",
                 isService: true,
                 sellerAdvice: "pouet",
+                citizenAdvice: "pouet",
                 shopId: create(:shop).id,
                 description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
                 variants: [
@@ -415,7 +491,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -456,6 +532,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                 status: "online",
                 isService: true,
                 sellerAdvice: "pouet",
+                citizenAdvice: "pouet",
                 shopId: create(:shop).id,
                 origin: "France",
                 description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
@@ -464,7 +541,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -505,6 +582,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                 status: "online",
                 isService: true,
                 sellerAdvice: "pouet",
+                citizenAdvice: "pouet",
                 shopId: create(:shop).id,
                 origin: "France",
                 composition: "Tissu",
@@ -514,7 +592,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -558,6 +636,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                 status: "online",
                 isService: true,
                 sellerAdvice: "pouet",
+                citizenAdvice: "pouet",
                 shopId: create(:shop).id,
                 description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
                 variants: [
@@ -565,7 +644,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -606,6 +685,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                 status: "online",
                 isService: true,
                 sellerAdvice: "pouet",
+                citizenAdvice: "pouet",
                 shopId: create(:shop).id,
                 origin: "France",
                 description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
@@ -614,7 +694,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -655,6 +735,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                 status: "online",
                 isService: true,
                 sellerAdvice: "pouet",
+                citizenAdvice: "pouet",
                 shopId: create(:shop).id,
                 origin: "France",
                 composition: "Tissu",
@@ -664,7 +745,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -709,6 +790,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                 status: "online",
                 isService: true,
                 sellerAdvice: "pouet",
+                citizenAdvice: "pouet",
                 shopId: create(:shop).id,
                 description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
                 variants: [
@@ -716,7 +798,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -757,6 +839,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                 status: "online",
                 isService: true,
                 sellerAdvice: "pouet",
+                citizenAdvice: "pouet",
                 shopId: create(:shop).id,
                 origin: "France",
                 description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
@@ -765,7 +848,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -806,6 +889,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                 status: "online",
                 isService: true,
                 sellerAdvice: "pouet",
+                citizenAdvice: "pouet",
                 shopId: create(:shop).id,
                 origin: "France",
                 composition: "Tissu",
@@ -815,7 +899,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -859,6 +943,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                 brand: "3sixteen",
                 status: "online",
                 isService: true,
+                citizenAdvice: "pouet",
                 sellerAdvice: "pouet",
                 shopId: create(:shop).id,
                 description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
@@ -867,7 +952,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -907,6 +992,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                 brand: "3sixteen",
                 status: "online",
                 isService: true,
+                citizenAdvice: "pouet",
                 sellerAdvice: "pouet",
                 shopId: create(:shop).id,
                 origin: "France",
@@ -916,7 +1002,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -957,6 +1043,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                 status: "online",
                 isService: true,
                 sellerAdvice: "pouet",
+                citizenAdvice: "pouet",
                 shopId: create(:shop).id,
                 origin: "France",
                 composition: "Tissu",
@@ -966,7 +1053,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -1010,6 +1097,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                 status: "online",
                 isService: true,
                 sellerAdvice: "pouet",
+                citizenAdvice: "pouet",
                 shopId: create(:shop).id,
                 description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
                 variants: [
@@ -1017,7 +1105,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -1058,6 +1146,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                 status: "online",
                 isService: true,
                 sellerAdvice: "pouet",
+                citizenAdvice: "pouet",
                 shopId: create(:shop).id,
                 origin: "France",
                 description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
@@ -1066,7 +1155,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -1107,6 +1196,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                 status: "online",
                 isService: true,
                 sellerAdvice: "pouet",
+                citizenAdvice: "pouet",
                 shopId: create(:shop).id,
                 origin: "France",
                 composition: "Tissu",
@@ -1116,7 +1206,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -1161,6 +1251,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                 status: "online",
                 isService: true,
                 sellerAdvice: "pouet",
+                citizenAdvice: "pouet",
                 shopId: create(:shop).id,
                 description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
                 variants: [
@@ -1168,7 +1259,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -1209,6 +1300,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                 status: "online",
                 isService: true,
                 sellerAdvice: "pouet",
+                citizenAdvice: "pouet",
                 shopId: create(:shop).id,
                 origin: "France",
                 description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
@@ -1217,7 +1309,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -1267,7 +1359,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                   basePrice: 379,
                   weight: 1,
                   quantity: 0,
-                  imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                  imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
                   isDefault: false,
                   goodDeal: {
                     startAt: "17/05/2021",
@@ -1311,7 +1403,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                   basePrice: 379,
                   weight: 1,
                   quantity: 0,
-                  imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                  imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
                   isDefault: false,
                   goodDeal: {
                     startAt: "17/05/2021",

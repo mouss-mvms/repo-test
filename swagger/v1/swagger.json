@@ -651,7 +651,8 @@
                         }
                       },
                       "required": [
-                        "characteristics"
+                        "characteristics",
+                        "imageIds"
                       ]
                     }
                   },
@@ -676,7 +677,6 @@
                   "characteristics",
                   "shopId",
                   "citizenAdvice",
-                  "imageIds",
                   "variants"
                 ]
               }
