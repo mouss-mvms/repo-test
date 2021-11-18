@@ -587,19 +587,20 @@
                           "example": true,
                           "description": "Tell if this variant is the product's default variant"
                         },
-                        "imageUrls": {
+                        "imageIds": {
                           "type": "array",
                           "items": {
-                            "type": "string"
+                            "type": "number"
                           },
                           "example": [
-                            "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr",
-                            "https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg"
+                            234,
+                            45566,
+                            345
                           ],
                           "default": [
 
                           ],
-                          "description": "List of product images urls"
+                          "description": "List of product images ids"
                         },
                         "goodDeal": {
                           "type": "object",
@@ -650,10 +651,7 @@
                         }
                       },
                       "required": [
-                        "basePrice",
-                        "weight",
-                        "quantity",
-                        "isDefault"
+                        "characteristics"
                       ]
                     }
                   },
@@ -675,15 +673,11 @@
                 },
                 "required": [
                   "name",
-                  "description",
-                  "brand",
-                  "status",
-                  "sellerAdvice",
-                  "isService",
+                  "characteristics",
+                  "shopId",
                   "citizenAdvice",
-                  "categoryId",
-                  "variants",
-                  "characteristics"
+                  "imageIds",
+                  "variants"
                 ]
               }
             }
@@ -6756,7 +6750,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {

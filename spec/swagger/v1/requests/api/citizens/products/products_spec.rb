@@ -49,20 +49,7 @@ RSpec.describe 'api/v1/citizens/products', swagger_doc: 'v1/swagger.json', type:
           citizenAdvice: { type: :string, example: 'Produit trouvé un commercant trop sympa', description: 'Advice from citizen of product' },
           categoryId: { type: :integer, example: 4, description: 'Category id of product' },
           shopId: { type: :integer, example: 453, description: 'Shop id of product' },
-=begin
-          imageUrls: {
-            type: 'array',
-            items: {
-              type: 'string'
-            },
-            example: [
-              'https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr',
-              'https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg'
-            ],
-            default: [],
-            description: 'List of product images urls'
-          },
-=end
+
           variants: {
             type: :array,
             items: {
@@ -72,17 +59,14 @@ RSpec.describe 'api/v1/citizens/products', swagger_doc: 'v1/swagger.json', type:
                 weight: { type: :number, example: 0.56, description: "Weight of product's variant (in Kg)" },
                 quantity: { type: :integer, example: 9, description: "Stock of product's variant" },
                 isDefault: { type: :boolean, example: true, description: "Tell if this variant is the product's default variant" },
-                imageUrls: {
+                imageIds: {
                   type: 'array',
                   items: {
-                    type: 'string'
+                    type: 'number'
                   },
-                  example: [
-                    'https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr',
-                    'https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg'
-                  ],
+                  example: [234, 45566, 345],
                   default: [],
-                  description: 'List of product images urls'
+                  description: 'List of product images ids'
                 },
                 goodDeal: {
                   type: :object,
@@ -105,7 +89,7 @@ RSpec.describe 'api/v1/citizens/products', swagger_doc: 'v1/swagger.json', type:
                   }
                 }
               },
-              required: %w[basePrice weight quantity isDefault]
+              required: %w[characteristics]
             }
           },
           origin: { type: :string, example: 'France', description: 'Origin of product. (This field is mandatory for some categories)' },
@@ -114,15 +98,11 @@ RSpec.describe 'api/v1/citizens/products', swagger_doc: 'v1/swagger.json', type:
         },
         required: %w[
           name
-          description
-          brand
-          status
-          sellerAdvice
-          isService
-          citizenAdvice
-          categoryId
-          variants
           characteristics
+          shopId
+          citizenAdvice
+          imageIds
+          variants
         ]
 
       }
