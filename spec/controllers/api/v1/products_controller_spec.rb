@@ -5698,7 +5698,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
   describe "POST #create_offline" do
     context "All ok" do
-      it "should return 202 HTTP Status" do
+      it "should return 201 HTTP Status" do
+        provider = create(:api_provider, name: 'wynd')
         create_params = {
           name: "manteau MAC",
           slug: "manteau-mac",
@@ -5739,12 +5740,25 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             externalProductId: '56ty'
           }
         }
-        job_id = "10aad2e35138aa982e0d848a"
-        allow(Dao::Product).to receive(:create_async).and_return(job_id)
-        expect(Dao::Product).to receive(:create_async)
         post :create_offline, params: create_params
-        should respond_with(202)
-        expect(JSON.parse(response.body)["url"]).to eq(ENV["API_BASE_URL"] + api_v1_product_job_status_path(job_id))
+        should respond_with(201)
+        result = JSON.parse(response.body)
+        product = Product.find(result["id"])
+        expect(product).to_not be_nil
+        expect(result["name"]).to eq(create_params[:name])
+        expect(Product.find(result["id"]).name).to eq(create_params[:name])
+        expect(result["category"]["id"]).to eq(create_params[:categoryId])
+        expect(Category.find(result["category"]["id"]).slug).to eq(product.category.slug)
+        expect(Category.find(result["category"]["id"]).name).to eq(product.category.name)
+        expect(result["brand"]).to eq(create_params[:brand])
+        expect(result["status"]).to eq(create_params[:status])
+        expect(result["isService"]).to eq(create_params[:isService])
+        expect(result["sellerAdvice"]).to eq(create_params[:sellerAdvice])
+        expect(result["description"]).to eq(create_params[:description])
+        expect(result["origin"]).to eq(create_params[:origin])
+        expect(result["allergens"]).to eq(create_params[:allergens])
+        expect(result["composition"]).to eq(create_params[:composition])
+        expect(product.references.count).to eq(1)
       end
     end
 
