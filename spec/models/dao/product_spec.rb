@@ -75,6 +75,8 @@ RSpec.describe Dao::Product, :type => :model do
       expect(product.api_provider_product).to_not be_nil
       expect(product.api_provider_product.api_provider.name).to eq(provider[:name])
       expect(product.api_provider_product.external_product_id).to eq(provider[:external_product_id])
+      expect(product.colors.first.name).to eq(create_params[:variants].first[:characteristics].first[:value])
+      expect(product.sizes.first.name).to eq(create_params[:variants].last[:characteristics].last[:value])
     end
   end
 
