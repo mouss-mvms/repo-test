@@ -1,12 +1,12 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
-  describe 'GET #index' do
-    context 'All ok' do
-      let(:citizen) {create(:citizen)}
-      let(:products) {create_list(:product, 5)}
+  describe "GET #index" do
+    context "All ok" do
+      let(:citizen) { create(:citizen) }
+      let(:products) { create_list(:product, 5) }
 
-      it 'should return 200 HTTP status' do
+      it "should return 200 HTTP status" do
         citizen.products << products
         citizen.save
         get :index, params: { id: citizen.id }
@@ -24,7 +24,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
     context "with invalid params" do
       context "id not a Numeric" do
         it "should returns 400 HTTP Status" do
-          get :index, params: { id: 'Xenomorph' }
+          get :index, params: { id: "Xenomorph" }
           should respond_with(400)
         end
       end
@@ -49,7 +49,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
         it "should return 202 HTTP Status" do
           user_citizen = create(:citizen_user, email: "citizen0@ecity.fr")
           image = create(:image)
-          category = create(:category, name: "Non Classée", slug:"non-classee")
+          category = create(:category, name: "Non Classée", slug: "non-classee")
 
           create_params = {
             name: "manteau MAC",
@@ -62,7 +62,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                   {
                     value: "coloris black",
                     name: "color",
-                  }
+                  },
                 ],
               },
             ],
@@ -76,18 +76,11 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
           should respond_with(202)
           expect(JSON.parse(response.body)["url"]).to eq(ENV["API_BASE_URL"] + api_v1_product_job_status_path(job_id))
         end
-
-        context "category is not provided" do
-          it "should set category to Non Classée" do
-
-          end
-        end
-
       end
 
       context "Param incorrect" do
         let(:user_citizen) { create(:citizen_user, email: "citizen1@ecity.fr") }
-
+        let(:image) { create(:image) }
         context "Shop id is missing" do
           it "should return 400 HTTP status" do
             create_params = {
@@ -104,7 +97,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                   basePrice: 379,
                   weight: 1,
                   quantity: 0,
-                  imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                  imageIds: [image.id],
                   isDefault: false,
                   goodDeal: {
                     startAt: "17/05/2021",
@@ -149,7 +142,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                   basePrice: 379,
                   weight: 1,
                   quantity: 0,
-                  imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                  imageIds: [image.id],
                   isDefault: false,
                   goodDeal: {
                     startAt: "17/05/2021",
@@ -240,7 +233,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                   basePrice: 379,
                   weight: 1,
                   quantity: 0,
-                  imageIds: [1,2,3,4,5,6],
+                  imageIds: [1, 2, 3, 4, 5, 6],
                   isDefault: false,
                   goodDeal: {
                     startAt: "17/05/2021",
@@ -280,7 +273,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                   basePrice: 379,
                   weight: 1,
                   quantity: 0,
-                  imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                  imageIds: [image.id],
                   isDefault: false,
                   goodDeal: {
                     startAt: "17/05/2021",
@@ -316,6 +309,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
 
         context "Category is dry-fresh group" do
           let(:category) { create(:category, group: "dry-food") }
+          let(:image) { create(:image) }
           context "Origin of product is missing" do
             it "should return 400 HTTP Status" do
               category = create(:category)
@@ -338,7 +332,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: [image.id],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -388,7 +382,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: [image.id],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -439,7 +433,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: [image.id],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -491,7 +485,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: [image.id],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -541,7 +535,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: [image.id],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -592,7 +586,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: [image.id],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -644,7 +638,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: [image.id],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -694,7 +688,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: [image.id],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -745,7 +739,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: [image.id],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -798,7 +792,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: [image.id],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -848,7 +842,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: [image.id],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -899,7 +893,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: [image.id],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -952,7 +946,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: [image.id],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -1002,7 +996,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: [image.id],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -1053,7 +1047,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: [image.id],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -1105,7 +1099,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: [image.id],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -1155,7 +1149,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: [image.id],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -1206,7 +1200,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: [image.id],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -1259,7 +1253,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: [image.id],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -1309,7 +1303,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                     basePrice: 379,
                     weight: 1,
                     quantity: 0,
-                    imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    imageIds: [image.id],
                     isDefault: false,
                     goodDeal: {
                       startAt: "17/05/2021",
@@ -1344,6 +1338,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
 
       context "Bad authentication" do
         context "x-client-id is missing" do
+          let(:image) { create(:image) }
           it "should return 401 HTTP status" do
             create_params = {
               name: "manteau MAC",
@@ -1359,7 +1354,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                   basePrice: 379,
                   weight: 1,
                   quantity: 0,
-                  imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                  imageIds: [image.id],
                   isDefault: false,
                   goodDeal: {
                     startAt: "17/05/2021",
@@ -1387,6 +1382,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
         end
 
         context "User is not a citizen" do
+          let(:image) { create(:image) }
           it "should return 403 HTTP status" do
             create_params = {
               name: "manteau MAC",
@@ -1403,7 +1399,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                   basePrice: 379,
                   weight: 1,
                   quantity: 0,
-                  imageIds: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                  imageIds: [image.id],
                   isDefault: false,
                   goodDeal: {
                     startAt: "17/05/2021",
@@ -1485,7 +1481,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
 
   describe "PATCH #update" do
     context "All ok" do
-      it 'should return 200 HTTP Status' do
+      it "should return 200 HTTP Status" do
         user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
         reference = create(:reference, base_price: 400)
         product = reference.product
@@ -1497,9 +1493,9 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
           variants: [
             {
               id: reference.id,
-              basePrice: 300
-            }
-          ]
+              basePrice: 300,
+            },
+          ],
         }
         user_citizen.citizen.products << product
         user_citizen.citizen.save
@@ -1513,15 +1509,15 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
         expect(result["id"]).to eq(product.id)
         expect(result["name"]).to eq(product.name)
         expect(result["name"]).to eq(product_params[:name])
-        variant_params_expected = product_params[:variants].find { |variant| variant[:id] == reference.id}
-        variant_to_compare = result["variants"].find { |variant| variant["id"] == variant_params_expected[:id]}
+        variant_params_expected = product_params[:variants].find { |variant| variant[:id] == reference.id }
+        variant_to_compare = result["variants"].find { |variant| variant["id"] == variant_params_expected[:id] }
         expect(variant_to_compare).not_to be_nil
         expect(variant_to_compare["basePrice"]).to eq(variant_params_expected[:basePrice])
       end
     end
 
     context "When product'status is not submitted or refused" do
-      it 'should return 403 HTTP Status' do
+      it "should return 403 HTTP Status" do
         user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
         reference = create(:reference, base_price: 400)
         product = reference.product
@@ -1533,9 +1529,9 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
           variants: [
             {
               id: reference.id,
-              basePrice: 300
-            }
-          ]
+              basePrice: 300,
+            },
+          ],
         }
         user_citizen.citizen.products << product
         user_citizen.citizen.save
@@ -1549,7 +1545,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
     end
 
     context "Want to modify the product' status" do
-      it 'should return 403 HTTP Status' do
+      it "should return 403 HTTP Status" do
         user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
         reference = create(:reference, base_price: 400)
         product = reference.product
@@ -1562,9 +1558,9 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
           variants: [
             {
               id: reference.id,
-              basePrice: 300
-            }
-          ]
+              basePrice: 300,
+            },
+          ],
         }
         user_citizen.citizen.products << product
         user_citizen.citizen.save
@@ -1578,7 +1574,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
     end
 
     context "Citizen is not the product's author" do
-      it 'should return 403 HTTP status' do
+      it "should return 403 HTTP status" do
         user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
         reference = create(:reference, base_price: 400)
         product = reference.product
@@ -1592,9 +1588,9 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
           variants: [
             {
               id: reference.id,
-              basePrice: 300
-            }
-          ]
+              basePrice: 300,
+            },
+          ],
         }
 
         request.headers["x-client-id"] = generate_token(user_citizen)
@@ -1606,7 +1602,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
     end
 
     context "Can't find product wanted in citizen product" do
-      it 'should return 404 HTTP Status' do
+      it "should return 404 HTTP Status" do
         user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
         reference = create(:reference, base_price: 400)
         reference2 = create(:reference, base_price: 500)
@@ -1620,9 +1616,9 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
           variants: [
             {
               id: reference.id,
-              basePrice: 300
-            }
-          ]
+              basePrice: 300,
+            },
+          ],
         }
         user_citizen.citizen.products << product
         user_citizen.citizen.save
@@ -1637,7 +1633,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
 
     context "Bad authentification" do
       context "No user" do
-        it 'should return 401 HTTP Status' do
+        it "should return 401 HTTP Status" do
           user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
           reference = create(:reference, base_price: 400)
           product = reference.product
@@ -1649,9 +1645,9 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
             variants: [
               {
                 id: reference.id,
-                basePrice: 300
-              }
-            ]
+                basePrice: 300,
+              },
+            ],
           }
           user_citizen.citizen.products << product
           user_citizen.citizen.save
@@ -1664,7 +1660,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
       end
 
       context "User is not a citizen" do
-        it 'should return 403 HTTP Status' do
+        it "should return 403 HTTP Status" do
           user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
           reference = create(:reference, base_price: 400)
           product = reference.product
@@ -1676,9 +1672,9 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
             variants: [
               {
                 id: reference.id,
-                basePrice: 300
-              }
-            ]
+                basePrice: 300,
+              },
+            ],
           }
           user_citizen.citizen.products << product
           user_citizen.citizen.save
