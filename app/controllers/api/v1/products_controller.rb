@@ -52,6 +52,7 @@ module Api
             raise ActionController::BadRequest.new('origin and composition is required') if ::Products::CategoriesSpecifications::MustHaveLabelling.new.is_satisfied_by?(category) && (dto_product_request.origin.blank? || dto_product_request.composition.blank?)
             raise ActionController::BadRequest.new('allergens is required') if ::Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
           end
+          raise ApplicationController::Forbidden.new if product.api_provider_product.nil? || (product.api_provider_product.api_provider.name != dto_product_request.provider[:name])
           begin
             product = Dao::Product.update(dto_product_request: dto_product_request)
           rescue ActiveRecord::RecordNotFound => e
@@ -119,10 +120,11 @@ module Api
           end
         end
         dto_product_request = Dto::V1::Product::Request.new(product_params)
-        product = Product.find(product_params[:id])
+        product = Product.find(dto_product_request.id)
         category = Category.find(dto_product_request.category_id)
         raise ActionController::BadRequest.new('origin and composition is required') if ::Products::CategoriesSpecifications::MustHaveLabelling.new.is_satisfied_by?(category) && (dto_product_request.origin.blank? || dto_product_request.composition.blank?)
         raise ActionController::BadRequest.new('allergens is required') if ::Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
+        raise ApplicationController::Forbidden.new if product.api_provider_product.nil? || (product.api_provider_product.api_provider.name != product_params[:provider][:name])
         begin
           product = Dto::V1::Product.build(dto_product_request: dto_product_request, product: product)
         rescue => e
@@ -145,7 +147,7 @@ module Api
         product_params = {}
         product_params[:id] = params[:id]
         product_params[:name] = params.require(:name)
-        product_params[:description] = params.require(:description)
+        product_params[:description] = params[:description]
         product_params[:brand] = params.require(:brand)
         product_params[:status] = params.require(:status)
         product_params[:seller_advice] = params.require(:sellerAdvice)
