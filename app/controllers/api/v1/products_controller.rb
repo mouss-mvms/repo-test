@@ -97,13 +97,14 @@ module Api
         raise ActionController::BadRequest.new('allergens is required') if ::Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
         ActiveRecord::Base.transaction do
           begin
-            job_id = Dao::Product.create_async(dto_product_request.to_h)
+            product = Dao::Product.create(dto_product_request.to_h)
           rescue => e
             Rails.logger.error(e.message)
             error = Dto::Errors::InternalServer.new(detail: e.message)
             return render json: error.to_h, status: error.status
           else
-            return render json: { url: ENV["API_BASE_URL"] + api_v1_product_job_status_path(job_id) }, status: :accepted
+            dto_product_response = Dto::V1::Product::Response.create(product)
+            return render json: dto_product_response.to_h, status: :created
           end
         end
       end
