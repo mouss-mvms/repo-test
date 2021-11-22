@@ -1,11 +1,11 @@
-require 'sidekiq/web'
+require "sidekiq/web"
 
 Rails.application.routes.draw do
-  mount Rswag::Api::Engine => '/api-docs'
-  mount Rswag::Ui::Engine => '/api-docs'
+  mount Rswag::Api::Engine => "/api-docs"
+  mount Rswag::Ui::Engine => "/api-docs"
   mount Sidekiq::Web.new, at: "/jobs"
 
-  get '/' => "rails/welcome#index"
+  get "/" => "rails/welcome#index"
 
   namespace :api do
     namespace :v1 do
@@ -14,8 +14,11 @@ Rails.application.routes.draw do
       instance_eval(File.read(Rails.root.join("config/routes/v1/reviews.rb")))
       instance_eval(File.read(Rails.root.join("config/routes/v1/shops.rb")))
       instance_eval(File.read(Rails.root.join("config/routes/v1/variants.rb")))
-      get '/citizens/:id/products', to: 'citizens/products#index'
-      get '/categories', to: 'categories#index'
+      get "/citizens/:id/products", to: "citizens/products#index"
+      get "/categories", to: "categories#index"
+      scope :auth do
+        resources :images, only: [:create]
+      end
     end
   end
 end
