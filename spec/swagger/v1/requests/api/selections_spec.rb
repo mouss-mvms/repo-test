@@ -60,5 +60,28 @@ RSpec.describe 'api/v1/selections', swagger_doc: 'v1/swagger.json', type: :reque
         run_test!
       end
     end
+
+    get('Lists all the selections') do
+      tags 'Selections'
+      produces 'application/json'
+      consumes 'application/json'
+      description 'Create a selection.'
+      security [{ authorization: [] }]
+
+      response(200, 'successful') do
+        schema type: :array, items: { '$ref': '#/components/schemas/Selection' }
+        run_test!
+      end
+
+      response(401, 'Unauthorized') do
+        schema Examples::Errors::Unauthorized.new.error
+        run_test!
+      end
+
+      response(403, 'Forbidden') do
+        schema Examples::Errors::Forbidden.new.error
+        run_test!
+      end
+    end
   end
 end
