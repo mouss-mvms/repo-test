@@ -16,7 +16,7 @@ module Api
               image_dto = Dto::V1::Image::Request.create(image: file)
               Rails.application.executor.wrap do # Avoid Circular dependency detected while autoloading constant Image
                 image = Image.create!(file: image_dto.tempfile)
-                Thread.current["image_file_url"] = image.file_url
+                Thread.current["image_id"] = image.id
               end
             }
           end
@@ -24,7 +24,7 @@ module Api
           raise ApplicationController::InternalServerError.new(e.message)
         else
           results = ActiveSupport::Dependencies.interlock.permit_concurrent_loads do # Enable Image to be invoked by multiple threads at the same time
-            threads.map { |thread| thread.join(); thread[:image_file_url] }
+            threads.map { |thread| thread.join(); thread[:image_id] }
           end
           render json: results, status: :created
         end

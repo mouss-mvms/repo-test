@@ -15,13 +15,7 @@ RSpec.describe Api::V1::ImagesController, type: :controller do
         post :create, params: { files: uploaded_files }
         should respond_with(201)
         response_body = JSON.parse(response.body)
-        expect(response_body.count).to eq(5)
-        expect do
-          response_body.each do |item|
-            uri = URI.parse(item)
-            %w( http https ).include?(uri.scheme)
-          end
-        end
+        expect(Image.where(id: response_body).count).to eq(5)
       end
     end
 

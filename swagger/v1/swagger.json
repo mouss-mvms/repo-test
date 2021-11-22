@@ -1007,11 +1007,11 @@
         }
       ],
       "post": {
-        "summary": "Upload image files and returns image urls",
+        "summary": "Upload image files and returns image ids",
         "tags": [
           "Images"
         ],
-        "description": "Return image urls",
+        "description": "Return image ids",
         "security": [
           {
             "authorization": [
@@ -1030,11 +1030,11 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "type": "string"
+                    "type": "integer"
                   },
                   "example": [
-                    "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr",
-                    "https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg"
+                    666,
+                    42
                   ]
                 }
               }
@@ -6898,7 +6898,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {

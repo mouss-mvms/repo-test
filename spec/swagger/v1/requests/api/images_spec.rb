@@ -4,11 +4,11 @@ RSpec.describe "api/v1/auth/images", swagger_doc: "v1/swagger.json", type: :requ
   path "/api/v1/auth/images" do
     parameter name: 'X-client-id', in: :header, type: :string, required: true
 
-    post("Upload image files and returns image urls") do
+    post("Upload image files and returns image ids") do
       tags "Images"
       consumes "multipart/form-data"
       produces "application/json"
-      description "Return image urls"
+      description "Return image ids"
       security [{ authorization: [] }]
 
       parameter name: :variant, in: :body, content: :formData, schema: {
@@ -28,13 +28,9 @@ RSpec.describe "api/v1/auth/images", swagger_doc: "v1/swagger.json", type: :requ
       response(201, "Created") do
         schema type: "array",
                items: {
-                 type: "string",
+                 type: "integer",
                },
-               example: [
-                 "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr",
-                 "https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg",
-               ]
-
+               example: [666, 42]
         run_test!
       end
 
