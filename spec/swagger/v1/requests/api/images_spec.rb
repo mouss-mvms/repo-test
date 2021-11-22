@@ -1,12 +1,14 @@
 require "swagger_helper"
 
-RSpec.describe "api/v1/images", swagger_doc: "v1/swagger.json", type: :request do
-  path "/api/v1/images" do
+RSpec.describe "api/v1/auth/images", swagger_doc: "v1/swagger.json", type: :request do
+  path "/api/v1/auth/images" do
+    parameter name: 'X-client-id', in: :header, type: :string, required: true
+
     post("Upload image files and returns image urls") do
       tags "Images"
       consumes "multipart/form-data"
       produces "application/json"
-      description "Return the variant updated"
+      description "Return image urls"
       security [{ authorization: [] }]
 
       parameter name: :variant, in: :body, content: :formData, schema: {
@@ -14,17 +16,16 @@ RSpec.describe "api/v1/images", swagger_doc: "v1/swagger.json", type: :request d
         properties: {
           'files[]': {
             type: :array,
-            description: "Variant's pictures",
+            description: "Image's pictures",
             items: {
               type: :string,
               format: :binary,
             },
           },
         },
-        required: %w[files],
       }
 
-      response(200, "Successful") do
+      response(201, "Created") do
         schema type: "array",
                items: {
                  type: "string",
@@ -39,6 +40,16 @@ RSpec.describe "api/v1/images", swagger_doc: "v1/swagger.json", type: :request d
 
       response(400, "Bad Request") do
         schema Examples::Errors::BadRequest.new.error
+        run_test!
+      end
+
+      response(401, 'Unauthorized') do
+        schema Examples::Errors::Unauthorized.new.error
+        run_test!
+      end
+
+      response(403, 'Forbidden') do
+        schema Examples::Errors::Forbidden.new.error
         run_test!
       end
     end

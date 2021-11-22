@@ -995,13 +995,23 @@
         }
       }
     },
-    "/api/v1/images": {
+    "/api/v1/auth/images": {
+      "parameters": [
+        {
+          "name": "X-client-id",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
       "post": {
         "summary": "Upload image files and returns image urls",
         "tags": [
           "Images"
         ],
-        "description": "Return the variant updated",
+        "description": "Return image urls",
         "security": [
           {
             "authorization": [
@@ -1013,8 +1023,8 @@
 
         ],
         "responses": {
-          "200": {
-            "description": "Successful",
+          "201": {
+            "description": "Created",
             "content": {
               "application/json": {
                 "schema": {
@@ -1056,6 +1066,60 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 401,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 403,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "requestBody": {
@@ -1066,16 +1130,13 @@
                 "properties": {
                   "files[]": {
                     "type": "array",
-                    "description": "Variant's pictures",
+                    "description": "Image's pictures",
                     "items": {
                       "type": "string",
                       "format": "binary"
                     }
                   }
-                },
-                "required": [
-                  "files"
-                ]
+                }
               }
             }
           }
