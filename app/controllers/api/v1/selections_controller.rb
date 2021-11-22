@@ -34,10 +34,11 @@ module Api
             Rails.logger.error(e)
             error = Dto::Errors::NotFound.new(e.message)
             return render json: error.to_h, status: error.status
-          rescue ActiveRecord::RecordNotSaved => e
+          rescue ActiveRecord::RecordNotSaved, ArgumentError => e
             Rails.logger.error(e)
             error = Dto::Errors::UnprocessableEntity.new(e.message)
             return render json: error.to_h, status: error.status
+          rescue => e
           else
             return render json: Dto::V1::Selection::Response.create(selection).to_h, status: :created
           end

@@ -160,5 +160,32 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
         end
       end
     end
+
+    context 'when status is incorrect' do
+      it 'should return 2200 HTTP status ' do
+        tag1 = create(:tag)
+        tag2 = create(:tag)
+        tag3 = create(:tag)
+        @create_params = {
+          name: "Selection Test",
+          slug: "selection-test",
+          description: "Ceci est discription test.",
+          tagIds: [tag1.id, tag2.id, tag3.id],
+          startAt: "17/05/2021",
+          endAt: "18/06/2021",
+          homePage: true,
+          event: true,
+          state: "dada",
+          imageUrl: "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg"
+        }
+
+        admin_user = create(:admin_user)
+        request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
+
+        post :create, params: @create_params
+
+        expect(response).to have_http_status(422)
+      end
+    end
   end
 end
