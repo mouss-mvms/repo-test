@@ -56,7 +56,6 @@ module Dao
           end
         end
         characteristics = variant_params.characteristics.map { |char| OpenStruct.new(char) }
-
         color_characteristic = characteristics.detect { |char| char.name == "color" }
         size_characteristic = characteristics.detect { |char| char.name == "size" }
 
@@ -67,8 +66,8 @@ module Dao
           product_id: product.id,
           sample_id: sample.id,
           shop_id: product.shop.id,
-          color_id: color_characteristic ? ::Color.where(name: color_characteristic.name).first_or_create.id : nil,
-          size_id: size_characteristic ? ::Size.where(name: size_characteristic.name).first_or_create.id : nil
+          color_id: color_characteristic ? ::Color.where(name: color_characteristic.value).first_or_create.id : nil,
+          size_id: size_characteristic ? ::Size.where(name: size_characteristic.value).first_or_create.id : nil
         )
 
         good_deal_params = variant_params.good_deal ? OpenStruct.new(variant_params.good_deal) : nil
