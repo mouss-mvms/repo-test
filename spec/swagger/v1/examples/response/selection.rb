@@ -15,7 +15,7 @@ module V1
               },
               startAt: { type: :string, example: "20/07/2021", description: "Date of start of selection." },
               endAt: { type: :string, example: "27/07/2021", description: "Date of end of selection." },
-              showAtHome: { type: :boolean, example: false, description: 'Show the selection at home.' },
+              homePage: { type: :boolean, example: false, description: 'Show the selection at home.' },
               event: { type: :boolean, example: false, description: 'Selection is an event.' },
               state: {
                 type: :string,

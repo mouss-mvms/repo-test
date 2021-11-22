@@ -16,7 +16,7 @@ module Api
                 description: dto_request.description,
                 begin_date: dto_request.start_at,
                 end_date: dto_request.end_at,
-                is_home: dto_request.show_at_home,
+                is_home: dto_request.home_page,
                 is_event: dto_request.event,
                 state: dto_request.state
               }
@@ -31,9 +31,16 @@ module Api
 
             selection.save!
           rescue ActiveRecord::RecordNotFound => e
-            
+            Rails.logger.error(e)
+            error = Dto::Errors::NotFound.new(e.message)
+            return render json: error.to_h, status: error.status
+          rescue ActiveRecord::RecordNotSaved => e
+            Rails.logger.error(e)
+            error = Dto::Errors::UnprocessableEntity.new(e.message)
+            return render json: error.to_h, status: error.status
+          else
+            return render json: Dto::V1::Selection::Response.create(selection).to_h, status: :created
           end
-          return render json: Dto::V1::Selection::Response.create(selection).to_h, status: :created
         end
       end
 
@@ -46,7 +53,7 @@ module Api
         hash[:tag_ids] = params[:tagIds]
         hash[:start_at] = params[:startAt]
         hash[:end_at] = params[:endAt]
-        hash[:show_at_home] = params[:showAtHome]
+        hash[:home_page] = params[:homePage]
         hash[:event] = params[:event]
         hash[:state] = params[:state]
         hash

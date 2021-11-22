@@ -2,7 +2,7 @@ module Dto
   module V1
     module Selection
       class Response
-        attr_accessor :name, :slug, :description, :image_url, :tag_ids, :start_at, :end_at, :show_at_home, :event, :state
+        attr_accessor :name, :slug, :description, :image_url, :tag_ids, :start_at, :end_at, :home_page, :event, :state
 
         def initialize(**args)
           @name = args[:name]
@@ -12,7 +12,7 @@ module Dto
           @tag_ids = args[:tag_ids]
           @start_at = args[:start_at]
           @end_at = args[:end_at]
-          @show_at_home = args[:show_at_home]
+          @home_page = args[:home_page]
           @event = args[:event]
           @state = args[:state]
         end
@@ -27,7 +27,7 @@ module Dto
               tag_ids: selection.tags,
               start_at: selection.begin_date,
               end_at: selection.end_date,
-              show_at_home: selection.is_home,
+              home_page: selection.is_home,
               event: selection.is_event,
               state: selection.state
             }
@@ -43,7 +43,7 @@ module Dto
             tagIds: @tag_ids,
             startAt: @start_at,
             endAt: @end_at,
-            showAtHome: @show_at_home,
+            homePage: @home_page,
             event: @event,
             state: @state
           }

@@ -14,7 +14,7 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
           tagIds: [tag1.id, tag2.id, tag3.id],
           startAt: "17/05/2021",
           endAt: "18/06/2021",
-          showAtHome: true,
+          homePage: true,
           event: true,
           state: "active",
           imageUrl: "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg"
@@ -33,7 +33,7 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
         expect(response_body[:tagIds].map {|tag| tag[:id]}).to eq(@create_params[:tagIds])
         expect(response_body[:startAt]).to_not be_empty
         expect(response_body[:endAt]).to_not be_empty
-        expect(response_body[:showAtHome]).to eq(@create_params[:showAtHome])
+        expect(response_body[:homePage]).to eq(@create_params[:homePage])
         expect(response_body[:event]).to eq(@create_params[:event])
         expect(response_body[:state]).to eq(@create_params[:state])
         expect(response_body[:imageUrl]).to_not be_empty
@@ -72,7 +72,7 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
             tagIds: [],
             startAt: "17/05/2021",
             endAt: "18/06/2021",
-            showAtHome: true,
+            homePage: true,
             event: true,
             state: "active",
             imageUrl: "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg"
@@ -91,7 +91,7 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
             tagIds: [],
             startAt: "17/05/2021",
             endAt: "18/06/2021",
-            showAtHome: true,
+            homePage: true,
             event: true,
             state: "active",
             imageUrl: "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg"
@@ -110,7 +110,7 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
             tagIds: [],
             startAt: "17/05/2021",
             endAt: "18/06/2021",
-            showAtHome: true,
+            homePage: true,
             event: true,
             state: "active",
             imageUrl: "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg"
@@ -130,7 +130,7 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
             tagIds: [],
             startAt: "17/05/2021",
             endAt: "18/06/2021",
-            showAtHome: true,
+            homePage: true,
             event: true,
             state: "active"
           }
@@ -149,7 +149,7 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
             tagIds: [15],
             startAt: "17/05/2021",
             endAt: "18/06/2021",
-            showAtHome: true,
+            homePage: true,
             event: true,
             imageUrl: "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg",
             state: "active"
