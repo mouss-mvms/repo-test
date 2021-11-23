@@ -275,4 +275,37 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
       end
     end
   end
+
+  describe "DELETE #destroy" do
+    context "All ok" do
+      it 'should return 204 HTTP status' do
+        admin_user = create(:admin_user)
+        request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
+        selection = create(:selection)
+        delete :destroy, params: { id: selection.id }
+        expect(response).to have_http_status(204)
+        expect(Selection.where(id: selection.id).first).to be_nil
+      end
+    end
+
+    context 'Authentication incorrect' do
+      context "No user" do
+        it "should return 401" do
+          selection = create(:selection)
+          delete :destroy, params: { id: selection.id }
+          expect(response).to have_http_status(401)
+        end
+      end
+
+      context "User is not an admin" do
+        it "should return 403" do
+          customer_user = create(:customer_user, email: 'customer678@ecity.fr')
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(customer_user)
+          selection = create(:selection)
+          delete :destroy, params: { id: selection.id }
+          expect(response).to have_http_status(403)
+        end
+      end
+    end
+  end
 end
