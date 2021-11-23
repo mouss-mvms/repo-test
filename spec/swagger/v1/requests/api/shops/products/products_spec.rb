@@ -53,7 +53,7 @@ RSpec.describe 'api/v1/shops/products', swagger_doc: 'v1/swagger.json', type: :r
           name: { type: :string, example: "Air jordan", description: 'Name of product' },
           description: { type: :string, example: "Chaussures trop bien", description: 'Description of product' },
           brand: { type: :string, example: "Chaussures trop bien", description: 'Description of product' },
-          status: { type: :string, example: "online", description: 'Status of product' },
+          status: { type: :string, example: "online", description: 'Status of product', enum: ["online", "offline", "submitted", "draft_cityzen", "refused"] },
           sellerAdvice: { type: :string, example: "Taille petite, prendre une demi pointure au dessus", description: 'Advice from seller of product' },
           isService: { type: :boolean, example: false, description: 'Tell if the product is a service' },
           citizenAdvice: { type: :string, example: 'Produit trouvé un commercant trop sympa', description: 'Advice from citizen of product' },
