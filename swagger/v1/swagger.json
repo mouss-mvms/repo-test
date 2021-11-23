@@ -4262,7 +4262,7 @@
                     "example": "27/07/2021",
                     "description": "Date of end of selection."
                   },
-                  "homePage": {
+                  "showAtHome": {
                     "type": "boolean",
                     "example": false,
                     "description": "Show the selection at home."
@@ -4275,8 +4275,8 @@
                   "state": {
                     "type": "string",
                     "enum": [
-                      "disabled",
-                      "active"
+                      "active",
+                      "inactive"
                     ]
                   },
                   "imageUrl": {
@@ -7121,7 +7121,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {
@@ -8183,7 +8183,7 @@
             "example": "Selection de voitures.",
             "description": "Description of the selection."
           },
-          "tagIds": {
+          "tags": {
             "type": "array",
             "items": {
               "type": "integer",
@@ -8201,7 +8201,7 @@
             "example": "27/07/2021",
             "description": "Date of end of selection."
           },
-          "homePage": {
+          "showAtHome": {
             "type": "boolean",
             "example": false,
             "description": "Show the selection at home."

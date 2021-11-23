@@ -12,7 +12,6 @@ module Api
             selection = Selection.create!(
               {
                 name: dto_request.name,
-                slug: dto_request.slug,
                 description: dto_request.description,
                 begin_date: dto_request.start_at,
                 end_date: dto_request.end_at,
@@ -45,12 +44,55 @@ module Api
         end
       end
 
+      def patch
+        raise ApplicationController::Forbidden.new unless @user.is_an_admin?
+        dto_request = Dto::V1::Selection::Request.new(update_params)
+        selection = Selection.find(dto_request.id)
+
+        if dto_request.tag_ids.present?
+          tags = Tag.find(dto_request.tag_ids)
+          selection.tags = tags
+        end
+
+        if dto_request.image_url.present?
+          set_image(object: selection, image_url: dto_request.image_url)
+        end
+
+        selection.name = dto_request.name if dto_request.name.present?
+        selection.description = dto_request.description if dto_request.description.present?
+        selection.begin_date = dto_request.start_at if dto_request.start_at.present?
+        selection.end_date =dto_request.end_at if dto_request.end_at.present?
+        selection.is_home = dto_request.home_page if dto_request.home_page
+        selection.is_event = dto_request.event if dto_request.event
+        selection.state = dto_request.state if dto_request.state.present?
+
+        selection.save!
+
+        render json: Dto::V1::Selection::Response.create(selection).to_h, status: :created
+      end
+
+      private
+
       def create_params
         hash = {}
         hash[:name] = params.require(:name)
-        hash[:slug] = params.require(:slug)
         hash[:description] = params.require(:description)
         hash[:image_url] = params.require(:imageUrl)
+        hash[:tag_ids] = params[:tagIds]
+        hash[:start_at] = params[:startAt]
+        hash[:end_at] = params[:endAt]
+        hash[:home_page] = params[:homePage]
+        hash[:event] = params[:event]
+        hash[:state] = params[:state]
+        hash
+      end
+
+      def update_params
+        hash = {}
+        hash[:id] = params[:id]
+        hash[:name] = params[:name]
+        hash[:description] = params[:description]
+        hash[:image_url] = params[:imageUrl]
         hash[:tag_ids] = params[:tagIds]
         hash[:start_at] = params[:startAt]
         hash[:end_at] = params[:endAt]
