@@ -10,7 +10,8 @@ module Dto
           @slug = args[:slug]
           @description = args[:description]
           @image_url = args[:image_url]
-          @tag_ids = args[:tag_ids]
+          @tag_ids = []
+          args[:tag_ids]&.each { |v| @tag_ids << v}
           @start_at = args[:start_at]
           @end_at = args[:end_at]
           @home_page = args[:home_page]
