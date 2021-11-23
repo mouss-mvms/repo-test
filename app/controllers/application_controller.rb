@@ -29,7 +29,7 @@ class ApplicationController < ActionController::API
 
     def render_forbidden(exception)
       Rails.logger.error(exception)
-      error = Dto::Errors::Forbidden.new
+      error = Dto::Errors::Forbidden.new(exception.message)
       return render json: error.to_h, status: error.status
     end
 

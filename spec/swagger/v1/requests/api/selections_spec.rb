@@ -54,7 +54,7 @@ RSpec.describe 'api/v1/selections', swagger_doc: 'v1/swagger.json', type: :reque
         run_test!
       end
 
-      response(404, 'Review not found') do
+      response(404, 'Selection not found') do
         schema Examples::Errors::NotFound.new.error
         run_test!
       end
@@ -62,15 +62,39 @@ RSpec.describe 'api/v1/selections', swagger_doc: 'v1/swagger.json', type: :reque
   end
 
   path '/api/v1/selections' do
-    get('Lists all the selections') do
+    get('Lists all the online selections') do
       tags 'Selections'
       produces 'application/json'
-      consumes 'application/json'
-      description 'Create a selection.'
+      description 'Lists all the online selections.'
       security [{ authorization: [] }]
 
       response(200, 'successful') do
         schema type: :array, items: { '$ref': '#/components/schemas/Selection' }
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v1/selections/{id}' do
+    parameter in: :path, name: :id, type: :integer, description: 'Unique identifier of a selection.'
+    get('Returns an online selection') do
+      tags 'Selections'
+      produces 'application/json'
+      description 'Returns an online selection.'
+      security [{ authorization: [] }]
+
+      response(200, 'Successful') do
+        schema '$ref': '#/components/schemas/Selection'
+        run_test!
+      end
+
+      response(403, 'Forbidden') do
+        schema Examples::Errors::Forbidden.new.error
+        run_test!
+      end
+
+      response(404, 'Selection not found') do
+        schema Examples::Errors::NotFound.new.error
         run_test!
       end
     end

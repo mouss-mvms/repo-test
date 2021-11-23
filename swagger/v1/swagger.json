@@ -4195,7 +4195,7 @@
             }
           },
           "404": {
-            "description": "Review not found",
+            "description": "Selection not found",
             "content": {
               "application/json": {
                 "schema": {
@@ -4293,11 +4293,11 @@
     },
     "/api/v1/selections": {
       "get": {
-        "summary": "Lists all the selections",
+        "summary": "Lists all the online selections",
         "tags": [
           "Selections"
         ],
-        "description": "Create a selection.",
+        "description": "Lists all the online selections.",
         "security": [
           {
             "authorization": [
@@ -4314,6 +4314,99 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/Selection"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/selections/{id}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "description": "Unique identifier of a selection.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Returns an online selection",
+        "tags": [
+          "Selections"
+        ],
+        "description": "Returns an online selection.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Selection"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 403,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Selection not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Resource not found",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Not found",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404,
+                      "description": "Status of an error."
+                    }
                   }
                 }
               }

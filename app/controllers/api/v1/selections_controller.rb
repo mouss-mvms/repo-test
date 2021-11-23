@@ -9,6 +9,14 @@ module Api
         render json: selections.map { |selection| Dto::V1::Selection::Response.create(selection).to_h }, status: :ok
       end
 
+      def show
+        selection = Selection.find(params[:id])
+        raise ApplicationController::Forbidden.new('Selection not online.') unless Selection.online.include?(selection)
+
+        response = Dto::V1::Selection::Response.create(selection).to_h
+        render json: response, status: :ok
+      end
+
       def create
         raise ApplicationController::Forbidden.new unless @user.is_an_admin?
         dto_request = Dto::V1::Selection::Request.new(create_params)

@@ -7,19 +7,47 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
       it "should return 200 HTTP status and a list of selections" do
         selections = [
           create(:selection, name: 'Jouets'),
-          create(:selection, name: 'Sabre lasers'),
-          create(:selection, name: 'Tournevis'),
+          create(:online_selection, name: 'Sabre lasers'),
+          create(:online_selection, name: 'Tournevis'),
         ]
-
-        user = create(:user)
-        request.headers['x-client-id'] = generate_token(user)
 
         get :index
         should respond_with(200)
         response_body = JSON.parse(response.body)
         expect(response_body).to be_instance_of(Array)
-        expect(response_body.count).to eq(3)
-        expect(response.body).to eq(selections.map { |s| Dto::V1::Selection::Response.create(s).to_h }.to_json)
+        expect(response_body.count).to eq(2)
+        expect(response.body).to eq(selections.last(2).map { |s| Dto::V1::Selection::Response.create(s).to_h }.to_json)
+      end
+    end
+  end
+
+  describe "GET #show" do
+    context "All ok" do
+      it "should return 200 HTTP status and a selection dto" do
+        selection = create(:online_selection)
+
+        get :show, params: { id: selection.id }
+        should respond_with(200)
+        expect(response.body).to eq(Dto::V1::Selection::Response.create(selection).to_h.to_json)
+      end
+    end
+
+    context 'Bad params' do
+      context "Selection does not exist" do
+        it "should return 404 HTTP status" do
+          get :show, params: { id: 666 }
+          should respond_with(404)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Selection with 'id'=666").to_h.to_json)
+        end
+      end
+
+      context "selection is not online" do
+        it "should return a 403 HTTP status" do
+          selection = create(:selection)
+          get :show, params: { id: selection.id }
+          should respond_with(403)
+          expect(response.body).to eq(Dto::Errors::Forbidden.new('Selection not online.').to_h.to_json)
+        end
       end
     end
   end
@@ -53,7 +81,7 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
         expect(response_body[:name]).to eq(@create_params[:name])
         expect(response_body[:slug]).to eq(@create_params[:slug])
         expect(response_body[:description]).to eq(@create_params[:description])
-        expect(response_body[:tagIds].map {|tag| tag[:id]}).to eq(@create_params[:tagIds])
+        expect(response_body[:tagIds]).to eq(@create_params[:tagIds])
         expect(response_body[:startAt]).to_not be_empty
         expect(response_body[:endAt]).to_not be_empty
         expect(response_body[:homePage]).to eq(@create_params[:homePage])
@@ -91,25 +119,6 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
         it "should return 400 HTTP status" do
           @create_params = {
             slug: "selection-test",
-            description: "Ceci est discription test.",
-            tagIds: [],
-            startAt: "17/05/2021",
-            endAt: "18/06/2021",
-            homePage: true,
-            event: true,
-            state: "active",
-            imageUrl: "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg"
-          }
-          post :create, params: @create_params
-
-          expect(response).to have_http_status(400)
-        end
-      end
-
-      context 'slug is missing' do
-        it "should return 400 HTTP status" do
-          @create_params = {
-            name: "oui",
             description: "Ceci est discription test.",
             tagIds: [],
             startAt: "17/05/2021",
