@@ -142,6 +142,18 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
                   },
                   required: %w[startAt endAt discount]
                 },
+                imageUrls: {
+                  type: 'array',
+                  items: {
+                    type: 'string'
+                  },
+                  example: [
+                    'https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr',
+                    'https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg'
+                  ],
+                  default: [],
+                  description: 'List of product images urls'
+                },
                 characteristics: {
                   type: :array,
                   items: {
@@ -383,6 +395,18 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
                     discount: { type: :integer, example: 45, description: "Amount of discount (in %)" }
                   },
                   required: %w[startAt endAt discount]
+                },
+                imageUrls: {
+                  type: 'array',
+                  items: {
+                    type: 'string'
+                  },
+                  example: [
+                    'https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr',
+                    'https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg'
+                  ],
+                  default: [],
+                  description: 'List of product images urls'
                 },
                 characteristics: {
                   type: :array,
