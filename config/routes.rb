@@ -14,6 +14,7 @@ Rails.application.routes.draw do
       instance_eval(File.read(Rails.root.join("config/routes/v1/reviews.rb")))
       instance_eval(File.read(Rails.root.join("config/routes/v1/shops.rb")))
       instance_eval(File.read(Rails.root.join("config/routes/v1/variants.rb")))
+      instance_eval(File.read(Rails.root.join("config/routes/v1/selections.rb")))
       get "/citizens/:id/products", to: "citizens/products#index"
       get "/categories", to: "categories#index"
       scope :auth do

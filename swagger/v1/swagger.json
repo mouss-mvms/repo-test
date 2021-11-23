@@ -4234,11 +4234,6 @@
                     "example": "voiture",
                     "description": "Selection name."
                   },
-                  "slug": {
-                    "type": "string",
-                    "example": "voiture-1",
-                    "description": "Selection slug."
-                  },
                   "description": {
                     "type": "string",
                     "example": "Selection de voitures.",
@@ -4294,7 +4289,9 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/v1/selections": {
       "get": {
         "summary": "Lists all the selections",
         "tags": [
@@ -4317,60 +4314,6 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/Selection"
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "detail": {
-                      "type": "string",
-                      "example": "",
-                      "description": "Message of an error."
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Unauthorized",
-                      "description": "Display description error."
-                    },
-                    "status": {
-                      "type": "integer",
-                      "example": 401,
-                      "description": "Status of an error."
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "detail": {
-                      "type": "string",
-                      "example": "",
-                      "description": "Message of an error."
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Forbidden",
-                      "description": "Display description error."
-                    },
-                    "status": {
-                      "type": "integer",
-                      "example": 403,
-                      "description": "Status of an error."
-                    }
                   }
                 }
               }
@@ -8251,6 +8194,11 @@
       "Selection": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "integer",
+            "example": 42,
+            "description": "Unique identifier of the selection."
+          },
           "name": {
             "type": "string",
             "example": "voiture",
@@ -8300,6 +8248,11 @@
               "active",
               "inactive"
             ]
+          },
+          "order": {
+            "type": "integer",
+            "example": 79,
+            "description": "Order of the  selection."
           },
           "imageUrl": {
             "type": "string",

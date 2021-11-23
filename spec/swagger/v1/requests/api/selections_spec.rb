@@ -16,7 +16,6 @@ RSpec.describe 'api/v1/selections', swagger_doc: 'v1/swagger.json', type: :reque
         description: 'Route to create a selection',
         properties: {
           name: { type: :string, example: "voiture", description: 'Selection name.' },
-          slug: { type: :string, example: 'voiture-1', description: 'Selection slug.' },
           description: { type: :string, example: "Selection de voitures.", description: 'Description of the selection.' },
           tags: {
             type: :array,
@@ -60,7 +59,9 @@ RSpec.describe 'api/v1/selections', swagger_doc: 'v1/swagger.json', type: :reque
         run_test!
       end
     end
+  end
 
+  path '/api/v1/selections' do
     get('Lists all the selections') do
       tags 'Selections'
       produces 'application/json'
@@ -70,16 +71,6 @@ RSpec.describe 'api/v1/selections', swagger_doc: 'v1/swagger.json', type: :reque
 
       response(200, 'successful') do
         schema type: :array, items: { '$ref': '#/components/schemas/Selection' }
-        run_test!
-      end
-
-      response(401, 'Unauthorized') do
-        schema Examples::Errors::Unauthorized.new.error
-        run_test!
-      end
-
-      response(403, 'Forbidden') do
-        schema Examples::Errors::Forbidden.new.error
         run_test!
       end
     end

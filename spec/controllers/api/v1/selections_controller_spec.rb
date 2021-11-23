@@ -1,6 +1,29 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::SelectionsController, type: :controller do
+
+  describe "GET #index" do
+    context "All ok" do
+      it "should return 200 HTTP status and a list of selections" do
+        selections = [
+          create(:selection, name: 'Jouets'),
+          create(:selection, name: 'Sabre lasers'),
+          create(:selection, name: 'Tournevis'),
+        ]
+
+        user = create(:user)
+        request.headers['x-client-id'] = generate_token(user)
+
+        get :index
+        should respond_with(200)
+        response_body = JSON.parse(response.body)
+        expect(response_body).to be_instance_of(Array)
+        expect(response_body.count).to eq(3)
+        expect(response.body).to eq(selections.map { |s| Dto::V1::Selection::Response.create(s).to_h }.to_json)
+      end
+    end
+  end
+
   describe "POST #create" do
     context "All ok" do
       it 'should return 201 HTTP status code with selection object' do
