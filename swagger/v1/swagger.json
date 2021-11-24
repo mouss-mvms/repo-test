@@ -4549,6 +4549,253 @@
         }
       }
     },
+    "/api/v1/auth/selections/{selection_id}/products/{id}": {
+      "parameters": [
+        {
+          "name": "selection_id",
+          "in": "path",
+          "description": "Unique identifier of the selection.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of the product.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "x-client-id",
+          "in": "header",
+          "description": "Auth token of user",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Add a product to a selection",
+        "tags": [
+          "Selections"
+        ],
+        "description": "Add a product to a selection.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Selection"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 401,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 403,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Resource not found",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Not found",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove a product to a selection",
+        "tags": [
+          "Selections"
+        ],
+        "description": "Remove a product to a selection.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Selection"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 401,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 403,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Resource not found",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Not found",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/shops/{id}/deliveries": {
       "parameters": [
         {
