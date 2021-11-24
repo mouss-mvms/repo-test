@@ -31,7 +31,7 @@ RSpec.describe Api::V1::Selections::ProductsController do
           selection = create(:selection)
           get :index, params: { id: selection.id }
           should respond_with(403)
-          expect(response.body).to eq(Dto::Errors::Forbidden.new('Selection not online.').to_h.to_json)
+          expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
         end
       end
     end

@@ -4,7 +4,7 @@ module Api
       class ProductsController < ApplicationController
         def index
           selection = Selection.preload(:products).find(params[:id])
-          raise ApplicationController::Forbidden.new('Selection not online.') unless Selection.online.include?(selection)
+          raise ApplicationController::Forbidden unless Selection.online.include?(selection)
 
           selection_dto = Dto::V1::Selection::Response.create(selection).to_h
           selection_products_dtos = selection.products.map { |product| Dto::V1::Product::Response.create(product).to_h }
