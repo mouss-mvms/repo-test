@@ -20,7 +20,7 @@ RSpec.describe Api::V1::Selections::ProductsController, type: :controller do
           selection = create(:selection)
           product = create(:available_product)
           post :add, params: { selection_id: selection.id, id: product.id }
-          should respond_with(401)
+          expect(response.body).to eq(Dto::Errors::Unauthorized.new.to_h.to_json)
         end
       end
 
@@ -31,7 +31,7 @@ RSpec.describe Api::V1::Selections::ProductsController, type: :controller do
           selection = create(:selection)
           product = create(:available_product)
           post :add, params: { selection_id: selection.id, id: product.id }
-          expect(response).to have_http_status(403)
+          expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
         end
       end
     end
@@ -58,7 +58,7 @@ RSpec.describe Api::V1::Selections::ProductsController, type: :controller do
           product = create(:available_product)
           delete :remove, params: { selection_id: selection.id, id: product.id }
 
-          should respond_with(401)
+          expect(response.body).to eq(Dto::Errors::Unauthorized.new.to_h.to_json)
         end
       end
 
@@ -69,7 +69,7 @@ RSpec.describe Api::V1::Selections::ProductsController, type: :controller do
           selection = create(:selection)
           product = create(:available_product)
           delete :remove, params: { selection_id: selection.id, id: product.id }
-          expect(response).to have_http_status(403)
+          expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
         end
       end
     end
