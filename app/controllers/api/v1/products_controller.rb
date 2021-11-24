@@ -131,7 +131,7 @@ module Api
         raise ApplicationController::Forbidden.new if product.api_provider_product.nil? || (product.api_provider_product.api_provider.name != product_params[:provider][:name])
         ActiveRecord::Base.transaction do
           begin
-            product = Dto::V1::Product.build(dto_product_request: dto_product_request, product: product)
+            product = Dao::Product.update(dto_product_request: dto_product_request)
           rescue => e
             Rails.logger.error(e)
             error = Dto::Errors::InternalServer.new
