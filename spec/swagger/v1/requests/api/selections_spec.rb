@@ -120,4 +120,74 @@ RSpec.describe 'api/v1/selections', swagger_doc: 'v1/swagger.json', type: :reque
       end
     end
   end
+
+  path '/api/v1/auth/selections/{selection_id}/products/{id}' do
+    parameter name: :selection_id, in: :path, type: :integer, description: 'Unique identifier of the selection.', required: true
+    parameter name: :id, in: :path, type: :integer, description: 'Unique identifier of the product.', required: true
+    parameter name: 'x-client-id', in: :header, type: :string, description: 'Auth token of user', required: true
+
+    post('Add a product to a selection') do
+      tags 'Selections'
+      produces 'application/json'
+      description 'Add a product to a selection.'
+      security [{ authorization: [] }]
+
+      response(200, 'successful') do
+        schema type: :object, '$ref': '#/components/schemas/Selection'
+        run_test!
+      end
+
+      response(401, 'Unauthorized') do
+        schema Examples::Errors::Unauthorized.new.error
+        run_test!
+      end
+
+      response(403, 'Forbidden') do
+        schema Examples::Errors::Forbidden.new.error
+        run_test!
+      end
+
+      response(404, 'Selection not found') do
+        schema Examples::Errors::NotFound.new.error
+        run_test!
+      end
+
+      response(404, 'Product not found') do
+        schema Examples::Errors::NotFound.new.error
+        run_test!
+      end
+    end
+
+    delete('Remove a product to a selection') do
+      tags 'Selections'
+      produces 'application/json'
+      description 'Remove a product to a selection.'
+      security [{ authorization: [] }]
+
+      response(200, 'successful') do
+        schema type: :object, '$ref': '#/components/schemas/Selection'
+        run_test!
+      end
+
+      response(401, 'Unauthorized') do
+        schema Examples::Errors::Unauthorized.new.error
+        run_test!
+      end
+
+      response(403, 'Forbidden') do
+        schema Examples::Errors::Forbidden.new.error
+        run_test!
+      end
+
+      response(404, 'Selection not found') do
+        schema Examples::Errors::NotFound.new.error
+        run_test!
+      end
+
+      response(404, 'Product not found') do
+        schema Examples::Errors::NotFound.new.error
+        run_test!
+      end
+    end
+  end
 end
