@@ -124,16 +124,22 @@ module Api
         category = Category.find(dto_product_request.category_id)
         raise ActionController::BadRequest.new('origin and composition is required') if ::Products::CategoriesSpecifications::MustHaveLabelling.new.is_satisfied_by?(category) && (dto_product_request.origin.blank? || dto_product_request.composition.blank?)
         raise ActionController::BadRequest.new('allergens is required') if ::Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
+        dto_product_request.variants.each do |dto_variant|
+          next if dto_variant.id.nil?
+          product.references.find(dto_variant.id)
+        end
         raise ApplicationController::Forbidden.new if product.api_provider_product.nil? || (product.api_provider_product.api_provider.name != product_params[:provider][:name])
-        begin
-          product = Dto::V1::Product.build(dto_product_request: dto_product_request, product: product)
-        rescue => e
-          Rails.logger.error(e)
-          error = Dto::Errors::InternalServer.new
-          return render json: error.to_h, status: error.status
-        else
-          dto_product_response = Dto::V1::Product::Response.create(product)
-          return render json: dto_product_response.to_h, status: :ok
+        ActiveRecord::Base.transaction do
+          begin
+            product = Dto::V1::Product.build(dto_product_request: dto_product_request, product: product)
+          rescue => e
+            Rails.logger.error(e)
+            error = Dto::Errors::InternalServer.new
+            return render json: error.to_h, status: error.status
+          else
+            dto_product_response = Dto::V1::Product::Response.create(product)
+            return render json: dto_product_response.to_h, status: :ok
+          end
         end
       end
 
