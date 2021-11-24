@@ -38,8 +38,7 @@ module Api
       def destroy
         raise ApplicationController::Forbidden.new unless @user.is_an_admin?
         selection = Selection.find(params[:id])
-        selection.destroy
-        return render json: nil, status: :no_content
+        selection.destroy!
       end
 
       private
