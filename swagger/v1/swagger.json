@@ -535,7 +535,14 @@
                   "status": {
                     "type": "string",
                     "example": "online",
-                    "description": "Status of product"
+                    "description": "Status of product",
+                    "enum": [
+                      "online",
+                      "offline",
+                      "submitted",
+                      "draft_cityzen",
+                      "refused"
+                    ]
                   },
                   "sellerAdvice": {
                     "type": "string",
@@ -754,7 +761,10 @@
                       "description": "Status of product",
                       "enum": [
                         "online",
-                        "offline"
+                        "offline",
+                        "submitted",
+                        "draft_cityzen",
+                        "refused"
                       ]
                     },
                     "sellerAdvice": {
@@ -5151,7 +5161,14 @@
                   "status": {
                     "type": "string",
                     "example": "online",
-                    "description": "Status of product"
+                    "description": "Status of product",
+                    "enum": [
+                      "online",
+                      "offline",
+                      "submitted",
+                      "draft_cityzen",
+                      "refused"
+                    ]
                   },
                   "sellerAdvice": {
                     "type": "string",
@@ -5376,7 +5393,10 @@
                       "description": "Status of product",
                       "enum": [
                         "online",
-                        "offline"
+                        "offline",
+                        "submitted",
+                        "draft_cityzen",
+                        "refused"
                       ]
                     },
                     "sellerAdvice": {
@@ -7780,7 +7800,10 @@
             "description": "Status of product",
             "enum": [
               "online",
-              "offline"
+              "offline",
+              "submitted",
+              "draft_cityzen",
+              "refused"
             ]
           },
           "sellerAdvice": {
