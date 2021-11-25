@@ -230,9 +230,10 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
           @update_params = {
             tagIds: [15]
           }
-          post :patch, params: @update_params.merge(id: 198987987879)
+          Selection.destroy_all
+          post :patch, params: @update_params.merge(id: 1978)
 
-          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Selection with an out of range value for 'id'").to_h.to_json)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Selection with 'id'=1978").to_h.to_json)
         end
       end
 
