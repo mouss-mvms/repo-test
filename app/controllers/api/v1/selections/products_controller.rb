@@ -9,6 +9,7 @@ module Api
         before_action :find_product
 
         def add
+          raise ApplicationController::UnprocessableEntity.new("Product already in selection.") if @selection.products.include?(@product)
           @selection.products << @product
           @selection.save!
           render json: Dto::V1::Selection::Response.create(@selection).to_h, status: :ok

@@ -42,7 +42,7 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
       context "No user" do
         it "should return 401" do
           post :create
-          expect(response).to have_http_status(401)
+          expect(response.body).to eq(Dto::Errors::Unauthorized.new.to_h.to_json)
         end
       end
 
@@ -51,7 +51,7 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
           customer_user = create(:customer_user, email: 'customer678@ecity.fr')
           request.headers['HTTP_X_CLIENT_ID'] = generate_token(customer_user)
           post :create
-          expect(response).to have_http_status(403)
+          expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
         end
       end
     end
@@ -76,7 +76,7 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
           }
           post :create, params: @create_params
 
-          expect(response).to have_http_status(400)
+          expect(response.body).to eq(Dto::Errors::BadRequest.new("param is missing or the value is empty: name").to_h.to_json)
         end
       end
 
@@ -94,7 +94,7 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
           }
           post :create, params: @create_params
 
-          expect(response).to have_http_status(400)
+          expect(response.body).to eq(Dto::Errors::BadRequest.new("param is missing or the value is empty: description").to_h.to_json)
         end
       end
 
@@ -112,7 +112,7 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
           }
           post :create, params: @create_params
 
-          expect(response).to have_http_status(400)
+          expect(response.body).to eq(Dto::Errors::BadRequest.new("param is missing or the value is empty: imageUrl").to_h.to_json)
         end
       end
 
@@ -131,13 +131,13 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
           }
           post :create, params: @create_params
 
-          expect(response).to have_http_status(404)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Tag with 'id'=15").to_h.to_json)
         end
       end
     end
 
     context 'when status is incorrect' do
-      it 'should return 2200 HTTP status ' do
+      it 'should return 422 HTTP status ' do
         tag1 = create(:tag)
         tag2 = create(:tag)
         tag3 = create(:tag)
@@ -158,7 +158,7 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
 
         post :create, params: @create_params
 
-        expect(response).to have_http_status(422)
+        expect(response.body).to eq(Dto::Errors::UnprocessableEntity.new("'dada' is not a valid state").to_h.to_json)
       end
     end
   end
@@ -205,7 +205,7 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
       context "No user" do
         it "should return 401" do
           post :create
-          expect(response).to have_http_status(401)
+          expect(response.body).to eq(Dto::Errors::Unauthorized.new.to_h.to_json)
         end
       end
 
@@ -232,7 +232,7 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
           }
           post :patch, params: @update_params.merge(id: 198987987879)
 
-          expect(response).to have_http_status(404)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Selection with an out of range value for 'id'").to_h.to_json)
         end
       end
 
@@ -244,7 +244,7 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
           }
           post :patch, params: @update_params.merge(id: selection.id)
 
-          expect(response).to have_http_status(404)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Tag with 'id'=15").to_h.to_json)
         end
       end
     end
@@ -271,7 +271,40 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
 
         post :create, params: @create_params
 
-        expect(response).to have_http_status(422)
+        expect(response.body).to eq(Dto::Errors::UnprocessableEntity.new("'dada' is not a valid state").to_h.to_json)
+      end
+    end
+  end
+
+  describe "DELETE #destroy" do
+    context "All ok" do
+      it 'should return 204 HTTP status' do
+        admin_user = create(:admin_user)
+        request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
+        selection = create(:selection)
+        delete :destroy, params: { id: selection.id }
+        expect(response).to have_http_status(204)
+        expect(Selection.exists?(selection.id)).to be_falsey
+      end
+    end
+
+    context 'Authentication incorrect' do
+      context "No user" do
+        it "should return 401" do
+          selection = create(:selection)
+          delete :destroy, params: { id: selection.id }
+          expect(response.body).to eq(Dto::Errors::Unauthorized.new.to_h.to_json)
+        end
+      end
+
+      context "User is not an admin" do
+        it "should return 403" do
+          customer_user = create(:customer_user, email: 'customer678@ecity.fr')
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(customer_user)
+          selection = create(:selection)
+          delete :destroy, params: { id: selection.id }
+          expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
+        end
       end
     end
   end
