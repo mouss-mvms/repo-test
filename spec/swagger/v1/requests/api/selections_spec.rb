@@ -217,6 +217,11 @@ RSpec.describe 'api/v1/selections', swagger_doc: 'v1/swagger.json', type: :reque
         schema Examples::Errors::NotFound.new.error
         run_test!
       end
+
+      response(404, 'Product not found') do
+        schema Examples::Errors::NotFound.new.error
+        run_test!
+      end
     end
   end
 end
