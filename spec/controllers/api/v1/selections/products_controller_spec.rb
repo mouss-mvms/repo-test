@@ -37,7 +37,7 @@ RSpec.describe Api::V1::Selections::ProductsController, type: :controller do
     end
 
     context "Product already in selection" do
-      it "should return 200 HTTP Status and products selection without the product" do
+      it "should return 422 HTTP Status" do
         product = create(:available_product)
         selection = create(:selection, products: [product])
         admin_user = create(:admin_user)
