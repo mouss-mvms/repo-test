@@ -35,6 +35,12 @@ module Api
         render json: Dto::V1::Selection::Response.create(selection).to_h, status: :created
       end
 
+      def destroy
+        raise ApplicationController::Forbidden.new unless @user.is_an_admin?
+        selection = Selection.find(params[:id])
+        selection.destroy!
+      end
+
       private
 
       def create_params
