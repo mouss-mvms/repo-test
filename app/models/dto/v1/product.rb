@@ -81,10 +81,13 @@ module Dto
         )
 
         variant_ids_to_update = dto_product_request.variants.map(&:id)
-        ::Reference.where(product_id: product.id).where.not(id: variant_ids_to_update).destroy_all
+        ::Reference.where(product_id: product.id).where.not(id: variant_ids_to_update).each do |ref_to_delete|
+          ref_to_delete.api_provider_variant&.destroy!
+          ref_to_delete.destroy!
+        end
         ::Image.where(product_id: product.id).destroy_all
         ::Advice.where(product_id: product.id).destroy_all
-        ::ApiProviderProduct.where(product_id: product.id).destroy_all
+        product.api_provider_product&.destroy!
 
         product
       end

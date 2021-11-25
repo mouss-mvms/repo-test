@@ -1476,6 +1476,86 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
         end
       end
+
+      context "Variant does not exist for this product" do
+        it 'should return 404 HTTP Status' do
+          product = create(:product)
+          provider = create(:api_provider, name: 'wynd')
+          product.api_provider_product = ApiProviderProduct.create(api_provider: provider, external_product_id: '34ui')
+          product.save
+          ref1 = create(:reference, product: product)
+          ref2 = create(:reference)
+          ref1_update_params = {
+            id: ref1.id,
+            basePrice: 20,
+            weight: 13,
+            quantity: 42,
+            isDefault: false,
+            externalVariantId: 'rzsd12',
+            imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+            goodDeal: {
+              startAt: "17/05/2015",
+              endAt: "18/06/2031",
+              discount: 10,
+            },
+            characteristics: [
+              {
+                value: "coloris oaijf",
+                name: "color",
+              },
+              {
+                value: "beaucoup",
+                name: "size",
+              },
+            ],
+          }
+          ref2_update_params = {
+            id: ref2.id,
+            basePrice: 199.9,
+            weight: 1111111.24,
+            quantity: 412,
+            isDefault: false,
+            externalVariantId: 'rzsd42',
+            goodDeal: {
+              startAt: "17/05/2011",
+              endAt: "18/06/2011",
+              discount: 99,
+            },
+            characteristics: [
+              {
+                value: "coloris black",
+                name: "color",
+              },
+              {
+                value: "S",
+                name: "size",
+              },
+            ],
+          }
+          update_params = {
+            name: "Lot de 4 tasses à café style rétro AOC",
+            categoryId: product.category_id,
+            brand: "AOC",
+            status: "online",
+            isService: false,
+            sellerAdvice: "Les tasses donneront du style à votre pause café !",
+            description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+            variants: [
+              ref1_update_params,
+              ref2_update_params,
+            ],
+            provider: {
+              name: provider.name,
+              externalProductId: 'tye65'
+            }
+          }
+
+          put :update_offline, params: update_params.merge(id: product.id)
+
+          expect(response).to have_http_status(:not_found)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Reference with 'id'=#{ref2.id} [WHERE \"pr_references\".\"product_id\" = $1]").to_h.to_json)
+        end
+      end
     end
   end
 
