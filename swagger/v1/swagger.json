@@ -4968,7 +4968,7 @@
             }
           },
           "404": {
-            "description": "Selection not found",
+            "description": "Product not found",
             "content": {
               "application/json": {
                 "schema": {
