@@ -71,6 +71,19 @@ RSpec.describe Api::V1::Selections::ProductsController do
         end
       end
     end
+
+    context "Product already in selection" do
+      it "should return 422 HTTP Status" do
+        product = create(:available_product)
+        selection = create(:selection, products: [product])
+        admin_user = create(:admin_user)
+        request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
+        expect(selection.reload.products.count).to eq(1)
+        post :add, params: { selection_id: selection.id, id: product.id }
+        expect(response.body).to eq(Dto::Errors::UnprocessableEntity.new("Product already in selection.").to_h.to_json)
+        expect(selection.reload.products.count).to eq(1)
+      end
+    end
   end
 
   describe "DELETE #destroy" do
