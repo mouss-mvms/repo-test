@@ -119,6 +119,37 @@ RSpec.describe 'api/v1/selections', swagger_doc: 'v1/swagger.json', type: :reque
         run_test!
       end
     end
+
+    delete('delete a selection') do
+      tags 'Selections'
+      produces 'application/json'
+      description 'Delete a selection.'
+      security [{ authorization: [] }]
+
+      response(204, 'Successful') do
+        run_test!
+      end
+
+      response(400, 'Bad request') do
+        schema Examples::Errors::BadRequest.new.error
+        run_test!
+      end
+
+      response(401, 'Unauthorized') do
+        schema Examples::Errors::Unauthorized.new.error
+        run_test!
+      end
+
+      response(403, 'Forbidden') do
+        schema Examples::Errors::Forbidden.new.error
+        run_test!
+      end
+
+      response(404, 'Selection not found') do
+        schema Examples::Errors::NotFound.new.error
+        run_test!
+      end
+    end
   end
 
   path '/api/v1/selections' do
