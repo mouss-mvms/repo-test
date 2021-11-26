@@ -1,8 +1,8 @@
 module Api
   module V1
     class SelectionsController < ApplicationController
-      before_action :uncrypt_token, only: [:create, :patch]
-      before_action :retrieve_user, only: [:create, :patch]
+      before_action :uncrypt_token, only: [:create, :patch, :destroy]
+      before_action :retrieve_user, only: [:create, :patch, :destroy]
 
       def index
         selections = Selection.online
@@ -24,17 +24,11 @@ module Api
           begin
             selection = Dao::Selection.create(dto_selection_request: dto_request)
           rescue ActiveRecord::RecordNotFound => e
-            Rails.logger.error(e)
-            error = Dto::Errors::NotFound.new(e.message)
-            return render json: error.to_h, status: error.status
+            raise ApplicationController::NotFound.new(e)
           rescue ActiveRecord::RecordNotSaved, ArgumentError => e
-            Rails.logger.error(e)
-            error = Dto::Errors::UnprocessableEntity.new(e.message)
-            return render json: error.to_h, status: error.status
+            raise ApplicationController::UnprocessableEntity.new(e)
           rescue => e
-            Rails.logger.error(e)
-            error = Dto::Errors::InternalServer.new
-            return render json: error.to_h, status: error.status
+            raise ApplicationController::InternalServerError.new()
           else
             return render json: Dto::V1::Selection::Response.create(selection).to_h, status: :created
           end
