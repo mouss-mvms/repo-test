@@ -18,8 +18,6 @@ module Api
           raise ActionController::ParameterMissing.new('shopId') if dto_product_request.shop_id.blank?
           Shop.find(dto_product_request.shop_id)
           category = Category.find(dto_product_request.category_id)
-          raise ActionController::BadRequest.new('origin and composition is required') if ::Products::CategoriesSpecifications::MustHaveLabelling.new.is_satisfied_by?(category) && (dto_product_request.origin.blank? || dto_product_request.composition.blank?)
-          raise ActionController::BadRequest.new('allergens is required') if ::Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
           dto_product_request.status = 'submitted'
           dto_product_request.citizen_id = @user.citizen.id
           ActiveRecord::Base.transaction do
