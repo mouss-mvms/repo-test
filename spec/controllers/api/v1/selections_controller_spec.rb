@@ -180,9 +180,10 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
             imageUrl: "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg",
             state: "active"
           }
+          Selection.destroy_all
           post :create, params: @create_params
-
           expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Tag with 'id'=15").to_h.to_json)
+          expect(Selection.all.count).to eq(0)
         end
       end
     end
