@@ -1,8 +1,21 @@
 module Api
   module V1
     class SelectionsController < ApplicationController
-      before_action :uncrypt_token
-      before_action :retrieve_user
+      before_action :uncrypt_token, only: [:create, :patch]
+      before_action :retrieve_user, only: [:create, :patch]
+
+      def index
+        selections = Selection.online
+        render json: selections.map { |selection| Dto::V1::Selection::Response.create(selection).to_h }, status: :ok
+      end
+
+      def show
+        selection = Selection.find(params[:id])
+        raise ApplicationController::Forbidden unless Selection.online.include?(selection)
+
+        response = Dto::V1::Selection::Response.create(selection).to_h
+        render json: response, status: :ok
+      end
 
       def create
         raise ApplicationController::Forbidden.new unless @user.is_an_admin?

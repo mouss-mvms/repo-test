@@ -7,3 +7,9 @@ scope :auth do
     delete ':selection_id/products/:id', to: 'products#remove'
   end
 end
+
+resources :selections, only: [:index, :show]
+
+namespace :selections do
+  get ':id/products', to: 'products#index'
+end

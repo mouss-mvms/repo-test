@@ -152,6 +152,40 @@ RSpec.describe 'api/v1/selections', swagger_doc: 'v1/swagger.json', type: :reque
     end
   end
 
+  path '/api/v1/selections' do
+    get('Lists all the online selections') do
+      tags 'Selections'
+      produces 'application/json'
+      description 'Lists all the online selections.'
+      security [{ authorization: [] }]
+
+      response(200, 'successful') do
+        schema type: :array, items: { '$ref': '#/components/schemas/Selection' }
+        run_test!
+      end
+    end
+  end
+
+  path '/api/v1/selections/{id}' do
+    parameter in: :path, name: :id, type: :integer, description: 'Unique identifier of a selection.'
+    get('Returns an online selection') do
+      tags 'Selections'
+      produces 'application/json'
+      description 'Returns an online selection.'
+      security [{ authorization: [] }]
+
+      response(200, 'Successful') do
+        schema '$ref': '#/components/schemas/Selection'
+        run_test!
+      end
+
+      response(404, 'Product not found') do
+        schema Examples::Errors::NotFound.new.error
+        run_test!
+      end
+    end
+  end
+
   path '/api/v1/auth/selections/{selection_id}/products/{id}' do
     parameter name: :selection_id, in: :path, type: :integer, description: 'Unique identifier of the selection.', required: true
     parameter name: :id, in: :path, type: :integer, description: 'Unique identifier of the product.', required: true

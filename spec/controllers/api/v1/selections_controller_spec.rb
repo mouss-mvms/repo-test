@@ -1,6 +1,57 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::SelectionsController, type: :controller do
+
+  describe "GET #index" do
+    context "All ok" do
+      it "should return 200 HTTP status and a list of selections" do
+        selections = [
+          create(:selection, name: 'Jouets'),
+          create(:online_selection, name: 'Sabre lasers'),
+          create(:online_selection, name: 'Tournevis'),
+        ]
+
+        get :index
+        should respond_with(200)
+        response_body = JSON.parse(response.body)
+        expect(response_body).to be_instance_of(Array)
+        expect(response_body.count).to eq(2)
+        expect(response.body).to eq(selections.last(2).map { |s| Dto::V1::Selection::Response.create(s).to_h }.to_json)
+      end
+    end
+  end
+
+  describe "GET #show" do
+    context "All ok" do
+      it "should return 200 HTTP status and a selection dto" do
+        selection = create(:online_selection)
+
+        get :show, params: { id: selection.id }
+        should respond_with(200)
+        expect(response.body).to eq(Dto::V1::Selection::Response.create(selection).to_h.to_json)
+      end
+    end
+
+    context 'Bad params' do
+      context "Selection does not exist" do
+        it "should return 404 HTTP status" do
+          get :show, params: { id: 666 }
+          should respond_with(404)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Selection with 'id'=666").to_h.to_json)
+        end
+      end
+
+      context "selection is not online" do
+        it "should return a 403 HTTP status" do
+          selection = create(:selection)
+          get :show, params: { id: selection.id }
+          should respond_with(403)
+          expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
+        end
+      end
+    end
+  end
+
   describe "POST #create" do
     context "All ok" do
       it 'should return 201 HTTP status code with selection object' do
@@ -28,7 +79,7 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
         response_body = JSON.parse(response.body, symbolize_names: true)
         expect(response_body[:name]).to eq(@create_params[:name])
         expect(response_body[:description]).to eq(@create_params[:description])
-        expect(response_body[:tagIds].map {|tag| tag[:id]}).to eq(@create_params[:tagIds])
+        expect(response_body[:tagIds]).to eq(@create_params[:tagIds])
         expect(response_body[:startAt]).to_not be_empty
         expect(response_body[:endAt]).to_not be_empty
         expect(response_body[:homePage]).to eq(@create_params[:homePage])
@@ -191,7 +242,7 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
         response_body = JSON.parse(response.body, symbolize_names: true)
         expect(response_body[:name]).to eq(@update_params[:name])
         expect(response_body[:description]).to eq(@update_params[:description])
-        expect(response_body[:tagIds].map {|tag| tag[:id]}).to eq(@update_params[:tagIds])
+        expect(response_body[:tagIds]).to eq(@update_params[:tagIds])
         expect(response_body[:startAt]).to_not be_empty
         expect(response_body[:endAt]).to_not be_empty
         expect(response_body[:homePage]).to eq(@update_params[:homePage])
