@@ -6,6 +6,7 @@ module V1
           {
             type: 'object',
             properties: {
+              id: { type: :integer, example: 42, description: "Unique identifier of the selection." },
               name: { type: :string, example: "voiture", description: 'Selection name.' },
               slug: { type: :string, example: 'voiture-1', description: 'Selection slug.' },
               description: { type: :string, example: "Selection de voitures.", description: 'Description of the selection.' },
@@ -21,6 +22,7 @@ module V1
                 type: :string,
                 enum: ["active", "inactive"]
               },
+              order: { type: :integer, example: 79, description: "Order of the  selection." },
               imageUrl: { type: :string, example: "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg" }
             }
           }

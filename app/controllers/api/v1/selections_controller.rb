@@ -1,8 +1,21 @@
 module Api
   module V1
     class SelectionsController < ApplicationController
-      before_action :uncrypt_token
-      before_action :retrieve_user
+      before_action :uncrypt_token, only: [:create, :patch, :destroy]
+      before_action :retrieve_user, only: [:create, :patch, :destroy]
+
+      def index
+        selections = Selection.online
+        render json: selections.map { |selection| Dto::V1::Selection::Response.create(selection).to_h }, status: :ok
+      end
+
+      def show
+        selection = Selection.find(params[:id])
+        raise ApplicationController::Forbidden unless Selection.online.include?(selection)
+
+        response = Dto::V1::Selection::Response.create(selection).to_h
+        render json: response, status: :ok
+      end
 
       def create
         raise ApplicationController::Forbidden.new unless @user.is_an_admin?
@@ -11,17 +24,11 @@ module Api
           begin
             selection = Dao::Selection.create(dto_selection_request: dto_request)
           rescue ActiveRecord::RecordNotFound => e
-            Rails.logger.error(e)
-            error = Dto::Errors::NotFound.new(e.message)
-            return render json: error.to_h, status: error.status
+            raise ApplicationController::NotFound.new(e)
           rescue ActiveRecord::RecordNotSaved, ArgumentError => e
-            Rails.logger.error(e)
-            error = Dto::Errors::UnprocessableEntity.new(e.message)
-            return render json: error.to_h, status: error.status
+            raise ApplicationController::UnprocessableEntity.new(e)
           rescue => e
-            Rails.logger.error(e)
-            error = Dto::Errors::InternalServer.new
-            return render json: error.to_h, status: error.status
+            raise ApplicationController::InternalServerError.new()
           else
             return render json: Dto::V1::Selection::Response.create(selection).to_h, status: :created
           end
@@ -33,6 +40,12 @@ module Api
         dto_request = Dto::V1::Selection::Request.new(update_params)
         selection = Dao::Selection.update(dto_selection_request: dto_request)
         render json: Dto::V1::Selection::Response.create(selection).to_h, status: :created
+      end
+
+      def destroy
+        raise ApplicationController::Forbidden.new unless @user.is_an_admin?
+        selection = Selection.find(params[:id])
+        selection.destroy!
       end
 
       private

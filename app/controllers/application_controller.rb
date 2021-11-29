@@ -13,7 +13,7 @@ class ApplicationController < ActionController::API
     rescue_from ApplicationController::InternalServerError, with: :render_internal_server_error
     rescue_from ApplicationController::Conflict, with: :render_conflict
     rescue_from ActiveRecord::RecordNotSaved, with: :render_internal_server_error
-    rescue_from ApplicationController::UnprocessableEntity, with: :render_unprocessable_entity
+    rescue_from ApplicationController::UnprocessableEntity, ActiveRecord::RecordNotDestroyed, with: :render_unprocessable_entity
 
     def render_record_not_found(exception)
       Rails.logger.error(exception)
