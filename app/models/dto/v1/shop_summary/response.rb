@@ -47,9 +47,9 @@ module Dto
           hash = {}
           hash[:_index] = _index if fields.nil? || (fields.any? && fields.include?("_index"))
           hash[:_type] = _type if fields.nil? || (fields.any? && fields.include?("_type"))
-          hash[:_id] = _id if fields.nil? || (fields.any? && fields.include?("_id"))
+          hash[:_id] = _id.to_i if fields.nil? || (fields.any? && fields.include?("_id"))
           hash[:_score] = _score if fields.nil? || (fields.any? && fields.include?("_score"))
-          hash[:id] = id if fields.nil? || (fields.any? && fields.include?("id"))
+          hash[:id] = id.to_i if fields.nil? || (fields.any? && fields.include?("id"))
           hash[:name] = name if fields.nil? || (fields.any? && fields.include?("name"))
           hash[:createdAt] = created_at if fields.nil? || (fields.any? && fields.include?("createdAt"))
           hash[:updatedAt] = updated_at if fields.nil? || (fields.any? && fields.include?("updatedAt"))
