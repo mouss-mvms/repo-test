@@ -534,7 +534,7 @@
                   },
                   "status": {
                     "type": "string",
-                    "example": "online",
+                    "example": "submitted",
                     "description": "Status of product",
                     "enum": [
                       "online",
