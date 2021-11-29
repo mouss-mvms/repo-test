@@ -8,7 +8,7 @@ module Api
 
         def index
           products = @citizen.products.includes(:category, :brand, references: [:sample, :color, :size, :good_deal]).actives
-          response = products.map {|product| Dto::V1::Product::Response.create(product)}
+          response = products.map {|product| Dto::V1::Product::Response.create(product).to_h}
           render json: response, status: :ok
         end
 
