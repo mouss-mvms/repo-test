@@ -534,7 +534,7 @@
                   },
                   "status": {
                     "type": "string",
-                    "example": "online",
+                    "example": "submitted",
                     "description": "Status of product",
                     "enum": [
                       "online",
@@ -7979,7 +7979,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-staging"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {
