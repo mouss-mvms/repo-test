@@ -4903,7 +4903,9 @@
           "in": "path",
           "description": "Unique identifier of the product.",
           "required": true,
-          "schema": {"type": "integer"}
+          "schema": {
+            "type": "integer"
+          }
         },
         {
           "name": "x-client-id",
@@ -7977,7 +7979,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-staging"
     }
   ],
   "components": {
