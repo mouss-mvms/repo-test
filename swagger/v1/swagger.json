@@ -534,7 +534,7 @@
                   },
                   "status": {
                     "type": "string",
-                    "example": "online",
+                    "example": "submitted",
                     "description": "Status of product",
                     "enum": [
                       "online",
@@ -738,7 +738,7 @@
                     "id": {
                       "type": "integer",
                       "example": 1,
-                      "description": "Unique identifier of a shop"
+                      "description": "Unique identifier of a product"
                     },
                     "name": {
                       "type": "string",
@@ -766,6 +766,16 @@
                         "draft_cityzen",
                         "refused"
                       ]
+                    },
+                    "shopId": {
+                      "type": "integer",
+                      "example": 1,
+                      "description": "Unique identifier product shop"
+                    },
+                    "shopName": {
+                      "type": "string",
+                      "example": "Ma super boutique",
+                      "description": "Product shop name"
                     },
                     "sellerAdvice": {
                       "type": "string",
@@ -5818,7 +5828,7 @@
                     "id": {
                       "type": "integer",
                       "example": 1,
-                      "description": "Unique identifier of a shop"
+                      "description": "Unique identifier of a product"
                     },
                     "name": {
                       "type": "string",
@@ -5846,6 +5856,16 @@
                         "draft_cityzen",
                         "refused"
                       ]
+                    },
+                    "shopId": {
+                      "type": "integer",
+                      "example": 1,
+                      "description": "Unique identifier product shop"
+                    },
+                    "shopName": {
+                      "type": "string",
+                      "example": "Ma super boutique",
+                      "description": "Product shop name"
                     },
                     "sellerAdvice": {
                       "type": "string",
@@ -8225,7 +8245,7 @@
           "id": {
             "type": "integer",
             "example": 1,
-            "description": "Unique identifier of a shop"
+            "description": "Unique identifier of a product"
           },
           "name": {
             "type": "string",
@@ -8253,6 +8273,16 @@
               "draft_cityzen",
               "refused"
             ]
+          },
+          "shopId": {
+            "type": "integer",
+            "example": 1,
+            "description": "Unique identifier product shop"
+          },
+          "shopName": {
+            "type": "string",
+            "example": "Ma super boutique",
+            "description": "Product shop name"
           },
           "sellerAdvice": {
             "type": "string",
