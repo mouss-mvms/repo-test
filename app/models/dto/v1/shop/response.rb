@@ -50,7 +50,7 @@ module Dto
 
         def self.from_searchkick(shop)
           return Dto::V1::Shop::Response.new({
-                                           id: shop['id'],
+                                           id: shop['id'].to_i,
                                            name: shop['name'],
                                            slug: shop['slug'],
                                            image_urls: [shop['image_url']],

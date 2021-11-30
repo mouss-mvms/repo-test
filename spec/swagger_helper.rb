@@ -64,6 +64,7 @@ RSpec.configure do |config|
           Schedule: V1::Examples::Response::Schedule.to_h,
           ProductSearch: V1::Examples::Response::Products::Search.to_h,
           ProductSummary: V1::Examples::Response::ProductSummary.to_h,
+          Selection: V1::Examples::Response::Selection.to_h,
           Shop: V1::Examples::Response::Shop.to_h,
           ShopSearch: V1::Examples::Response::Shops::Search.to_h,
           ShopSummary: V1::Examples::Response::ShopSummary.to_h,

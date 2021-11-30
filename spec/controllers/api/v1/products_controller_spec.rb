@@ -1265,6 +1265,297 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
         end
 
       end
+
+      context "If product doesn't have provider" do
+        it 'should return 403 HTTP Status' do
+          product = create(:product)
+          provider = create(:api_provider, name: 'wynd')
+
+          ref1 = create(:reference, product: product)
+          ref2 = create(:reference, product: product)
+          ref1_update_params = {
+            id: ref1.id,
+            basePrice: 20,
+            weight: 13,
+            quantity: 42,
+            isDefault: false,
+            externalVariantId: 'rzsd12',
+            imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+            goodDeal: {
+              startAt: "17/05/2015",
+              endAt: "18/06/2031",
+              discount: 10,
+            },
+            characteristics: [
+              {
+                value: "coloris oaijf",
+                name: "color",
+              },
+              {
+                value: "beaucoup",
+                name: "size",
+              },
+            ],
+          }
+          ref2_update_params = {
+            id: ref2.id,
+            basePrice: 199.9,
+            weight: 1111111.24,
+            quantity: 412,
+            isDefault: false,
+            externalVariantId: 'rzsd42',
+            goodDeal: {
+              startAt: "17/05/2011",
+              endAt: "18/06/2011",
+              discount: 99,
+            },
+            characteristics: [
+              {
+                value: "coloris black",
+                name: "color",
+              },
+              {
+                value: "S",
+                name: "size",
+              },
+            ],
+          }
+          new_ref_update_params = {
+            basePrice: 19.9,
+            weight: 0.24,
+            quantity: 4,
+            isDefault: true,
+            imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+            externalVariantId: 'iuhzfiuh21',
+            goodDeal: {
+              startAt: "17/05/2021",
+              endAt: "18/06/2021",
+              discount: 20,
+            },
+            characteristics: [
+              {
+                value: "coloris black",
+                name: "color",
+              },
+              {
+                value: "S",
+                name: "size",
+              },
+            ],
+          }
+
+          update_params = {
+            name: "Lot de 4 tasses à café style rétro AOC",
+            categoryId: product.category_id,
+            brand: "AOC",
+            status: "online",
+            isService: false,
+            sellerAdvice: "Les tasses donneront du style à votre pause café !",
+            description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+            variants: [
+              new_ref_update_params,
+              ref1_update_params,
+              ref2_update_params,
+            ],
+            provider: {
+              name: provider.name,
+              externalProductId: 'tye65'
+            }
+          }
+
+          put :update_offline, params: update_params.merge(id: product.id)
+
+          expect(response).to have_http_status(:forbidden)
+          expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
+        end
+      end
+
+      context "Product provider from request is not the same as the product provider saved" do
+        it "should return 403 HTTP Status" do
+          product = create(:product)
+          provider = create(:api_provider, name: 'wynd')
+          wrong_provider = create(:api_provider, name: 'wrong_provider')
+
+          product.api_provider_product = ApiProviderProduct.create!(api_provider: provider, external_product_id: 'RED56')
+          product.save
+          ref1 = create(:reference, product: product)
+          ref2 = create(:reference, product: product)
+          ref1_update_params = {
+            id: ref1.id,
+            basePrice: 20,
+            weight: 13,
+            quantity: 42,
+            isDefault: false,
+            externalVariantId: 'rzsd12',
+            imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+            goodDeal: {
+              startAt: "17/05/2015",
+              endAt: "18/06/2031",
+              discount: 10,
+            },
+            characteristics: [
+              {
+                value: "coloris oaijf",
+                name: "color",
+              },
+              {
+                value: "beaucoup",
+                name: "size",
+              },
+            ],
+          }
+          ref2_update_params = {
+            id: ref2.id,
+            basePrice: 199.9,
+            weight: 1111111.24,
+            quantity: 412,
+            isDefault: false,
+            externalVariantId: 'rzsd42',
+            goodDeal: {
+              startAt: "17/05/2011",
+              endAt: "18/06/2011",
+              discount: 99,
+            },
+            characteristics: [
+              {
+                value: "coloris black",
+                name: "color",
+              },
+              {
+                value: "S",
+                name: "size",
+              },
+            ],
+          }
+          new_ref_update_params = {
+            basePrice: 19.9,
+            weight: 0.24,
+            quantity: 4,
+            isDefault: true,
+            imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+            externalVariantId: 'iuhzfiuh21',
+            goodDeal: {
+              startAt: "17/05/2021",
+              endAt: "18/06/2021",
+              discount: 20,
+            },
+            characteristics: [
+              {
+                value: "coloris black",
+                name: "color",
+              },
+              {
+                value: "S",
+                name: "size",
+              },
+            ],
+          }
+
+          update_params = {
+            name: "Lot de 4 tasses à café style rétro AOC",
+            categoryId: product.category_id,
+            brand: "AOC",
+            status: "online",
+            isService: false,
+            sellerAdvice: "Les tasses donneront du style à votre pause café !",
+            description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+            variants: [
+              new_ref_update_params,
+              ref1_update_params,
+              ref2_update_params,
+            ],
+            provider: {
+              name: wrong_provider.name,
+              externalProductId: 'tye65'
+            }
+          }
+
+          put :update_offline, params: update_params.merge(id: product.id)
+
+          expect(response).to have_http_status(:forbidden)
+          expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
+        end
+      end
+
+      context "Variant does not exist for this product" do
+        it 'should return 404 HTTP Status' do
+          product = create(:product)
+          provider = create(:api_provider, name: 'wynd')
+          product.api_provider_product = ApiProviderProduct.create(api_provider: provider, external_product_id: '34ui')
+          product.save
+          ref1 = create(:reference, product: product)
+          ref2 = create(:reference)
+          ref1_update_params = {
+            id: ref1.id,
+            basePrice: 20,
+            weight: 13,
+            quantity: 42,
+            isDefault: false,
+            externalVariantId: 'rzsd12',
+            imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+            goodDeal: {
+              startAt: "17/05/2015",
+              endAt: "18/06/2031",
+              discount: 10,
+            },
+            characteristics: [
+              {
+                value: "coloris oaijf",
+                name: "color",
+              },
+              {
+                value: "beaucoup",
+                name: "size",
+              },
+            ],
+          }
+          ref2_update_params = {
+            id: ref2.id,
+            basePrice: 199.9,
+            weight: 1111111.24,
+            quantity: 412,
+            isDefault: false,
+            externalVariantId: 'rzsd42',
+            goodDeal: {
+              startAt: "17/05/2011",
+              endAt: "18/06/2011",
+              discount: 99,
+            },
+            characteristics: [
+              {
+                value: "coloris black",
+                name: "color",
+              },
+              {
+                value: "S",
+                name: "size",
+              },
+            ],
+          }
+          update_params = {
+            name: "Lot de 4 tasses à café style rétro AOC",
+            categoryId: product.category_id,
+            brand: "AOC",
+            status: "online",
+            isService: false,
+            sellerAdvice: "Les tasses donneront du style à votre pause café !",
+            description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+            variants: [
+              ref1_update_params,
+              ref2_update_params,
+            ],
+            provider: {
+              name: provider.name,
+              externalProductId: 'tye65'
+            }
+          }
+
+          put :update_offline, params: update_params.merge(id: product.id)
+
+          expect(response).to have_http_status(:not_found)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Reference with 'id'=#{ref2.id} [WHERE \"pr_references\".\"product_id\" = $1]").to_h.to_json)
+        end
+      end
     end
   end
 
@@ -4204,6 +4495,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               externalProductId: 'tye65'
             }
           }
+          product.api_provider_product = ApiProviderProduct.create!(api_provider: provider, external_product_id: 'RED56')
+          product.save
 
           patch :patch, params: product_params.merge(id: product.id)
           should respond_with(200)
@@ -5349,8 +5642,11 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           ref1 = create(:reference)
           ref2 = create(:reference)
           product.references << ref2
-          product.save
           shop.products << product
+
+          provider = create(:api_provider, name: 'wynd')
+          product.api_provider_product = ApiProviderProduct.create!(api_provider: provider, external_product_id: 'RED56')
+          product.save
 
           product_params = {
             name: "manteau MAC",
@@ -5386,6 +5682,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 ],
               },
             ],
+            provider: {
+              name: provider.name,
+              externalProductId: 'tye65'
+            }
           }
 
           user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
@@ -5401,6 +5701,50 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
           expect(response).to have_http_status(:not_found)
           expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Reference with 'id'=#{ref1.id} [WHERE \"pr_references\".\"product_id\" = $1]").to_h.to_json)
+        end
+      end
+
+      context "If product doesn't have provider" do
+        it 'should return 403 HTTP Status' do
+          product = create(:product)
+          provider = create(:api_provider, name: 'wynd')
+
+          update_params = {
+            name: "Lot de 4 tasses à café style rétro AOC",
+            provider: {
+              name: provider.name,
+              externalProductId: 'tye65'
+            }
+          }
+
+          patch :patch, params: update_params.merge(id: product.id)
+
+          expect(response).to have_http_status(:forbidden)
+          expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
+        end
+      end
+
+      context "Product provider from request is not the same as the product provider saved" do
+        it "should return 403 HTTP Status" do
+          product = create(:product)
+          provider = create(:api_provider, name: 'wynd')
+          wrong_provider = create(:api_provider, name: 'wrong_provider')
+
+          product.api_provider_product = ApiProviderProduct.create!(api_provider: provider, external_product_id: 'RED56')
+          product.save
+
+          update_params = {
+            name: "Lot de 4 tasses à café style rétro AOC",
+            provider: {
+              name: wrong_provider.name,
+              externalProductId: 'tye65'
+            }
+          }
+
+          patch :patch, params: update_params.merge(id: product.id)
+
+          expect(response).to have_http_status(:forbidden)
+          expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
         end
       end
     end
@@ -5434,7 +5778,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
   describe "POST #create_offline" do
     context "All ok" do
-      it "should return 202 HTTP Status" do
+      it "should return 201 HTTP Status" do
+        provider = create(:api_provider, name: 'wynd')
         create_params = {
           name: "manteau MAC",
           slug: "manteau-mac",
@@ -5475,12 +5820,25 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             externalProductId: '56ty'
           }
         }
-        job_id = "10aad2e35138aa982e0d848a"
-        allow(Dao::Product).to receive(:create_async).and_return(job_id)
-        expect(Dao::Product).to receive(:create_async)
         post :create_offline, params: create_params
-        should respond_with(202)
-        expect(JSON.parse(response.body)["url"]).to eq(ENV["API_BASE_URL"] + api_v1_product_job_status_path(job_id))
+        should respond_with(201)
+        result = JSON.parse(response.body)
+        product = Product.find(result["id"])
+        expect(product).to_not be_nil
+        expect(result["name"]).to eq(create_params[:name])
+        expect(Product.find(result["id"]).name).to eq(create_params[:name])
+        expect(result["category"]["id"]).to eq(create_params[:categoryId])
+        expect(Category.find(result["category"]["id"]).slug).to eq(product.category.slug)
+        expect(Category.find(result["category"]["id"]).name).to eq(product.category.name)
+        expect(result["brand"]).to eq(create_params[:brand])
+        expect(result["status"]).to eq(create_params[:status])
+        expect(result["isService"]).to eq(create_params[:isService])
+        expect(result["sellerAdvice"]).to eq(create_params[:sellerAdvice])
+        expect(result["description"]).to eq(create_params[:description])
+        expect(result["origin"]).to eq(create_params[:origin])
+        expect(result["allergens"]).to eq(create_params[:allergens])
+        expect(result["composition"]).to eq(create_params[:composition])
+        expect(product.references.count).to eq(1)
       end
     end
 

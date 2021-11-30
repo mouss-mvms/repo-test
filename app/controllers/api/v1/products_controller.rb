@@ -52,6 +52,7 @@ module Api
             raise ActionController::BadRequest.new('origin and composition is required') if ::Products::CategoriesSpecifications::MustHaveLabelling.new.is_satisfied_by?(category) && (dto_product_request.origin.blank? || dto_product_request.composition.blank?)
             raise ActionController::BadRequest.new('allergens is required') if ::Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
           end
+          raise ApplicationController::Forbidden.new if product.api_provider_product.nil? || (product.api_provider_product.api_provider.name != dto_product_request.provider[:name])
           begin
             product = Dao::Product.update(dto_product_request: dto_product_request)
           rescue ActiveRecord::RecordNotFound => e
@@ -97,13 +98,14 @@ module Api
         raise ActionController::BadRequest.new('allergens is required') if ::Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
         ActiveRecord::Base.transaction do
           begin
-            job_id = Dao::Product.create_async(dto_product_request.to_h)
+            product = Dao::Product.create(dto_product_request.to_h)
           rescue => e
             Rails.logger.error(e.message)
             error = Dto::Errors::InternalServer.new(detail: e.message)
             return render json: error.to_h, status: error.status
           else
-            return render json: { url: ENV["API_BASE_URL"] + api_v1_product_job_status_path(job_id) }, status: :accepted
+            dto_product_response = Dto::V1::Product::Response.create(product)
+            return render json: dto_product_response.to_h, status: :created
           end
         end
       end
@@ -118,19 +120,26 @@ module Api
           end
         end
         dto_product_request = Dto::V1::Product::Request.new(product_params)
-        product = Product.find(product_params[:id])
+        product = Product.find(dto_product_request.id)
         category = Category.find(dto_product_request.category_id)
         raise ActionController::BadRequest.new('origin and composition is required') if ::Products::CategoriesSpecifications::MustHaveLabelling.new.is_satisfied_by?(category) && (dto_product_request.origin.blank? || dto_product_request.composition.blank?)
         raise ActionController::BadRequest.new('allergens is required') if ::Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
-        begin
-          product = Dto::V1::Product.build(dto_product_request: dto_product_request, product: product)
-        rescue => e
-          Rails.logger.error(e)
-          error = Dto::Errors::InternalServer.new
-          return render json: error.to_h, status: error.status
-        else
-          dto_product_response = Dto::V1::Product::Response.create(product)
-          return render json: dto_product_response.to_h, status: :ok
+        dto_product_request.variants.each do |dto_variant|
+          next if dto_variant.id.nil?
+          product.references.find(dto_variant.id)
+        end
+        raise ApplicationController::Forbidden.new if product.api_provider_product.nil? || (product.api_provider_product.api_provider.name != product_params[:provider][:name])
+        ActiveRecord::Base.transaction do
+          begin
+            product = Dao::Product.update(dto_product_request: dto_product_request)
+          rescue => e
+            Rails.logger.error(e)
+            error = Dto::Errors::InternalServer.new
+            return render json: error.to_h, status: error.status
+          else
+            dto_product_response = Dto::V1::Product::Response.create(product)
+            return render json: dto_product_response.to_h, status: :ok
+          end
         end
       end
 
@@ -144,7 +153,7 @@ module Api
         product_params = {}
         product_params[:id] = params[:id]
         product_params[:name] = params.require(:name)
-        product_params[:description] = params.require(:description)
+        product_params[:description] = params[:description]
         product_params[:brand] = params.require(:brand)
         product_params[:status] = params.require(:status)
         product_params[:seller_advice] = params.require(:sellerAdvice)

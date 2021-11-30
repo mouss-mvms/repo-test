@@ -534,8 +534,15 @@
                   },
                   "status": {
                     "type": "string",
-                    "example": "online",
-                    "description": "Status of product"
+                    "example": "submitted",
+                    "description": "Status of product",
+                    "enum": [
+                      "online",
+                      "offline",
+                      "submitted",
+                      "draft_cityzen",
+                      "refused"
+                    ]
                   },
                   "sellerAdvice": {
                     "type": "string",
@@ -587,19 +594,20 @@
                           "example": true,
                           "description": "Tell if this variant is the product's default variant"
                         },
-                        "imageUrls": {
+                        "imageIds": {
                           "type": "array",
                           "items": {
-                            "type": "string"
+                            "type": "number"
                           },
                           "example": [
-                            "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr",
-                            "https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg"
+                            234,
+                            45566,
+                            345
                           ],
                           "default": [
 
                           ],
-                          "description": "List of product images urls"
+                          "description": "List of product images ids"
                         },
                         "goodDeal": {
                           "type": "object",
@@ -650,10 +658,8 @@
                         }
                       },
                       "required": [
-                        "basePrice",
-                        "weight",
-                        "quantity",
-                        "isDefault"
+                        "characteristics",
+                        "imageIds"
                       ]
                     }
                   },
@@ -675,15 +681,10 @@
                 },
                 "required": [
                   "name",
-                  "description",
-                  "brand",
-                  "status",
-                  "sellerAdvice",
-                  "isService",
+                  "characteristics",
+                  "shopId",
                   "citizenAdvice",
-                  "categoryId",
-                  "variants",
-                  "characteristics"
+                  "variants"
                 ]
               }
             }
@@ -737,7 +738,7 @@
                     "id": {
                       "type": "integer",
                       "example": 1,
-                      "description": "Unique identifier of a shop"
+                      "description": "Unique identifier of a product"
                     },
                     "name": {
                       "type": "string",
@@ -760,8 +761,21 @@
                       "description": "Status of product",
                       "enum": [
                         "online",
-                        "offline"
+                        "offline",
+                        "submitted",
+                        "draft_cityzen",
+                        "refused"
                       ]
+                    },
+                    "shopId": {
+                      "type": "integer",
+                      "example": 1,
+                      "description": "Unique identifier product shop"
+                    },
+                    "shopName": {
+                      "type": "string",
+                      "example": "Ma super boutique",
+                      "description": "Product shop name"
                     },
                     "sellerAdvice": {
                       "type": "string",
@@ -992,6 +1006,154 @@
                           "description": "List of product images urls"
                         }
                       }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/images": {
+      "parameters": [
+        {
+          "name": "X-client-id",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Upload image files and returns image ids",
+        "tags": [
+          "Images"
+        ],
+        "description": "Return image ids",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "integer"
+                  },
+                  "example": [
+                    666,
+                    42
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "The syntax of the query is incorrect.",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Bad Request",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 400,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 401,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 403,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "files[]": {
+                    "type": "array",
+                    "description": "Image's pictures",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
                     }
                   }
                 }
@@ -2655,6 +2817,20 @@
                             "discount"
                           ]
                         },
+                        "imageUrls": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": [
+                            "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr",
+                            "https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg"
+                          ],
+                          "default": [
+
+                          ],
+                          "description": "List of product images urls"
+                        },
                         "characteristics": {
                           "type": "array",
                           "items": {
@@ -3460,6 +3636,20 @@
                             "discount"
                           ]
                         },
+                        "imageUrls": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": [
+                            "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr",
+                            "https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg"
+                          ],
+                          "default": [
+
+                          ],
+                          "description": "List of product images urls"
+                        },
                         "characteristics": {
                           "type": "array",
                           "items": {
@@ -3903,6 +4093,1019 @@
           },
           "404": {
             "description": "Review not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Resource not found",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Not found",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/selections/{id}/products": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of a selection.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Returns an online selection and all of its products.",
+        "tags": [
+          "Selections"
+        ],
+        "description": "Returns an online selection and all of its products.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "selection": {
+                      "$ref": "#/components/schemas/Selection"
+                    },
+                    "products": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Product"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 403,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Selection not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Resource not found",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Not found",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/selections": {
+      "parameters": [
+        {
+          "name": "x-client-id",
+          "in": "header",
+          "description": "Auth token of user",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "summary": "create a selection",
+        "tags": [
+          "Selections"
+        ],
+        "description": "Create a selection.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "201": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Selection"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "The syntax of the query is incorrect.",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Bad Request",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 400,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 401,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 403,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Selection not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Resource not found",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Not found",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Route to create a selection",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "voiture",
+                    "description": "Selection name."
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Selection de voitures.",
+                    "description": "Description of the selection."
+                  },
+                  "tagIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "example": 12,
+                      "description": "Tag id."
+                    }
+                  },
+                  "startAt": {
+                    "type": "string",
+                    "example": "20/07/2021",
+                    "description": "Date of start of selection."
+                  },
+                  "endAt": {
+                    "type": "string",
+                    "example": "27/07/2021",
+                    "description": "Date of end of selection."
+                  },
+                  "homePage": {
+                    "type": "boolean",
+                    "example": false,
+                    "description": "Show the selection at home."
+                  },
+                  "event": {
+                    "type": "boolean",
+                    "example": false,
+                    "description": "Selection is an event."
+                  },
+                  "state": {
+                    "type": "string",
+                    "enum": [
+                      "disabled",
+                      "active"
+                    ]
+                  },
+                  "imageUrl": {
+                    "type": "string",
+                    "example": "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg"
+                  }
+                },
+                "required": [
+                  "name",
+                  "description",
+                  "imageUrl"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/selections/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of the selection.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "x-client-id",
+          "in": "header",
+          "description": "Auth token of user",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "patch": {
+        "summary": "update a selection",
+        "tags": [
+          "Selections"
+        ],
+        "description": "Update a selection.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Selection"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "The syntax of the query is incorrect.",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Bad Request",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 400,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 401,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 403,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Selection not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Resource not found",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Not found",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Route to update a selection",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "voiture",
+                    "description": "Selection name."
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "Selection de voitures.",
+                    "description": "Description of the selection."
+                  },
+                  "tagIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "example": 12,
+                      "description": "Tag id."
+                    }
+                  },
+                  "startAt": {
+                    "type": "string",
+                    "example": "20/07/2021",
+                    "description": "Date of start of selection."
+                  },
+                  "endAt": {
+                    "type": "string",
+                    "example": "27/07/2021",
+                    "description": "Date of end of selection."
+                  },
+                  "homePage": {
+                    "type": "boolean",
+                    "example": false,
+                    "description": "Show the selection at home."
+                  },
+                  "event": {
+                    "type": "boolean",
+                    "example": false,
+                    "description": "Selection is an event."
+                  },
+                  "state": {
+                    "type": "string",
+                    "enum": [
+                      "disabled",
+                      "active"
+                    ]
+                  },
+                  "imageUrl": {
+                    "type": "string",
+                    "example": "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "delete a selection",
+        "tags": [
+          "Selections"
+        ],
+        "description": "Delete a selection.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful"
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "The syntax of the query is incorrect.",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Bad Request",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 400,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 401,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 403,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Selection not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Resource not found",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Not found",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/selections": {
+      "get": {
+        "summary": "Lists all the online selections",
+        "tags": [
+          "Selections"
+        ],
+        "description": "Lists all the online selections.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Selection"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/selections/{id}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "description": "Unique identifier of a selection.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Returns an online selection",
+        "tags": [
+          "Selections"
+        ],
+        "description": "Returns an online selection.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Selection"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Resource not found",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Not found",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/selections/{selection_id}/products/{id}": {
+      "parameters": [
+        {
+          "name": "selection_id",
+          "in": "path",
+          "description": "Unique identifier of the selection.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of the product.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "x-client-id",
+          "in": "header",
+          "description": "Auth token of user",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Add a product to a selection",
+        "tags": [
+          "Selections"
+        ],
+        "description": "Add a product to a selection.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Selection"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 401,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 403,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Resource not found",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Not found",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove a product to a selection",
+        "tags": [
+          "Selections"
+        ],
+        "description": "Remove a product to a selection.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Selection"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 401,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 403,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found",
             "content": {
               "application/json": {
                 "schema": {
@@ -4416,7 +5619,14 @@
                   "status": {
                     "type": "string",
                     "example": "online",
-                    "description": "Status of product"
+                    "description": "Status of product",
+                    "enum": [
+                      "online",
+                      "offline",
+                      "submitted",
+                      "draft_cityzen",
+                      "refused"
+                    ]
                   },
                   "sellerAdvice": {
                     "type": "string",
@@ -4618,7 +5828,7 @@
                     "id": {
                       "type": "integer",
                       "example": 1,
-                      "description": "Unique identifier of a shop"
+                      "description": "Unique identifier of a product"
                     },
                     "name": {
                       "type": "string",
@@ -4641,8 +5851,21 @@
                       "description": "Status of product",
                       "enum": [
                         "online",
-                        "offline"
+                        "offline",
+                        "submitted",
+                        "draft_cityzen",
+                        "refused"
                       ]
+                    },
+                    "shopId": {
+                      "type": "integer",
+                      "example": 1,
+                      "description": "Unique identifier product shop"
+                    },
+                    "shopName": {
+                      "type": "string",
+                      "example": "Ma super boutique",
+                      "description": "Product shop name"
                     },
                     "sellerAdvice": {
                       "type": "string",
@@ -7022,7 +8245,7 @@
           "id": {
             "type": "integer",
             "example": 1,
-            "description": "Unique identifier of a shop"
+            "description": "Unique identifier of a product"
           },
           "name": {
             "type": "string",
@@ -7045,8 +8268,21 @@
             "description": "Status of product",
             "enum": [
               "online",
-              "offline"
+              "offline",
+              "submitted",
+              "draft_cityzen",
+              "refused"
             ]
+          },
+          "shopId": {
+            "type": "integer",
+            "example": 1,
+            "description": "Unique identifier product shop"
+          },
+          "shopName": {
+            "type": "string",
+            "example": "Ma super boutique",
+            "description": "Product shop name"
           },
           "sellerAdvice": {
             "type": "string",
@@ -7797,6 +9033,75 @@
           "disountPrice": {
             "type": "number",
             "example": 50.5
+          }
+        }
+      },
+      "Selection": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 42,
+            "description": "Unique identifier of the selection."
+          },
+          "name": {
+            "type": "string",
+            "example": "voiture",
+            "description": "Selection name."
+          },
+          "slug": {
+            "type": "string",
+            "example": "voiture-1",
+            "description": "Selection slug."
+          },
+          "description": {
+            "type": "string",
+            "example": "Selection de voitures.",
+            "description": "Description of the selection."
+          },
+          "tagIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "example": "12",
+              "description": "Tag id."
+            }
+          },
+          "startAt": {
+            "type": "string",
+            "example": "20/07/2021",
+            "description": "Date of start of selection."
+          },
+          "endAt": {
+            "type": "string",
+            "example": "27/07/2021",
+            "description": "Date of end of selection."
+          },
+          "homePage": {
+            "type": "boolean",
+            "example": false,
+            "description": "Show the selection at home."
+          },
+          "event": {
+            "type": "boolean",
+            "example": false,
+            "description": "Selection is an event."
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "active",
+              "inactive"
+            ]
+          },
+          "order": {
+            "type": "integer",
+            "example": 79,
+            "description": "Order of the  selection."
+          },
+          "imageUrl": {
+            "type": "string",
+            "example": "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg"
           }
         }
       },
