@@ -3490,19 +3490,13 @@
 
         ],
         "responses": {
-          "202": {
-            "description": "Accepted",
+          "201": {
+            "description": "Created",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "url": {
-                      "type": "string",
-                      "example": "https://exempleurl/api/products/status/10aad2e35138aa982e0d848a",
-                      "description": "Url polling"
-                    }
-                  }
+                  "$ref": "#/components/schemas/Product"
                 }
               }
             }
