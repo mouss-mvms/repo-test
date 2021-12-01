@@ -439,8 +439,8 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
         required: %w[name description brand status sellerAdvice isService categoryId variants characteristics provider shopId]
       }
 
-      response(202, 'Accepted') do
-        schema type: :object, properties: { url: { type: 'string', example: "https://exempleurl/api/products/status/10aad2e35138aa982e0d848a", description: "Url polling" } }
+      response(201, 'Created') do
+        schema type: :object, '$ref': '#/components/schemas/Product'
         run_test!
       end
 
