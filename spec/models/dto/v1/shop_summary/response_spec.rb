@@ -22,6 +22,7 @@ RSpec.describe Dto::V1::ShopSummary::Response do
           "baseline" => "pouet",
           "description" => "pouet",
           "brands_name" => [""],
+          "location"=>{"lat"=>44.8363625, "lon"=>-0.5735385000000406},
           "city_label" => "Sablé-sur-Sarthe",
           "city_slug" => "sable-sur-sarthe",
           "insee_code" => "72264",
@@ -64,6 +65,8 @@ RSpec.describe Dto::V1::ShopSummary::Response do
         expect(dto_response.description).to eq(shop_search_result["description"])
         expect(dto_response.brands_name).to eq(shop_search_result["brands_name"])
         expect(dto_response.city_label).to eq(shop_search_result["city_label"])
+        expect(dto_response.latitude).to eq(shop_search_result["location"]["lat"])
+        expect(dto_response.longitude).to eq(shop_search_result["location"]["lon"])
         expect(dto_response.city_slug).to eq(shop_search_result["city_slug"])
         expect(dto_response.insee_code).to eq(shop_search_result["insee_code"])
         expect(dto_response.territory_name).to eq(shop_search_result["territory_name"])
@@ -103,6 +106,7 @@ RSpec.describe Dto::V1::ShopSummary::Response do
           "description" => "pouet",
           "brands_name" => [""],
           "city_label" => "Sablé-sur-Sarthe",
+          "location"=>{"lat"=>44.8363625, "lon"=>-0.5735385000000406},
           "city_slug" => "sable-sur-sarthe",
           "insee_code" => "72264",
           "territory_name" => "pouet",
@@ -147,6 +151,8 @@ RSpec.describe Dto::V1::ShopSummary::Response do
         expect(dto_hash[:brandsName]).to eq(dto_response.brands_name)
         expect(dto_hash[:cityLabel]).to eq(dto_response.city_label)
         expect(dto_hash[:citySlug]).to eq(dto_response.city_slug)
+        expect(dto_hash[:latitude]).to eq(dto_response.latitude)
+        expect(dto_hash[:longitude]).to eq(dto_response.longitude)
         expect(dto_hash[:inseeCode]).to eq(dto_response.insee_code)
         expect(dto_hash[:territoryName]).to eq(dto_response.territory_name)
         expect(dto_hash[:territorySlug]).to eq(dto_response.territory_slug)
