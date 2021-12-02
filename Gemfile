@@ -74,3 +74,6 @@ end
 
 gem 'newrelic_rpm'
 
+#Pagination
+gem 'kaminari'
+

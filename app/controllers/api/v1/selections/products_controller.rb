@@ -12,9 +12,10 @@ module Api
           selection = Selection.preload(:products).find(params[:id])
           raise ApplicationController::Forbidden unless Selection.online.include?(selection)
 
-          selection_dto = Dto::V1::Selection::Response.create(selection).to_h
-          selection_products_dtos = selection.products.map { |product| Dto::V1::Product::Response.create(product).to_h }
-          response = { selection: selection_dto, products: selection_products_dtos }
+          products = paginate(selection.products)
+
+          selection_products_dtos = products.map { |product| Dto::V1::Product::Response.create(product).to_h }
+          response = { products: selection_products_dtos, page: params[:page].to_i, totalPages: products.total_pages}
           render json: response, status: :ok
         end
 
