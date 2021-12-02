@@ -39,6 +39,8 @@ module V1
               cityLabel: { type: :string, example: "New York" },
               citySlug: { type: :string, example: "new-york" },
               inseeCode: { type: :string, example: "44084" },
+              latitude: { type: 'number', example: 44.82408, description: "Shop address's latitude" },
+              longitude: { type: 'number', example: 24.13408, description: "Shop address's longitude" },
               territoryName: { type: :string, example: "Usa" },
               territorySlug: { type: :string, example: "usa" },
               departmentNumber: { type: :string, example: "44" },
