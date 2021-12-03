@@ -77,11 +77,6 @@ class ApplicationController < ActionController::API
 
     protected
 
-    def paginate(array)
-      params[:page] ||= 1
-      Kaminari.paginate_array(array).page(params[:page])
-    end
-
     def cache_path
       controller = params[:controller]
       action = params[:action]

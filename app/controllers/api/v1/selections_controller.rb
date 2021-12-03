@@ -5,7 +5,8 @@ module Api
       before_action :retrieve_user, only: [:create, :patch, :destroy]
 
       def index
-        selections = paginate(Selection.online)
+        params[:page] ||= 1
+        selections = Kaminari.paginate_array(Selection.online).page(params[:page])
         response = { selections: selections.map { |selection| Dto::V1::Selection::Response.create(selection).to_h }, page: params[:page].to_i, totalPages: selections.total_pages }
         render json: response, status: :ok
       end

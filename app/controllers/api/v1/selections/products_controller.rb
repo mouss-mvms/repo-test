@@ -9,10 +9,11 @@ module Api
         before_action :find_product, only: [:add, :remove]
 
         def index
+          params[:page] ||= 1
           selection = Selection.preload(:products).find(params[:id])
           raise ApplicationController::Forbidden unless Selection.online.include?(selection)
 
-          products = paginate(selection.products)
+          products = Kaminari.paginate_array(selection.products).page(params[:page])
 
           selection_products_dtos = products.map { |product| Dto::V1::Product::Response.create(product).to_h }
           response = { products: selection_products_dtos, page: params[:page].to_i, totalPages: products.total_pages}

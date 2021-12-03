@@ -7,7 +7,8 @@ module Api
         before_action :verify_admin
 
         def index
-          selections = paginate(Selection.all)
+          params[:page] ||= 1
+          selections = Selection.page(params[:page])
           selection_responses = selections.map { |selection| Dto::V1::Selection::Response.create(selection).to_h }
           response = { selections: selection_responses, page: params[:page].to_i, totalPages: selections.total_pages }
           render json: response, status: :ok
