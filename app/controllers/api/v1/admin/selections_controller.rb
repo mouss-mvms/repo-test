@@ -18,6 +18,12 @@ module Api
           response = Dto::V1::Selection::Response.create(selection).to_h
           render json: response, status: :ok
         end
+
+        private
+
+        def verify_admin
+          raise ApplicationController::Forbidden unless @user.is_an_admin?
+        end
       end
     end
   end

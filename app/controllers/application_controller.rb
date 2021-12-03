@@ -77,10 +77,6 @@ class ApplicationController < ActionController::API
 
     protected
 
-    def verify_admin
-      raise ApplicationController::Forbidden unless @user.is_an_admin?
-    end
-
     def paginate(array)
       params[:page] ||= 1
       Kaminari.paginate_array(array).page(params[:page])

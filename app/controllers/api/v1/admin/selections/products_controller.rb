@@ -15,6 +15,12 @@ module Api
             response = { products: selection_products_dtos, page: params[:page].to_i, totalPages: products.total_pages}
             render json: response, status: :ok
           end
+
+          private
+
+          def verify_admin
+            raise ApplicationController::Forbidden unless @user.is_an_admin?
+          end
         end
       end
     end
