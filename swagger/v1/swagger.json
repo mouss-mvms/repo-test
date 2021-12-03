@@ -258,7 +258,7 @@
                         "properties": {
                           "id": {
                             "type": "integer",
-                            "example": "3442",
+                            "example": null,
                             "description": "Unique identifier of a category."
                           },
                           "name": {
@@ -561,7 +561,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -1050,12 +1050,8 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "type": "integer"
-                  },
-                  "example": [
-                    666,
-                    42
-                  ]
+                    "$ref": "#/components/schemas/Image"
+                  }
                 }
               }
             }
@@ -2486,7 +2482,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -2759,7 +2755,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -3249,7 +3245,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -3572,7 +3568,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -5639,7 +5635,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -6079,7 +6075,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -7973,7 +7969,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {
@@ -8114,7 +8110,7 @@
         "properties": {
           "id": {
             "type": "integer",
-            "example": "3442",
+            "example": null,
             "description": "Unique identifier of a category."
           },
           "name": {
@@ -8232,6 +8228,35 @@
           "endAt",
           "discount"
         ]
+      },
+      "Image": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 42
+          },
+          "originalUrl": {
+            "type": "string",
+            "example": "https://path/to/original-image.jpg"
+          },
+          "miniUrl": {
+            "type": "string",
+            "example": "https://path/to/mini-format.jpg"
+          },
+          "thumbUrl": {
+            "type": "string",
+            "example": "https://path/to/thumb-format.jpg"
+          },
+          "squareUrl": {
+            "type": "string",
+            "example": "https://path/to/square-format.jpg"
+          },
+          "wideUrl": {
+            "type": "string",
+            "example": "https://path/to/wide-format.jpg"
+          }
+        }
       },
       "Product": {
         "type": "object",

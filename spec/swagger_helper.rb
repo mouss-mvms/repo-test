@@ -59,6 +59,7 @@ RSpec.configure do |config|
           Characteristic: V1::Examples::Response::Characteristics.to_h,
           Delivery: V1::Examples::Response::Delivery.to_h,
           GoodDeal: V1::Examples::Response::GoodDeal.to_h,
+          Image: V1::Examples::Response::Image.to_h,
           Product: V1::Examples::Response::Product.to_h,
           Review: V1::Examples::Response::Review.to_h,
           Schedule: V1::Examples::Response::Schedule.to_h,

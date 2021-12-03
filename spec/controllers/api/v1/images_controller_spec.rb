@@ -8,7 +8,7 @@ RSpec.describe Api::V1::ImagesController, type: :controller do
         request.headers["x-client-id"] = generate_token(user)
         request.env["CONTENT_TYPE"] = "multipart/form-data"
         uploaded_files = []
-        5.times do
+        2.times do
           uploaded_files << fixture_file_upload(Rails.root.join("spec/fixtures/files/images/harry-and-marv.jpg"), 'image/jpeg')
         end
 
