@@ -75,8 +75,8 @@ class ApplicationController < ActionController::API
       end
     end
 
-
     protected
+
     def cache_path
       controller = params[:controller]
       action = params[:action]
