@@ -12,6 +12,7 @@ pipelines:
           script:
             - export DATABASE_URL="postgres://ue1rgleac2brfs:pd2aece2fa947c8901d06f32fbf7c0daef02712bfc10faec1a563f3f5fbc3999e@ec2-54-74-206-102.eu-west-1.compute.amazonaws.com:5432/d88qcna1ceab3j"
             - export API_BASE_URL=`{ case $BITBUCKET_PR_DESTINATION_BRANCH in dev) echo "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev" ;; release/v*) echo "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-staging" ;; master) echo "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog" ;; esac }`
+            - export UNCLASSIFIED_CATEGORY_ID=`{ case $BITBUCKET_PR_DESTINATION_BRANCH in dev) echo "3442" ;; release/v*) echo "3527" ;; master) echo "2423" ;; esac }`
             - gem install bundler:2.2.16
             - bundle config https://gem.fury.io/mvms/ 1NRAu1-s5LftEnpweDkWewfASsrNMbVmaQ
             - bundle install
