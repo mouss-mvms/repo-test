@@ -5,16 +5,7 @@ RSpec.describe Dto::V1::Selection::Response do
     context "All ok" do
       it "should return a Dto::V1::Selection::Response" do
         image = create(:image)
-        selection = create(:selection,
-          name: "voiture",
-          description: "Selection de voitures.",
-          begin_date: "20/07/2021",
-          end_date: "27/07/2021",
-          is_home: false,
-          is_event: false,
-          state: "disabled",
-          order: 1,
-        )
+        selection = create(:online_selection)
         selection.update(image_id: image.id)
 
         dto = Dto::V1::Selection::Response.create(selection)
@@ -32,6 +23,7 @@ RSpec.describe Dto::V1::Selection::Response do
         expect(dto.event).to eq(selection.is_event)
         expect(dto.state).to eq(selection.state)
         expect(dto.order).to eq(selection.order)
+        expect(dto.products_count).to eq(selection.products.count)
       end
     end
   end
@@ -39,16 +31,7 @@ RSpec.describe Dto::V1::Selection::Response do
     context "All ok" do
       it "should return a hash representation of Dto::V1::Selection::Response" do
         image = create(:image)
-        selection = create(:selection,
-          name: "voiture",
-          description: "Selection de voitures.",
-          begin_date: "20/07/2021",
-          end_date: "27/07/2021",
-          is_home: false,
-          is_event: false,
-          state: "disabled",
-          order: 1
-        )
+        selection = create(:online_selection)
         selection.update(image_id: image.id)
 
         dto = Dto::V1::Selection::Response.create(selection)
@@ -67,6 +50,7 @@ RSpec.describe Dto::V1::Selection::Response do
         expect(dto_hash[:event]).to eq(selection.is_event)
         expect(dto_hash[:state]).to eq(selection.state)
         expect(dto_hash[:order]).to eq(selection.order)
+        expect(dto_hash[:productsCount]).to eq(selection.products.count)
       end
     end
   end
