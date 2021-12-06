@@ -258,12 +258,12 @@
                         "properties": {
                           "id": {
                             "type": "integer",
-                            "example": 1,
+                            "example": "3442",
                             "description": "Unique identifier of a category."
                           },
                           "name": {
                             "type": "string",
-                            "example": "Mobilier extérieur",
+                            "example": "Non classée",
                             "description": "Display name of a category."
                           },
                           "children": {
@@ -561,7 +561,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": 4,
+                    "example": "3442",
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -2486,7 +2486,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": 4,
+                    "example": "3442",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -2759,7 +2759,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": 4,
+                    "example": "3442",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -3249,7 +3249,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": 4,
+                    "example": "3442",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -3490,19 +3490,13 @@
 
         ],
         "responses": {
-          "202": {
-            "description": "Accepted",
+          "201": {
+            "description": "Created",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "url": {
-                      "type": "string",
-                      "example": "https://exempleurl/api/products/status/10aad2e35138aa982e0d848a",
-                      "description": "Url polling"
-                    }
-                  }
+                  "$ref": "#/components/schemas/Product"
                 }
               }
             }
@@ -3578,7 +3572,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": 4,
+                    "example": "3442",
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -5645,7 +5639,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": 4,
+                    "example": "3442",
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -6085,7 +6079,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": 4,
+                    "example": "3442",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -8120,12 +8114,12 @@
         "properties": {
           "id": {
             "type": "integer",
-            "example": 1,
+            "example": "3442",
             "description": "Unique identifier of a category."
           },
           "name": {
             "type": "string",
-            "example": "Mobilier extérieur",
+            "example": "Non classée",
             "description": "Display name of a category."
           },
           "children": {
@@ -9281,6 +9275,16 @@
                   "type": "string",
                   "example": "44084"
                 },
+                "latitude": {
+                  "type": "number",
+                  "example": 44.82408,
+                  "description": "Shop address's latitude"
+                },
+                "longitude": {
+                  "type": "number",
+                  "example": 24.13408,
+                  "description": "Shop address's longitude"
+                },
                 "territoryName": {
                   "type": "string",
                   "example": "Usa"
@@ -9561,6 +9565,16 @@
           "inseeCode": {
             "type": "string",
             "example": "44084"
+          },
+          "latitude": {
+            "type": "number",
+            "example": 44.82408,
+            "description": "Shop address's latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "example": 24.13408,
+            "description": "Shop address's longitude"
           },
           "territoryName": {
             "type": "string",

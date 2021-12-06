@@ -8,12 +8,12 @@ module V1
             properties: {
               id: {
                 type: 'integer',
-                example: 1,
+                example: ENV['UNCLASSIFIED_CATEGORY_ID'],
                 description: 'Unique identifier of a category.'
               },
               name: {
                 type: 'string',
-                example: 'Mobilier extérieur',
+                example: 'Non classée',
                 description: 'Display name of a category.'
               },
               children: {

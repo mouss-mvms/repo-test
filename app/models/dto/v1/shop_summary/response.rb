@@ -2,7 +2,7 @@ module Dto
   module V1
     module ShopSummary
       class Response
-        attr_reader :_index, :_type, :_id, :_score, :id, :name, :created_at, :updated_at, :slug, :shop_url, :in_holidays, :category_tree_ids, :category_tree_names, :baseline, :description, :brands_name, :city_label, :city_slug, :insee_code, :territory_name, :territory_slug, :department_number, :deleted_at, :number_of_online_products, :number_of_orders, :image_url, :coupons, :pictogram_url, :services, :is_template, :score, :indexed_at
+        attr_reader :_index, :_type, :_id, :_score, :id, :name, :created_at, :updated_at, :slug, :shop_url, :in_holidays, :category_tree_ids, :category_tree_names, :baseline, :description, :brands_name, :city_label, :city_slug, :insee_code, :territory_name, :territory_slug, :department_number, :deleted_at, :number_of_online_products, :number_of_orders, :image_url, :coupons, :pictogram_url, :services, :is_template, :score, :indexed_at, :latitude, :longitude
 
         def initialize(**args)
           @_index = args[:_index]
@@ -37,6 +37,8 @@ module Dto
           @is_template = args[:is_template]
           @score = args[:score]
           @indexed_at = args[:indexed_at]
+          @latitude = args.dig(:location, :lat)
+          @longitude = args.dig(:location, :lon)
         end
 
         def self.create(shop_search_result)
@@ -64,6 +66,8 @@ module Dto
           hash[:cityLabel] = city_label if fields.nil? || (fields.any? && fields.include?("cityLabel"))
           hash[:citySlug] = city_slug if fields.nil? || (fields.any? && fields.include?("citySlug"))
           hash[:inseeCode] = insee_code if fields.nil? || (fields.any? && fields.include?("inseeCode"))
+          hash[:latitude] = latitude&.to_f if fields.nil? || (fields.any? && fields.include?("latitude"))
+          hash[:longitude] = longitude&.to_f if fields.nil? || (fields.any? && fields.include?("longitude"))
           hash[:territoryName] = territory_name if fields.nil? || (fields.any? && fields.include?("territoryName"))
           hash[:territorySlug] = territory_slug if fields.nil? || (fields.any? && fields.include?("territorySlug"))
           hash[:departmentNumber] = department_number if fields.nil? || (fields.any? && fields.include?("departmentNumber"))
