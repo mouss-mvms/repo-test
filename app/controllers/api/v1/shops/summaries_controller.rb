@@ -31,14 +31,12 @@ module Api
               raise ApplicationController::NotFound.new('Location not found')
             end
             if search_params[:perimeter]
-              raise ActionController::BadRequest.new("excludeLocation params should be a boolean.") if search_params[:exclude_location] && !([true, false].include? search_params[:exclude_location])
-              exclude_location = [true, false].include?(search_params[:exclude_location]) ? search_params[:exclude_location] : false
               search_criterias.remove(:insee_code, :territory_slug)
               case search_params[:perimeter]
               when 'department'
-                search_criterias.and(::Criterias::CloseToYou.new(nil, insee_code, except_current_cities: exclude_location))
+                search_criterias.and(::Criterias::CloseToYou.new(nil, insee_code, except_current_cities: search_params[:exclude_location]))
               when 'country'
-                search_criterias.and(::Criterias::InCountry.new(insee_code, except_current_department: exclude_location))
+                search_criterias.and(::Criterias::InCountry.new(insee_code, except_current_department: search_params[:exclude_location]))
               end
             end
           else
@@ -84,7 +82,7 @@ module Api
           search_params[:random] = params[:sortBy] && params[:sortBy] == 'random'
           search_params[:page] = params[:page] ? params[:page] : "1"
           search_params[:per_page] = params[:perPage] if params[:perPage]
-          search_params[:exclude_location] = params[:excludeLocation]
+          search_params[:exclude_location] = (params[:excludeLocation] == false)
           search_params[:services] = params[:services]
           search_params
         end

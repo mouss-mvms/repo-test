@@ -12,16 +12,6 @@ RSpec.describe Api::V1::Shops::SummariesController, type: :controller do
             expect(response.body).to eq(Dto::Errors::NotFound.new('Location not found').to_h.to_json)
           end
         end
-
-        context 'ExcludeLocation params is not a boolean' do
-          it 'should return 400 HTTP Status' do
-            city = create(:city)
-            post :search, params: { location: city.slug, perimeter: 'department',  excludeLocation: "false"}
-
-            expect(response).to have_http_status(:bad_request)
-            expect(response.body).to eq(Dto::Errors::BadRequest.new('excludeLocation params should be a boolean.').to_h.to_json)
-          end
-        end
       end
       context 'GeolocOptions' do
         context 'longitude is missing' do
@@ -65,7 +55,7 @@ RSpec.describe Api::V1::Shops::SummariesController, type: :controller do
           end
         end
 
-        context 'PerPage params is not an integer' do
+        context 'PerPage params is not in the range' do
           it 'should return 400 HTTP Status' do
             city = create(:city)
             post :search, params: { location: city.slug, perPage: 3000000 }
