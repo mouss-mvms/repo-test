@@ -82,7 +82,7 @@ module Api
           search_params[:random] = params[:sortBy] && params[:sortBy] == 'random'
           search_params[:page] = params[:page] ? params[:page] : "1"
           search_params[:per_page] = params[:perPage] if params[:perPage]
-          search_params[:exclude_location] = (params[:excludeLocation] == false)
+          search_params[:exclude_location] = (params[:excludeLocation] == true)
           search_params[:services] = params[:services]
           search_params
         end
