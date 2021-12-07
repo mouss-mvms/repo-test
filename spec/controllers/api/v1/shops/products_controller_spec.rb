@@ -47,6 +47,25 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
           expect(Product.where(id: product_ids).to_a).to eq(online_products)
         end
 
+        it "should return http status 304" do
+          shop = create(:shop)
+          products = [
+            create(:product, status: "online", position: 1, shop: shop),
+            create(:product, status: "online", position: 2, shop: shop),
+            create(:product, status: "offline", shop: shop)
+          ]
+
+          online_products = Product.where(status: "online").sort_by(&:position)
+
+          allow(Product).to receive(:search).and_return(online_products)
+
+          get :index, params: { id: shop.id }
+          should respond_with(200)
+
+          get :index, params: { id: shop.id }
+          should respond_with(304)
+        end
+
         it 'get products matching query' do
           products = [
             create(:available_product, name: 'patator', status: "online"),

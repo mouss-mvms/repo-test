@@ -22,8 +22,9 @@ module Api
           sort_by = Requests::ProductSearches.new.sort_by(sort_by)
           query = search_params[:search_query] ? search_params[:search_query] : QUERY_ALL
 
-          products = Product.search(query, where: search_criterias.create, order: sort_by, page: search_params[:page], per_page: PER_PAGE)
-          response = products.map {|product| Dto::V1::Product::Response.create(product).to_h}
+          search_results = Product.search(query, where: search_criterias.create, order: sort_by, page: search_params[:page], per_page: PER_PAGE, load: false)
+          products = search_results.map { |product| product }
+          response = products.map { |product| Dto::V1::ProductSummary::Response.create(product.deep_symbolize_keys).to_h }
           render json: response, per_page: PER_PAGE
         end
 

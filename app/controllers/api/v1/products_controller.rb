@@ -5,7 +5,8 @@ module Api
       before_action :retrieve_user, only: [:update, :create, :destroy, :patch_auth]
 
       def show
-        render json: Dto::V1::Product::Response.create(Product.find(params[:id])).to_h, status: :ok
+        product = Product.find(params[:id])
+        return render json: Dto::V1::Product::Response.create(product).to_h, status: :ok if stale?(product)
       end
 
       def update

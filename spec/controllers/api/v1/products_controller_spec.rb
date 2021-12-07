@@ -5763,6 +5763,17 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
         expect(result["name"]).to eq(product.name)
         expect(result["slug"]).to eq(product.slug)
       end
+
+      it "should return 304 HTTP Status with product" do
+        product = create(:product)
+        get :show, params: { id: product.id }
+        should respond_with(200)
+
+        etag = response.headers["ETag"]
+        request.env["HTTP_IF_NONE_MATCH"] = etag
+        get :show, params: { id: product.id }
+        should respond_with(304)
+      end
     end
 
     context "Product not found" do
