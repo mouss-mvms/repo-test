@@ -4,6 +4,9 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
 
   describe "GET #index" do
     context "All ok" do
+      before(:each) do
+        Selection.destroy_all
+      end
       context "No page params" do
         it "should return 200 HTTP status and page 1 of online selections (16 per page)" do
           selections = []
