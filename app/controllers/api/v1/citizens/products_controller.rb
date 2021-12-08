@@ -122,7 +122,7 @@ module Api
                          end
             raise ActionController::BadRequest.new("You can't pass more than 5 image ids") if image_urls.count > 5
 
-            hash[:imageUrls] = image_urls
+            hash[:image_urls] = image_urls
             if v[:goodDeal]
               hash[:good_deal] = {}
               hash[:good_deal][:start_at] = v[:goodDeal][:startAt]
