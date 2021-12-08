@@ -596,6 +596,7 @@
                         },
                         "imageIds": {
                           "type": "array",
+                          "maxItems": 5,
                           "items": {
                             "type": "number"
                           },
@@ -607,7 +608,22 @@
                           "default": [
 
                           ],
-                          "description": "List of product images ids"
+                          "description": "List of product images ids (required if no imageUrls)"
+                        },
+                        "imageUrls": {
+                          "type": "array",
+                          "maxItems": 5,
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": [
+                            "https://path/to/image1.jpg",
+                            "https://path/to/image2.jpg"
+                          ],
+                          "default": [
+
+                          ],
+                          "description": "List of product images urls (required if no imageIds)"
                         },
                         "goodDeal": {
                           "type": "object",
@@ -659,7 +675,8 @@
                       },
                       "required": [
                         "characteristics",
-                        "imageIds"
+                        "imageIds",
+                        "imageUrls"
                       ]
                     }
                   },
@@ -1050,12 +1067,8 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "type": "integer"
-                  },
-                  "example": [
-                    666,
-                    42
-                  ]
+                    "$ref": "#/components/schemas/Image"
+                  }
                 }
               }
             }
@@ -8684,6 +8697,35 @@
           "endAt",
           "discount"
         ]
+      },
+      "Image": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 42
+          },
+          "originalUrl": {
+            "type": "string",
+            "example": "https://path/to/original-image.jpg"
+          },
+          "miniUrl": {
+            "type": "string",
+            "example": "https://path/to/mini-format.jpg"
+          },
+          "thumbUrl": {
+            "type": "string",
+            "example": "https://path/to/thumb-format.jpg"
+          },
+          "squareUrl": {
+            "type": "string",
+            "example": "https://path/to/square-format.jpg"
+          },
+          "wideUrl": {
+            "type": "string",
+            "example": "https://path/to/wide-format.jpg"
+          }
+        }
       },
       "Product": {
         "type": "object",
