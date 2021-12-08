@@ -298,26 +298,20 @@
           "schema": {
             "type": "string"
           }
-        },
-        {
-          "name": "If-None-Match",
-          "in": "header",
-          "description": "Etag checker.",
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
-          "name": "Etag",
-          "in": "header",
-          "description": "Etag.",
-          "schema": {
-            "type": "string"
-          }
         }
       ],
       "get": {
         "summary": "retrieve products of a citizen",
+        "parameters": [
+          {
+            "name": "If-None-Match",
+            "in": "header",
+            "description": "Etag checker.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "tags": [
           "Citizens"
         ],
@@ -342,6 +336,9 @@
                 }
               }
             }
+          },
+          "304": {
+            "description": "Not Modified"
           },
           "400": {
             "description": "Bad request",
@@ -1383,6 +1380,16 @@
       ],
       "get": {
         "summary": "Get reviews for a product.",
+        "parameters": [
+          {
+            "name": "If-None-Match",
+            "in": "header",
+            "description": "Etag checker.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "tags": [
           "Reviews"
         ],
@@ -1407,6 +1414,9 @@
                 }
               }
             }
+          },
+          "304": {
+            "description": "Not Modified"
           },
           "400": {
             "description": "Bad request",
@@ -3012,6 +3022,16 @@
       },
       "get": {
         "summary": "Retrieve a product",
+        "parameters": [
+          {
+            "name": "If-None-Match",
+            "in": "header",
+            "description": "Etag checker.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "tags": [
           "Products"
         ],
@@ -3034,6 +3054,9 @@
                 }
               }
             }
+          },
+          "304": {
+            "description": "Not Modified"
           },
           "404": {
             "description": "Product not found",
@@ -5597,6 +5620,16 @@
       ],
       "get": {
         "summary": "List of deliveries by shop",
+        "parameters": [
+          {
+            "name": "If-None-Match",
+            "in": "header",
+            "description": "Etag checker.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "tags": [
           "Deliveries"
         ],
@@ -5621,6 +5654,9 @@
                 }
               }
             }
+          },
+          "304": {
+            "description": "Not Modified"
           }
         }
       }
@@ -6858,6 +6894,16 @@
       ],
       "get": {
         "summary": "Get reviews for a shop.",
+        "parameters": [
+          {
+            "name": "If-None-Match",
+            "in": "header",
+            "description": "Etag checker.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "tags": [
           "Reviews"
         ],
@@ -6882,6 +6928,9 @@
                 }
               }
             }
+          },
+          "304": {
+            "description": "Not Modified"
           },
           "404": {
             "description": "Product not found",
@@ -6927,6 +6976,16 @@
       ],
       "get": {
         "summary": "get shop's schedules",
+        "parameters": [
+          {
+            "name": "If-None-Match",
+            "in": "header",
+            "description": "Etag checker.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "tags": [
           "Schedules"
         ],
@@ -6951,6 +7010,9 @@
                 }
               }
             }
+          },
+          "304": {
+            "description": "Not Modified"
           },
           "404": {
             "description": "Not found",
@@ -7197,6 +7259,16 @@
       ],
       "get": {
         "summary": "shop informations",
+        "parameters": [
+          {
+            "name": "If-None-Match",
+            "in": "header",
+            "description": "Etag checker.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "tags": [
           "Shops"
         ],
@@ -7219,6 +7291,9 @@
                 }
               }
             }
+          },
+          "304": {
+            "description": "Not Modified"
           },
           "404": {
             "description": "Not found",

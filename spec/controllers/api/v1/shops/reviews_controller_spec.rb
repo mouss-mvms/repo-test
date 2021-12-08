@@ -14,6 +14,20 @@ RSpec.describe Api::V1::Shops::ReviewsController, type: :controller do
         expect(response_body).to be_an_instance_of(Array)
         expect(response_body.count).to eq(2)
       end
+
+      it "should return HTTP status 304" do
+        shop = create(:shop)
+        user = create(:user)
+        shop.reviews << [create(:review, mark: 5, user_id: user.id, content: "Love this shop."), create(:review, mark: 4, user_id: user.id, content: "Like this product.")]
+
+        get :index, params: { id: shop.id }
+        should respond_with(200)
+
+        etag = response.headers["ETag"]
+        request.env["HTTP_IF_NONE_MATCH"] = etag
+        get :index, params: { id: shop.id }
+        should respond_with(304)
+      end
     end
 
     context "Bad params" do
