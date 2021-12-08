@@ -596,6 +596,7 @@
                         },
                         "imageIds": {
                           "type": "array",
+                          "maxItems": 5,
                           "items": {
                             "type": "number"
                           },
@@ -607,7 +608,22 @@
                           "default": [
 
                           ],
-                          "description": "List of product images ids"
+                          "description": "List of product images ids (required if no imageUrls)"
+                        },
+                        "imageUrls": {
+                          "type": "array",
+                          "maxItems": 5,
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": [
+                            "https://path/to/image1.jpg",
+                            "https://path/to/image2.jpg"
+                          ],
+                          "default": [
+
+                          ],
+                          "description": "List of product images urls (required if no imageIds)"
                         },
                         "goodDeal": {
                           "type": "object",
@@ -659,7 +675,8 @@
                       },
                       "required": [
                         "characteristics",
-                        "imageIds"
+                        "imageIds",
+                        "imageUrls"
                       ]
                     }
                   },
@@ -712,11 +729,11 @@
         }
       ],
       "patch": {
-        "summary": "Update a product",
+        "summary": "Update a product for a citizen.",
         "tags": [
           "Products"
         ],
-        "description": "Update product",
+        "description": "Update product for a citizen.",
         "security": [
           {
             "authorization": [
@@ -961,10 +978,32 @@
                     "example": "Air jordan",
                     "description": "Name of product"
                   },
+                  "description": {
+                    "type": "string",
+                    "example": "Chaussures trop bien",
+                    "description": "Description of product"
+                  },
                   "brand": {
                     "type": "string",
-                    "example": "Nike",
-                    "description": "Brand of product"
+                    "example": "Chaussures trop bien",
+                    "description": "Description of product"
+                  },
+                  "status": {
+                    "type": "string",
+                    "example": "submitted",
+                    "description": "Status of product",
+                    "enum": [
+                      "online",
+                      "offline",
+                      "submitted",
+                      "draft_cityzen",
+                      "refused"
+                    ]
+                  },
+                  "sellerAdvice": {
+                    "type": "string",
+                    "example": "Taille petite, prendre une demi pointure au dessus",
+                    "description": "Advice from seller of product"
                   },
                   "isService": {
                     "type": "boolean",
@@ -973,23 +1012,58 @@
                   },
                   "citizenAdvice": {
                     "type": "string",
-                    "example": "Ce produit est super, je recommande !",
-                    "description": "Citizen advice of product"
+                    "example": "Produit trouvé un commercant trop sympa",
+                    "description": "Advice from citizen of product"
+                  },
+                  "categoryId": {
+                    "type": "integer",
+                    "example": null,
+                    "description": "Category id of product"
+                  },
+                  "shopId": {
+                    "type": "integer",
+                    "example": 453,
+                    "description": "Shop id of product"
                   },
                   "variants": {
                     "type": "array",
                     "items": {
                       "type": "object",
                       "properties": {
-                        "id": {
-                          "type": "integer",
-                          "example": 67,
-                          "description": "Id of product's variant wanted to update (No id means new variant for the product)"
-                        },
                         "basePrice": {
                           "type": "number",
                           "example": 44.99,
-                          "description": "Price of product's variant (Required if new variant)"
+                          "description": "Price of product's variant"
+                        },
+                        "weight": {
+                          "type": "number",
+                          "example": 0.56,
+                          "description": "Weight of product's variant (in Kg)"
+                        },
+                        "quantity": {
+                          "type": "integer",
+                          "example": 9,
+                          "description": "Stock of product's variant"
+                        },
+                        "isDefault": {
+                          "type": "boolean",
+                          "example": true,
+                          "description": "Tell if this variant is the product's default variant"
+                        },
+                        "imageIds": {
+                          "type": "array",
+                          "items": {
+                            "type": "number"
+                          },
+                          "example": [
+                            234,
+                            45566,
+                            345
+                          ],
+                          "default": [
+
+                          ],
+                          "description": "List of product images ids (required if no imageUrls)"
                         },
                         "imageUrls": {
                           "type": "array",
@@ -997,16 +1071,69 @@
                             "type": "string"
                           },
                           "example": [
-                            "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr",
-                            "https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg"
+                            "https://path/to/image1.jpg",
+                            "https://path/to/image2.jpg"
                           ],
                           "default": [
 
                           ],
-                          "description": "List of product images urls"
+                          "description": "List of product images urls (required if no imageIds)"
+                        },
+                        "goodDeal": {
+                          "type": "object",
+                          "properties": {
+                            "startAt": {
+                              "type": "string",
+                              "example": "20/07/2021",
+                              "description": "Date of start of good deal"
+                            },
+                            "endAt": {
+                              "type": "string",
+                              "example": "27/07/2021",
+                              "description": "Date of end of good deal"
+                            },
+                            "discount": {
+                              "type": "integer",
+                              "example": 45,
+                              "description": "Amount of discount (in %)"
+                            }
+                          }
+                        },
+                        "characteristics": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string",
+                                "example": "color",
+                                "description": "Name of characteristic"
+                              },
+                              "value": {
+                                "type": "string",
+                                "example": "Bleu",
+                                "description": "Value of characteristic"
+                              }
+                            }
+                          }
                         }
                       }
                     }
+                  },
+                  "origin": {
+                    "type": "string",
+                    "example": "France",
+                    "description": "Origin of product. (This field is mandatory for some categories)"
+                  },
+                  "allergens": {
+                    "type": "string",
+                    "example": "Contient des traces de fruit à coques",
+                    "description": "Advice of potencial allergens. (This field is mandatory for some categories)"
+                  },
+                  "composition": {
+                    "type": "string",
+                    "example": "Oeuf, sucre",
+                    "description": "Composition of product. (This field is mandatory for some categories)"
                   }
                 }
               }
