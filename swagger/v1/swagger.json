@@ -4239,23 +4239,32 @@
       }
     },
     "/api/v1/selections/{id}/products": {
-      "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "description": "Unique identifier of a selection.",
-          "required": true,
-          "schema": {
-            "type": "integer"
-          }
-        }
-      ],
       "get": {
-        "summary": "Returns an online selection and all of its products.",
+        "summary": "Returns products of an online selection.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Unique identifier of a selection.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "example": 1,
+            "description": "Number of desired page.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
         "tags": [
           "Selections"
         ],
-        "description": "Returns an online selection and all of its products.",
+        "description": "Returns products of an online selection.",
         "security": [
           {
             "authorization": [
@@ -4271,14 +4280,173 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "selection": {
-                      "$ref": "#/components/schemas/Selection"
-                    },
                     "products": {
                       "type": "array",
                       "items": {
                         "$ref": "#/components/schemas/Product"
                       }
+                    },
+                    "page": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "totalPages": {
+                      "type": "integer",
+                      "example": 19
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 403,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Selection not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Resource not found",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Not found",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/admin/selections/{id}/products": {
+      "get": {
+        "summary": "Returns all products of a selection.",
+        "parameters": [
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Auth token of user",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Unique identifier of a selection.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "example": 1,
+            "description": "Number of desired page.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "tags": [
+          "Selections"
+        ],
+        "description": "Returns all products of a selection.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "products": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Product"
+                      }
+                    },
+                    "page": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "totalPages": {
+                      "type": "integer",
+                      "example": 19
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 401,
+                      "description": "Status of an error."
                     }
                   }
                 }
@@ -4553,6 +4721,124 @@
                   "description",
                   "imageUrl"
                 ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/admin/selections": {
+      "get": {
+        "summary": "List all selections for admin users.",
+        "parameters": [
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Auth token of user",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "example": 1,
+            "description": "Number of desired page.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "tags": [
+          "Selections"
+        ],
+        "description": "List all selections for admin users.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "selections": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Selection"
+                      }
+                    },
+                    "page": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "totalPages": {
+                      "type": "integer",
+                      "example": 19
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 401,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 403,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
               }
             }
           }
@@ -4907,7 +5193,147 @@
         }
       }
     },
+    "/api/v1/auth/admin/selections/{id}": {
+      "parameters": [
+        {
+          "name": "x-client-id",
+          "in": "header",
+          "description": "Auth token of user",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of a selection.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Returns a selection",
+        "tags": [
+          "Selections"
+        ],
+        "description": "Returns a selection.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Selection"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 401,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 403,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Resource not found",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Not found",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/selections": {
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "example": 1,
+          "description": "Number of desired page.",
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
       "get": {
         "summary": "Lists all the online selections",
         "tags": [
@@ -4927,9 +5353,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Selection"
+                  "type": "object",
+                  "properties": {
+                    "selections": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Selection"
+                      }
+                    },
+                    "page": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "totalPages": {
+                      "type": "integer",
+                      "example": 19
+                    }
                   }
                 }
               }
@@ -7436,6 +7875,13 @@
                     "example": 1,
                     "description": "Search page number."
                   },
+                  "perPage": {
+                    "type": "integer",
+                    "example": 12,
+                    "description": "Number of results per page.",
+                    "minimum": 1,
+                    "maximum": 16
+                  },
                   "perimeter": {
                     "type": "string",
                     "enum": [
@@ -7453,6 +7899,12 @@
                       "highest-score",
                       "best-sells"
                     ]
+                  },
+                  "excludeLocation": {
+                    "type": "boolean",
+                    "example": false,
+                    "default": false,
+                    "description": "Only with a search with location params. Exclude the city of the search when perimeter params is department. Exclude city department from search when perimeter params is country."
                   },
                   "geolocOptions": {
                     "type": "object",
@@ -9248,6 +9700,11 @@
           "imageUrl": {
             "type": "string",
             "example": "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg"
+          },
+          "productsCount": {
+            "type": "integer",
+            "example": 100,
+            "description": "Number of a selection's produ"
           }
         }
       },
