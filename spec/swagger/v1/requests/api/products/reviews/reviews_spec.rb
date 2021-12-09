@@ -54,6 +54,8 @@ RSpec.describe 'api/v1/products/reviews', swagger_doc: 'v1/swagger.json', type: 
   path '/api/v1/products/{id}/reviews' do
     parameter name: :id, in: :path, type: :integer, description: 'Unique identifier of the products.', required: true
     get('Get reviews for a product.') do
+      parameter name: 'If-None-Match', in: :header, type: :string, description: 'Etag checker.'
+
       tags 'Reviews'
       produces 'application/json'
       description 'Get reviews for a product.'
@@ -61,6 +63,10 @@ RSpec.describe 'api/v1/products/reviews', swagger_doc: 'v1/swagger.json', type: 
 
       response(200, 'Successful') do
         schema type: :array, items: { '$ref': '#/components/schemas/Review' }
+        run_test!
+      end
+
+      response(304, 'Not Modified') do
         run_test!
       end
 

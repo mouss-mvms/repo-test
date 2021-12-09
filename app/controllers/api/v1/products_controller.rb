@@ -5,7 +5,8 @@ module Api
       before_action :retrieve_user, only: [:update, :create, :destroy, :patch_auth]
 
       def show
-        render json: Dto::V1::Product::Response.create(Product.find(params[:id])).to_h, status: :ok
+        product = Product.find(params[:id])
+        return render json: Dto::V1::Product::Response.create(product).to_h, status: :ok if stale?(product)
       end
 
       def update
@@ -90,6 +91,7 @@ module Api
           raise ActionController::ParameterMissing.new('variant.provider') unless req_variant[:provider]
           raise ActionController::ParameterMissing.new('variant.provider.externalVariantId') unless req_variant[:provider][:external_variant_id]
           raise ActionController::ParameterMissing.new('variant.provider.name') unless req_variant[:provider][:name]
+          raise ApplicationController::Forbidden if product_params[:provider][:name] != req_variant[:provider][:name]
         end
         dto_product_request = Dto::V1::Product::Request.new(product_params)
 

@@ -10,9 +10,10 @@ module Api
 
         def index
           deliveries = @shop.active_services
-          response = deliveries.map { |delivery| Dto::V1::Delivery::Response.create(delivery).to_h }
-
-          render json: response, status: :ok
+          if stale?(deliveries)
+            response = deliveries.map { |delivery| Dto::V1::Delivery::Response.create(delivery).to_h }
+            render json: response, status: :ok
+          end
         end
 
         def update

@@ -8,7 +8,9 @@ module Api
         def index
           shop = ::Shop.find(params[:id])
           reviews = shop.reviews
-          render json: reviews.map { |review| Dto::V1::Review::Response.create(review).to_h }, status: :ok
+          if stale?(reviews)
+            render json: reviews.map { |review| Dto::V1::Review::Response.create(review).to_h }, status: :ok
+          end
         end
 
         def create

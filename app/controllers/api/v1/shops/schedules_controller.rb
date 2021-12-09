@@ -6,11 +6,12 @@ module Api
         before_action :retrieve_user, only: [:update]
 
         def index
-          response = []
-          Shop.find(params[:id]).schedules.each do |schedule|
-            response << Dto::V1::Schedule::Response.create(schedule)
+          shop = Shop.find(params[:id])
+          schedules = shop.schedules
+          if stale?(schedules)
+            response = schedules.map { |schedule|  Dto::V1::Schedule::Response.create(schedule) }
+            render json: response, status: :ok
           end
-          return render json: response, status: :ok
         end
 
         def update

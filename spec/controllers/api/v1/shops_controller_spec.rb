@@ -180,6 +180,20 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         expect(response).to have_http_status(200)
         expect(response.body).to eq(Dto::V1::Shop::Response.create(shop).to_h.to_json)
       end
+
+      it 'should return http status 304' do
+        shop = create(:shop)
+        shop.address.addressable = shop
+        shop.save
+        get :show, params: {id: shop.id}
+        expect(response).to have_http_status(200)
+
+        etag = response.headers["ETag"]
+        request.env["HTTP_IF_NONE_MATCH"] = etag
+        get :show, params: {id: shop.id}
+
+        expect(response).to have_http_status(304)
+      end
     end
 
     context "Shop id is 0" do

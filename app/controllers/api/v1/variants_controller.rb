@@ -48,7 +48,13 @@ module Api
               hash[:characteristics] << characteristic
             }
           end
-          hash[:external_variant_id] = params[:externalVariantId]
+          if params[:provider]
+            provider_params = ActionController::Parameters.new(JSON.parse(params[:provider]))
+            provider = {}
+            provider[:name] = provider_params[:name]
+            provider[:external_variant_id] = provider_params[:externalVariantId]
+            hash[:provider] = provider
+          end
           hash[:files] = params[:files]
           hash
       end

@@ -13,6 +13,18 @@ RSpec.describe Api::V1::Shops::SchedulesController do
         result = JSON.parse(response.body)
         expect(result.count).to eq(shop.schedules.count)
       end
+
+      it 'should return 304 HTTP Status' do
+        shop = create(:shop)
+        get :index, params: { id: shop.id }
+        expect(response).to have_http_status(:ok)
+
+        etag = response.headers["ETag"]
+        request.env["HTTP_IF_NONE_MATCH"] = etag
+
+        get :index, params: { id: shop.id }
+        expect(response).to have_http_status(304)
+      end
     end
 
     context 'Shop not found' do
