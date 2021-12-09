@@ -224,6 +224,8 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
     end
 
     get('Retrieve a product') do
+      parameter name: 'If-None-Match', in: :header, type: :string, description: 'Etag checker.'
+      
       tags 'Products'
       produces 'application/json'
       description 'Retrieve a product'
@@ -231,6 +233,10 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
 
       response(200, 'Successful') do
         schema type: :object, '$ref': '#/components/schemas/Product'
+        run_test!
+      end
+
+      response(304, 'Not Modified') do
         run_test!
       end
 

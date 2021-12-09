@@ -5,6 +5,7 @@ RSpec.describe 'api/v1/citizens/products', swagger_doc: 'v1/swagger.json', type:
     parameter name: 'id', in: :path, type: :string, description: 'Unique identifier of the citizen.'
 
     get('retrieve products of a citizen') do
+      parameter name: 'If-None-Match', in: :header, type: :string, description: 'Etag checker.'
       tags 'Citizens'
       produces 'application/json'
       description 'Retrieve a product from a citizen.'
@@ -12,6 +13,10 @@ RSpec.describe 'api/v1/citizens/products', swagger_doc: 'v1/swagger.json', type:
 
       response(200, 'Successful') do
         schema type: :array, items: {'$ref': '#/components/schemas/Product'}
+        run_test!
+      end
+
+      response(304, 'Not Modified') do
         run_test!
       end
 

@@ -231,6 +231,20 @@ RSpec.describe Api::V1::Products::ReviewsController, type: :controller do
           result = JSON.parse(response.body)
           expect(result.count).to eq(2)
         end
+
+        it 'should return 304 HTTP Status' do
+          user = create(:citizen_user)
+          product = create(:product)
+          product.reviews << [create(:review, mark: 4, user_id: user.id, content: "Love this product."), create(:review, mark: 4, user_id: user.id, content: "Like this product.")]
+
+          post :index, params: { id: product.id}
+          expect(response).to have_http_status(:ok)
+
+          etag = response.headers["ETag"]
+          request.env["HTTP_IF_NONE_MATCH"] = etag
+          post :index, params: { id: product.id}
+          expect(response).to have_http_status(304)
+        end
       end
     end
 

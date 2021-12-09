@@ -19,6 +19,18 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
         product_ids = response_body.map { |p| p.symbolize_keys[:id] }
         expect(Product.where(id: product_ids).actives.to_a).to eq(products)
       end
+
+      it "should return 304 HTTP status" do
+        citizen.products << products
+        citizen.save
+        get :index, params: { id: citizen.id }
+        expect(response).to have_http_status(:ok)
+
+        etag = response.headers["ETag"]
+        request.env["HTTP_IF_NONE_MATCH"] = etag
+        get :index, params: { id: citizen.id }
+        expect(response).to have_http_status(304)
+      end
     end
 
     context "with invalid params" do
