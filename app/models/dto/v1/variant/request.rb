@@ -16,7 +16,10 @@ module Dto
           @good_deal = Dto::V1::GoodDeal::Request.new(**args[:good_deal]) if args[:good_deal]
           @characteristics = []
           args[:characteristics]&.each { |c| @characteristics << Dto::V1::Characteristic::Request.new(**c) }
-          @files = args[:files]
+          @files = []
+          args[:files]&.each do |file|
+            @files << file unless file.blank?
+          end
           if args[:provider]
             @provider = {
               name: args[:provider][:name],
