@@ -1626,7 +1626,8 @@
                   "sortBy": {
                     "type": "string",
                     "enum": [
-                      "highest-score",
+                      "highest-score-mvms",
+                      "highest-score-elastic",
                       "price-asc",
                       "price-desc",
                       "newest",
@@ -7907,7 +7908,8 @@
                       "name-desc",
                       "random",
                       "distance",
-                      "highest-score",
+                      "highest-score-mvms",
+                      "highest-score-elastic",
                       "best-sells"
                     ]
                   },
