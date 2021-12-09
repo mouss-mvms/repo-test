@@ -7828,7 +7828,7 @@
         }
       }
     },
-    "api/v1/auth/admin/tags": {
+    "/api/v1/auth/admin/tags": {
       "parameters": [
         {
           "name": "x-client-id",
