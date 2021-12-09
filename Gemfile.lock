@@ -10,7 +10,7 @@ GEM
       redcarpet
       rubyzip (>= 1.0.0)
       will_paginate
-    mvms-core (2.5.357)
+    mvms-core (2.5.377)
       MailchimpMarketing (~> 3.0.34)
       MailchimpTransactional (~> 1.0.40)
       active_model_otp
@@ -22,6 +22,7 @@ GEM
       data_migrate
       devise
       elasticsearch (= 7.13.3)
+      emailable
       gdpr_mvms_custom (= 1.0.0)
       google-api-client (~> 0.11)
       hubspot-api-client
@@ -102,16 +103,16 @@ GEM
     awesome_nested_set (3.4.0)
       activerecord (>= 4.0.0, < 7.0)
     aws-eventstream (1.2.0)
-    aws-partitions (1.534.0)
-    aws-sdk-core (3.123.0)
+    aws-partitions (1.540.0)
+    aws-sdk-core (3.124.0)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.525.0)
       aws-sigv4 (~> 1.1)
       jmespath (~> 1.0)
-    aws-sdk-kms (1.51.0)
+    aws-sdk-kms (1.52.0)
       aws-sdk-core (~> 3, >= 3.122.0)
       aws-sigv4 (~> 1.1)
-    aws-sdk-s3 (1.107.0)
+    aws-sdk-s3 (1.109.0)
       aws-sdk-core (~> 3, >= 3.122.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.4)
@@ -160,10 +161,11 @@ GEM
     elasticsearch-transport (7.13.3)
       faraday (~> 1)
       multi_json
+    emailable (3.1.1)
     erubi (1.10.0)
     ethon (0.15.0)
       ffi (>= 1.15.0)
-    excon (0.88.0)
+    excon (0.89.0)
     factory_bot (6.2.0)
       activesupport (>= 5.0.0)
     factory_bot_rails (6.2.0)
@@ -221,7 +223,7 @@ GEM
       multi_json (~> 1.11)
       os (>= 0.9, < 2.0)
       signet (>= 0.16, < 2.a)
-    groupdate (5.2.2)
+    groupdate (5.2.3)
       activesupport (>= 5)
     hashie (3.6.0)
     http-accept (1.7.0)
@@ -480,7 +482,7 @@ DEPENDENCIES
   kaminari
   listen (~> 3.3)
   memcachier
-  mvms-core (= 2.5.357)!
+  mvms-core (= 2.5.377)!
   newrelic_rpm
   omniauth (= 1.3.1)
   pagy

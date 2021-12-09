@@ -165,7 +165,13 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
                     required: %w[name value]
                   }
                 },
-                externalVariantId: { type: :string, example: '67ty7', description: 'Id of variant saved by the provider' }
+                provider: {
+                  type: :object,
+                  properties: {
+                    name: { type: :name, example: 'wynd', description: 'Name of the provider'},
+                    externalVariantId: { type: :string, example: '67ty7', description: 'Id of variant saved by the provider' }
+                  }
+                }
               },
               required: %w[basePrice weight quantity isDefault]
             }
@@ -425,7 +431,13 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
                     required: %w[name value]
                   }
                 },
-                externalVariantId: { type: :string, example: '67ty7', description: 'Id of variant saved by the provider' }
+                provider: {
+                  type: :object,
+                  properties: {
+                    name: { type: :name, example: 'wynd', description: 'Name of the provider'},
+                    externalVariantId: { type: :string, example: '67ty7', description: 'Id of variant saved by the provider' }
+                  }
+                }
               },
               required: %w[basePrice weight quantity isDefault]
             }
