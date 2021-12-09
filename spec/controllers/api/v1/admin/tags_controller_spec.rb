@@ -29,7 +29,7 @@ RSpec.describe Api::V1::Admin::TagsController do
         create_params = {
           status: "not_active",
           featured: false,
-          image_url: "https://path/to/image.jpg"
+          imageUrl: "https://path/to/image.jpg"
         }
 
         post :create, params: create_params
@@ -44,7 +44,7 @@ RSpec.describe Api::V1::Admin::TagsController do
         create_params = {
           name: "Chuck Noris",
           featured: false,
-          image_url: "https://path/to/image.jpg"
+          imageUrl: "https://path/to/image.jpg"
         }
 
         post :create, params: create_params

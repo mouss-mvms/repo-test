@@ -4,14 +4,9 @@ module Api
       class TagsController < AdminsController
         def create
           params_hash = create_params
-          begin
-            tag = Tag.create!(params_hash)
-            response = Dto::V1::Tag::Response.create(tag).to_h
-          rescue => e
-            raise ApplicationController::InternalServerError.new(e.message)
-          else
-            render json: response, status: :created
-          end
+          tag = Tag.create!(params_hash)
+          response = Dto::V1::Tag::Response.create(tag).to_h
+          render json: response, status: :created
         end
 
         private

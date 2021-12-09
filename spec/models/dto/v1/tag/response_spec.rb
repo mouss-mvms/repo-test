@@ -32,11 +32,11 @@ RSpec.describe Dto::V1::Tag::Response do
         dto_hash = dto_tag.to_h
 
         expect(dto_hash).to be_an_instance_of(Hash)
-        expect(dto_hash[:id]).to eq(tag.id)
-        expect(dto_hash[:name]).to eq(tag.name)
-        expect(dto_hash[:status]).to eq(tag.status)
-        expect(dto_hash[:featured]).to eq(tag.featured)
-        expect(dto_hash[:imageUrl]).to eq(tag.image_url)
+        expect(dto_hash[:id]).to eq(dto_tag.id)
+        expect(dto_hash[:name]).to eq(dto_tag.name)
+        expect(dto_hash[:status]).to eq(dto_tag.status)
+        expect(dto_hash[:featured]).to eq(dto_tag.featured)
+        expect(dto_hash[:imageUrl]).to eq(dto_tag.image_url)
       end
     end
 
