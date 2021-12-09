@@ -69,9 +69,7 @@ module Api
       def show
         raise ActionController::BadRequest.new("#{params[:id]} is not an id valid") unless params[:id].to_i > 0
         shop = Shop.find(params[:id].to_i)
-
-        response = Dto::V1::Shop::Response.create(shop)
-        render json: response.to_h, status: :ok
+        render json: Dto::V1::Shop::Response.create(shop).to_h, status: :ok if stale?(shop)
       end
 
       def create

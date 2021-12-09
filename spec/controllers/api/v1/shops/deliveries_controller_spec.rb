@@ -3,22 +3,33 @@ require 'rails_helper'
 RSpec.describe Api::V1::Shops::DeliveriesController, type: :controller do
   describe "GET #index" do
     context "All ok" do
-      it 'should return 200 HTTP Status with deliveries for a shop requested' do
-        shop = create(:shop)
+      before(:each) do
+        @shop = create(:shop)
         delivery1 = create(:service_delivery, disabled: false)
         delivery2 = create(:service_not_delivery, disabled: false)
-        shop.services << delivery1
-        shop.services << delivery2
-        shop.delivery_options
-        shop.save
-
-        get :index, params: { id: shop.id }
+        @shop.services << delivery1
+        @shop.services << delivery2
+        @shop.delivery_options
+        @shop.save
+      end
+      it 'should return 200 HTTP Status with deliveries for a shop requested' do
+        get :index, params: { id: @shop.id }
 
         expect(response).to have_http_status(:ok)
         body = JSON.parse(response.body)
         expect(body).to be_instance_of(Array)
         expect(body.any?).to eq(true)
-        expect(body.count).to eq(shop.services.count)
+        expect(body.count).to eq(@shop.services.count)
+      end
+
+      it 'should return 200 HTTP Status with deliveries for a shop requested' do
+        get :index, params: { id: @shop.id }
+        expect(response).to have_http_status(:ok)
+
+        etag = response.headers["ETag"]
+        request.env["HTTP_IF_NONE_MATCH"] = etag
+        get :index, params: { id: @shop.id }
+        expect(response).to have_http_status(304)
       end
     end
     context "with invalid params" do
