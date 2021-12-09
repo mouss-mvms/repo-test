@@ -5,19 +5,16 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
     context "All ok" do
 
       it "should return 200 HTTP Status with product updated" do
-        user_shop_employee = create(:shop_employee_user, email: "shop.employee3@ecity.fr")
-        product = create(:product)
         provider = create(:api_provider, name: 'wynd')
+        product = create(:product, api_provider_product: ApiProviderProduct.create(api_provider: provider, external_product_id: '13ut'))
         ref1 = create(:reference, product: product)
         ref2 = create(:reference, product: product)
-        ref3 = create(:reference, product: product)
         ref1_update_params = {
           id: ref1.id,
           basePrice: 20,
           weight: 13,
           quantity: 42,
           isDefault: false,
-          externalVariantId: 'rzsd12',
           imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
           goodDeal: {
             startAt: "17/05/2015",
@@ -34,6 +31,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               name: "size",
             },
           ],
+          provider: {
+            name: provider.name,
+            externalVariantId: 'rzsd12'
+          }
         }
         ref2_update_params = {
           id: ref2.id,
@@ -41,7 +42,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           weight: 1111111.24,
           quantity: 412,
           isDefault: false,
-          externalVariantId: 'rzsd42',
           goodDeal: {
             startAt: "17/05/2011",
             endAt: "18/06/2011",
@@ -57,6 +57,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               name: "size",
             },
           ],
+          provider: {
+            name: provider.name,
+            externalVariantId: 'rzsd14'
+          }
         }
         new_ref_update_params = {
           basePrice: 19.9,
@@ -64,7 +68,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           quantity: 4,
           isDefault: true,
           imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
-          externalVariantId: 'iuhzfiuh21',
           goodDeal: {
             startAt: "17/05/2021",
             endAt: "18/06/2021",
@@ -80,9 +83,11 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               name: "size",
             },
           ],
+          provider: {
+            name: provider.name,
+            externalVariantId: 'rzsd34'
+          }
         }
-        user_shop_employee.shop_employee.shops << product.shop
-        user_shop_employee.shop_employee.save
         update_params = {
           name: "Lot de 4 tasses à café style rétro AOC",
           categoryId: product.category_id,
@@ -102,9 +107,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           }
         }
 
-        request.headers["x-client-id"] = generate_token(user_shop_employee)
-
-        put :update, params: update_params.merge(id: product.id)
+        put :update_offline, params: update_params.merge(id: product.id)
 
         should respond_with(200)
         result = JSON.parse(response.body)
@@ -122,50 +125,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
         expect(result["origin"]).to eq(update_params[:origin])
         expect(result["allergens"]).to eq(update_params[:allergens])
         expect(result["composition"]).to eq(update_params[:composition])
-        expect(product.references.count).to eq(3)
-
-        ref1_updated = Reference.where(id: ref1.id).first
-        expect(ref1_updated).to_not be_nil
-        expect(ref1_updated.base_price).to eq(ref1_update_params[:basePrice])
-        expect(ref1_updated.weight).to eq(ref1_update_params[:weight])
-        expect(ref1_updated.quantity).to eq(ref1_update_params[:quantity])
-        expect(ref1_updated.sample.default).to eq(ref1_update_params[:isDefault])
-        expect(ref1_updated.sample.images).not_to be_empty
-        expect(ref1_updated.good_deal.starts_at).to eq(date_from_string(date_string:ref1_update_params[:goodDeal][:startAt]))
-        expect(ref1_updated.good_deal.discount).to eq(ref1_update_params[:goodDeal][:discount])
-        expect(ref1_updated.size.name ).to eq(ref1_update_params[:characteristics].last[:value])
-        expect(ref1_updated.color.name ).to eq(ref1_update_params[:characteristics].first[:value])
-        expect(ref1_updated.api_provider_variant.external_variant_id).to eq(ref1_update_params[:externalVariantId])
-
-
-        ref2_updated = Reference.where(id: ref2.id).first
-        expect(ref2_updated).to_not be_nil
-        expect(ref2_updated.base_price).to eq(ref2_update_params[:basePrice])
-        expect(ref2_updated.weight).to eq(ref2_update_params[:weight])
-        expect(ref2_updated.quantity).to eq(ref2_update_params[:quantity])
-        expect(ref2_updated.sample.default).to eq(ref2_update_params[:isDefault])
-        expect(ref2_updated.sample.images).to be_empty
-        expect(ref2_updated.good_deal.starts_at).to eq(date_from_string(date_string:ref2_update_params[:goodDeal][:startAt]))
-        expect(ref2_updated.good_deal.discount).to eq(ref2_update_params[:goodDeal][:discount])
-        expect(ref2_updated.size.name ).to eq(ref2_update_params[:characteristics].last[:value])
-        expect(ref2_updated.color.name ).to eq(ref2_update_params[:characteristics].first[:value])
-        expect(ref2_updated.api_provider_variant.external_variant_id).to eq(ref2_update_params[:externalVariantId])
-
-        new_variant = Reference.where(product_id: product.id).where.not(id: [ref1.id, ref2.id]).first
-        expect(new_variant).to_not be_nil
-        expect(new_variant.base_price).to eq(new_ref_update_params[:basePrice])
-        expect(new_variant.weight).to eq(new_ref_update_params[:weight])
-        expect(new_variant.quantity).to eq(new_ref_update_params[:quantity])
-        expect(new_variant.sample.default).to eq(new_ref_update_params[:isDefault])
-        expect(new_variant.sample.images).not_to be_empty
-        expect(new_variant.good_deal.starts_at).to eq(date_from_string(date_string: new_ref_update_params[:goodDeal][:startAt]))
-        expect(new_variant.good_deal.discount).to eq(new_ref_update_params[:goodDeal][:discount])
-        expect(new_variant.size.name ).to eq(new_ref_update_params[:characteristics].last[:value])
-        expect(new_variant.color.name ).to eq(new_ref_update_params[:characteristics].first[:value])
-        expect(new_variant.color.name ).to eq(new_ref_update_params[:characteristics].first[:value])
-        expect(new_variant.api_provider_variant.external_variant_id).to eq(new_ref_update_params[:externalVariantId])
-
-        expect(Reference.where(id: ref3.id).first).to be_nil
+        expect(result["variants"].to_a.count).to eq(3)
       end
     end
 
@@ -201,6 +161,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                     name: "size",
                   },
                 ],
+                provider: {
+                  name: "wynd",
+                  externalVariantId: 'Rt33'
+                }
               },
             ],
           }
@@ -286,6 +250,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                     name: "size",
                   },
                 ],
+                provider: {
+                  name: "wynd",
+                  externalVariantId: 'Rt33'
+                }
               },
             ],
           }
@@ -337,6 +305,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
+                  provider: {
+                    name: "wynd",
+                    externalVariantId: 'Rt33'
+                  }
                 },
               ],
             }
@@ -381,6 +353,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
+                  provider: {
+                    name: "wynd",
+                    externalVariantId: 'Rt33'
+                  }
                 },
               ],
             }
@@ -426,6 +402,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
+                  provider: {
+                    name: "wynd",
+                    externalVariantId: 'Rt33'
+                  }
                 },
               ],
             }
@@ -474,6 +454,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
+                  provider: {
+                    name: "wynd",
+                    externalVariantId: 'Rt33'
+                  }
                 },
               ],
             }
@@ -518,6 +502,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
+                  provider: {
+                    name: "wynd",
+                    externalVariantId: 'Rt33'
+                  }
                 },
               ],
             }
@@ -563,6 +551,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
+                  provider: {
+                    name: "wynd",
+                    externalVariantId: 'Rt33'
+                  }
                 },
               ],
             }
@@ -611,6 +603,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
+                  provider: {
+                    name: "wynd",
+                    externalVariantId: 'Rt33'
+                  }
                 },
               ],
             }
@@ -655,6 +651,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
+                  provider: {
+                    name: "wynd",
+                    externalVariantId: 'Rt33'
+                  }
                 },
               ],
             }
@@ -700,6 +700,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
+                  provider: {
+                    name: "wynd",
+                    externalVariantId: 'Rt33'
+                  }
                 },
               ],
             }
@@ -748,6 +752,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
+                  provider: {
+                    name: "wynd",
+                    externalVariantId: 'Rt33'
+                  }
                 },
               ],
             }
@@ -792,6 +800,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
+                  provider: {
+                    name: "wynd",
+                    externalVariantId: 'Rt33'
+                  }
                 },
               ],
             }
@@ -837,6 +849,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
+                  provider: {
+                    name: "wynd",
+                    externalVariantId: 'Rt33'
+                  }
                 },
               ],
             }
@@ -885,6 +901,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
+                  provider: {
+                    name: "wynd",
+                    externalVariantId: 'Rt33'
+                  }
                 },
               ],
             }
@@ -929,6 +949,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
+                  provider: {
+                    name: "wynd",
+                    externalVariantId: 'Rt33'
+                  }
                 },
               ],
             }
@@ -974,6 +998,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
+                  provider: {
+                    name: "wynd",
+                    externalVariantId: 'Rt33'
+                  }
                 },
               ],
             }
@@ -1022,6 +1050,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
+                  provider: {
+                    name: "wynd",
+                    externalVariantId: 'Rt33'
+                  }
                 },
               ],
             }
@@ -1066,6 +1098,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
+                  provider: {
+                    name: "wynd",
+                    externalVariantId: 'Rt33'
+                  }
                 },
               ],
             }
@@ -1111,6 +1147,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
+                  provider: {
+                    name: "wynd",
+                    externalVariantId: 'Rt33'
+                  }
                 },
               ],
             }
@@ -1159,6 +1199,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
+                  provider: {
+                    name: "wynd",
+                    externalVariantId: 'Rt33'
+                  }
                 },
               ],
             }
@@ -1203,6 +1247,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
+                  provider: {
+                    name: "wynd",
+                    externalVariantId: 'Rt33'
+                  }
                 },
               ],
             }
@@ -1296,6 +1344,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 name: "size",
               },
             ],
+            provider: {
+              name: "wynd",
+              externalVariantId: 'Rt33'
+            }
           }
           ref2_update_params = {
             id: ref2.id,
@@ -1319,6 +1371,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 name: "size",
               },
             ],
+            provider: {
+              name: "wynd",
+              externalVariantId: 'Rt34'
+            }
           }
           new_ref_update_params = {
             basePrice: 19.9,
@@ -1342,6 +1398,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 name: "size",
               },
             ],
+            provider: {
+              name: "wynd",
+              externalVariantId: 'Rt35'
+            }
           }
 
           update_params = {
@@ -1356,11 +1416,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               new_ref_update_params,
               ref1_update_params,
               ref2_update_params,
-            ],
-            provider: {
-              name: provider.name,
-              externalProductId: 'tye65'
-            }
+            ]
           }
 
           put :update_offline, params: update_params.merge(id: product.id)
@@ -1403,6 +1459,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 name: "size",
               },
             ],
+            provider: {
+              name: "wynd",
+              externalVariantId: 'Rt33'
+            }
           }
           ref2_update_params = {
             id: ref2.id,
@@ -1426,6 +1486,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 name: "size",
               },
             ],
+            provider: {
+              name: "wynd",
+              externalVariantId: 'Rt33'
+            }
           }
           new_ref_update_params = {
             basePrice: 19.9,
@@ -1449,6 +1513,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 name: "size",
               },
             ],
+            provider: {
+              name: "wynd",
+              externalVariantId: 'Rt33'
+            }
           }
 
           update_params = {
@@ -1508,6 +1576,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 name: "size",
               },
             ],
+            provider: {
+              name: "wynd",
+              externalVariantId: 'Rt33'
+            }
           }
           ref2_update_params = {
             id: ref2.id,
@@ -1531,6 +1603,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 name: "size",
               },
             ],
+            provider: {
+              name: "wynd",
+              externalVariantId: 'Rt33'
+            }
           }
           update_params = {
             name: "Lot de 4 tasses à café style rétro AOC",
@@ -1556,6 +1632,171 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Reference with 'id'=#{ref2.id} [WHERE \"pr_references\".\"product_id\" = $1]").to_h.to_json)
         end
       end
+
+      context 'In variant' do
+        context 'Provider is missing' do
+          it 'should return 400 HTTP Status' do
+            provider = create(:api_provider, name: 'wynd')
+
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: create(:category).id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              shopId: create(:shop).id,
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ]
+                },
+              ],
+              provider: {
+                name: 'wynd',
+                externalProductId: 'RT45'
+              }
+            }
+
+            post :create_offline, params: create_params
+
+            should respond_with(400)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new('param is missing or the value is empty: variant.provider').to_h.to_json)
+          end
+        end
+        context 'Provider' do
+          context 'External variant id is missing in one variant' do
+            it 'should return 400 HTTP Status' do
+              provider = create(:api_provider, name: 'wynd')
+              product = create(:product, api_provider_product: ApiProviderProduct.create(api_provider: provider, external_product_id: '13ut'))
+
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: create(:category).id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20,
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color",
+                      },
+                      {
+                        value: "S",
+                        name: "size",
+                      },
+                    ],
+                    provider: {
+                      name: provider.name
+                    }
+                  },
+                ],
+                provider: {
+                  name: 'wynd',
+                  externalProductId: 'RT45'
+                }
+              }
+
+              put :update_offline, params: create_params.merge(id: product.id)
+
+              should respond_with(400)
+              expect(response.body).to eq(Dto::Errors::BadRequest.new('param is missing or the value is empty: variant.provider.externalVariantId').to_h.to_json)
+            end
+          end
+
+          context 'name is missing in one variant' do
+            it 'should return 400 HTTP Status' do
+              provider = create(:api_provider, name: 'wynd')
+              product = create(:product, api_provider_product: ApiProviderProduct.create(api_provider: provider, external_product_id: '13ut'))
+
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: create(:category).id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20,
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color",
+                      },
+                      {
+                        value: "S",
+                        name: "size",
+                      },
+                    ],
+                    provider: {
+                      externalVariantId: "ty78"
+                    }
+                  },
+                ],
+                provider: {
+                  name: 'wynd',
+                  externalProductId: '56ty'
+                }
+              }
+
+              put :update_offline, params: create_params.merge(id: product.id)
+
+              should respond_with(400)
+              expect(response.body).to eq(Dto::Errors::BadRequest.new('param is missing or the value is empty: variant.provider.name').to_h.to_json)
+            end
+          end
+        end
+      end
+
     end
   end
 
@@ -4448,7 +4689,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 quantity: 4,
                 imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
                 isDefault: false,
-                externalVariantId: "72",
                 goodDeal: {
                   startAt: "17/05/2021",
                   endAt: "18/06/2021",
@@ -4464,6 +4704,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                     name: "size",
                   },
                 ],
+                provider: {
+                  name: provider.name,
+                  externalVariantId: '545ti'
+                }
               },
               {
                 id: reference.id,
@@ -4477,7 +4721,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                   endAt: "18/06/2021",
                   discount: 20,
                 },
-                externalVariantId: "42",
                 characteristics: [
                   {
                     value: "coloris black",
@@ -4488,6 +4731,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                     name: "size",
                   },
                 ],
+                provider: {
+                  name: provider.name,
+                  externalVariantId: '56ti'
+                }
               }
             ],
             provider: {
@@ -4515,15 +4762,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           expect(result["allergens"]).to eq(product_params[:allergens])
           expect(result["composition"]).to eq(product_params[:composition])
           expect(product.reload.api_provider_product.external_product_id).to eq(product_params[:provider][:externalProductId])
-          product_params[:variants].each do |variant_param|
-            to_compare = result["variants"].find { |r_variant|
-              r_variant["externalVariantId"] == variant_param[:externalVariantId]
-            }
-            expect(to_compare).to_not be_nil
-            expect(to_compare["basePrice"]).to eq(variant_param[:basePrice])
-            expect(to_compare["quantity"]).to eq(variant_param[:quantity])
-            expect(to_compare["weight"]).to eq(variant_param[:weight])
-          end
         end
       end
     end
@@ -5823,11 +6061,14 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                   name: "size",
                 },
               ],
-              externalVariantId: "tyh46"
+              provider: {
+                name: provider.name,
+                externalVariantId: "tyh46"
+              }
             },
           ],
           provider: {
-            name: 'wynd',
+            name: provider.name,
             externalProductId: '56ty'
           }
         }
@@ -5899,6 +6140,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
       context "Shop not found" do
         it "should return 404 HTTP status" do
+          provider = create(:api_provider, name: 'wynd')
+
           create_params = {
             name: "manteau MAC",
             slug: "manteau-mac",
@@ -5931,7 +6174,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                     name: "size",
                   },
                 ],
-                externalVariantId: "tyh46"
+                provider: {
+                  name: provider.name,
+                  externalVariantId: "tyh46"
+                }
               },
             ],
             provider: {
@@ -5949,6 +6195,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
       context "Category id is missing" do
         it "should return 400 HTTP status" do
+          provider = create(:api_provider, name: 'wynd')
+
           create_params = {
             name: "manteau MAC",
             slug: "manteau-mac",
@@ -5980,6 +6228,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                     name: "size",
                   },
                 ],
+                provider: {
+                  name: provider.name,
+                  externalVariantId: "tyh46"
+                }
               },
             ],
           }
@@ -5992,6 +6244,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
       context "Category not found" do
         it "should return 404 HTTP Status" do
+          provider = create(:api_provider, name: 'wynd')
+
           create_params = {
             name: "manteau MAC",
             slug: "manteau-mac",
@@ -6024,7 +6278,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                     name: "size",
                   },
                 ],
-                externalVariantId: "tyh46"
+                provider: {
+                  name: provider.name,
+                  externalVariantId: "tyh46"
+                }
               },
             ],
             provider: {
@@ -6050,6 +6307,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             category = create(:category)
             category.group = "dry-food"
             category.save
+            provider = create(:api_provider, name: 'wynd')
 
             create_params = {
               name: "manteau MAC",
@@ -6083,8 +6341,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
-                  externalVariantId: "tyh46"
-
+                  provider: {
+                    name: provider.name,
+                    externalVariantId: "tyh46"
+                  }
                 },
               ],
               provider: {
@@ -6106,6 +6366,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             category = create(:category)
             category.group = "dry-food"
             category.save
+            provider = create(:api_provider, name: 'wynd')
 
             create_params = {
               name: "manteau MAC",
@@ -6140,8 +6401,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
-                  externalVariantId: "tyh46"
-
+                  provider: {
+                    name: provider.name,
+                    externalVariantId: "tyh46"
+                  }
                 },
               ],
               provider: {
@@ -6163,6 +6426,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             category = create(:category)
             category.group = "dry-food"
             category.save
+            provider = create(:api_provider, name: 'wynd')
 
             create_params = {
               name: "manteau MAC",
@@ -6198,8 +6462,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
-                  externalVariantId: "tyh46"
-
+                  provider: {
+                    name: provider.name,
+                    externalVariantId: "tyh46"
+                  }
                 },
               ],
               provider: {
@@ -6223,6 +6489,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             category = create(:category)
             category.group = "fresh-food"
             category.save
+            provider = create(:api_provider, name: 'wynd')
 
             create_params = {
               name: "manteau MAC",
@@ -6256,7 +6523,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
-                  externalVariantId: "tyh46"
+                  provider: {
+                    name: provider.name,
+                    externalVariantId: "tyh46"
+                  }
 
                 },
               ],
@@ -6279,6 +6549,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             category = create(:category)
             category.group = "fresh-food"
             category.save
+            provider = create(:api_provider, name: 'wynd')
 
             create_params = {
               name: "manteau MAC",
@@ -6313,7 +6584,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
-                  externalVariantId: "tyh46"
+                  provider: {
+                    name: provider.name,
+                    externalVariantId: "tyh46"
+                  }
 
                 },
               ],
@@ -6336,6 +6610,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             category = create(:category)
             category.group = "fresh-food"
             category.save
+            provider = create(:api_provider, name: 'wynd')
 
             create_params = {
               name: "manteau MAC",
@@ -6371,7 +6646,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
-                  externalVariantId: "tyh46"
+                  provider: {
+                    name: provider.name,
+                    externalVariantId: "tyh46"
+                  }
 
                 },
               ],
@@ -6396,6 +6674,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             category = create(:category)
             category.group = "frozen-food"
             category.save
+            provider = create(:api_provider, name: 'wynd')
 
             create_params = {
               name: "manteau MAC",
@@ -6429,7 +6708,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
-                  externalVariantId: "tyh46"
+                  provider: {
+                    name: provider.name,
+                    externalVariantId: "tyh46"
+                  }
 
                 },
               ],
@@ -6452,6 +6734,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             category = create(:category)
             category.group = "frozen-food"
             category.save
+            provider = create(:api_provider, name: 'wynd')
 
             create_params = {
               name: "manteau MAC",
@@ -6486,7 +6769,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
-                  externalVariantId: "tyh46"
+                  provider: {
+                    name: provider.name,
+                    externalVariantId: "tyh46"
+                  }
 
                 },
               ],
@@ -6509,6 +6795,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             category = create(:category)
             category.group = "frozen-food"
             category.save
+            provider = create(:api_provider, name: 'wynd')
 
             create_params = {
               name: "manteau MAC",
@@ -6544,7 +6831,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
-                  externalVariantId: "tyh46"
+                  provider: {
+                    name: provider.name,
+                    externalVariantId: "tyh46"
+                  }
 
                 },
               ],
@@ -6569,6 +6859,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             category = create(:category)
             category.group = "alcohol"
             category.save
+            provider = create(:api_provider, name: 'wynd')
 
             create_params = {
               name: "manteau MAC",
@@ -6602,8 +6893,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
-                  externalVariantId: "tyh46"
-
+                  provider: {
+                    name: provider.name,
+                    externalVariantId: "tyh46"
+                  }
                 },
               ],
               provider: {
@@ -6625,6 +6918,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             category = create(:category)
             category.group = "alcohol"
             category.save
+            provider = create(:api_provider, name: 'wynd')
 
             create_params = {
               name: "manteau MAC",
@@ -6659,7 +6953,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
-                  externalVariantId: "tyh46"
+                  provider: {
+                    name: provider.name,
+                    externalVariantId: "tyh46"
+                  }
 
                 },
               ],
@@ -6682,6 +6979,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             category = create(:category)
             category.group = "alcohol"
             category.save
+            provider = create(:api_provider, name: 'wynd')
 
             create_params = {
               name: "manteau MAC",
@@ -6717,7 +7015,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
-                  externalVariantId: "tyh46"
+                  provider: {
+                    name: provider.name,
+                    externalVariantId: "tyh46"
+                  }
 
                 },
               ],
@@ -6742,6 +7043,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             category = create(:category)
             category.group = "cosmetic"
             category.save
+            provider = create(:api_provider, name: 'wynd')
 
             create_params = {
               name: "manteau MAC",
@@ -6775,7 +7077,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
-                  externalVariantId: "tyh46"
+                  provider: {
+                    name: provider.name,
+                    externalVariantId: "tyh46"
+                  }
 
                 },
               ],
@@ -6798,6 +7103,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             category = create(:category)
             category.group = "cosmetic"
             category.save
+            provider = create(:api_provider, name: 'wynd')
 
             create_params = {
               name: "manteau MAC",
@@ -6832,7 +7138,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
-                  externalVariantId: "tyh46"
+                  provider: {
+                    name: provider.name,
+                    externalVariantId: "tyh46"
+                  }
 
                 },
               ],
@@ -6855,6 +7164,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             category = create(:category)
             category.group = "cosmetic"
             category.save
+
+            provider = create(:api_provider, name: 'wynd')
 
             create_params = {
               name: "manteau MAC",
@@ -6890,7 +7201,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
-                  externalVariantId: "tyh46"
+                  provider: {
+                    name: provider.name,
+                    externalVariantId: "tyh46"
+                  }
 
                 },
               ],
@@ -6916,6 +7230,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             category.group = "food"
             category.save
 
+            provider = create(:api_provider, name: 'wynd')
+
             create_params = {
               name: "manteau MAC",
               slug: "manteau-mac",
@@ -6948,7 +7264,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
-                  externalVariantId: "tyh46"
+                  provider: {
+                    name: provider.name,
+                    externalVariantId: "tyh46"
+                  }
 
                 },
               ],
@@ -6971,6 +7290,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             category = create(:category)
             category.group = "food"
             category.save
+            provider = create(:api_provider, name: 'wynd')
 
             create_params = {
               name: "manteau MAC",
@@ -7005,7 +7325,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
-                  externalVariantId: "tyh46"
+                  provider: {
+                    name: provider.name,
+                    externalVariantId: "tyh46"
+                  }
 
                 },
               ],
@@ -7028,6 +7351,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             category = create(:category)
             category.group = "food"
             category.save
+            provider = create(:api_provider, name: 'wynd')
 
             create_params = {
               name: "manteau MAC",
@@ -7063,7 +7387,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
-                  externalVariantId: "tyh46"
+                  provider: {
+                    name: provider.name,
+                    externalVariantId: "tyh46"
+                  }
 
                 },
               ],
@@ -7088,6 +7415,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             category = create(:category)
             category.group = "clothing"
             category.save
+            provider = create(:api_provider, name: 'wynd')
+
 
             create_params = {
               name: "manteau MAC",
@@ -7121,7 +7450,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
-                  externalVariantId: "tyh46"
+                  provider: {
+                    name: provider.name,
+                    externalVariantId: "tyh46"
+                  }
 
                 },
               ],
@@ -7144,6 +7476,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             category = create(:category)
             category.group = "clothing"
             category.save
+            provider = create(:api_provider, name: 'wynd')
+
 
             create_params = {
               name: "manteau MAC",
@@ -7178,7 +7512,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       name: "size",
                     },
                   ],
-                  externalVariantId: "tyh46"
+                  provider: {
+                    name: provider.name,
+                    externalVariantId: "tyh46"
+                  }
 
                 },
               ],
@@ -7243,7 +7580,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
       end
 
       context 'In provider' do
-        context 'If provider is wynd and externalProductId is missing' do
+        context 'Provider is wynd and externalProductId is missing' do
           it 'should return 400 HTTP Status' do
             create_params = {
               name: "manteau MAC",
@@ -7294,8 +7631,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
       end
 
       context 'In variant' do
-        context 'External variant id is missing in one variant' do
+        context 'Provider is missing' do
           it 'should return 400 HTTP Status' do
+            provider = create(:api_provider, name: 'wynd')
+
             create_params = {
               name: "manteau MAC",
               slug: "manteau-mac",
@@ -7327,19 +7666,127 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                       value: "S",
                       name: "size",
                     },
-                  ],
+                  ]
                 },
               ],
               provider: {
                 name: 'wynd',
-                externalProductId: '56ty'
+                externalProductId: 'RT45'
               }
             }
 
             post :create_offline, params: create_params
 
             should respond_with(400)
-            expect(response.body).to eq(Dto::Errors::BadRequest.new('param is missing or the value is empty: variant.externalVariantId').to_h.to_json)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new('param is missing or the value is empty: variant.provider').to_h.to_json)
+          end
+        end
+        context 'Provider' do
+          context 'External variant id is missing in one variant' do
+            it 'should return 400 HTTP Status' do
+              provider = create(:api_provider, name: 'wynd')
+
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: create(:category).id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20,
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color",
+                      },
+                      {
+                        value: "S",
+                        name: "size",
+                      },
+                    ],
+                    provider: {
+                      name: provider.name
+                    }
+                  },
+                ],
+                provider: {
+                  name: 'wynd',
+                  externalProductId: 'RT45'
+                }
+              }
+
+              post :create_offline, params: create_params
+
+              should respond_with(400)
+              expect(response.body).to eq(Dto::Errors::BadRequest.new('param is missing or the value is empty: variant.provider.externalVariantId').to_h.to_json)
+            end
+          end
+
+          context 'name is missing in one variant' do
+            it 'should return 400 HTTP Status' do
+
+              create_params = {
+                name: "manteau MAC",
+                slug: "manteau-mac",
+                categoryId: create(:category).id,
+                brand: "3sixteen",
+                status: "online",
+                isService: true,
+                sellerAdvice: "pouet",
+                shopId: create(:shop).id,
+                description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+                variants: [
+                  {
+                    basePrice: 379,
+                    weight: 1,
+                    quantity: 0,
+                    imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                    isDefault: false,
+                    goodDeal: {
+                      startAt: "17/05/2021",
+                      endAt: "18/06/2021",
+                      discount: 20,
+                    },
+                    characteristics: [
+                      {
+                        value: "coloris black",
+                        name: "color",
+                      },
+                      {
+                        value: "S",
+                        name: "size",
+                      },
+                    ],
+                    provider: {
+                      externalVariantId: "ty78"
+                    }
+                  },
+                ],
+                provider: {
+                  name: 'wynd',
+                  externalProductId: '56ty'
+                }
+              }
+
+              post :create_offline, params: create_params
+
+              should respond_with(400)
+              expect(response.body).to eq(Dto::Errors::BadRequest.new('param is missing or the value is empty: variant.provider.name').to_h.to_json)
+            end
           end
         end
       end

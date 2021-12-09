@@ -609,6 +609,7 @@
                         },
                         "imageIds": {
                           "type": "array",
+                          "maxItems": 5,
                           "items": {
                             "type": "number"
                           },
@@ -620,7 +621,22 @@
                           "default": [
 
                           ],
-                          "description": "List of product images ids"
+                          "description": "List of product images ids (required if no imageUrls)"
+                        },
+                        "imageUrls": {
+                          "type": "array",
+                          "maxItems": 5,
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": [
+                            "https://path/to/image1.jpg",
+                            "https://path/to/image2.jpg"
+                          ],
+                          "default": [
+
+                          ],
+                          "description": "List of product images urls (required if no imageIds)"
                         },
                         "goodDeal": {
                           "type": "object",
@@ -672,7 +688,8 @@
                       },
                       "required": [
                         "characteristics",
-                        "imageIds"
+                        "imageIds",
+                        "imageUrls"
                       ]
                     }
                   },
@@ -1063,12 +1080,8 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "type": "integer"
-                  },
-                  "example": [
-                    666,
-                    42
-                  ]
+                    "$ref": "#/components/schemas/Image"
+                  }
                 }
               }
             }
@@ -7843,6 +7856,13 @@
                     "example": 1,
                     "description": "Search page number."
                   },
+                  "perPage": {
+                    "type": "integer",
+                    "example": 12,
+                    "description": "Number of results per page.",
+                    "minimum": 1,
+                    "maximum": 16
+                  },
                   "perimeter": {
                     "type": "string",
                     "enum": [
@@ -7860,6 +7880,12 @@
                       "highest-score",
                       "best-sells"
                     ]
+                  },
+                  "excludeLocation": {
+                    "type": "boolean",
+                    "example": false,
+                    "default": false,
+                    "description": "Only with a search with location params. Exclude the city of the search when perimeter params is department. Exclude city department from search when perimeter params is country."
                   },
                   "geolocOptions": {
                     "type": "object",
@@ -8762,6 +8788,35 @@
           "endAt",
           "discount"
         ]
+      },
+      "Image": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 42
+          },
+          "originalUrl": {
+            "type": "string",
+            "example": "https://path/to/original-image.jpg"
+          },
+          "miniUrl": {
+            "type": "string",
+            "example": "https://path/to/mini-format.jpg"
+          },
+          "thumbUrl": {
+            "type": "string",
+            "example": "https://path/to/thumb-format.jpg"
+          },
+          "squareUrl": {
+            "type": "string",
+            "example": "https://path/to/square-format.jpg"
+          },
+          "wideUrl": {
+            "type": "string",
+            "example": "https://path/to/wide-format.jpg"
+          }
+        }
       },
       "Product": {
         "type": "object",

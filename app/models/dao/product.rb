@@ -110,8 +110,8 @@ module Dao
         if api_provider
           product.api_provider_product = ApiProviderProduct.create!(api_provider: api_provider,
                                                                     external_product_id: dto_product_request.provider[:external_product_id])
+          product.save!
         end
-        product.save!
       end
 
       product.advice.content = dto_product_request.citizen_advice if dto_product_request.citizen_advice && product.advice

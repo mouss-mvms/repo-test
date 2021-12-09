@@ -66,12 +66,26 @@ RSpec.describe 'api/v1/citizens/products', swagger_doc: 'v1/swagger.json', type:
                 isDefault: { type: :boolean, example: true, description: "Tell if this variant is the product's default variant" },
                 imageIds: {
                   type: 'array',
+                  maxItems: 5,
                   items: {
                     type: 'number'
                   },
                   example: [234, 45566, 345],
                   default: [],
-                  description: 'List of product images ids'
+                  description: 'List of product images ids (required if no imageUrls)'
+                },
+                imageUrls: {
+                  type: :array,
+                  maxItems: 5,
+                  items: {
+                    type: :string
+                  },
+                  example: [
+                    'https://path/to/image1.jpg',
+                    'https://path/to/image2.jpg'
+                  ],
+                  default: [],
+                  description: 'List of product images urls (required if no imageIds)'
                 },
                 goodDeal: {
                   type: :object,
@@ -94,7 +108,7 @@ RSpec.describe 'api/v1/citizens/products', swagger_doc: 'v1/swagger.json', type:
                   }
                 }
               },
-              required: %w[characteristics imageIds]
+              required: %w[characteristics imageIds imageUrls]
             }
           },
           origin: { type: :string, example: 'France', description: 'Origin of product. (This field is mandatory for some categories)' },
