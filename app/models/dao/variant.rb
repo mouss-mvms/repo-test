@@ -67,10 +67,17 @@ module Dao
       end
 
       if dto_variant_request.provider
-        api_provider_product = @reference.product.api_provider_product
-        if api_provider_product
-          @reference.api_provider_variant = ApiProviderVariant.create!(api_provider: api_provider_product.api_provider,
-                                                                      external_variant_id: dto_variant_request.provider[:external_variant_id])
+        if @reference.product.api_provider_product
+          api_provider = ApiProvider.find_by(name: dto_variant_request.provider[:name])
+          if api_provider
+            if @reference.api_provider_variant
+              @reference.api_provider_variant.api_provider = api_provider
+              @reference.api_provider_variant.external_variant_id = dto_variant_request.provider[:external_variant_id]
+            else
+              @reference.api_provider_variant = ApiProviderVariant.create!(api_provider: api_provider,
+                                                                           external_variant_id: dto_variant_request.provider[:external_variant_id])
+            end
+          end
           @reference.save!
         end
       end

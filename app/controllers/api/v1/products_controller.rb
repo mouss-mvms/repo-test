@@ -91,6 +91,7 @@ module Api
           raise ActionController::ParameterMissing.new('variant.provider') unless req_variant[:provider]
           raise ActionController::ParameterMissing.new('variant.provider.externalVariantId') unless req_variant[:provider][:external_variant_id]
           raise ActionController::ParameterMissing.new('variant.provider.name') unless req_variant[:provider][:name]
+          raise ApplicationController::Forbidden if product_params[:provider][:name] != req_variant[:provider][:name]
         end
         dto_product_request = Dto::V1::Product::Request.new(product_params)
 
