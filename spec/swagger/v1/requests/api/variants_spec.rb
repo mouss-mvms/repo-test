@@ -120,7 +120,15 @@
                format: :binary
              }
            },
-           externalVariantId: { type: :string, example: "'iuhzfiuh21'", description: "Provider variant ID" },
+           provider: {
+             type: :object,
+             description: 'Provider object for third part',
+             example: { name: 'wynd', externalVariantId: '67ty7' },
+             properties: {
+               name: { type: :name, example: 'wynd', description: 'Name of the provider'},
+               externalVariantId: { type: :string, example: '67ty7', description: 'Id of variant saved by the provider' }
+             }
+           }
          }
        }
 

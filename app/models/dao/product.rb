@@ -72,9 +72,13 @@ module Dao
 
         good_deal_params = variant_params.good_deal ? OpenStruct.new(variant_params.good_deal) : nil
 
-        if variant_params.external_variant_id
-          reference.api_provider_variant = ApiProviderVariant.create!(api_provider: product.api_provider_product.api_provider,
-                                                                     external_variant_id: variant_params.external_variant_id)
+        if variant_params.provider
+          api_provider = ApiProvider.where(name: variant_params.provider[:name]).first
+          if api_provider
+            reference.api_provider_variant = ApiProviderVariant.create!(api_provider: api_provider,
+                                                                        external_variant_id: variant_params.provider[:external_variant_id])
+            reference.save!
+          end
         end
 
         if good_deal_params && good_deal_params&.discount && good_deal_params&.end_at && good_deal_params&.start_at
