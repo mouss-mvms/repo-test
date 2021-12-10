@@ -33,7 +33,7 @@ RSpec.describe 'api/v1/shops/summaries', swagger_doc: 'v1/swagger.json', type: :
           },
           sortBy: {
             type: :string,
-            enum: ["name-asc", "name-desc", "random", "distance", "highest-score", "best-sells"]
+            enum: ["name-asc", "name-desc", "random", "distance", "highest-score-mvms", "highest-score-elastic", "best-sells"]
           },
           excludeLocation: { type: :boolean, example: false, default: false, description: 'Only with a search with location params. Exclude the city of the search when perimeter params is department. Exclude city department from search when perimeter params is country.' },
           geolocOptions: {
