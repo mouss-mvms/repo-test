@@ -69,6 +69,7 @@ RSpec.configure do |config|
           Shop: V1::Examples::Response::Shop.to_h,
           ShopSearch: V1::Examples::Response::Shops::Search.to_h,
           ShopSummary: V1::Examples::Response::ShopSummary.to_h,
+          Tag: V1::Examples::Response::Tag.to_h,
           Variant: V1::Examples::Response::Variant.to_h,
           Errors: Examples::Errors::Error.new(message_example: "Bad Request", status_example: 400, detail_example: "The syntax of the query is incorrect.").error
         }

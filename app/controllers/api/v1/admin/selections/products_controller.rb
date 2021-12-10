@@ -2,11 +2,7 @@ module Api
   module V1
     module Admin
       module Selections
-        class ProductsController < ApplicationController
-          before_action :uncrypt_token
-          before_action :retrieve_user
-          before_action :verify_admin
-
+        class ProductsController < AdminsController
           def index
             params[:page] ||= 1
             selection = Selection.preload(:products).find(params[:id])
@@ -15,12 +11,6 @@ module Api
             selection_products_dtos = products.map { |product| Dto::V1::Product::Response.create(product).to_h }
             response = { products: selection_products_dtos, page: params[:page].to_i, totalPages: products.total_pages}
             render json: response, status: :ok
-          end
-
-          private
-
-          def verify_admin
-            raise ApplicationController::Forbidden unless @user.is_an_admin?
           end
         end
       end
