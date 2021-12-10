@@ -258,7 +258,7 @@
                         "properties": {
                           "id": {
                             "type": "integer",
-                            "example": "3442",
+                            "example": "3527",
                             "description": "Unique identifier of a category."
                           },
                           "name": {
@@ -574,7 +574,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -1626,7 +1626,8 @@
                   "sortBy": {
                     "type": "string",
                     "enum": [
-                      "highest-score",
+                      "highest-score-mvms",
+                      "highest-score-elastic",
                       "price-asc",
                       "price-desc",
                       "newest",
@@ -2535,7 +2536,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -2808,7 +2809,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -3321,7 +3322,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -3644,7 +3645,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -6173,7 +6174,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -6613,7 +6614,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -7907,7 +7908,8 @@
                       "name-desc",
                       "random",
                       "distance",
-                      "highest-score",
+                      "highest-score-mvms",
+                      "highest-score-elastic",
                       "best-sells"
                     ]
                   },
@@ -7943,6 +7945,168 @@
                     ]
                   }
                 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/admin/tags": {
+      "parameters": [
+        {
+          "name": "x-client-id",
+          "in": "header",
+          "description": "Auth token of user",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Create a tag.",
+        "tags": [
+          "Tags"
+        ],
+        "description": "Create a tag.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "201": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Tag"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "The syntax of the query is incorrect.",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Bad Request",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 400,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 401,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 403,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Noël",
+                    "description": "Name of the Tag."
+                  },
+                  "status": {
+                    "type": "string",
+                    "example": "active",
+                    "enum": [
+                      "active",
+                      "not_active"
+                    ],
+                    "description": "Status of the Tag."
+                  },
+                  "featured": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "imageUrl": {
+                    "type": "string",
+                    "example": "https://path/to/image.jpeg",
+                    "description": "Image url of the Tag."
+                  }
+                },
+                "required": [
+                  "name",
+                  "status"
+                ]
               }
             }
           }
@@ -8594,7 +8758,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-staging"
     }
   ],
   "components": {
@@ -8735,7 +8899,7 @@
         "properties": {
           "id": {
             "type": "integer",
-            "example": "3442",
+            "example": "3527",
             "description": "Unique identifier of a category."
           },
           "name": {
@@ -10289,6 +10453,39 @@
           "indexed_at": {
             "type": "string",
             "example": "2021-06-28T11:09:54.088+00:00"
+          }
+        }
+      },
+      "Tag": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1,
+            "description": "Unique identifier of a tag."
+          },
+          "name": {
+            "type": "string",
+            "example": "Noël",
+            "description": "Name of the Tag."
+          },
+          "status": {
+            "type": "string",
+            "example": "active",
+            "enum": [
+              "active",
+              "not_active"
+            ],
+            "description": "Status of the Tag."
+          },
+          "featured": {
+            "type": "boolean",
+            "example": true
+          },
+          "imageUrl": {
+            "type": "string",
+            "example": "https://path/to/image.jpeg",
+            "description": "Image url of the Tag."
           }
         }
       },

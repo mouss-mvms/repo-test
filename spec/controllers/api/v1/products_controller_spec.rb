@@ -132,6 +132,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
     context "Incorrect Params" do
       context "Product not found" do
         it "should return 404 HTTP Status" do
+          provider = create(:api_provider, name: 'wynd')
+
           update_params = {
             name: "Lot de 4 tasses à café style rétro AOC",
             categoryId: create(:category).id,
@@ -167,6 +169,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 }
               },
             ],
+            provider: {
+              name: provider.name,
+              externalProductId: 'tye65'
+            }
           }
           Product.destroy_all
 
@@ -178,6 +184,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
       context "Category id is missing" do
         it "should return 400 HTTP status" do
+          provider = create(:api_provider, name: 'wynd')
+
           product = create(:product)
           update_params = {
             name: "Lot de 4 tasses à café style rétro AOC",
@@ -220,6 +228,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
       context "Category not found" do
         it "should return 404 HTTP status" do
+          provider = create(:api_provider, name: 'wynd')
+
           product = create(:product)
           update_params = {
             name: "Lot de 4 tasses à café style rétro AOC",
@@ -256,6 +266,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 }
               },
             ],
+            provider: {
+              name: provider.name,
+              externalProductId: 'tye65'
+            }
           }
           i = 1
           Category.all.each do |category|
@@ -276,6 +290,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Origin of product is missing" do
           it "should return 400 HTTP Status" do
+            provider = create(:api_provider, name: 'wynd')
+
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -311,6 +327,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                   }
                 },
               ],
+              provider: {
+                name: provider.name,
+                externalProductId: 'tye65'
+              }
             }
 
             put :update_offline, params: update_params.merge(id: product.id)
@@ -323,6 +343,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Composition of product is missing" do
           it "should return 400 HTTP Status" do
+            provider = create(:api_provider, name: 'wynd')
+
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -359,6 +381,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                   }
                 },
               ],
+              provider: {
+                name: provider.name,
+                externalProductId: 'tye65'
+              }
             }
 
             put :update_offline, params: update_params.merge(id: product.id)
@@ -371,6 +397,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Allergens of product is missing" do
           it "should return 400 HTTP Status" do
+            provider = create(:api_provider, name: 'wynd')
+
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -408,6 +436,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                   }
                 },
               ],
+              provider: {
+                name: provider.name,
+                externalProductId: 'tye65'
+              }
             }
 
             put :update_offline, params: update_params.merge(id: product.id)
@@ -425,6 +457,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Origin of product is missing" do
           it "should return 400 HTTP Status" do
+            provider = create(:api_provider, name: 'wynd')
+
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -460,6 +494,11 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                   }
                 },
               ],
+              provider: {
+                name: provider.name,
+                externalProductId: 'tye65'
+              }
+
             }
 
             put :update_offline, params: update_params.merge(id: product.id)
@@ -472,6 +511,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Composition of product is missing" do
           it "should return 400 HTTP Status" do
+            provider = create(:api_provider, name: 'wynd')
+
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -508,6 +549,11 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                   }
                 },
               ],
+              provider: {
+                name: provider.name,
+                externalProductId: 'tye65'
+              }
+
             }
 
             put :update_offline, params: update_params.merge(id: product.id)
@@ -520,6 +566,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Allergens of product is missing" do
           it "should return 400 HTTP Status" do
+            provider = create(:api_provider, name: 'wynd')
+
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -557,6 +605,11 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                   }
                 },
               ],
+              provider: {
+                name: provider.name,
+                externalProductId: 'tye65'
+              }
+
             }
 
             put :update_offline, params: update_params.merge(id: product.id)
@@ -574,6 +627,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Origin of product is missing" do
           it "should return 400 HTTP Status" do
+            provider = create(:api_provider, name: 'wynd')
+
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -609,6 +664,11 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                   }
                 },
               ],
+              provider: {
+                name: provider.name,
+                externalProductId: 'tye65'
+              }
+
             }
 
             put :update_offline, params: update_params.merge(id: product.id)
@@ -621,6 +681,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Composition of product is missing" do
           it "should return 400 HTTP Status" do
+            provider = create(:api_provider, name: 'wynd')
+
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -657,6 +719,11 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                   }
                 },
               ],
+              provider: {
+                name: provider.name,
+                externalProductId: 'tye65'
+              }
+
             }
 
             put :update_offline, params: update_params.merge(id: product.id)
@@ -669,6 +736,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Allergens of product is missing" do
           it "should return 400 HTTP Status" do
+            provider = create(:api_provider, name: 'wynd')
+
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -706,6 +775,11 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                   }
                 },
               ],
+              provider: {
+                name: provider.name,
+                externalProductId: 'tye65'
+              }
+
             }
 
             put :update_offline, params: update_params.merge(id: product.id)
@@ -723,6 +797,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Origin of product is missing" do
           it "should return 400 HTTP Status" do
+            provider = create(:api_provider, name: 'wynd')
+
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -758,6 +834,11 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                   }
                 },
               ],
+              provider: {
+                name: provider.name,
+                externalProductId: 'tye65'
+              }
+
             }
 
             put :update_offline, params: update_params.merge(id: product.id)
@@ -770,6 +851,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Composition of product is missing" do
           it "should return 400 HTTP Status" do
+            provider = create(:api_provider, name: 'wynd')
+
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -806,6 +889,11 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                   }
                 },
               ],
+              provider: {
+                name: provider.name,
+                externalProductId: 'tye65'
+              }
+
             }
 
             put :update_offline, params: update_params.merge(id: product.id)
@@ -818,6 +906,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Allergens of product is missing" do
           it "should return 400 HTTP Status" do
+            provider = create(:api_provider, name: 'wynd')
+
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -855,6 +945,11 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                   }
                 },
               ],
+              provider: {
+                name: provider.name,
+                externalProductId: 'tye65'
+              }
+
             }
 
             put :update_offline, params: update_params.merge(id: product.id)
@@ -872,6 +967,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Origin of product is missing" do
           it "should return 400 HTTP Status" do
+            provider = create(:api_provider, name: 'wynd')
+
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -907,6 +1004,11 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                   }
                 },
               ],
+              provider: {
+                name: provider.name,
+                externalProductId: 'tye65'
+              }
+
             }
 
             put :update_offline, params: update_params.merge(id: product.id)
@@ -919,6 +1021,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Composition of product is missing" do
           it "should return 400 HTTP Status" do
+            provider = create(:api_provider, name: 'wynd')
+
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -955,6 +1059,11 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                   }
                 },
               ],
+              provider: {
+                name: provider.name,
+                externalProductId: 'tye65'
+              }
+
             }
 
             put :update_offline, params: update_params.merge(id: product.id)
@@ -967,6 +1076,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Allergens of product is missing" do
           it "should return 400 HTTP Status" do
+            provider = create(:api_provider, name: 'wynd')
+
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -1004,6 +1115,11 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                   }
                 },
               ],
+              provider: {
+                name: provider.name,
+                externalProductId: 'tye65'
+              }
+
             }
 
             put :update_offline, params: update_params.merge(id: product.id)
@@ -1021,6 +1137,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Origin of product is missing" do
           it "should return 400 HTTP Status" do
+            provider = create(:api_provider, name: 'wynd')
+
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -1056,6 +1174,11 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                   }
                 },
               ],
+              provider: {
+                name: provider.name,
+                externalProductId: 'tye65'
+              }
+
             }
 
             put :update_offline, params: update_params.merge(id: product.id)
@@ -1068,6 +1191,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Composition of product is missing" do
           it "should return 400 HTTP Status" do
+            provider = create(:api_provider, name: 'wynd')
+
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -1104,6 +1229,11 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                   }
                 },
               ],
+              provider: {
+                name: provider.name,
+                externalProductId: 'tye65'
+              }
+
             }
 
             put :update_offline, params: update_params.merge(id: product.id)
@@ -1116,6 +1246,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Allergens of product is missing" do
           it "should return 400 HTTP Status" do
+            provider = create(:api_provider, name: 'wynd')
+
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -1153,6 +1285,11 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                   }
                 },
               ],
+              provider: {
+                name: provider.name,
+                externalProductId: 'tye65'
+              }
+
             }
 
             put :update_offline, params: update_params.merge(id: product.id)
@@ -1170,6 +1307,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Origin of product is missing" do
           it "should return 400 HTTP Status" do
+            provider = create(:api_provider, name: 'wynd')
+
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -1205,6 +1344,11 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                   }
                 },
               ],
+              provider: {
+                name: provider.name,
+                externalProductId: 'tye65'
+              }
+
             }
 
             put :update_offline, params: update_params.merge(id: product.id)
@@ -1217,6 +1361,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Composition of product is missing" do
           it "should return 400 HTTP Status" do
+            provider = create(:api_provider, name: 'wynd')
+
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -1253,6 +1399,11 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                   }
                 },
               ],
+              provider: {
+                name: provider.name,
+                externalProductId: 'tye65'
+              }
+
             }
 
             put :update_offline, params: update_params.merge(id: product.id)
@@ -1848,6 +1999,117 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
               should respond_with(400)
               expect(response.body).to eq(Dto::Errors::BadRequest.new('param is missing or the value is empty: variant.provider.name').to_h.to_json)
+            end
+          end
+
+          context "Provider name set is not the same as the product's provider" do
+            it 'should return 403 HTTP Status' do
+              provider = create(:api_provider, name: 'wynd')
+              product = create(:product, api_provider_product: ApiProviderProduct.create(api_provider: provider, external_product_id: '13ut'))
+              ref1 = create(:reference, product: product)
+              ref2 = create(:reference, product: product)
+              ref1_update_params = {
+                id: ref1.id,
+                basePrice: 20,
+                weight: 13,
+                quantity: 42,
+                isDefault: false,
+                imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                goodDeal: {
+                  startAt: "17/05/2015",
+                  endAt: "18/06/2031",
+                  discount: 10,
+                },
+                characteristics: [
+                  {
+                    value: "coloris oaijf",
+                    name: "color",
+                  },
+                  {
+                    value: "beaucoup",
+                    name: "size",
+                  },
+                ],
+                provider: {
+                  name: "#{provider.name}2",
+                  externalVariantId: 'rzsd12'
+                }
+              }
+              ref2_update_params = {
+                id: ref2.id,
+                basePrice: 199.9,
+                weight: 1111111.24,
+                quantity: 412,
+                isDefault: false,
+                goodDeal: {
+                  startAt: "17/05/2011",
+                  endAt: "18/06/2011",
+                  discount: 99,
+                },
+                characteristics: [
+                  {
+                    value: "coloris black",
+                    name: "color",
+                  },
+                  {
+                    value: "S",
+                    name: "size",
+                  },
+                ],
+                provider: {
+                  name: provider.name,
+                  externalVariantId: 'rzsd14'
+                }
+              }
+              new_ref_update_params = {
+                basePrice: 19.9,
+                weight: 0.24,
+                quantity: 4,
+                isDefault: true,
+                imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                goodDeal: {
+                  startAt: "17/05/2021",
+                  endAt: "18/06/2021",
+                  discount: 20,
+                },
+                characteristics: [
+                  {
+                    value: "coloris black",
+                    name: "color",
+                  },
+                  {
+                    value: "S",
+                    name: "size",
+                  },
+                ],
+                provider: {
+                  name: provider.name,
+                  externalVariantId: 'rzsd34'
+                }
+              }
+              update_params = {
+                name: "Lot de 4 tasses à café style rétro AOC",
+                categoryId: product.category_id,
+                brand: "AOC",
+                status: "online",
+                isService: false,
+                sellerAdvice: "Les tasses donneront du style à votre pause café !",
+                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
+                variants: [
+                  new_ref_update_params,
+                  ref1_update_params,
+                  ref2_update_params,
+                ],
+                provider: {
+                  name: provider.name,
+                  externalProductId: 'tye65'
+                }
+              }
+
+              put :update_offline, params: update_params.merge(id: product.id)
+
+              expect(response).to have_http_status(:forbidden)
+              expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
             end
           end
         end
