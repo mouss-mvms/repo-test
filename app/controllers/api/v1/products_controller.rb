@@ -5,7 +5,8 @@ module Api
       before_action :retrieve_user, only: [:update, :create, :destroy, :patch_auth]
 
       def show
-        render json: Dto::V1::Product::Response.create(Product.find(params[:id])).to_h, status: :ok
+        product = Product.find(params[:id])
+        return render json: Dto::V1::Product::Response.create(product).to_h, status: :ok if stale?(product)
       end
 
       def update
@@ -87,7 +88,10 @@ module Api
           raise ActionController::ParameterMissing.new('provider.externalProductId') unless product_params[:provider][:external_product_id]
         end
         product_params[:variants].each do |req_variant|
-          raise ActionController::ParameterMissing.new('variant.externalVariantId') unless req_variant[:external_variant_id]
+          raise ActionController::ParameterMissing.new('variant.provider') unless req_variant[:provider]
+          raise ActionController::ParameterMissing.new('variant.provider.externalVariantId') unless req_variant[:provider][:external_variant_id]
+          raise ActionController::ParameterMissing.new('variant.provider.name') unless req_variant[:provider][:name]
+          raise ApplicationController::Forbidden if product_params[:provider][:name] != req_variant[:provider][:name]
         end
         dto_product_request = Dto::V1::Product::Request.new(product_params)
 
@@ -115,9 +119,9 @@ module Api
           raise ActionController::ParameterMissing.new('provider.externalProductId') unless product_params[:provider][:external_product_id]
         end
         product_params[:variants].each do |variant|
-          if variant[:provider] && variant[:provider][:name] == 'wynd'
-            raise ActionController::ParameterMissing.new('variant.provider.externalVariantId') unless variant[:provider][:external_variant_id]
-          end
+          raise ActionController::ParameterMissing.new('variant.provider') unless variant[:provider]
+          raise ActionController::ParameterMissing.new('variant.provider.externalVariantId') unless variant[:provider][:external_variant_id]
+          raise ActionController::ParameterMissing.new('variant.provider.name') unless variant[:provider][:name]
         end
         dto_product_request = Dto::V1::Product::Request.new(product_params)
         product = Product.find(dto_product_request.id)
@@ -187,7 +191,11 @@ module Api
             characteristic[:value] = c.require(:value)
             hash[:characteristics] << characteristic
           }
-          hash[:external_variant_id] = v[:externalVariantId] if v[:externalVariantId]
+          if v[:provider]
+            hash[:provider] = {}
+            hash[:provider][:name] = v[:provider][:name] if v[:provider][:name]
+            hash[:provider][:external_variant_id] = v[:provider][:externalVariantId] if v[:provider][:externalVariantId]
+          end
           product_params[:variants] << hash
         }
         if params[:provider]
@@ -246,7 +254,11 @@ module Api
                 characteristic[:value] = c.require(:value)
                 hash[:characteristics] << characteristic
               }
-              hash[:external_variant_id] = v[:externalVariantId] if v[:externalVariantId]
+              if v[:provider]
+                hash[:provider] = {}
+                hash[:provider][:name] = v[:provider][:name] if v[:provider][:name]
+                hash[:provider][:external_variant_id] = v[:provider][:externalVariantId] if v[:provider][:externalVariantId]
+              end
             end
             if v[:goodDeal]
               hash[:good_deal] = {}

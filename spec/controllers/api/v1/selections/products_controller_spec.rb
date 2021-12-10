@@ -3,17 +3,42 @@ require 'rails_helper'
 RSpec.describe Api::V1::Selections::ProductsController do
   describe "GET #index" do
     context "All ok" do
-      it "should return 200 HTTP status with a selection dto and all of its products" do
-        selection = create(:online_selection)
+      context "No page in query" do
+        it "should return 200 HTTP status with page 1 of selection products (16 per page)" do
+          selection = create(:online_selection)
+          17.times do
+            selection.products << create(:available_product)
+          end
 
-        get :index, params: { id: selection.id }
-        should respond_with(200)
-        expect(response.body).to eq(
-          {
-            selection: Dto::V1::Selection::Response.create(selection).to_h,
-            products: selection.products.map { |p| Dto::V1::Product::Response.create(p).to_h }
-          }.to_json
-        )
+          get :index, params: { id: selection.id }
+          should respond_with(200)
+          expect(response.body).to eq(
+            {
+              products: selection.products.first(16).map { |p| Dto::V1::Product::Response.create(p).to_h },
+              page: 1,
+              totalPages: 2
+            }.to_json
+          )
+        end
+      end
+
+      context "With page number in query" do
+        it "should return 200 HTTP status with page 2 of selection products" do
+          selection = create(:online_selection)
+          17.times do
+            selection.products << create(:available_product)
+          end
+
+          get :index, params: { id: selection.id, page: 2 }
+          should respond_with(200)
+          expect(response.body).to eq(
+            {
+              products: selection.products.last(2).map { |p| Dto::V1::Product::Response.create(p).to_h },
+              page: 2,
+              totalPages: 2
+            }.to_json
+          )
+        end
       end
     end
 

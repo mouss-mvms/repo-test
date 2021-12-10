@@ -61,6 +61,42 @@ RSpec.describe 'api/v1/selections', swagger_doc: 'v1/swagger.json', type: :reque
     end
   end
 
+  path '/api/v1/auth/admin/selections' do
+    get('List all selections for admin users.') do
+      parameter name: 'x-client-id', in: :header, type: :string, description: 'Auth token of user', required: true
+      parameter name: :page, in: :query, type: :integer, example: 1, description: 'Number of desired page.'
+
+      tags 'Selections'
+      produces 'application/json'
+      consumes 'application/json'
+      description 'List all selections for admin users.'
+      security [{ authorization: [] }]
+
+      response(200, 'Successful') do
+        schema type: :object,
+          properties: {
+            selections: {
+              type: :array,
+              items: { '$ref': '#/components/schemas/Selection' }
+            },
+            page: { type: :integer, example: 1 },
+            totalPages: { type: :integer, example: 19 }
+          }
+        run_test!
+      end
+
+      response(401, 'Unauthorized') do
+        schema Examples::Errors::Unauthorized.new.error
+        run_test!
+      end
+
+      response(403, 'Forbidden') do
+        schema Examples::Errors::Forbidden.new.error
+        run_test!
+      end
+    end
+  end
+
   path '/api/v1/auth/selections/{id}' do
     parameter name: :id, in: :path, type: :integer, description: 'Unique identifier of the selection.', required: true
     parameter name: 'x-client-id', in: :header, type: :string, description: 'Auth token of user', required: true
@@ -152,7 +188,40 @@ RSpec.describe 'api/v1/selections', swagger_doc: 'v1/swagger.json', type: :reque
     end
   end
 
+  path '/api/v1/auth/admin/selections/{id}' do
+    parameter name: 'x-client-id', in: :header, type: :string, description: 'Auth token of user', required: true
+    parameter name: :id, in: :path, type: :integer, description: "Unique identifier of a selection."
+    get('Returns a selection') do
+      tags 'Selections'
+      produces 'application/json'
+      description 'Returns a selection.'
+      security [{ authorization: [] }]
+
+      response(200, 'Successful') do
+        schema '$ref': '#/components/schemas/Selection'
+        run_test!
+      end
+
+      response(401, 'Unauthorized') do
+        schema Examples::Errors::Unauthorized.new.error
+        run_test!
+      end
+
+      response(403, 'Forbidden') do
+        schema Examples::Errors::Forbidden.new.error
+        run_test!
+      end
+
+      response(404, 'Product not found') do
+        schema Examples::Errors::NotFound.new.error
+        run_test!
+      end
+    end
+  end
+
   path '/api/v1/selections' do
+    parameter name: :page, in: :query, type: :integer, example: 1, description: 'Number of desired page.'
+
     get('Lists all the online selections') do
       tags 'Selections'
       produces 'application/json'
@@ -160,7 +229,15 @@ RSpec.describe 'api/v1/selections', swagger_doc: 'v1/swagger.json', type: :reque
       security [{ authorization: [] }]
 
       response(200, 'successful') do
-        schema type: :array, items: { '$ref': '#/components/schemas/Selection' }
+        schema type: :object,
+          properties: {
+            selections: {
+              type: :array,
+              items: { '$ref': '#/components/schemas/Selection' }
+            },
+            page: { type: :integer, example: 1 },
+            totalPages: { type: :integer, example: 19 }
+          }
         run_test!
       end
     end
