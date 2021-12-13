@@ -11,7 +11,8 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
         citizen.save
         get :index, params: { id: citizen.id }
         expect(response).to have_http_status(:ok)
-        expect(response.body).to eq(products.map { |p| Dto::V1::Product::Response.create(p).to_h }.to_json)
+        response_body = JSON.parse(response.body, symbolize_names: true)
+        expect(response_body).to match_array(products.map { |p| Dto::V1::Product::Response.create(p).to_h })
       end
 
       it "should return 304 HTTP status" do
