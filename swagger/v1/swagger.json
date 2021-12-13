@@ -258,7 +258,7 @@
                         "properties": {
                           "id": {
                             "type": "integer",
-                            "example": "3527",
+                            "example": null,
                             "description": "Unique identifier of a category."
                           },
                           "name": {
@@ -574,7 +574,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3527",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -1352,7 +1352,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "description": "To create a review, productId and mark are required, parentId is forbidden.\n                      To create an answer, parentId is required but mark is forbidden",
+                "description": "To create a review, productId and mark are required, parentId is forbidden.\\nTo create an answer, parentId is required but mark is forbidden",
                 "properties": {
                   "mark": {
                     "type": "integer",
@@ -1835,7 +1835,7 @@
                     "type": "object",
                     "properties": {
                       "name": {
-                        "type": "name",
+                        "type": "string",
                         "example": "wynd",
                         "description": "Name of the provider"
                       },
@@ -2536,7 +2536,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3527",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -2809,7 +2809,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3527",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -2907,7 +2907,7 @@
                           "type": "object",
                           "properties": {
                             "name": {
-                              "type": "name",
+                              "type": "string",
                               "example": "wynd",
                               "description": "Name of the provider"
                             },
@@ -3322,7 +3322,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3527",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -3645,7 +3645,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3527",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -3743,7 +3743,7 @@
                           "type": "object",
                           "properties": {
                             "name": {
-                              "type": "name",
+                              "type": "string",
                               "example": "wynd",
                               "description": "Name of the provider"
                             },
@@ -4216,6 +4216,7 @@
             "in": "query",
             "example": 1,
             "description": "Number of desired page.",
+            "required": true,
             "schema": {
               "type": "integer"
             }
@@ -4343,6 +4344,7 @@
             "in": "query",
             "example": 1,
             "description": "Number of desired page.",
+            "required": true,
             "schema": {
               "type": "integer"
             }
@@ -4705,6 +4707,7 @@
             "in": "query",
             "example": 1,
             "description": "Number of desired page.",
+            "required": true,
             "schema": {
               "type": "integer"
             }
@@ -5289,6 +5292,7 @@
           "in": "query",
           "example": 1,
           "description": "Number of desired page.",
+          "required": true,
           "schema": {
             "type": "integer"
           }
@@ -6174,7 +6178,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3527",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -6614,7 +6618,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3527",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -8386,7 +8390,7 @@
                       "type": "object",
                       "properties": {
                         "name": {
-                          "type": "name",
+                          "type": "string",
                           "example": "wynd",
                           "description": "Name of the provider"
                         },
@@ -8693,7 +8697,7 @@
                       "type": "object",
                       "properties": {
                         "name": {
-                          "type": "name",
+                          "type": "string",
                           "example": "wynd",
                           "description": "Name of the provider"
                         },
@@ -8909,7 +8913,7 @@
                     },
                     "properties": {
                       "name": {
-                        "type": "name",
+                        "type": "string",
                         "example": "wynd",
                         "description": "Name of the provider"
                       },
@@ -8930,7 +8934,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-staging"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {
@@ -9071,7 +9075,7 @@
         "properties": {
           "id": {
             "type": "integer",
-            "example": "3527",
+            "example": null,
             "description": "Unique identifier of a category."
           },
           "name": {
@@ -10721,7 +10725,7 @@
             "type": "object",
             "properties": {
               "name": {
-                "type": "name",
+                "type": "string",
                 "example": "wynd",
                 "description": "Name of the provider"
               },

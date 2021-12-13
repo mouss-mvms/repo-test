@@ -53,7 +53,7 @@ RSpec.describe "api/v1/products/variants", swagger_doc: "v1/swagger.json", type:
           provider: {
             type: :object,
             properties: {
-              name: { type: :name, example: 'wynd', description: 'Name of the provider'},
+              name: { type: :string, example: 'wynd', description: 'Name of the provider'},
               externalVariantId: { type: :string, example: '67ty7', description: 'Id of variant saved by the provider' }
             }
           }

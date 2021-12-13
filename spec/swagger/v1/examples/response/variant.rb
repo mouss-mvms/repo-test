@@ -60,7 +60,7 @@ module V1
               provider: {
                 type: :object,
                 properties: {
-                  name: { type: :name, example: 'wynd', description: 'Name of the provider'},
+                  name: { type: :string, example: 'wynd', description: 'Name of the provider'},
                   externalVariantId: { type: :string, example: '67ty7', description: 'Id of variant saved by the provider' }
                 }
               }
