@@ -8115,9 +8115,23 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/v1/tags": {
       "get": {
         "summary": "Get list of tags",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "example": 1,
+            "description": "Number of the desired page.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
         "tags": [
           "Tags"
         ],
@@ -8146,7 +8160,19 @@
         }
       }
     },
-    "/api/v1/tags/:id": {
+    "/api/v1/tags/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "example": 1,
+          "description": "Unique identifier of a tag.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
       "get": {
         "summary": "Retrieve a tag",
         "tags": [
@@ -8231,9 +8257,33 @@
         }
       }
     },
-    "/api/v1/tags/:id/products": {
+    "/api/v1/tags/{id}/products": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "example": 1,
+          "description": "Unique identifier of a tag",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
       "get": {
         "summary": "Get the products of a tag",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "example": 1,
+            "description": "Number of the desired page.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
         "tags": [
           "Tags"
         ],
@@ -8253,7 +8303,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Products"
+                    "$ref": "#/components/schemas/Product"
                   }
                 }
               }
