@@ -8,40 +8,18 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
         Selection.destroy_all
       end
       context "No page params" do
-        it "should return 200 HTTP status and page 1 of online selections (16 per page)" do
-          selections = []
-          17.times do
-            selections << create(:online_selection)
-          end
+        it "should return 200 HTTP status" do
+          count = 16
+          create_list(:online_selection, count)
 
           get :index
           should respond_with(200)
-          expect(response.body).to eq(
-            {
-              selections: selections.first(16).map { |s| Dto::V1::Selection::Response.create(s).to_h },
-              page: 1,
-              totalPages: 2
-            }.to_json
-          )
-        end
-      end
-
-      context "No page params" do
-        it "should return 200 HTTP status and page 1 of online selections" do
-          selections = []
-          17.times do
-            selections << create(:online_selection)
+          result = JSON.parse(response.body).deep_symbolize_keys
+          expect(result[:selections].count).to eq(count)
+          result[:selections].each do |result_selection|
+            expect_selection = Selection.find(result_selection[:id])
+            expect(result_selection).to eq(Dto::V1::Selection::Response.create(expect_selection).to_h)
           end
-
-          get :index, params: { page: 2 }
-          should respond_with(200)
-          expect(response.body).to eq(
-            {
-              selections: [Dto::V1::Selection::Response.create(selections.last).to_h],
-              page: 2,
-              totalPages: 2
-            }.to_json
-          )
         end
       end
     end
