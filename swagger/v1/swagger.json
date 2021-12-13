@@ -258,7 +258,7 @@
                         "properties": {
                           "id": {
                             "type": "integer",
-                            "example": null,
+                            "example": "3527",
                             "description": "Unique identifier of a category."
                           },
                           "name": {
@@ -574,7 +574,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": null,
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -1352,7 +1352,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "description": "To create a review, productId and mark are required, parentId is forbidden.\\nTo create an answer, parentId is required but mark is forbidden",
+                "description": "To create a review, productId and mark are required, parentId is forbidden.\n                      To create an answer, parentId is required but mark is forbidden",
                 "properties": {
                   "mark": {
                     "type": "integer",
@@ -2536,7 +2536,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": null,
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -2809,7 +2809,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": null,
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -3322,7 +3322,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": null,
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -3645,7 +3645,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": null,
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -6178,7 +6178,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": null,
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -6618,7 +6618,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": null,
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -8934,7 +8934,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000/"
+      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-staging"
     }
   ],
   "components": {
@@ -9075,7 +9075,7 @@
         "properties": {
           "id": {
             "type": "integer",
-            "example": null,
+            "example": "3527",
             "description": "Unique identifier of a category."
           },
           "name": {
