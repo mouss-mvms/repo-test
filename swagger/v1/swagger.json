@@ -1835,7 +1835,7 @@
                     "type": "object",
                     "properties": {
                       "name": {
-                        "type": "name",
+                        "type": "string",
                         "example": "wynd",
                         "description": "Name of the provider"
                       },
@@ -2907,7 +2907,7 @@
                           "type": "object",
                           "properties": {
                             "name": {
-                              "type": "name",
+                              "type": "string",
                               "example": "wynd",
                               "description": "Name of the provider"
                             },
@@ -3743,7 +3743,7 @@
                           "type": "object",
                           "properties": {
                             "name": {
-                              "type": "name",
+                              "type": "string",
                               "example": "wynd",
                               "description": "Name of the provider"
                             },
@@ -4216,6 +4216,7 @@
             "in": "query",
             "example": 1,
             "description": "Number of desired page.",
+            "required": true,
             "schema": {
               "type": "integer"
             }
@@ -4343,6 +4344,7 @@
             "in": "query",
             "example": 1,
             "description": "Number of desired page.",
+            "required": true,
             "schema": {
               "type": "integer"
             }
@@ -4705,6 +4707,7 @@
             "in": "query",
             "example": 1,
             "description": "Number of desired page.",
+            "required": true,
             "schema": {
               "type": "integer"
             }
@@ -5289,6 +5292,7 @@
           "in": "query",
           "example": 1,
           "description": "Number of desired page.",
+          "required": true,
           "schema": {
             "type": "integer"
           }
@@ -8386,7 +8390,7 @@
                       "type": "object",
                       "properties": {
                         "name": {
-                          "type": "name",
+                          "type": "string",
                           "example": "wynd",
                           "description": "Name of the provider"
                         },
@@ -8693,7 +8697,7 @@
                       "type": "object",
                       "properties": {
                         "name": {
-                          "type": "name",
+                          "type": "string",
                           "example": "wynd",
                           "description": "Name of the provider"
                         },
@@ -8909,7 +8913,7 @@
                     },
                     "properties": {
                       "name": {
-                        "type": "name",
+                        "type": "string",
                         "example": "wynd",
                         "description": "Name of the provider"
                       },
@@ -10721,7 +10725,7 @@
             "type": "object",
             "properties": {
               "name": {
-                "type": "name",
+                "type": "string",
                 "example": "wynd",
                 "description": "Name of the provider"
               },
