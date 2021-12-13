@@ -5,7 +5,7 @@ module Api
       DEFAULT_PER_PAGE = 15
 
       def index
-        page = params[:page] || 1
+        page = params[:page].to_i || 1
         per_page = params[:limit] || DEFAULT_PER_PAGE
         tags = Kaminari.paginate_array(Tag.all.order(created_at: :desc).to_a).page(page).per(per_page)
         response = { tags: [], page: page, totalPages: tags.total_pages}
