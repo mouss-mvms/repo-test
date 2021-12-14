@@ -29,6 +29,16 @@ module V1
                 },
                 description: 'Images of a shop'
               },
+              avatarImageUrl: {
+                  type: :string,
+                  example: 'http://www.image.com/avatar.jpg',
+                  description: 'Avatar image of a shop'
+              },
+              coverImageUrl: {
+                type: :string,
+                example: 'http://www.image.com/cover.jpg',
+                description: 'Avatar image of a shop'
+              },
               description: {
                 type: 'string',
                 example: "La description d'une boutique",
