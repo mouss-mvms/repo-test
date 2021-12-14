@@ -64,7 +64,7 @@ RSpec.describe 'api/v1/selections', swagger_doc: 'v1/swagger.json', type: :reque
   path '/api/v1/auth/admin/selections' do
     get('List all selections for admin users.') do
       parameter name: 'x-client-id', in: :header, type: :string, description: 'Auth token of user', required: true
-      parameter name: :page, in: :query, type: :integer, example: 1, description: 'Number of desired page.'
+      parameter name: :page, in: :query, type: :integer, example: 1, description: 'Number of desired page.', required: true
 
       tags 'Selections'
       produces 'application/json'
@@ -220,7 +220,7 @@ RSpec.describe 'api/v1/selections', swagger_doc: 'v1/swagger.json', type: :reque
   end
 
   path '/api/v1/selections' do
-    parameter name: :page, in: :query, type: :integer, example: 1, description: 'Number of desired page.'
+    parameter name: :page, in: :query, type: :integer, example: 1, description: 'Number of desired page.', required: true
 
     get('Lists all the online selections') do
       tags 'Selections'

@@ -1835,7 +1835,7 @@
                     "type": "object",
                     "properties": {
                       "name": {
-                        "type": "name",
+                        "type": "string",
                         "example": "wynd",
                         "description": "Name of the provider"
                       },
@@ -2907,7 +2907,7 @@
                           "type": "object",
                           "properties": {
                             "name": {
-                              "type": "name",
+                              "type": "string",
                               "example": "wynd",
                               "description": "Name of the provider"
                             },
@@ -3743,7 +3743,7 @@
                           "type": "object",
                           "properties": {
                             "name": {
-                              "type": "name",
+                              "type": "string",
                               "example": "wynd",
                               "description": "Name of the provider"
                             },
@@ -4216,6 +4216,7 @@
             "in": "query",
             "example": 1,
             "description": "Number of desired page.",
+            "required": true,
             "schema": {
               "type": "integer"
             }
@@ -4343,6 +4344,7 @@
             "in": "query",
             "example": 1,
             "description": "Number of desired page.",
+            "required": true,
             "schema": {
               "type": "integer"
             }
@@ -4705,6 +4707,7 @@
             "in": "query",
             "example": 1,
             "description": "Number of desired page.",
+            "required": true,
             "schema": {
               "type": "integer"
             }
@@ -5289,6 +5292,7 @@
           "in": "query",
           "example": 1,
           "description": "Number of desired page.",
+          "required": true,
           "schema": {
             "type": "integer"
           }
@@ -7951,6 +7955,390 @@
         }
       }
     },
+    "/api/v1/auth/admin/tags": {
+      "parameters": [
+        {
+          "name": "x-client-id",
+          "in": "header",
+          "description": "Auth token of user",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Create a tag.",
+        "tags": [
+          "Tags"
+        ],
+        "description": "Create a tag.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "201": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Tag"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "The syntax of the query is incorrect.",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Bad Request",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 400,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 401,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 403,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Noël",
+                    "description": "Name of the Tag."
+                  },
+                  "status": {
+                    "type": "string",
+                    "example": "active",
+                    "enum": [
+                      "active",
+                      "not_active"
+                    ],
+                    "description": "Status of the Tag."
+                  },
+                  "featured": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "imageUrl": {
+                    "type": "string",
+                    "example": "https://path/to/image.jpeg",
+                    "description": "Image url of the Tag."
+                  }
+                },
+                "required": [
+                  "name",
+                  "status"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tags": {
+      "get": {
+        "summary": "Get list of tags",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "example": 1,
+            "description": "Number of the desired page.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "tags": [
+          "Tags"
+        ],
+        "description": "Get the list of tags",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Tag"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tags/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "example": 1,
+          "description": "Unique identifier of a tag.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Retrieve a tag",
+        "tags": [
+          "Tags"
+        ],
+        "description": "Retrieve a tag by id",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "example": 1,
+                      "description": "Unique identifier of a tag."
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "Noël",
+                      "description": "Name of the Tag."
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "active",
+                      "enum": [
+                        "active",
+                        "not_active"
+                      ],
+                      "description": "Status of the Tag."
+                    },
+                    "featured": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "imageUrl": {
+                      "type": "string",
+                      "example": "https://path/to/image.jpeg",
+                      "description": "Image url of the Tag."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tag not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Resource not found",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Not found",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tags/{id}/products": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "example": 1,
+          "description": "Unique identifier of a tag",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get the products of a tag",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "example": 1,
+            "description": "Number of the desired page.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "tags": [
+          "Tags"
+        ],
+        "description": "Get the products of a tag by id of tag",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Product"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tag not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Resource not found",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Not found",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/auth/variants/{id}": {
       "parameters": [
         {
@@ -8052,7 +8440,7 @@
                       "type": "object",
                       "properties": {
                         "name": {
-                          "type": "name",
+                          "type": "string",
                           "example": "wynd",
                           "description": "Name of the provider"
                         },
@@ -8359,7 +8747,7 @@
                       "type": "object",
                       "properties": {
                         "name": {
-                          "type": "name",
+                          "type": "string",
                           "example": "wynd",
                           "description": "Name of the provider"
                         },
@@ -8575,7 +8963,7 @@
                     },
                     "properties": {
                       "name": {
-                        "type": "name",
+                        "type": "string",
                         "example": "wynd",
                         "description": "Name of the provider"
                       },
@@ -10294,6 +10682,39 @@
           }
         }
       },
+      "Tag": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1,
+            "description": "Unique identifier of a tag."
+          },
+          "name": {
+            "type": "string",
+            "example": "Noël",
+            "description": "Name of the Tag."
+          },
+          "status": {
+            "type": "string",
+            "example": "active",
+            "enum": [
+              "active",
+              "not_active"
+            ],
+            "description": "Status of the Tag."
+          },
+          "featured": {
+            "type": "boolean",
+            "example": true
+          },
+          "imageUrl": {
+            "type": "string",
+            "example": "https://path/to/image.jpeg",
+            "description": "Image url of the Tag."
+          }
+        }
+      },
       "Variant": {
         "type": "object",
         "properties": {
@@ -10354,7 +10775,7 @@
             "type": "object",
             "properties": {
               "name": {
-                "type": "name",
+                "type": "string",
                 "example": "wynd",
                 "description": "Name of the provider"
               },
