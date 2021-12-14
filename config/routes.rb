@@ -9,12 +9,14 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
+      instance_eval(File.read(Rails.root.join("config/routes/v1/admin.rb")))
       instance_eval(File.read(Rails.root.join("config/routes/v1/brands.rb")))
       instance_eval(File.read(Rails.root.join("config/routes/v1/products.rb")))
       instance_eval(File.read(Rails.root.join("config/routes/v1/reviews.rb")))
       instance_eval(File.read(Rails.root.join("config/routes/v1/shops.rb")))
       instance_eval(File.read(Rails.root.join("config/routes/v1/variants.rb")))
       instance_eval(File.read(Rails.root.join("config/routes/v1/selections.rb")))
+      instance_eval(File.read(Rails.root.join("config/routes/v1/tags.rb")))
       get "/citizens/:id/products", to: "citizens/products#index"
       get "/categories", to: "categories#index"
       scope :auth do

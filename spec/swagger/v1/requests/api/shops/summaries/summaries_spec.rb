@@ -7,7 +7,7 @@ RSpec.describe 'api/v1/shops/summaries', swagger_doc: 'v1/swagger.json', type: :
       consumes 'application/json'
       produces 'application/json'
       description 'Search list of shops'
-      security [{authorization: []}]
+      security [{ authorization: [] }]
 
       parameter name: :shops, in: :body, schema: {
         type: :object,
@@ -23,6 +23,7 @@ RSpec.describe 'api/v1/shops/summaries', swagger_doc: 'v1/swagger.json', type: :
             }
           },
           page: { type: :integer, example: 1, description: 'Search page number.' },
+          perPage: { type: :integer, example: 12, description: 'Number of results per page.', minimum: 1, maximum: 16 },
           perimeter: {
             type: :string,
             enum: [
@@ -32,13 +33,14 @@ RSpec.describe 'api/v1/shops/summaries', swagger_doc: 'v1/swagger.json', type: :
           },
           sortBy: {
             type: :string,
-            enum: ["name-asc", "name-desc", "random", "distance", "highest-score", "best-sells"]
+            enum: ["name-asc", "name-desc", "random", "distance", "highest-score-mvms", "highest-score-elastic", "best-sells"]
           },
+          excludeLocation: { type: :boolean, example: false, default: false, description: 'Only with a search with location params. Exclude the city of the search when perimeter params is department. Exclude city department from search when perimeter params is country.' },
           geolocOptions: {
             type: :object,
             properties: {
               lat: { type: :number, example: "-0.5862431", description: "Shop address latitude." },
-              long: { type: :number, example: "44.8399608", description: "Shop address longitude."},
+              long: { type: :number, example: "44.8399608", description: "Shop address longitude." },
               radius: { type: :integer, example: 50000, description: "Research radius in meters.", minimum: 1 },
             },
             required: %w[lat long]

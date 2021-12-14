@@ -13,7 +13,7 @@ module V1
               sellerAdvice: {type: :string, example: "Taille petite, prendre une demi pointure au dessus", description: 'Advice from seller of product'},
               isService: {type: :boolean, example: false, description: 'Tell if the product is a service'},
               citizenAdvice: {type: :string, example: 'Produit trouvé un commercant trop sympa', description: 'Advice from citizen of product'},
-              categoryId: {type: :integer, example: 4, description: 'Category id of product'},
+              categoryId: {type: :integer, example: ENV['UNCLASSIFIED_CATEGORY_ID'], description: 'Category id of product'},
               shopId: {type: :integer, example: 453, description: 'Shop id of product'},
 =begin
               imageUrls: {

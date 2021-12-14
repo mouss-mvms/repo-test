@@ -228,7 +228,10 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
               name: "size",
             },
           ],
-          externalVariantId: "tyh46"
+          provider: {
+            name: api_provider.name,
+            externalVariantId: "34ty"
+          }
         }
 
         Reference.destroy_all
@@ -246,41 +249,11 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
         expect(response_body[:imageUrls].count).to eq(variant_params[:imageUrls].count)
         expect(response_body[:goodDeal]).to eq(variant_params[:goodDeal])
         expect(response_body[:characteristics].map(&:values)).to eq(variant_params[:characteristics].map(&:values))
-        expect(response_body[:externalVariantId]).to eq(variant_params[:externalVariantId])
+        expect(response_body[:provider]).to eq(variant_params[:provider])
       end
     end
 
     context "Bad params" do
-      context "product id is missing" do
-        it "should return 400 HTTP status" do
-          variant_params = {
-            basePrice: 379,
-            weight: 1,
-            quantity: 0,
-            imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
-            isDefault: false,
-            goodDeal: {
-              startAt: "17/05/2021",
-              endAt: "18/06/2021",
-              discount: 20,
-            },
-            characteristics: [
-              {
-                value: "coloris black",
-                name: "color",
-              },
-              {
-                value: "S",
-                name: "size",
-              },
-            ],
-            externalVariantId: "tyh46"
-          }
-          post :create_offline, params: variant_params.merge(id: "")
-          should respond_with(400)
-          expect(response.body).to eq(Dto::Errors::BadRequest.new("param is missing or the value is empty: id").to_h.to_json)
-        end
-      end
 
       context "product does not exist" do
         it "should return 404 HTTP status" do
@@ -305,7 +278,10 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
                 name: "size",
               },
             ],
-            externalVariantId: "tyh46"
+            provider: {
+              name: 'wynd',
+              externalVariantId: "34ty"
+            }
           }
           post :create_offline, params: variant_params.merge(id: 69)
           should respond_with(404)
@@ -316,8 +292,9 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
       context "variant" do
         context "required params are missing" do
           it "should return 400 HTTP status" do
-            product = create(:available_product)
-            required_params = %i[basePrice weight quantity isDefault externalVariantId]
+            api_provider = create(:api_provider, name: 'wynd')
+            product = create(:available_product, api_provider_product: ApiProviderProduct.create(external_product_id: 'trf67', api_provider: api_provider))
+            required_params = %i[basePrice weight quantity isDefault]
             variant_params = {
               basePrice: 379,
               weight: 1,
@@ -339,7 +316,10 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
                   name: "size",
                 },
               ],
-              externalVariantId: "tyh46"
+              provider: {
+                name: api_provider.name,
+                externalVariantId: "34ty"
+              }
             }
 
             required_params.each do |required_param|
@@ -355,8 +335,9 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
 
         context "required params are nil" do
           it "should return 400 HTTP status" do
-            product = create(:available_product)
-            required_params = %i[basePrice weight quantity isDefault externalVariantId]
+            api_provider = create(:api_provider, name: 'wynd')
+            product = create(:available_product, api_provider_product: ApiProviderProduct.create(external_product_id: 'trf67', api_provider: api_provider))
+            required_params = %i[basePrice weight quantity isDefault]
             variant_params = {
               basePrice: 379,
               weight: 1,
@@ -378,7 +359,10 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
                   name: "size",
                 },
               ],
-              externalVariantId: "tyh46"
+              provider: {
+                name: api_provider.name,
+                externalVariantId: "34ty"
+              }
             }
 
             required_params.each do |required_param|
@@ -393,10 +377,207 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
         end
       end
 
+      context 'provider' do
+        context 'provider is missing' do
+          it 'should return 400 HTTP Status' do
+            api_provider = create(:api_provider, name: 'wynd')
+            product = create(:available_product, api_provider_product: ApiProviderProduct.create(external_product_id: 'trf67', api_provider: api_provider))
+            variant_params = {
+              basePrice: 379,
+              weight: 1,
+              quantity: 0,
+              imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+              isDefault: false,
+              goodDeal: {
+                startAt: "17/05/2021",
+                endAt: "18/06/2021",
+                discount: 20,
+              },
+              characteristics: [
+                {
+                  value: "coloris black",
+                  name: "color",
+                },
+                {
+                  value: "S",
+                  name: "size",
+                },
+              ],
+            }
+
+            Reference.destroy_all
+            expect(Reference.count).to eq(0)
+
+            post :create_offline, params: variant_params.merge(id: product.id)
+            should respond_with(400)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("param is missing or the value is empty: provider").to_h.to_json)
+          end
+        end
+
+        context 'Name of provider is missing' do
+          it 'should return 400 HTTP Status' do
+            api_provider = create(:api_provider, name: 'wynd')
+            product = create(:available_product, api_provider_product: ApiProviderProduct.create(external_product_id: 'trf67', api_provider: api_provider))
+            variant_params = {
+              basePrice: 379,
+              weight: 1,
+              quantity: 0,
+              imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+              isDefault: false,
+              goodDeal: {
+                startAt: "17/05/2021",
+                endAt: "18/06/2021",
+                discount: 20,
+              },
+              characteristics: [
+                {
+                  value: "coloris black",
+                  name: "color",
+                },
+                {
+                  value: "S",
+                  name: "size",
+                },
+              ],
+              provider: {
+                externalVariantId: '99ki'
+              }
+            }
+
+            Reference.destroy_all
+            expect(Reference.count).to eq(0)
+
+            post :create_offline, params: variant_params.merge(id: product.id)
+            should respond_with(400)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("param is missing or the value is empty: name").to_h.to_json)
+          end
+        end
+
+        context 'External Variant id of provider is missing' do
+          it 'should return 400 HTTP Status' do
+            api_provider = create(:api_provider, name: 'wynd')
+            product = create(:available_product, api_provider_product: ApiProviderProduct.create(external_product_id: 'trf67', api_provider: api_provider))
+            variant_params = {
+              basePrice: 379,
+              weight: 1,
+              quantity: 0,
+              imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+              isDefault: false,
+              goodDeal: {
+                startAt: "17/05/2021",
+                endAt: "18/06/2021",
+                discount: 20,
+              },
+              characteristics: [
+                {
+                  value: "coloris black",
+                  name: "color",
+                },
+                {
+                  value: "S",
+                  name: "size",
+                },
+              ],
+              provider: {
+                name: 'wynd'
+              }
+            }
+
+            Reference.destroy_all
+            expect(Reference.count).to eq(0)
+
+            post :create_offline, params: variant_params.merge(id: product.id)
+            should respond_with(400)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("param is missing or the value is empty: externalVariantId").to_h.to_json)
+          end
+        end
+
+        context 'The provider setted is not the same as the product' do
+          it 'should return 403 HTTP Status' do
+            api_provider = create(:api_provider, name: 'wynd')
+            product = create(:available_product, api_provider_product: ApiProviderProduct.create(external_product_id: 'trf67', api_provider: api_provider))
+            variant_params = {
+              basePrice: 379,
+              weight: 1,
+              quantity: 0,
+              imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+              isDefault: false,
+              goodDeal: {
+                startAt: "17/05/2021",
+                endAt: "18/06/2021",
+                discount: 20,
+              },
+              characteristics: [
+                {
+                  value: "coloris black",
+                  name: "color",
+                },
+                {
+                  value: "S",
+                  name: "size",
+                },
+              ],
+              provider: {
+                name: 'other',
+                externalVariantId: "34ty"
+              }
+            }
+
+            Reference.destroy_all
+            expect(Reference.count).to eq(0)
+
+            post :create_offline, params: variant_params.merge(id: product.id)
+            should respond_with(403)
+            expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
+          end
+        end
+
+        context 'The product has not api provider' do
+          it 'should return 403 HTTP Status' do
+            product = create(:available_product)
+            variant_params = {
+              basePrice: 379,
+              weight: 1,
+              quantity: 0,
+              imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+              isDefault: false,
+              goodDeal: {
+                startAt: "17/05/2021",
+                endAt: "18/06/2021",
+                discount: 20,
+              },
+              characteristics: [
+                {
+                  value: "coloris black",
+                  name: "color",
+                },
+                {
+                  value: "S",
+                  name: "size",
+                },
+              ],
+              provider: {
+                name: 'other',
+                externalVariantId: "34ty"
+              }
+            }
+
+            Reference.destroy_all
+            expect(Reference.count).to eq(0)
+
+            post :create_offline, params: variant_params.merge(id: product.id)
+            should respond_with(403)
+            expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
+          end
+        end
+      end
+
       context "good_deal" do
         context "required params are missing" do
           it "should return 400 HTTP status" do
-            product = create(:available_product)
+            api_provider = create(:api_provider, name: 'wynd')
+            product = create(:available_product, api_provider_product: ApiProviderProduct.create(external_product_id: 'trf67', api_provider: api_provider)
+                             )
             required_params = %i[startAt endAt discount]
             required_params.each do |required_param|
               variant_params = {
@@ -420,21 +601,24 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
                     name: "size",
                   },
                 ],
-                externalVariantId: "tyh46"
+                provider: {
+                  name: 'wynd',
+                  externalVariantId: "34ty"
+                }
               }
 
               variant_params[:goodDeal].delete(required_param)
               post :create_offline, params: variant_params.merge(id: product.id)
               should respond_with(400)
               expect(response.body).to eq(Dto::Errors::BadRequest.new("param is missing or the value is empty: #{required_param}").to_h.to_json)
-
             end
           end
         end
 
         context "required params are nil" do
           it "should return 400 HTTP status" do
-            product = create(:available_product)
+            api_provider = create(:api_provider, name: 'wynd')
+            product = create(:available_product, api_provider_product: ApiProviderProduct.create(external_product_id: 'trf67', api_provider: api_provider))
             required_params = %i[startAt endAt discount]
 
             required_params.each do |required_param|
@@ -459,7 +643,10 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
                     name: "size",
                   },
                 ],
-                externalVariantId: "tyh46"
+                provider: {
+                  name: api_provider.name,
+                  externalVariantId: "34ty"
+                }
               }
               variant_params[:goodDeal][required_param] = nil
 
@@ -474,7 +661,8 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
       context "characteristics" do
         context "required params are missing" do
           it "should return 400 HTTP status" do
-            product = create(:available_product)
+            api_provider = create(:api_provider, name: 'wynd')
+            product = create(:available_product, api_provider_product: ApiProviderProduct.create(external_product_id: 'trf67', api_provider: api_provider))
             required_params = %i[value name]
 
             required_params.each do |required_param|
@@ -495,7 +683,10 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
                     name: "color",
                   }
                 ],
-                externalVariantId: "tyh46"
+                provider: {
+                  name:  api_provider.name,
+                  externalVariantId: "34ty"
+                }
               }
               variant_params[:characteristics].first.delete(required_param)
 
@@ -508,7 +699,8 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
 
         context "required params are nil" do
           it "should return 400 HTTP status" do
-            product = create(:available_product)
+            api_provider = create(:api_provider, name: 'wynd')
+            product = create(:available_product, api_provider_product: ApiProviderProduct.create(external_product_id: 'trf67', api_provider: api_provider))
             required_params = %i[value name]
 
             required_params.each do |required_param|
@@ -529,7 +721,10 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
                     name: "color",
                   }
                 ],
-                externalVariantId: "tyh46"
+                provider: {
+                  name: api_provider.name,
+                  externalVariantId: "34ty"
+                }
               }
               variant_params[:characteristics].first[required_param] = nil
 

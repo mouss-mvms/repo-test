@@ -258,12 +258,12 @@
                         "properties": {
                           "id": {
                             "type": "integer",
-                            "example": 1,
+                            "example": "2423",
                             "description": "Unique identifier of a category."
                           },
                           "name": {
                             "type": "string",
-                            "example": "Mobilier extérieur",
+                            "example": "Non classée",
                             "description": "Display name of a category."
                           },
                           "children": {
@@ -302,6 +302,16 @@
       ],
       "get": {
         "summary": "retrieve products of a citizen",
+        "parameters": [
+          {
+            "name": "If-None-Match",
+            "in": "header",
+            "description": "Etag checker.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "tags": [
           "Citizens"
         ],
@@ -326,6 +336,9 @@
                 }
               }
             }
+          },
+          "304": {
+            "description": "Not Modified"
           },
           "400": {
             "description": "Bad request",
@@ -561,7 +574,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": 4,
+                    "example": "2423",
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -596,6 +609,7 @@
                         },
                         "imageIds": {
                           "type": "array",
+                          "maxItems": 5,
                           "items": {
                             "type": "number"
                           },
@@ -607,7 +621,22 @@
                           "default": [
 
                           ],
-                          "description": "List of product images ids"
+                          "description": "List of product images ids (required if no imageUrls)"
+                        },
+                        "imageUrls": {
+                          "type": "array",
+                          "maxItems": 5,
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": [
+                            "https://path/to/image1.jpg",
+                            "https://path/to/image2.jpg"
+                          ],
+                          "default": [
+
+                          ],
+                          "description": "List of product images urls (required if no imageIds)"
                         },
                         "goodDeal": {
                           "type": "object",
@@ -659,7 +688,8 @@
                       },
                       "required": [
                         "characteristics",
-                        "imageIds"
+                        "imageIds",
+                        "imageUrls"
                       ]
                     }
                   },
@@ -1050,12 +1080,8 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "type": "integer"
-                  },
-                  "example": [
-                    666,
-                    42
-                  ]
+                    "$ref": "#/components/schemas/Image"
+                  }
                 }
               }
             }
@@ -1367,6 +1393,16 @@
       ],
       "get": {
         "summary": "Get reviews for a product.",
+        "parameters": [
+          {
+            "name": "If-None-Match",
+            "in": "header",
+            "description": "Etag checker.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "tags": [
           "Reviews"
         ],
@@ -1391,6 +1427,9 @@
                 }
               }
             }
+          },
+          "304": {
+            "description": "Not Modified"
           },
           "400": {
             "description": "Bad request",
@@ -1587,7 +1626,8 @@
                   "sortBy": {
                     "type": "string",
                     "enum": [
-                      "highest-score",
+                      "highest-score-mvms",
+                      "highest-score-elastic",
                       "price-asc",
                       "price-desc",
                       "newest",
@@ -1791,10 +1831,20 @@
                       ]
                     }
                   },
-                  "externalVariantId": {
-                    "type": "string",
-                    "example": "67ty7",
-                    "description": "Id of variant saved by the provider"
+                  "provider": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "example": "wynd",
+                        "description": "Name of the provider"
+                      },
+                      "externalVariantId": {
+                        "type": "string",
+                        "example": "67ty7",
+                        "description": "Id of variant saved by the provider"
+                      }
+                    }
                   }
                 },
                 "required": [
@@ -2486,7 +2536,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": 4,
+                    "example": "2423",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -2759,7 +2809,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": 4,
+                    "example": "2423",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -2853,10 +2903,20 @@
                             ]
                           }
                         },
-                        "externalVariantId": {
-                          "type": "string",
-                          "example": "67ty7",
-                          "description": "Id of variant saved by the provider"
+                        "provider": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "example": "wynd",
+                              "description": "Name of the provider"
+                            },
+                            "externalVariantId": {
+                              "type": "string",
+                              "example": "67ty7",
+                              "description": "Id of variant saved by the provider"
+                            }
+                          }
                         }
                       },
                       "required": [
@@ -2996,6 +3056,16 @@
       },
       "get": {
         "summary": "Retrieve a product",
+        "parameters": [
+          {
+            "name": "If-None-Match",
+            "in": "header",
+            "description": "Etag checker.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "tags": [
           "Products"
         ],
@@ -3018,6 +3088,9 @@
                 }
               }
             }
+          },
+          "304": {
+            "description": "Not Modified"
           },
           "404": {
             "description": "Product not found",
@@ -3249,7 +3322,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": 4,
+                    "example": "2423",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -3490,19 +3563,13 @@
 
         ],
         "responses": {
-          "202": {
-            "description": "Accepted",
+          "201": {
+            "description": "Created",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
-                    "url": {
-                      "type": "string",
-                      "example": "https://exempleurl/api/products/status/10aad2e35138aa982e0d848a",
-                      "description": "Url polling"
-                    }
-                  }
+                  "$ref": "#/components/schemas/Product"
                 }
               }
             }
@@ -3578,7 +3645,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": 4,
+                    "example": "2423",
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -3672,10 +3739,20 @@
                             ]
                           }
                         },
-                        "externalVariantId": {
-                          "type": "string",
-                          "example": "67ty7",
-                          "description": "Id of variant saved by the provider"
+                        "provider": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "example": "wynd",
+                              "description": "Name of the provider"
+                            },
+                            "externalVariantId": {
+                              "type": "string",
+                              "example": "67ty7",
+                              "description": "Id of variant saved by the provider"
+                            }
+                          }
                         }
                       },
                       "required": [
@@ -4122,23 +4199,33 @@
       }
     },
     "/api/v1/selections/{id}/products": {
-      "parameters": [
-        {
-          "name": "id",
-          "in": "path",
-          "description": "Unique identifier of a selection.",
-          "required": true,
-          "schema": {
-            "type": "integer"
-          }
-        }
-      ],
       "get": {
-        "summary": "Returns an online selection and all of its products.",
+        "summary": "Returns products of an online selection.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Unique identifier of a selection.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "example": 1,
+            "description": "Number of desired page.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
         "tags": [
           "Selections"
         ],
-        "description": "Returns an online selection and all of its products.",
+        "description": "Returns products of an online selection.",
         "security": [
           {
             "authorization": [
@@ -4154,14 +4241,174 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "selection": {
-                      "$ref": "#/components/schemas/Selection"
-                    },
                     "products": {
                       "type": "array",
                       "items": {
                         "$ref": "#/components/schemas/Product"
                       }
+                    },
+                    "page": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "totalPages": {
+                      "type": "integer",
+                      "example": 19
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 403,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Selection not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Resource not found",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Not found",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/admin/selections/{id}/products": {
+      "get": {
+        "summary": "Returns all products of a selection.",
+        "parameters": [
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Auth token of user",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Unique identifier of a selection.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "example": 1,
+            "description": "Number of desired page.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "tags": [
+          "Selections"
+        ],
+        "description": "Returns all products of a selection.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "products": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Product"
+                      }
+                    },
+                    "page": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "totalPages": {
+                      "type": "integer",
+                      "example": 19
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 401,
+                      "description": "Status of an error."
                     }
                   }
                 }
@@ -4436,6 +4683,125 @@
                   "description",
                   "imageUrl"
                 ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/admin/selections": {
+      "get": {
+        "summary": "List all selections for admin users.",
+        "parameters": [
+          {
+            "name": "x-client-id",
+            "in": "header",
+            "description": "Auth token of user",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "example": 1,
+            "description": "Number of desired page.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "tags": [
+          "Selections"
+        ],
+        "description": "List all selections for admin users.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "selections": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Selection"
+                      }
+                    },
+                    "page": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "totalPages": {
+                      "type": "integer",
+                      "example": 19
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 401,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 403,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
               }
             }
           }
@@ -4790,7 +5156,148 @@
         }
       }
     },
+    "/api/v1/auth/admin/selections/{id}": {
+      "parameters": [
+        {
+          "name": "x-client-id",
+          "in": "header",
+          "description": "Auth token of user",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of a selection.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Returns a selection",
+        "tags": [
+          "Selections"
+        ],
+        "description": "Returns a selection.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Selection"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 401,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 403,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Resource not found",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Not found",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/selections": {
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "example": 1,
+          "description": "Number of desired page.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
       "get": {
         "summary": "Lists all the online selections",
         "tags": [
@@ -4810,9 +5317,22 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Selection"
+                  "type": "object",
+                  "properties": {
+                    "selections": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Selection"
+                      }
+                    },
+                    "page": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "totalPages": {
+                      "type": "integer",
+                      "example": 19
+                    }
                   }
                 }
               }
@@ -5148,6 +5668,16 @@
       ],
       "get": {
         "summary": "List of deliveries by shop",
+        "parameters": [
+          {
+            "name": "If-None-Match",
+            "in": "header",
+            "description": "Etag checker.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "tags": [
           "Deliveries"
         ],
@@ -5172,6 +5702,9 @@
                 }
               }
             }
+          },
+          "304": {
+            "description": "Not Modified"
           }
         }
       }
@@ -5645,7 +6178,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": 4,
+                    "example": "2423",
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -6085,7 +6618,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": 4,
+                    "example": "2423",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -6409,6 +6942,16 @@
       ],
       "get": {
         "summary": "Get reviews for a shop.",
+        "parameters": [
+          {
+            "name": "If-None-Match",
+            "in": "header",
+            "description": "Etag checker.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "tags": [
           "Reviews"
         ],
@@ -6433,6 +6976,9 @@
                 }
               }
             }
+          },
+          "304": {
+            "description": "Not Modified"
           },
           "404": {
             "description": "Product not found",
@@ -6478,6 +7024,16 @@
       ],
       "get": {
         "summary": "get shop's schedules",
+        "parameters": [
+          {
+            "name": "If-None-Match",
+            "in": "header",
+            "description": "Etag checker.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "tags": [
           "Schedules"
         ],
@@ -6502,6 +7058,9 @@
                 }
               }
             }
+          },
+          "304": {
+            "description": "Not Modified"
           },
           "404": {
             "description": "Not found",
@@ -6748,6 +7307,16 @@
       ],
       "get": {
         "summary": "shop informations",
+        "parameters": [
+          {
+            "name": "If-None-Match",
+            "in": "header",
+            "description": "Etag checker.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "tags": [
           "Shops"
         ],
@@ -6770,6 +7339,9 @@
                 }
               }
             }
+          },
+          "304": {
+            "description": "Not Modified"
           },
           "404": {
             "description": "Not found",
@@ -7319,6 +7891,13 @@
                     "example": 1,
                     "description": "Search page number."
                   },
+                  "perPage": {
+                    "type": "integer",
+                    "example": 12,
+                    "description": "Number of results per page.",
+                    "minimum": 1,
+                    "maximum": 16
+                  },
                   "perimeter": {
                     "type": "string",
                     "enum": [
@@ -7333,9 +7912,16 @@
                       "name-desc",
                       "random",
                       "distance",
-                      "highest-score",
+                      "highest-score-mvms",
+                      "highest-score-elastic",
                       "best-sells"
                     ]
+                  },
+                  "excludeLocation": {
+                    "type": "boolean",
+                    "example": false,
+                    "default": false,
+                    "description": "Only with a search with location params. Exclude the city of the search when perimeter params is department. Exclude city department from search when perimeter params is country."
                   },
                   "geolocOptions": {
                     "type": "object",
@@ -7361,6 +7947,390 @@
                       "lat",
                       "long"
                     ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/admin/tags": {
+      "parameters": [
+        {
+          "name": "x-client-id",
+          "in": "header",
+          "description": "Auth token of user",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "post": {
+        "summary": "Create a tag.",
+        "tags": [
+          "Tags"
+        ],
+        "description": "Create a tag.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "201": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Tag"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "The syntax of the query is incorrect.",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Bad Request",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 400,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 401,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 403,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Noël",
+                    "description": "Name of the Tag."
+                  },
+                  "status": {
+                    "type": "string",
+                    "example": "active",
+                    "enum": [
+                      "active",
+                      "not_active"
+                    ],
+                    "description": "Status of the Tag."
+                  },
+                  "featured": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "imageUrl": {
+                    "type": "string",
+                    "example": "https://path/to/image.jpeg",
+                    "description": "Image url of the Tag."
+                  }
+                },
+                "required": [
+                  "name",
+                  "status"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tags": {
+      "get": {
+        "summary": "Get list of tags",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "example": 1,
+            "description": "Number of the desired page.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "tags": [
+          "Tags"
+        ],
+        "description": "Get the list of tags",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Tag"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tags/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "example": 1,
+          "description": "Unique identifier of a tag.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Retrieve a tag",
+        "tags": [
+          "Tags"
+        ],
+        "description": "Retrieve a tag by id",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "example": 1,
+                      "description": "Unique identifier of a tag."
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "Noël",
+                      "description": "Name of the Tag."
+                    },
+                    "status": {
+                      "type": "string",
+                      "example": "active",
+                      "enum": [
+                        "active",
+                        "not_active"
+                      ],
+                      "description": "Status of the Tag."
+                    },
+                    "featured": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "imageUrl": {
+                      "type": "string",
+                      "example": "https://path/to/image.jpeg",
+                      "description": "Image url of the Tag."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tag not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Resource not found",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Not found",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tags/{id}/products": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "example": 1,
+          "description": "Unique identifier of a tag",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Get the products of a tag",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "example": 1,
+            "description": "Number of the desired page.",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "tags": [
+          "Tags"
+        ],
+        "description": "Get the products of a tag by id of tag",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Product"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Tag not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Resource not found",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Not found",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404,
+                      "description": "Status of an error."
+                    }
                   }
                 }
               }
@@ -7466,10 +8436,20 @@
                       },
                       "description": "List of characteristics."
                     },
-                    "externalVariantId": {
-                      "type": "string",
-                      "example": "67ty7",
-                      "description": "Id of variant saved by the provider"
+                    "provider": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "example": "wynd",
+                          "description": "Name of the provider"
+                        },
+                        "externalVariantId": {
+                          "type": "string",
+                          "example": "67ty7",
+                          "description": "Id of variant saved by the provider"
+                        }
+                      }
                     }
                   }
                 }
@@ -7763,10 +8743,20 @@
                       },
                       "description": "List of characteristics."
                     },
-                    "externalVariantId": {
-                      "type": "string",
-                      "example": "67ty7",
-                      "description": "Id of variant saved by the provider"
+                    "provider": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "example": "wynd",
+                          "description": "Name of the provider"
+                        },
+                        "externalVariantId": {
+                          "type": "string",
+                          "example": "67ty7",
+                          "description": "Id of variant saved by the provider"
+                        }
+                      }
                     }
                   }
                 }
@@ -7964,10 +8954,25 @@
                       "format": "binary"
                     }
                   },
-                  "externalVariantId": {
-                    "type": "string",
-                    "example": "'iuhzfiuh21'",
-                    "description": "Provider variant ID"
+                  "provider": {
+                    "type": "object",
+                    "description": "Provider object for third part",
+                    "example": {
+                      "name": "wynd",
+                      "externalVariantId": "67ty7"
+                    },
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "example": "wynd",
+                        "description": "Name of the provider"
+                      },
+                      "externalVariantId": {
+                        "type": "string",
+                        "example": "67ty7",
+                        "description": "Id of variant saved by the provider"
+                      }
+                    }
                   }
                 }
               }
@@ -8120,12 +9125,12 @@
         "properties": {
           "id": {
             "type": "integer",
-            "example": 1,
+            "example": "2423",
             "description": "Unique identifier of a category."
           },
           "name": {
             "type": "string",
-            "example": "Mobilier extérieur",
+            "example": "Non classée",
             "description": "Display name of a category."
           },
           "children": {
@@ -8238,6 +9243,35 @@
           "endAt",
           "discount"
         ]
+      },
+      "Image": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 42
+          },
+          "originalUrl": {
+            "type": "string",
+            "example": "https://path/to/original-image.jpg"
+          },
+          "miniUrl": {
+            "type": "string",
+            "example": "https://path/to/mini-format.jpg"
+          },
+          "thumbUrl": {
+            "type": "string",
+            "example": "https://path/to/thumb-format.jpg"
+          },
+          "squareUrl": {
+            "type": "string",
+            "example": "https://path/to/square-format.jpg"
+          },
+          "wideUrl": {
+            "type": "string",
+            "example": "https://path/to/wide-format.jpg"
+          }
+        }
       },
       "Product": {
         "type": "object",
@@ -9102,6 +10136,11 @@
           "imageUrl": {
             "type": "string",
             "example": "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg"
+          },
+          "productsCount": {
+            "type": "integer",
+            "example": 100,
+            "description": "Number of a selection's produ"
           }
         }
       },
@@ -9280,6 +10319,16 @@
                 "inseeCode": {
                   "type": "string",
                   "example": "44084"
+                },
+                "latitude": {
+                  "type": "number",
+                  "example": 44.82408,
+                  "description": "Shop address's latitude"
+                },
+                "longitude": {
+                  "type": "number",
+                  "example": 24.13408,
+                  "description": "Shop address's longitude"
                 },
                 "territoryName": {
                   "type": "string",
@@ -9562,6 +10611,16 @@
             "type": "string",
             "example": "44084"
           },
+          "latitude": {
+            "type": "number",
+            "example": 44.82408,
+            "description": "Shop address's latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "example": 24.13408,
+            "description": "Shop address's longitude"
+          },
           "territoryName": {
             "type": "string",
             "example": "Usa"
@@ -9623,6 +10682,39 @@
           }
         }
       },
+      "Tag": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1,
+            "description": "Unique identifier of a tag."
+          },
+          "name": {
+            "type": "string",
+            "example": "Noël",
+            "description": "Name of the Tag."
+          },
+          "status": {
+            "type": "string",
+            "example": "active",
+            "enum": [
+              "active",
+              "not_active"
+            ],
+            "description": "Status of the Tag."
+          },
+          "featured": {
+            "type": "boolean",
+            "example": true
+          },
+          "imageUrl": {
+            "type": "string",
+            "example": "https://path/to/image.jpeg",
+            "description": "Image url of the Tag."
+          }
+        }
+      },
       "Variant": {
         "type": "object",
         "properties": {
@@ -9679,10 +10771,20 @@
             },
             "description": "List of characteristics."
           },
-          "externalVariantId": {
-            "type": "string",
-            "example": "67ty7",
-            "description": "Id of variant saved by the provider"
+          "provider": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "example": "wynd",
+                "description": "Name of the provider"
+              },
+              "externalVariantId": {
+                "type": "string",
+                "example": "67ty7",
+                "description": "Id of variant saved by the provider"
+              }
+            }
           }
         }
       },

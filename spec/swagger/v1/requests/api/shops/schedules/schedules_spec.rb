@@ -5,6 +5,7 @@ RSpec.describe 'api/v1/shops/schedules', swagger_doc: 'v1/swagger.json', type: :
     parameter name: 'id', in: :path, type: :string, description: 'Unique identifier of the desired shop.'
 
     get("get shop's schedules") do
+      parameter name: 'If-None-Match', in: :header, type: :string, description: 'Etag checker.'
       tags 'Schedules'
       produces 'application/json'
       description 'Retrieve schedules from the given shop.'
@@ -12,6 +13,10 @@ RSpec.describe 'api/v1/shops/schedules', swagger_doc: 'v1/swagger.json', type: :
 
       response(200, 'Successful') do
         schema type: :array, items: { '$ref': '#/components/schemas/Schedule' }
+        run_test!
+      end
+
+      response(304, 'Not Modified') do
         run_test!
       end
 

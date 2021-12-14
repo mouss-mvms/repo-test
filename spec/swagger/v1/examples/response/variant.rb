@@ -57,7 +57,13 @@ module V1
                 },
                 description: 'List of characteristics.'
               },
-              externalVariantId: { type: :string, example: '67ty7', description: 'Id of variant saved by the provider' }
+              provider: {
+                type: :object,
+                properties: {
+                  name: { type: :string, example: 'wynd', description: 'Name of the provider'},
+                  externalVariantId: { type: :string, example: '67ty7', description: 'Id of variant saved by the provider' }
+                }
+              }
             }
           }
         end
