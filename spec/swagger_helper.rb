@@ -59,6 +59,7 @@ RSpec.configure do |config|
           Characteristic: V1::Examples::Response::Characteristics.to_h,
           Delivery: V1::Examples::Response::Delivery.to_h,
           GoodDeal: V1::Examples::Response::GoodDeal.to_h,
+          Image: V1::Examples::Response::Image.to_h,
           Product: V1::Examples::Response::Product.to_h,
           Review: V1::Examples::Response::Review.to_h,
           Schedule: V1::Examples::Response::Schedule.to_h,
@@ -68,6 +69,7 @@ RSpec.configure do |config|
           Shop: V1::Examples::Response::Shop.to_h,
           ShopSearch: V1::Examples::Response::Shops::Search.to_h,
           ShopSummary: V1::Examples::Response::ShopSummary.to_h,
+          Tag: V1::Examples::Response::Tag.to_h,
           Variant: V1::Examples::Response::Variant.to_h,
           Errors: Examples::Errors::Error.new(message_example: "Bad Request", status_example: 400, detail_example: "The syntax of the query is incorrect.").error
         }

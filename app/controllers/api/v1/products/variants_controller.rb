@@ -17,7 +17,10 @@ module Api
         end
 
         def create_offline
-          variant_params[:external_variant_id] = params.require(:externalVariantId)
+          params.require(:provider).require(:name)
+          params[:provider].require(:name)
+          params[:provider].require(:externalVariantId)
+          raise ApplicationController::Forbidden if params[:provider][:name] != Product.find(params[:id]).api_provider_product&.api_provider&.name
           dto_variant_request = Dto::V1::Variant::Request.new(variant_params)
           ActiveRecord::Base.transaction do
             variant = Dao::Variant.create(dto_variant_request: dto_variant_request)
@@ -62,7 +65,11 @@ module Api
             characteristic[:value] = c.require(:value)
             variant_params[:characteristics] << characteristic
           }
-          variant_params[:external_variant_id] = params[:externalVariantId] if params[:externalVariantId]
+          if params[:provider]
+            variant_params[:provider] = {}
+            variant_params[:provider][:name] = params[:provider][:name] if params[:provider][:name]
+            variant_params[:provider][:external_variant_id] = params[:provider][:externalVariantId] if params[:provider][:externalVariantId]
+          end
           variant_params
         end
       end

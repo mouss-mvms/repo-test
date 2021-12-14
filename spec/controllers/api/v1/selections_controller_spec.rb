@@ -4,19 +4,23 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
 
   describe "GET #index" do
     context "All ok" do
-      it "should return 200 HTTP status and a list of selections" do
-        selections = [
-          create(:selection, name: 'Jouets'),
-          create(:online_selection, name: 'Sabre lasers'),
-          create(:online_selection, name: 'Tournevis'),
-        ]
+      before(:each) do
+        Selection.destroy_all
+      end
+      context "No page params" do
+        it "should return 200 HTTP status" do
+          count = 16
+          create_list(:online_selection, count)
 
-        get :index
-        should respond_with(200)
-        response_body = JSON.parse(response.body)
-        expect(response_body).to be_instance_of(Array)
-        expect(response_body.count).to eq(2)
-        expect(response.body).to eq(selections.last(2).map { |s| Dto::V1::Selection::Response.create(s).to_h }.to_json)
+          get :index
+          should respond_with(200)
+          result = JSON.parse(response.body).deep_symbolize_keys
+          expect(result[:selections].count).to eq(count)
+          result[:selections].each do |result_selection|
+            expect_selection = Selection.find(result_selection[:id])
+            expect(result_selection).to eq(Dto::V1::Selection::Response.create(expect_selection).to_h)
+          end
+        end
       end
     end
   end

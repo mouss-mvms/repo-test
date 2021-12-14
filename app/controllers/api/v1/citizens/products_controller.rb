@@ -8,8 +8,10 @@ module Api
 
         def index
           products = @citizen.products.includes(:category, :brand, references: [:sample, :color, :size, :good_deal]).actives
-          response = products.map {|product| Dto::V1::Product::Response.create(product).to_h}
-          render json: response, status: :ok
+          if stale?(products)
+            response = products.map { |product| Dto::V1::Product::Response.create(product).to_h }
+            return render json: response, status: :ok
+          end
         end
 
         def create
@@ -112,10 +114,17 @@ module Api
             hash[:weight] = v[:weight]
             hash[:quantity] = v[:quantity]
             hash[:is_default] = v[:isDefault]
-            image_ids = v.require(:imageIds)
-            raise ActionController::BadRequest.new("You can't pass more than 5 image ids") if image_ids.count > 5
+            raise ActionController::ParameterMissing.new("imageIds or imageUrls") unless v[:imageIds] || v[:imageUrls]
+            raise ActionController::BadRequest.new("You can only pass imageIds or imageUrls, not both.") if v[:imageIds] && v[:imageUrls]
+            image_urls = if v[:imageIds]
+                           image_ids = v.require(:imageIds)
+                           image_ids.map { |id| Image.find(id).file_url }
+                         else
+                           v.require(:imageUrls)
+                         end
+            raise ActionController::BadRequest.new("You can't pass more than 5 image ids") if image_urls.count > 5
 
-            hash[:image_urls] = image_ids.map { |id| Image.find(id).file_url }
+            hash[:image_urls] = image_urls
             if v[:goodDeal]
               hash[:good_deal] = {}
               hash[:good_deal][:start_at] = v[:goodDeal][:startAt]

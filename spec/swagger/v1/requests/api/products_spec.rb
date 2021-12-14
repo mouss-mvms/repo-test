@@ -20,7 +20,7 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
           status: { type: :string, example: "online", description: 'Status of product' },
           sellerAdvice: { type: :string, example: "Taille petite, prendre une demi pointure au dessus", description: 'Advice from seller of product' },
           isService: { type: :boolean, example: false, description: 'Tell if the product is a service' },
-          categoryId: { type: :integer, example: 4, description: 'Category id of product' },
+          categoryId: { type: :integer, example: ENV['UNCLASSIFIED_CATEGORY_ID'], description: 'Category id of product' },
           variants: {
             type: :array,
             items: {
@@ -122,7 +122,7 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
           sellerAdvice: { type: :string, example: "Taille petite, prendre une demi pointure au dessus", description: 'Advice from seller of product' },
           isService: { type: :boolean, example: false, description: 'Tell if the product is a service' },
           citizenAdvice: { type: :string, example: 'Produit trouvé un commercant trop sympa', description: 'Advice from citizen of product' },
-          categoryId: { type: :integer, example: 4, description: 'Category id of product' },
+          categoryId: { type: :integer, example: ENV['UNCLASSIFIED_CATEGORY_ID'], description: 'Category id of product' },
           variants: {
             type: :array,
             items: {
@@ -165,7 +165,13 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
                     required: %w[name value]
                   }
                 },
-                externalVariantId: { type: :string, example: '67ty7', description: 'Id of variant saved by the provider' }
+                provider: {
+                  type: :object,
+                  properties: {
+                    name: { type: :string, example: 'wynd', description: 'Name of the provider'},
+                    externalVariantId: { type: :string, example: '67ty7', description: 'Id of variant saved by the provider' }
+                  }
+                }
               },
               required: %w[basePrice weight quantity isDefault]
             }
@@ -224,6 +230,8 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
     end
 
     get('Retrieve a product') do
+      parameter name: 'If-None-Match', in: :header, type: :string, description: 'Etag checker.'
+      
       tags 'Products'
       produces 'application/json'
       description 'Retrieve a product'
@@ -231,6 +239,10 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
 
       response(200, 'Successful') do
         schema type: :object, '$ref': '#/components/schemas/Product'
+        run_test!
+      end
+
+      response(304, 'Not Modified') do
         run_test!
       end
 
@@ -262,7 +274,7 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
           sellerAdvice: { type: :string, example: "Taille petite, prendre une demi pointure au dessus", description: 'Advice from seller of product' },
           isService: { type: :boolean, example: false, description: 'Tell if the product is a service' },
           citizenAdvice: { type: :string, example: 'Produit trouvé un commercant trop sympa', description: 'Advice from citizen of product' },
-          categoryId: { type: :integer, example: 4, description: 'Category id of product' },
+          categoryId: { type: :integer, example: ENV['UNCLASSIFIED_CATEGORY_ID'], description: 'Category id of product' },
           variants: {
             type: :array,
             items: {
@@ -376,7 +388,7 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
           sellerAdvice: { type: :string, example: "Taille petite, prendre une demi pointure au dessus", description: 'Advice from seller of product' },
           isService: { type: :boolean, example: false, description: 'Tell if the product is a service' },
           citizenAdvice: { type: :string, example: 'Produit trouvé un commercant trop sympa', description: 'Advice from citizen of product' },
-          categoryId: { type: :integer, example: 4, description: 'Category id of product' },
+          categoryId: { type: :integer, example: ENV['UNCLASSIFIED_CATEGORY_ID'], description: 'Category id of product' },
           shopId: { type: :integer, example: 453, description: 'Shop id of product' },
           variants: {
             type: :array,
@@ -419,7 +431,13 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
                     required: %w[name value]
                   }
                 },
-                externalVariantId: { type: :string, example: '67ty7', description: 'Id of variant saved by the provider' }
+                provider: {
+                  type: :object,
+                  properties: {
+                    name: { type: :string, example: 'wynd', description: 'Name of the provider'},
+                    externalVariantId: { type: :string, example: '67ty7', description: 'Id of variant saved by the provider' }
+                  }
+                }
               },
               required: %w[basePrice weight quantity isDefault]
             }

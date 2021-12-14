@@ -28,9 +28,8 @@ RSpec.describe "api/v1/auth/images", swagger_doc: "v1/swagger.json", type: :requ
       response(201, "Created") do
         schema type: "array",
                items: {
-                 type: "integer",
-               },
-               example: [666, 42]
+                 '$ref': '#/components/schemas/Image'
+               }
         run_test!
       end
 

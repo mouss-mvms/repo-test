@@ -29,7 +29,7 @@ RSpec.describe "api/v1/products/summaries", swagger_doc: "v1/swagger.json", type
             example: ["livraison-par-la-poste", "livraison-france-metropolitaine"], description: 'Service slugs.' },
           sortBy: {
             type: :string,
-            enum: ["highest-score", "price-asc", "price-desc", "newest", "position", "name-asc", "name-desc", "random"]
+            enum: ["highest-score-mvms", "highest-score-elastic", "price-asc", "price-desc", "newest", "position", "name-asc", "name-desc", "random"]
           },
 
           page: { type: :integer, example: 1, description: 'Search page number.' },

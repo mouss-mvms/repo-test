@@ -4,6 +4,8 @@ RSpec.describe Dto::V1::Variant::Request do
   describe 'new' do
     context 'All ok' do
       it 'should return a Dto::Variant::Request' do
+        provider = create(:api_provider, name: 'wynd')
+
         variant_params = {
           base_price: 20.5,
           weight: 20.5,
@@ -24,7 +26,10 @@ RSpec.describe Dto::V1::Variant::Request do
                 value: "S"
             }
           ],
-          external_variant_id: '56yt'
+          provider: {
+            name: provider.name,
+            external_variant_id: '56yt'
+          }
         }
 
 
