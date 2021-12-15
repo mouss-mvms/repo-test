@@ -83,6 +83,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
             inseeCode: "33063"
           },
           email: "test@boutique.com",
+          mobileNumber: "0666666666",
           siret: "75409821800029",
           categoryIds: [
             @categories[0].id,
@@ -107,6 +108,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         expect(shop_result["name"]).to eq(@create_params[:name])
         expect(shop_result["siret"]).to eq(@create_params[:siret])
         expect(shop_result["email"]).to eq(@create_params[:email])
+        expect(shop_result["mobileNumber"]).to eq(@create_params[:mobileNumber])
         expect(shop_result["address"]["streetNumber"]).to eq(@create_params[:address][:streetNumber])
         expect(shop_result["address"]["route"]).to eq(@create_params[:address][:route])
         expect(shop_result["address"]["locality"]).to eq(@create_params[:address][:locality])
@@ -290,6 +292,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         @update_params = {
           name: "Boutique Test",
           email: @shop.email,
+          mobileNumber: "0666666666",
           siret: @shop.siret,
           address: {
             streetNumber: @shop.address.street_number,

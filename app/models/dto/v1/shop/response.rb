@@ -2,7 +2,7 @@ module Dto
   module V1
     module Shop
       class Response
-        attr_accessor :id, :name, :slug, :image_urls, :cover_image_url, :avatar_image_url, :description, :baseline, :facebook_link, :instagram_link, :website_link, :address, :siret, :email, :lowest_product_price, :highest_product_price
+        attr_accessor :id, :name, :slug, :image_urls, :cover_image_url, :avatar_image_url, :description, :baseline, :facebook_link, :instagram_link, :website_link, :address, :siret, :email, :mobile_number, :lowest_product_price, :highest_product_price
 
         def initialize(**args)
           @id = args[:id]
@@ -22,6 +22,7 @@ module Dto
           @address = args[:address] || Dto::V1::Address::Response.new
           @siret = args[:siret]
           @email = args[:email]
+          @mobile_number = args[:mobile_number]
           @lowest_product_price = args[:lowest_product_price]
           @highest_product_price = args[:highest_product_price]
         end
@@ -45,6 +46,7 @@ module Dto
                                            address: Dto::V1::Address::Response.create(shop.address),
                                            siret: shop.siret,
                                            email: shop.email,
+                                           mobile_number: shop.mobile_phone_number,
                                            avatar_image_url: shop.profil&.file_url(:thumb),
                                            cover_image_url: shop.featured&.file_url(:thumb),
                                            lowest_product_price: shop.cheapest_ref&.base_price,
@@ -79,6 +81,7 @@ module Dto
           hash[:address] = @address.to_h if fields.nil? || (fields.any? && fields.include?('address'))
           hash[:siret] = @siret if fields.nil? || (fields.any? && fields.include?('siret'))
           hash[:email] = @email if fields.nil? || (fields.any? && fields.include?('email'))
+          hash[:mobileNumber] = @mobile_number if fields.nil? || (fields.any? && fields.include?('mobile_number'))
           hash[:lowestProductPrice] = @lowest_product_price if fields.nil? || (fields.any? && fields.include?('lowestProductPrice'))
           hash[:highestProductPrice] = @highest_product_price if fields.nil? || (fields.any? && fields.include?('highestProductPrice'))
           hash

@@ -59,6 +59,11 @@ RSpec.describe 'api/v1/shops', swagger_doc: 'v1/swagger.json', type: :request do
             example: "L'email d'une boutique",
             description: "Shop's email"
           },
+          mobileNumber: {
+            type: 'string',
+            example: "0677777777",
+            description: "Shop's mobile number"
+          },
           description: {
             type: 'string',
             example: "La description d'une boutique",
@@ -94,10 +99,10 @@ RSpec.describe 'api/v1/shops', swagger_doc: 'v1/swagger.json', type: :request do
             description: "Shop's address"
           }
         },
-        required: %w[id]
+        required: %w[id name address email mobileNumber siret]
       }
 
-      response(201, 'Created') do
+      response(200, 'Succesful') do
         schema type: :object, '$ref': '#/components/schemas/Shop'
         run_test!
       end
@@ -139,6 +144,11 @@ RSpec.describe 'api/v1/shops', swagger_doc: 'v1/swagger.json', type: :request do
             example: "L'email d'une boutique",
             description: "Shop's email"
           },
+          mobileNumber: {
+            type: 'string',
+            example: "0677777777",
+            description: "Shop's mobile number"
+          },
           description: {
             type: 'string',
             example: "La description d'une boutique",
@@ -174,7 +184,7 @@ RSpec.describe 'api/v1/shops', swagger_doc: 'v1/swagger.json', type: :request do
             description: "Shop's address"
           }
         },
-        required: %w[name, address, email, siret]
+        required: %w[name address email mobileNumber siret]
       }
 
       response(201, 'Created') do

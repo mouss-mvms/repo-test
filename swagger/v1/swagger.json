@@ -7409,8 +7409,8 @@
           }
         ],
         "responses": {
-          "201": {
-            "description": "Created",
+          "200": {
+            "description": "Succesful",
             "content": {
               "application/json": {
                 "schema": {
@@ -7472,6 +7472,11 @@
                     "example": "L'email d'une boutique",
                     "description": "Shop's email"
                   },
+                  "mobileNumber": {
+                    "type": "string",
+                    "example": "0677777777",
+                    "description": "Shop's mobile number"
+                  },
                   "description": {
                     "type": "string",
                     "example": "La description d'une boutique",
@@ -7508,7 +7513,12 @@
                   }
                 },
                 "required": [
-                  "id"
+                  "id",
+                  "name",
+                  "address",
+                  "email",
+                  "mobileNumber",
+                  "siret"
                 ]
               }
             }
@@ -7604,6 +7614,11 @@
                     "example": "L'email d'une boutique",
                     "description": "Shop's email"
                   },
+                  "mobileNumber": {
+                    "type": "string",
+                    "example": "0677777777",
+                    "description": "Shop's mobile number"
+                  },
                   "description": {
                     "type": "string",
                     "example": "La description d'une boutique",
@@ -7640,9 +7655,10 @@
                   }
                 },
                 "required": [
-                  "name,",
-                  "address,",
-                  "email,",
+                  "name",
+                  "address",
+                  "email",
+                  "mobileNumber",
                   "siret"
                 ]
               }
@@ -10072,6 +10088,11 @@
             "type": "string",
             "example": "boutique@email.com",
             "description": "Shop's email"
+          },
+          "mobileNumber": {
+            "type": "string",
+            "example": "0677777777",
+            "description": "Shop's mobile number"
           },
           "baseline": {
             "type": "string",

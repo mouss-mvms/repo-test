@@ -7,6 +7,7 @@ FactoryBot.define do
     is_group { false }
     slug { "gallazini" }
     email { "contact@michaelvilleneuve.fr" }
+    mobile_phone_number { '0666666666' }
     free_shipping_limit { 500 }
     is_self_delivery { true }
     after(:create) do |shop|
