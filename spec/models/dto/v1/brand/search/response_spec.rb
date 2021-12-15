@@ -28,7 +28,9 @@ RSpec.describe Dto::V1::Brand::Search::Response do
               "indexed_at"=>"2021-10-08T15:02:34.855+00:00"
             }
           ],
-          page: 2
+          page: 2,
+          total_pages: 2,
+          total_count: 3
         }
 
         dto = ::Dto::V1::Brand::Search::Response.create(brand_search_response)
@@ -40,6 +42,8 @@ RSpec.describe Dto::V1::Brand::Search::Response do
           expect(brand).to be_an_instance_of(Dto::V1::BrandSummary::Response)
         end
         expect(dto.page).to eq(brand_search_response[:page])
+        expect(dto.total_pages).to eq(brand_search_response[:total_pages])
+        expect(dto.total_count).to eq(brand_search_response[:total_count])
       end
     end
   end
@@ -70,7 +74,9 @@ RSpec.describe Dto::V1::Brand::Search::Response do
               "indexed_at"=>"2021-10-08T15:02:34.855+00:00"
             }
           ],
-          page: 2
+          page: 2,
+          total_pages: 2,
+          total_count: 3
         }
 
         dto = ::Dto::V1::Brand::Search::Response.create(brand_search_response)
@@ -79,6 +85,8 @@ RSpec.describe Dto::V1::Brand::Search::Response do
         expect(dto_hash).to be_an_instance_of(Hash)
         expect(dto_hash[:brands]).to eq(dto.brands.map(&:to_h))
         expect(dto_hash[:page]).to eq(dto.page)
+        expect(dto_hash[:totalPages]).to eq(dto.total_pages)
+        expect(dto_hash[:totalCount]).to eq(dto.total_count)
       end
     end
   end
