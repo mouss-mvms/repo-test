@@ -26,6 +26,7 @@ RSpec.describe Dto::V1::Shop::Response do
         expect(dto_response.address).to be_an_instance_of(Dto::V1::Address::Response)
         expect(dto_response.siret).to eq(shop.siret)
         expect(dto_response.email).to eq(shop.email)
+        expect(dto_response.mobile_number).to eq(shop.mobile_phone_number)
         expect(dto_response.lowest_product_price).to eq(shop.cheapest_ref.base_price)
         expect(dto_response.highest_product_price).to eq(shop.most_expensive_ref.base_price)
       end
@@ -57,6 +58,7 @@ RSpec.describe Dto::V1::Shop::Response do
         expect(dto_hash[:address]).to eq(dto_response.address.to_h)
         expect(dto_hash[:siret]).to eq(dto_response.siret)
         expect(dto_hash[:email]).to eq(dto_response.email)
+        expect(dto_hash[:mobileNumber]).to eq(dto_response.mobile_number)
         expect(dto_hash[:lowestProductPrice]).to eq(dto_response.lowest_product_price)
         expect(dto_hash[:highestProductPrice]).to eq(dto_response.highest_product_price)
       end

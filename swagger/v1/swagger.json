@@ -258,7 +258,7 @@
                         "properties": {
                           "id": {
                             "type": "integer",
-                            "example": "3442",
+                            "example": null,
                             "description": "Unique identifier of a category."
                           },
                           "name": {
@@ -574,7 +574,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -2536,7 +2536,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -2809,7 +2809,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -3322,7 +3322,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -3645,7 +3645,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -6178,7 +6178,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -6618,7 +6618,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -7409,8 +7409,8 @@
           }
         ],
         "responses": {
-          "201": {
-            "description": "Created",
+          "200": {
+            "description": "Succesful",
             "content": {
               "application/json": {
                 "schema": {
@@ -7472,6 +7472,11 @@
                     "example": "L'email d'une boutique",
                     "description": "Shop's email"
                   },
+                  "mobileNumber": {
+                    "type": "string",
+                    "example": "0677777777",
+                    "description": "Shop's mobile number"
+                  },
                   "description": {
                     "type": "string",
                     "example": "La description d'une boutique",
@@ -7508,7 +7513,12 @@
                   }
                 },
                 "required": [
-                  "id"
+                  "id",
+                  "name",
+                  "address",
+                  "email",
+                  "mobileNumber",
+                  "siret"
                 ]
               }
             }
@@ -7604,6 +7614,11 @@
                     "example": "L'email d'une boutique",
                     "description": "Shop's email"
                   },
+                  "mobileNumber": {
+                    "type": "string",
+                    "example": "0677777777",
+                    "description": "Shop's mobile number"
+                  },
                   "description": {
                     "type": "string",
                     "example": "La description d'une boutique",
@@ -7640,9 +7655,10 @@
                   }
                 },
                 "required": [
-                  "name,",
-                  "address,",
-                  "email,",
+                  "name",
+                  "address",
+                  "email",
+                  "mobileNumber",
                   "siret"
                 ]
               }
@@ -8862,7 +8878,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {
@@ -9003,7 +9019,7 @@
         "properties": {
           "id": {
             "type": "integer",
-            "example": "3442",
+            "example": null,
             "description": "Unique identifier of a category."
           },
           "name": {
@@ -10062,6 +10078,11 @@
             "type": "string",
             "example": "boutique@email.com",
             "description": "Shop's email"
+          },
+          "mobileNumber": {
+            "type": "string",
+            "example": "0677777777",
+            "description": "Shop's mobile number"
           },
           "baseline": {
             "type": "string",

@@ -44,6 +44,11 @@ module V1
                 example: "boutique@email.com",
                 description: "Shop's email"
               },
+              mobileNumber: {
+                type: 'string',
+                example: "0677777777",
+                description: "Shop's mobile number"
+              },
               baseline: {
                 type: 'string',
                 example: "Ma boutique est top",
