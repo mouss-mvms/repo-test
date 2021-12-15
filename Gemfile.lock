@@ -10,7 +10,7 @@ GEM
       redcarpet
       rubyzip (>= 1.0.0)
       will_paginate
-    mvms-core (2.5.391)
+    mvms-core (2.5.392)
       MailchimpMarketing (~> 3.0.34)
       MailchimpTransactional (~> 1.0.40)
       active_model_otp
@@ -482,7 +482,7 @@ DEPENDENCIES
   kaminari
   listen (~> 3.3)
   memcachier
-  mvms-core (= 2.5.391)!
+  mvms-core (= 2.5.392)!
   newrelic_rpm
   omniauth (= 1.3.1)
   pagy
@@ -507,4 +507,4 @@ RUBY VERSION
    ruby 2.6.6p146
 
 BUNDLED WITH
-   2.2.30
+   2.2.33

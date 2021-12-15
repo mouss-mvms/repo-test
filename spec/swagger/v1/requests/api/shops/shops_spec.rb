@@ -188,34 +188,4 @@ RSpec.describe 'api/v1/shops', swagger_doc: 'v1/swagger.json', type: :request do
       end
     end
   end
-
-  path '/api/v1/shops' do
-    get('get shops') do
-      tags 'Shops'
-      produces 'application/json'
-      description 'Get a list of shops'
-      security [{authorization: []}]
-
-      parameter name: :q, in: :query, type: :string, description: 'Search query'
-      parameter name: :location, in: :query, type: :string, description: 'City or territory slug', required: true
-      parameter name: :categories, in: :query, type: :string, description: 'Categories slugs concatened with double "_" if more than one.', example: "vin-et-spiritueux/aperitif-et-spiritueux/rhum__maison-et-bricolage/cuisine"
-      parameter name: :perimeter, in: :query, type: :string, description: " 'around_me' : dans mon département, 'all' : dans toute la France"
-      parameter name: :services, in: :query,type: :string, example: "livraison-par-la-poste__click-collect", description: 'Service slugs concatened with double "_" if more than one.'
-      parameter name: :page, in: :query, type: :string, description: 'Number of the researches page'
-      parameter name: 'fields[]', in: :query, description: 'Return only the fields requested', schema: {
-        type: :array,
-        items: { type: :string }
-      }
-
-      response(200, 'Ok') do
-        schema type: :array, items: { '$ref': '#/components/schemas/Shop' }
-        run_test!
-      end
-
-      response(404, 'Not found') do
-        schema Examples::Errors::NotFound.new.error
-        run_test!
-      end
-    end
-  end
 end
