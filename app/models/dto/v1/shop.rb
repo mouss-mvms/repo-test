@@ -11,6 +11,7 @@ module Dto
         shop.update!(
           name: dto_shop_request.name,
           email: dto_shop_request.email,
+          mobile_phone_number: dto_shop_request.mobile_number,
           siret: dto_shop_request.siret,
           descriptions_attributes: [
             { lang: "fr", field: "description", content: dto_shop_request.description },
@@ -33,6 +34,7 @@ module Dto
         shop = ::Shop.create!(
           name: dto_shop_request.name,
           email: dto_shop_request.email,
+          mobile_phone_number: dto_shop_request.mobile_number,
           siret: dto_shop_request.siret,
           descriptions_attributes: [
             { lang: "fr", field: "description", content: dto_shop_request.description },

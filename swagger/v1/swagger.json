@@ -7409,8 +7409,8 @@
           }
         ],
         "responses": {
-          "201": {
-            "description": "Created",
+          "200": {
+            "description": "Succesful",
             "content": {
               "application/json": {
                 "schema": {
@@ -7472,6 +7472,11 @@
                     "example": "L'email d'une boutique",
                     "description": "Shop's email"
                   },
+                  "mobileNumber": {
+                    "type": "string",
+                    "example": "0677777777",
+                    "description": "Shop's mobile number"
+                  },
                   "description": {
                     "type": "string",
                     "example": "La description d'une boutique",
@@ -7508,7 +7513,12 @@
                   }
                 },
                 "required": [
-                  "id"
+                  "id",
+                  "name",
+                  "address",
+                  "email",
+                  "mobileNumber",
+                  "siret"
                 ]
               }
             }
@@ -7604,6 +7614,11 @@
                     "example": "L'email d'une boutique",
                     "description": "Shop's email"
                   },
+                  "mobileNumber": {
+                    "type": "string",
+                    "example": "0677777777",
+                    "description": "Shop's mobile number"
+                  },
                   "description": {
                     "type": "string",
                     "example": "La description d'une boutique",
@@ -7640,133 +7655,12 @@
                   }
                 },
                 "required": [
-                  "name,",
-                  "address,",
-                  "email,",
+                  "name",
+                  "address",
+                  "email",
+                  "mobileNumber",
                   "siret"
                 ]
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/shops": {
-      "get": {
-        "summary": "get shops",
-        "tags": [
-          "Shops"
-        ],
-        "description": "Get a list of shops",
-        "security": [
-          {
-            "authorization": [
-
-            ]
-          }
-        ],
-        "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "description": "Search query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "location",
-            "in": "query",
-            "description": "City or territory slug",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "categories",
-            "in": "query",
-            "description": "Categories slugs concatened with double \"_\" if more than one.",
-            "example": "vin-et-spiritueux/aperitif-et-spiritueux/rhum__maison-et-bricolage/cuisine",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "perimeter",
-            "in": "query",
-            "description": " 'around_me' : dans mon département, 'all' : dans toute la France",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "services",
-            "in": "query",
-            "example": "livraison-par-la-poste__click-collect",
-            "description": "Service slugs concatened with double \"_\" if more than one.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "description": "Number of the researches page",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "fields[]",
-            "in": "query",
-            "description": "Return only the fields requested",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Shop"
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "detail": {
-                      "type": "string",
-                      "example": "Resource not found",
-                      "description": "Message of an error."
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Not found",
-                      "description": "Display description error."
-                    },
-                    "status": {
-                      "type": "integer",
-                      "example": 404,
-                      "description": "Status of an error."
-                    }
-                  }
-                }
               }
             }
           }
@@ -10170,6 +10064,16 @@
             },
             "description": "Images of a shop"
           },
+          "avatarImageUrl": {
+            "type": "string",
+            "example": "http://www.image.com/avatar.jpg",
+            "description": "Avatar image of a shop"
+          },
+          "coverImageUrl": {
+            "type": "string",
+            "example": "http://www.image.com/cover.jpg",
+            "description": "Avatar image of a shop"
+          },
           "description": {
             "type": "string",
             "example": "La description d'une boutique",
@@ -10184,6 +10088,11 @@
             "type": "string",
             "example": "boutique@email.com",
             "description": "Shop's email"
+          },
+          "mobileNumber": {
+            "type": "string",
+            "example": "0677777777",
+            "description": "Shop's mobile number"
           },
           "baseline": {
             "type": "string",
