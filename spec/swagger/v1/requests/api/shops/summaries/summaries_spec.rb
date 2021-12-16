@@ -44,7 +44,8 @@ RSpec.describe 'api/v1/shops/summaries', swagger_doc: 'v1/swagger.json', type: :
               radius: { type: :integer, example: 50000, description: "Research radius in meters.", minimum: 1 },
             },
             required: %w[lat long]
-          }
+          },
+          includeOffline: { type: :boolean, example: false, default: false, description: 'Search with offline shops' },
         }
       }
 
