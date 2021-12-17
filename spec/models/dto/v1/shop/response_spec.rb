@@ -6,7 +6,7 @@ RSpec.describe Dto::V1::Shop::Response do
   describe "#create" do
     context "All ok" do
       it "should return a Dto::V1::Shop::Response" do
-        shop = create(:shop)
+        shop = create(:shop, featured: create(:image), profil: create(:image))
         product = create(:available_product, shop_id: shop.id)
         product.references.first.update(base_price: 50.99, shop_id: shop.id)
         product.references.last.update(shop_id: shop.id)
@@ -18,6 +18,8 @@ RSpec.describe Dto::V1::Shop::Response do
         expect(dto_response.name).to eq(shop.name)
         expect(dto_response.slug).to eq(shop.slug)
         expect(dto_response.image_urls).to eq(shop.images.map { |image| image.file.url })
+        expect(dto_response.avatar_image_url).to eq(shop.profil&.file_url(:thumb))
+        expect(dto_response.cover_image_url).to eq(shop.featured&.file_url(:thumb))
         expect(dto_response.description).to eq(shop.description)
         expect(dto_response.baseline).to eq(shop.baseline)
         expect(dto_response.facebook_link).to eq(shop.facebook_url)
@@ -26,6 +28,7 @@ RSpec.describe Dto::V1::Shop::Response do
         expect(dto_response.address).to be_an_instance_of(Dto::V1::Address::Response)
         expect(dto_response.siret).to eq(shop.siret)
         expect(dto_response.email).to eq(shop.email)
+        expect(dto_response.mobile_number).to eq(shop.mobile_phone_number)
         expect(dto_response.lowest_product_price).to eq(shop.cheapest_ref.base_price)
         expect(dto_response.highest_product_price).to eq(shop.most_expensive_ref.base_price)
       end
@@ -49,6 +52,8 @@ RSpec.describe Dto::V1::Shop::Response do
         expect(dto_hash[:name]).to eq(dto_response.name)
         expect(dto_hash[:slug]).to eq(dto_response.slug)
         expect(dto_hash[:imageUrls]).to eq(dto_response.image_urls)
+        expect(dto_hash[:avatarImageUrl]).to eq(dto_response.avatar_image_url)
+        expect(dto_hash[:coverImageUrl]).to eq(dto_response.cover_image_url)
         expect(dto_hash[:baseline]).to eq(dto_response.baseline)
         expect(dto_hash[:description]).to eq(dto_response.description)
         expect(dto_hash[:facebookLink]).to eq(dto_response.facebook_link)
@@ -57,6 +62,7 @@ RSpec.describe Dto::V1::Shop::Response do
         expect(dto_hash[:address]).to eq(dto_response.address.to_h)
         expect(dto_hash[:siret]).to eq(dto_response.siret)
         expect(dto_hash[:email]).to eq(dto_response.email)
+        expect(dto_hash[:mobileNumber]).to eq(dto_response.mobile_number)
         expect(dto_hash[:lowestProductPrice]).to eq(dto_response.lowest_product_price)
         expect(dto_hash[:highestProductPrice]).to eq(dto_response.highest_product_price)
       end

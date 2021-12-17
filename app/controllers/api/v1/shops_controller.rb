@@ -1,70 +1,14 @@
 module Api
   module V1
     class ShopsController < ApplicationController
-      before_action :uncrypt_token, except: [:show, :index]
-      before_action :retrieve_user, except: [:show, :index]
-      before_action :check_user, except: [:show, :index]
+      before_action :uncrypt_token, except: [:show]
+      before_action :retrieve_user, except: [:show]
+      before_action :check_user, except: [:show]
       before_action :retrieve_shop, only: [:update]
       before_action :is_shop_owner, only: [:update]
 
       DEFAULT_FILTERS_SHOPS = [:brands, :services, :categories]
       PER_PAGE = 15
-
-      def index
-        raise ActionController::ParameterMissing.new('location.') if params[:location].blank?
-
-        search_criterias = ::Criterias::Composite.new(::Criterias::Shops::WithOnlineProducts)
-                                                 .and(::Criterias::Shops::NotDeleted)
-                                                 .and(::Criterias::Shops::NotTemplated)
-                                                 .and(::Criterias::NotInHolidays)
-
-        search_criterias = filter_by(search_criterias)
-        category = nil
-        if params[:categories]
-          category = Category.find_by(slug: params[:categories])
-          raise ActiveRecord::RecordNotFound.new("Category not found for slug #{params[:categories]}") unless category
-          search_criterias.and(::Criterias::InCategories.new([category.id]))
-        end
-
-        if params[:location]
-          territory = Territory.find_by(slug: params[:location])
-          city = City.find_by(slug: params[:location])
-          if territory.nil? && city.nil?
-            raise ApplicationController::NotFound.new('Location not found.')
-          else
-            insee_codes = territory ? territory.insee_codes : city.insee_codes
-            if params[:q].blank? && category.nil?
-              search_criterias.and(::Criterias::InCities.new(insee_codes))
-            else
-              case params[:perimeter]
-              when "around_me" then search_criterias.and(::Criterias::CloseToYou.new(city, insee_codes, current_cities_accepted: true))
-              when "all" then search_criterias.and(::Criterias::HasServices.new(["livraison-par-colissimo"]))
-              else search_criterias.and(::Criterias::InCities.new(insee_codes))
-              end
-            end
-          end
-        end
-        response = []
-
-        shops = ::Requests::ShopSearches.search_highest_scored_shops(params[:q], search_criterias)
-
-        if !params[:page] || params[:page] == "1"
-          shops.each do |shop|
-            response << Dto::V1::Shop::Response.from_searchkick(shop).to_h(params[:fields])
-          end
-        end
-
-
-        slugs = shops.pluck(:slug)
-        search_criterias.and(::Criterias::Shops::ExceptShops.new(slugs))
-
-        random_shops = ::Requests::ShopSearches.search_random_shops(params[:q], search_criterias, params[:page])
-
-        random_shops.each do |random_shop|
-          response << Dto::V1::Shop::Response.from_searchkick(random_shop).to_h(params[:fields])
-        end
-        return render json: response, status: :ok
-      end
 
       def show
         raise ActionController::BadRequest.new("#{params[:id]} is not an id valid") unless params[:id].to_i > 0
@@ -103,6 +47,7 @@ module Api
         shop_params = {}
         shop_params[:name] = params.require(:name)
         shop_params[:email] = params.require(:email)
+        shop_params[:mobile_number] = params.require(:mobileNumber)
         shop_params[:siret] = params.require(:siret)
         shop_params[:description] = params[:description]
         shop_params[:baseline] = params[:baseline]
