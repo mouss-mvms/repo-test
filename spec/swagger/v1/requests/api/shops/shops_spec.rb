@@ -97,7 +97,12 @@ RSpec.describe 'api/v1/shops', swagger_doc: 'v1/swagger.json', type: :request do
           address: {
             '$ref': '#/components/schemas/Address',
             description: "Shop's address"
-          }
+          },
+          avatarImageId: {
+            type: 'integer',
+            example: 14,
+            description: "Image id wanted to be the shop's avatar image"
+          },
         },
         required: %w[id name address email mobileNumber siret]
       }
