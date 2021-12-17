@@ -29,6 +29,16 @@ module V1
                 },
                 description: 'Images of a shop'
               },
+              avatarImageUrl: {
+                  type: :string,
+                  example: 'http://www.image.com/avatar.jpg',
+                  description: 'Avatar image of a shop'
+              },
+              coverImageUrl: {
+                type: :string,
+                example: 'http://www.image.com/cover.jpg',
+                description: 'Avatar image of a shop'
+              },
               description: {
                 type: 'string',
                 example: "La description d'une boutique",
@@ -43,6 +53,11 @@ module V1
                 type: 'string',
                 example: "boutique@email.com",
                 description: "Shop's email"
+              },
+              mobileNumber: {
+                type: 'string',
+                example: "0677777777",
+                description: "Shop's mobile number"
               },
               baseline: {
                 type: 'string',

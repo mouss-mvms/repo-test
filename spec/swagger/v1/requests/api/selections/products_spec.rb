@@ -4,7 +4,7 @@ RSpec.describe 'api/v1/selections/products', swagger_doc: 'v1/swagger.json', typ
   path '/api/v1/selections/{id}/products' do
     get('Returns products of an online selection.') do
       parameter name: :id, in: :path, type: :integer, description: 'Unique identifier of a selection.'
-      parameter name: :page, in: :query, type: :integer, example: 1, description: 'Number of desired page.'
+      parameter name: :page, in: :query, type: :integer, example: 1, description: 'Number of desired page.', required: true
 
       tags 'Selections'
       produces 'application/json'
@@ -42,7 +42,7 @@ RSpec.describe 'api/v1/selections/products', swagger_doc: 'v1/swagger.json', typ
     get('Returns all products of a selection.') do
       parameter name: 'x-client-id', in: :header, type: :string, description: 'Auth token of user', required: true
       parameter name: :id, in: :path, type: :integer, description: 'Unique identifier of a selection.'
-      parameter name: :page, in: :query, type: :integer, example: 1, description: 'Number of desired page.'
+      parameter name: :page, in: :query, type: :integer, example: 1, description: 'Number of desired page.', required: true
 
       tags 'Selections'
       produces 'application/json'

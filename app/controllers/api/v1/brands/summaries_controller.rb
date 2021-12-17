@@ -7,7 +7,7 @@ module Api
         def search
           brands_searchkick_result = ::Requests::BrandSearches.search(query: params[:q], sort_params: params[:sortBy], page: params[:page])
           brands = brands_searchkick_result
-          response = Dto::V1::Brand::Search::Response.create(brands: brands, page: brands_searchkick_result.options[:page]).to_h
+          response = Dto::V1::Brand::Search::Response.create(brands: brands, page: brands_searchkick_result.options[:page], total_pages: brands.total_pages, total_count: brands.total_count).to_h
           set_cache!(response: response)
           render json: response, status: :ok
         end

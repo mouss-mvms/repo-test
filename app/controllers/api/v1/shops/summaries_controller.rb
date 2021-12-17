@@ -9,11 +9,11 @@ module Api
 
         def search
           raise ActionController::BadRequest.new("perPage params must be an integer between #{MIN_PER_PAGE} and #{MAX_PER_PAGE}.") unless search_params[:per_page].blank? || (search_params[:per_page].is_a?(Integer) && search_params[:per_page].between?(MIN_PER_PAGE, MAX_PER_PAGE))
-          search_criterias = ::Criterias::Composite.new(::Criterias::Shops::WithOnlineProducts)
-                                                   .and(::Criterias::Shops::NotDeleted)
+          search_criterias = ::Criterias::Composite.new(::Criterias::Shops::NotDeleted)
                                                    .and(::Criterias::Shops::NotTemplated)
                                                    .and(::Criterias::NotInHolidays)
 
+          search_criterias.and(::Criterias::Shops::WithOnlineProducts) unless params[:includeOffline] == true
           if search_params[:geoloc]
             geoloc_params = search_params[:geoloc]
             radius_in_km = (geoloc_params[:radius].to_f / 1000)
