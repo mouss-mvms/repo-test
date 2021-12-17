@@ -18,6 +18,7 @@ RSpec.describe "api/v1/products/summaries", swagger_doc: "v1/swagger.json", type
             enum: ["none", "city", "department", "country"]
           },
           q: { type: :string, example: "Chaussures", description: 'Query for search.' },
+          selectionId: { type: :integer, example: 3, description: 'Unique identifier of a selection.' },
           category: { type: :string, example: "homme", description: 'Category slug' },
           prices: { type: :string, example: "1__100", description: 'Prices range' },
           sharedProducts: { type: :boolean, description: "Only shared products", example: false },
