@@ -47,8 +47,8 @@ module Dto
                                            siret: shop.siret,
                                            email: shop.email,
                                            mobile_number: shop.mobile_phone_number,
-                                           avatar_image_url: shop.profil&.file_url(:thumb),
-                                           cover_image_url: shop.featured&.file_url(:thumb),
+                                           avatar_image_url: shop.profil&.file_url(:thumb) || shop.profil&.file_url,
+                                           cover_image_url: shop.featured&.file_url(:thumb) || shop.featured&.file_url,
                                            lowest_product_price: shop.cheapest_ref&.base_price,
                                            highest_product_price: shop.most_expensive_ref&.base_price
                                          })
