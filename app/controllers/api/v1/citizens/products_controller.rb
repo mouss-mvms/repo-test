@@ -6,10 +6,20 @@ module Api
         before_action :uncrypt_token, only: [:create, :update]
         before_action :retrieve_user, only: [:create, :update]
 
+        PER_PAGE = 16
+
         def index
-          products = @citizen.products.includes(:category, :brand, references: [:sample, :color, :size, :good_deal]).actives
+          order = [params[:sort_by].split('-')].to_h if params[:sort_by]
+          page = params[:page] ? params[:page].to_i : 1
+          limit = params[:limit] || PER_PAGE
+          products = Kaminari.paginate_array(@citizen.products.order(order).includes(:category, :brand, references: [:sample, :color, :size, :good_deal]).actives).page(page).per(limit)
           if stale?(products)
-            response = products.map { |product| Dto::V1::Product::Response.create(product).to_h }
+            response = {
+              products: products.map { |product| Dto::V1::Product::Response.create(product).to_h },
+              page: products.current_page,
+              totalPages: products.total_pages,
+              totalCount: products.total_count
+            }
             return render json: response, status: :ok
           end
         end

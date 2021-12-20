@@ -86,7 +86,13 @@ module Dao
       @reference.weight = dto_variant_request.weight if dto_variant_request.weight
       @reference.quantity = dto_variant_request.quantity if dto_variant_request.quantity
       @reference.sample.default = dto_variant_request.is_default unless dto_variant_request.is_default.nil?
-      @reference.good_deal.update(starts_at: dto_variant_request.good_deal.start_at, ends_at: dto_variant_request.good_deal.end_at, discount: dto_variant_request.good_deal.discount) if dto_variant_request.good_deal
+      if dto_variant_request.good_deal
+        if @reference.good_deal
+          @reference.good_deal.update(starts_at: dto_variant_request.good_deal&.start_at, ends_at: dto_variant_request.good_deal&.end_at, discount: dto_variant_request.good_deal&.discount)
+        else
+          GoodDeal.create!(starts_at: dto_variant_request.good_deal&.start_at, ends_at: dto_variant_request.good_deal&.end_at, discount: dto_variant_request.good_deal&.discount, reference: @reference)
+        end
+      end
       update_characteristics(dto_variant_request: dto_variant_request) if dto_variant_request.characteristics
       @reference.save!
       @reference
