@@ -289,6 +289,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         @shop_address.save
       end
       it 'should return 200 HTTP status code with shop response object' do
+        avatar_image = create(:image)
         @update_params = {
           name: "Boutique Test",
           email: @shop.email,
@@ -306,10 +307,12 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
           },
           facebookLink: "http://www.facebook.com",
           instagramLink: "http://www.instagram.com",
-          websiteLink: "http://www.website.com"
+          websiteLink: "http://www.website.com",
+          avatarImageId: avatar_image.id
         }
         shop_employee_user = create(:shop_employee_user, email: 'shop.employee78@ecity.fr')
         @shop.assign_ownership(shop_employee_user)
+        @shop.profil&.file_url = nil
         @shop.save
         request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
 
@@ -331,6 +334,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         expect(shop_result["facebookLink"]).to eq(@update_params[:facebookLink])
         expect(shop_result["instagramLink"]).to eq(@update_params[:instagramLink])
         expect(shop_result["websiteLink"]).to eq(@update_params[:websiteLink])
+        expect(shop_result["avatarImageUrl"].blank?).to be_falsey
         expect((Shop.find(shop_result["id"]).owner == shop_employee_user.shop_employee)).to be_truthy
       end
     end
