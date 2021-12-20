@@ -258,7 +258,7 @@
                         "properties": {
                           "id": {
                             "type": "integer",
-                            "example": "3442",
+                            "example": "3527",
                             "description": "Unique identifier of a category."
                           },
                           "name": {
@@ -574,7 +574,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -2536,7 +2536,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -2809,7 +2809,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -3322,7 +3322,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -3645,7 +3645,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -6178,7 +6178,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -6618,7 +6618,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -7510,6 +7510,11 @@
                   "address": {
                     "$ref": "#/components/schemas/Address",
                     "description": "Shop's address"
+                  },
+                  "avatarImageId": {
+                    "type": "integer",
+                    "example": 14,
+                    "description": "Image id wanted to be the shop's avatar image"
                   }
                 },
                 "required": [
@@ -7841,6 +7846,12 @@
                       "lat",
                       "long"
                     ]
+                  },
+                  "includeOffline": {
+                    "type": "boolean",
+                    "example": false,
+                    "default": false,
+                    "description": "Search with offline shops"
                   }
                 }
               }
@@ -8878,7 +8889,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-staging"
     }
   ],
   "components": {
@@ -9019,7 +9030,7 @@
         "properties": {
           "id": {
             "type": "integer",
-            "example": "3442",
+            "example": "3527",
             "description": "Unique identifier of a category."
           },
           "name": {
