@@ -9,7 +9,7 @@ module Dto
           @product_id = args[:product_id]
           @base_price = args[:base_price]
           @weight = args[:weight]
-          @quantity = args[:quantity] || 0
+          @quantity = args[:quantity]
           @image_urls = []
           args[:image_urls]&.each { |img_url| @image_urls << img_url }
           @is_default = args[:is_default]
