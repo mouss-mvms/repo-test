@@ -1644,6 +1644,11 @@
                     "example": "Chaussures",
                     "description": "Query for search."
                   },
+                  "selectionId": {
+                    "type": "integer",
+                    "example": 3,
+                    "description": "Unique identifier of a selection."
+                  },
                   "category": {
                     "type": "string",
                     "example": "homme",
