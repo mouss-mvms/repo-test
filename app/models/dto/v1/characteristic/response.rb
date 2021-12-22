@@ -2,17 +2,17 @@ module Dto
   module V1
     module Characteristic
       class Response
-        attr_reader :name, :type
+        attr_reader :name, :value
 
         def initialize(**args)
           @name = args[:name]
-          @type = args[:type]
+          @value = args[:value]
         end
 
         def to_h
           {
             name: @name,
-            type: @type
+            value: @value
           }
         end
       end

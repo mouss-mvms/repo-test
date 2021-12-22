@@ -220,12 +220,12 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
           },
           characteristics: [
             {
-              value: "coloris black",
               name: "color",
+              value: "coloris black",
             },
             {
-              value: "S",
               name: "size",
+              value: "S",
             },
           ],
           provider: {
@@ -766,12 +766,12 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
           },
           characteristics: [
             {
-              value: "coloris black",
               name: "color",
+              value: "coloris black",
             },
             {
-              value: "S",
               name: "size",
+              value: "S",
             },
           ],
 

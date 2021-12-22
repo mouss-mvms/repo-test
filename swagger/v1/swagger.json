@@ -258,7 +258,7 @@
                         "properties": {
                           "id": {
                             "type": "integer",
-                            "example": "3442",
+                            "example": null,
                             "description": "Unique identifier of a category."
                           },
                           "name": {
@@ -621,7 +621,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -2588,7 +2588,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -2861,7 +2861,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -3374,7 +3374,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -3697,7 +3697,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -6230,7 +6230,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -6670,7 +6670,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -8941,7 +8941,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {
@@ -9082,7 +9082,7 @@
         "properties": {
           "id": {
             "type": "integer",
-            "example": "3442",
+            "example": null,
             "description": "Unique identifier of a category."
           },
           "name": {
