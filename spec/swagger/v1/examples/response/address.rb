@@ -45,8 +45,9 @@ module V1
                 type: 'string',
                 example: "33063",
                 description: "Insee code"
-              },
-            }
+              }
+            },
+            required: %w[streetNumber route locality country postalCode latitude longitude inseeCode]
           }
         end
       end
