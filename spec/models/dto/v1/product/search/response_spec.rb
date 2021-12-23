@@ -209,7 +209,9 @@ RSpec.describe Dto::V1::Product::Search::Response do
                   "doc_count_error_upper_bound" => 0,
                   "sum_other_doc_count" => 0,
                   "buckets" => [{ "key" => "Modèle par défaut", "doc_count" => 13 }] } },
-          page: 2
+          page: 2,
+          total_pages: 3,
+          total_count: 45
         }
         result = ::Dto::V1::Product::Search::Response.create(product_search_result)
 
@@ -220,6 +222,8 @@ RSpec.describe Dto::V1::Product::Search::Response do
         end
         expect(result.filters).to be_instance_of(Dto::V1::Search::Filter::Response)
         expect(result.page).to eq(product_search_result[:page])
+        expect(result.total_pages).to eq(product_search_result[:total_pages])
+        expect(result.total_count).to eq(product_search_result[:total_count])
       end
     end
   end
@@ -431,7 +435,9 @@ RSpec.describe Dto::V1::Product::Search::Response do
                   "doc_count_error_upper_bound" => 0,
                   "sum_other_doc_count" => 0,
                   "buckets" => [{ "key" => "Modèle par défaut", "doc_count" => 13 }] } },
-          page: 2
+          page: 2,
+          total_pages: 3,
+          total_count: 45
         }
         dto = Dto::V1::Product::Search::Response.create(product_search_result)
 
@@ -439,6 +445,8 @@ RSpec.describe Dto::V1::Product::Search::Response do
         expect(dto_hash[:products]).to eq(dto.products.map(&:to_h))
         expect(dto_hash[:filters]).to eq(dto.filters.to_h)
         expect(dto_hash[:page]).to eq(dto.page)
+        expect(dto_hash[:totalPages]).to eq(dto.total_pages)
+        expect(dto_hash[:totalCount]).to eq(dto.total_count)
       end
     end
   end

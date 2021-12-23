@@ -12,7 +12,9 @@ module Api
                                                    .and(::Criterias::Products::NotInShopTemplate)
                                                    .and(::Criterias::NotInHolidays)
 
-          if search_parameters[:location]
+          if search_parameters[:shop_id]
+            search_criterias.and(::Criterias::Products::FromShop.new(search_parameters[:shop_id]))
+          elsif search_parameters[:location]
             territory = Territory.find_by(slug: search_parameters[:location])
             city = City.find_by(slug: search_parameters[:location])
             if territory
@@ -60,7 +62,11 @@ module Api
             pagination: { page: search_parameters[:page], per_page: RESULTS_PER_PAGE }
           ).call
 
-          search = { products: search_results.map { |p| p }, aggs: search_results.aggs, page: search_results.options[:page], total_pages: search_results.total_pages }
+          search = { products: search_results.map { |p| p },
+                     aggs: search_results.aggs,
+                     page: search_results.options[:page],
+                     total_pages: search_results.total_pages,
+                     total_count: search_results.total_entries }
 
           response = ::Dto::V1::Product::Search::Response.create(search).to_h
 
@@ -83,6 +89,7 @@ module Api
           search_params[:sort_by] = params[:sortBy] ? params[:sortBy] : 'name-asc'
           search_params[:random] = params[:sortBy] == 'random'
           search_params[:page] = params[:page] ? params[:page] : "1"
+          search_params[:shop_id] = params[:shopId] if params[:shopId]
           search_params
         end
 
