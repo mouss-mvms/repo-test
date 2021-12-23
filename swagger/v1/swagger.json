@@ -1693,6 +1693,11 @@
                     "type": "integer",
                     "example": 1,
                     "description": "Search page number."
+                  },
+                  "shopId": {
+                    "type": "integer",
+                    "example": 45,
+                    "description": "Shop id to get products of a shop"
                   }
                 }
               }
@@ -9836,6 +9841,11 @@
             "type": "integer",
             "description": "Total search page number.",
             "example": 15
+          },
+          "totalCount": {
+            "type": "integer",
+            "description": "Total count result number.",
+            "example": 4329
           }
         }
       },
