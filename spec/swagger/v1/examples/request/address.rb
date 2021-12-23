@@ -1,6 +1,6 @@
 module V1
   module Examples
-    module Response
+    module Request
       class Address
         def self.to_h
           {
@@ -46,7 +46,8 @@ module V1
                 example: "33063",
                 description: "Insee code"
               }
-            }
+            },
+            required: %w[streetNumber route locality country postalCode latitude longitude inseeCode]
           }
         end
       end
