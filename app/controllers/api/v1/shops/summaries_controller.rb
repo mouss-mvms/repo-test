@@ -59,7 +59,7 @@ module Api
             random: search_params[:random]
           ).call
 
-          render json: Dto::V1::Shop::Search::Response.new({ shops: shops.map { |p| p }, aggs: shops.aggs, page: shops.options[:page], total_pages: shops.total_pages }).to_h, status: :ok
+          render json: Dto::V1::Shop::Search::Response.new({ shops: shops.map { |p| p }, aggs: shops.aggs, page: shops.options[:page], total_pages: shops.total_pages, total_count: shops.total_count }).to_h, status: :ok
         end
 
         private
