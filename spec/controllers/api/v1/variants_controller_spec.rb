@@ -27,9 +27,9 @@ RSpec.describe Api::V1::VariantsController, type: :controller do
           expect(result[:goodDeal]).to eq(JSON.parse(variant_params[:goodDeal], symbolize_names: true))
           expect(result[:imageUrls]).to_not be_nil
           hash_variant_params = JSON.parse(variant_params[:characteristics], symbolize_names: true)
-          variant_params_mapped = hash_variant_params.map { |c| [c[:value], c[:name]] }
+          variant_params_mapped = hash_variant_params.map { |c| [c[:name], c[:value]] }
           result[:characteristics].each do |charac|
-            expect(variant_params_mapped.include?([charac[:name], charac[:type]])).to eq(true)
+            expect(variant_params_mapped.include?([charac[:name], charac[:value]])).to eq(true)
           end
         end
       end
@@ -56,9 +56,9 @@ RSpec.describe Api::V1::VariantsController, type: :controller do
           expect(result[:goodDeal]).to eq(JSON.parse(variant_params[:goodDeal], symbolize_names: true))
           expect(result[:imageUrls]).to_not be_nil
           hash_variant_params = JSON.parse(variant_params[:characteristics], symbolize_names: true)
-          variant_params_mapped = hash_variant_params.map { |c| [c[:value], c[:name]] }
+          variant_params_mapped = hash_variant_params.map { |c| [c[:name], c[:value]] }
           result[:characteristics].each do |charac|
-            expect(variant_params_mapped.include?([charac[:name], charac[:type]])).to eq(true)
+            expect(variant_params_mapped.include?([charac[:name], charac[:value]])).to eq(true)
           end
         end
       end
@@ -133,9 +133,9 @@ RSpec.describe Api::V1::VariantsController, type: :controller do
         expect(result[:goodDeal]).to eq(JSON.parse(variant_params[:goodDeal], symbolize_names: true))
         expect(result[:imageUrls]).to_not be_nil
         hash_variant_params = JSON.parse(variant_params[:characteristics], symbolize_names: true)
-        variant_params_mapped = hash_variant_params.map { |c| [c[:value], c[:name]] }
+        variant_params_mapped = hash_variant_params.map { |c| [c[:name], c[:value]] }
         result[:characteristics].each do |charac|
-          expect(variant_params_mapped.include?([charac[:name], charac[:type]])).to eq(true)
+          expect(variant_params_mapped.include?([charac[:name], charac[:value]])).to eq(true)
         end
       end
     end
