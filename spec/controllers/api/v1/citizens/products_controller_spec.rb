@@ -4,15 +4,66 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
   describe "GET #index" do
     context "All ok" do
       let(:citizen) { create(:citizen) }
-      let(:products) { create_list(:product, 5) }
+      let(:products) { create_list(:product, 17) }
 
-      it "should return 200 HTTP status" do
-        citizen.products << products
-        citizen.save
-        get :index, params: { id: citizen.id }
-        expect(response).to have_http_status(:ok)
-        response_body = JSON.parse(response.body, symbolize_names: true)
-        expect(response_body).to match_array(products.map { |p| Dto::V1::Product::Response.create(p).to_h })
+      context "without :limit" do
+        it "should return 200 HTTP status and handle pagination" do
+          citizen.products << products
+          citizen.save
+          get :index, params: { id: citizen.id }
+          expect(response).to have_http_status(:ok)
+          response_body = JSON.parse(response.body, symbolize_names: true)
+          expect(response_body[:products].count).to eq(16)
+          expect(response_body[:page]).to eq(1)
+          expect(response_body[:totalPages]).to eq(2)
+          expect(response_body[:totalCount]).to eq(17)
+        end
+      end
+
+      context "with :limit" do
+        it "should return 200 HTTP status and handle pagination" do
+          citizen.products << products
+          citizen.save
+          get :index, params: { id: citizen.id, limit: 4 }
+          expect(response).to have_http_status(:ok)
+          response_body = JSON.parse(response.body, symbolize_names: true)
+          expect(response_body[:products].count).to eq(4)
+          expect(response_body[:page]).to eq(1)
+          expect(response_body[:totalPages]).to eq(5)
+          expect(response_body[:totalCount]).to eq(17)
+        end
+      end
+
+      context "with :sort_by" do
+        context "created_at-asc" do
+          it "should return 200 HTTP status and sort products ASC" do
+            citizen.products << products
+            citizen.save
+            get :index, params: { id: citizen.id, sort_by: 'created_at-asc' }
+            expect(response).to have_http_status(:ok)
+            response_body = JSON.parse(response.body, symbolize_names: true)
+            product_ids = response_body[:products].pluck(:id)
+            product_ids.each_with_index do |id, index|
+              break if id == product_ids.last
+              expect(Product.find(id).created_at).to be <= Product.find(product_ids[index + 1]).created_at
+            end
+          end
+        end
+
+        context "created_at-desc" do
+          it "should return 200 HTTP status and sort products DESC" do
+            citizen.products << products
+            citizen.save
+            get :index, params: { id: citizen.id, sort_by: 'created_at-desc' }
+            expect(response).to have_http_status(:ok)
+            response_body = JSON.parse(response.body, symbolize_names: true)
+            product_ids = response_body[:products].pluck(:id)
+            product_ids.each_with_index do |id, index|
+              break if id == product_ids.last
+              expect(Product.find(id).created_at).to be >= Product.find(product_ids[index + 1]).created_at
+            end
+          end
+        end
       end
 
       it "should return 304 HTTP status" do

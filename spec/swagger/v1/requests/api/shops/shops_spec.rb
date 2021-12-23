@@ -94,10 +94,7 @@ RSpec.describe 'api/v1/shops', swagger_doc: 'v1/swagger.json', type: :request do
             example: 'http://www.boutique.com/',
             description: "Shop's website link"
           },
-          address: {
-            '$ref': '#/components/schemas/Address',
-            description: "Shop's address"
-          },
+          address: V1::Examples::Request::Address.to_h,
           avatarImageId: {
             type: 'integer',
             example: 14,
