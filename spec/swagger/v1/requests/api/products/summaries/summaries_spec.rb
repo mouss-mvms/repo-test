@@ -32,8 +32,8 @@ RSpec.describe "api/v1/products/summaries", swagger_doc: "v1/swagger.json", type
             type: :string,
             enum: ["highest-score-mvms", "highest-score-elastic", "price-asc", "price-desc", "newest", "position", "name-asc", "name-desc", "random"]
           },
-
           page: { type: :integer, example: 1, description: 'Search page number.' },
+          shopId: { type: :integer, example: 45, description: 'Shop id to get products of a shop' },
         }
       }
       response(200, 'successful') do
