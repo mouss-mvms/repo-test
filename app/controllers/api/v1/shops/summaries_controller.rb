@@ -50,7 +50,7 @@ module Api
             search_criterias.and(::Criterias::InCategories.new([category.id]))
           end
 
-          shops = ::Requests::ShopSearches.new(
+          search_results = ::Requests::ShopSearches.new(
             query: search_params[:query],
             criterias: search_criterias.create,
             aggs: [:brands_name, :services, :category_tree_ids, :category_id],
@@ -59,7 +59,13 @@ module Api
             random: search_params[:random]
           ).call
 
-          render json: Dto::V1::Shop::Search::Response.new({ shops: shops.map { |p| p }, aggs: shops.aggs, page: shops.options[:page], total_pages: shops.total_pages, total_count: shops.total_count }).to_h, status: :ok
+          search = { shops: search_results.map { |s| s },
+                     aggs: search_results.aggs,
+                     page: search_results.options[:page],
+                     total_pages: search_results.total_pages,
+                     total_count: search_results.total_entries }
+
+          render json: Dto::V1::Shop::Search::Response.create(search).to_h, status: :ok
         end
 
         private
