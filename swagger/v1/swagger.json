@@ -54,8 +54,8 @@
                     ]
                   },
                   "page": {
-                    "type": "string",
-                    "example": "2",
+                    "type": "integer",
+                    "example": 2,
                     "description": "Search page number."
                   }
                 }
@@ -9127,9 +9127,19 @@
             }
           },
           "page": {
-            "type": "string",
+            "type": "integer",
             "description": "Search page number.",
-            "example": "2"
+            "example": 2
+          },
+          "totalPages": {
+            "type": "integer",
+            "description": "Total number of page",
+            "example": 2
+          },
+          "totalCount": {
+            "type": "integer",
+            "description": "Total Result count",
+            "example": 2
           }
         }
       },

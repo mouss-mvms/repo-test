@@ -14,7 +14,7 @@ RSpec.describe "api/v1/brands/summaries", swagger_doc: "v1/swagger.json", type: 
         properties: {
           q: { type: :string, example: 'rebok', description: 'Query for search.' },
           sortBy: { type: :string, enum: ["products-count"] },
-          page: { type: :string, example: '2', description: 'Search page number.' }
+          page: { type: :integer, example: 2, description: 'Search page number.' }
         }
       }
 
