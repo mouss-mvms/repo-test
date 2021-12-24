@@ -141,7 +141,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
           it "should return 202 HTTP Status" do
             user_citizen = create(:citizen_user, email: "citizen0@ecity.fr")
             image = create(:image)
-            category = create(:category, name: "Non Classée", slug: "non-classee")
+            create(:category, name: "Non Classée", slug: "non-classee")
 
             create_params = {
               name: "manteau MAC",
