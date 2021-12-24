@@ -73,6 +73,7 @@ RSpec.describe Dao::Product, :type => :model do
         expect(product.composition).to eq(create_params[:composition])
         expect(product.images.first.file_url).to_not be_empty
         expect(product.samples.first.images.first.file_url).to_not be_empty
+        expect(product.samples.first.images.first.file_derivatives.values_at(:mini, :thumb, :square, :wide).all?(&:present?)).to be_truthy
         expect(product.api_provider_product).to_not be_nil
         expect(product.api_provider_product.api_provider.name).to eq(provider[:name])
         expect(product.api_provider_product.external_product_id).to eq(provider[:external_product_id])
@@ -459,6 +460,7 @@ RSpec.describe Dao::Product, :type => :model do
         expect(updated_product.allergens).to eq(update_params[:allergens])
         expect(updated_product.composition).to eq(update_params[:composition])
         expect(updated_product.samples.first.images.first.file_url).to_not be_empty
+        expect(updated_product.samples.first.images.first.file_derivatives.values_at(:mini, :thumb, :square, :wide).all?(&:present?)).to be_truthy
         expect(updated_product.api_provider_product).to_not be_nil
         expect(updated_product.api_provider_product.api_provider.name).to eq(provider[:name])
         expect(updated_product.api_provider_product.external_product_id).to eq(provider[:external_product_id])
