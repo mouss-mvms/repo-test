@@ -20,6 +20,7 @@ Shrine.storages = {
   store: Shrine::Storage::S3.new(public: true, **s3_options)
 }
 
+Shrine.plugin :activerecord
 Shrine.plugin :validation_helpers
 Shrine.plugin :pretty_location
 Shrine.plugin :derivatives
