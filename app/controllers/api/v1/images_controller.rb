@@ -16,7 +16,6 @@ module Api
               image_dto = Dto::V1::Image::Request.create(image: file)
               Rails.application.executor.wrap do # Avoid Circular dependency detected while autoloading constant Image
                 image = Image.create!(file: image_dto.tempfile)
-                image.save
                 Thread.current["image_id"] = image.id
               end
             }

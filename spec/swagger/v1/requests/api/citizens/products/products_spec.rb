@@ -6,13 +6,24 @@ RSpec.describe 'api/v1/citizens/products', swagger_doc: 'v1/swagger.json', type:
 
     get('retrieve products of a citizen') do
       parameter name: 'If-None-Match', in: :header, type: :string, description: 'Etag checker.'
+      parameter name: :sort_by, in: :query, schema: { type: :string, enum: %w[created_at-asc created_at-desc] }
+      parameter name: :limit, in: :query, type: :integer, description: 'Number of desired object per page. (default: 16)'
+      parameter name: :page, in: :query, type: :integer, description: 'Number of desired page. (default: 1)'
+
       tags 'Citizens'
       produces 'application/json'
       description 'Retrieve a product from a citizen.'
       security [{authorization: []}]
 
       response(200, 'Successful') do
-        schema type: :array, items: {'$ref': '#/components/schemas/Product'}
+        schema(
+          type: :object,
+          properties: {
+            products: { type: :array, items: { '$ref': '#/components/schemas/Product' } },
+            page: { type: :integer, description: 'Search page number.', example: 2 },
+            totalPages: { type: :integer, description: 'Total search page number.', example: 15 },
+            totalCount: { type: :integer, description: "Total of citizen's products.", example: 250 }
+          })
         run_test!
       end
 

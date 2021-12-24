@@ -8,19 +8,14 @@ RSpec.describe Api::V1::Admin::Selections::ProductsController do
           admin = create(:admin_user)
           selection = create(:online_selection)
           request.headers['x-client-id'] = generate_token(admin)
-          17.times do
-            selection.products << create(:available_product)
-          end
+          selection.products << create_list(:available_product, 17)
 
           get :index, params: { id: selection.id }
           should respond_with(200)
-          expect(response.body).to eq(
-            {
-              products: selection.products.first(16).map { |p| Dto::V1::Product::Response.create(p).to_h },
-              page: 1,
-              totalPages: 2
-            }.to_json
-          )
+          response_body = JSON.parse(response.body, symbolize_names: true)
+          expect(response_body[:products].count).to eq(16)
+          expect(response_body[:page]).to eq(1)
+          expect(response_body[:totalPages]).to eq(2)
         end
       end
 
@@ -29,19 +24,14 @@ RSpec.describe Api::V1::Admin::Selections::ProductsController do
           admin = create(:admin_user)
           selection = create(:online_selection)
           request.headers['x-client-id'] = generate_token(admin)
-          17.times do
-            selection.products << create(:available_product)
-          end
+          selection.products << create_list(:available_product, 16)
 
           get :index, params: { id: selection.id, page: 2 }
           should respond_with(200)
-          expect(response.body).to eq(
-            {
-              products: selection.products.last(2).map { |p| Dto::V1::Product::Response.create(p).to_h },
-              page: 2,
-              totalPages: 2
-            }.to_json
-          )
+          response_body = JSON.parse(response.body, symbolize_names: true)
+          expect(response_body[:products].count).to eq(1)
+          expect(response_body[:page]).to eq(2)
+          expect(response_body[:totalPages]).to eq(2)
         end
       end
     end
