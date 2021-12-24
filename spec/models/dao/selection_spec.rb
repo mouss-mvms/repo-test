@@ -29,6 +29,7 @@ RSpec.describe Dao::Selection, :type => :model do
       expect(selection.is_event).to eq(create_params[:event])
       expect(selection.state).to eq(create_params[:state])
       expect(selection.image).to_not be_nil
+      expect(selection.image.file_derivatives.values_at(:mini, :thumb, :square, :wide).all?(&:present?)).to be true
     end
   end
 
@@ -62,6 +63,7 @@ RSpec.describe Dao::Selection, :type => :model do
       expect(selection.is_event).to eq(update_params[:event])
       expect(selection.state).to eq(update_params[:state])
       expect(selection.image).to_not be_nil
+      expect(selection.image.file_derivatives.values_at(:mini, :thumb, :square, :wide).all?(&:present?)).to be true
     end
   end
 end

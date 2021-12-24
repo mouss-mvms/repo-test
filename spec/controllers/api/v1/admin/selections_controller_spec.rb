@@ -7,21 +7,17 @@ RSpec.describe Api::V1::Admin::SelectionsController do
         it "should return page 1 all selections" do
           admin = create(:admin_user)
           selections = []
-          10.times do
-            selections << create(:selection)
-            selections << create(:online_selection)
-          end
+          selections << create_list(:selection, 10)
+          selections << create_list(:online_selection, 10)
 
           request.headers['x-client-id'] = generate_token(admin)
 
           get :index
-          expect(response.body).to eq(
-            {
-              selections: selections.first(16).map { |s| Dto::V1::Selection::Response.create(s).to_h },
-              page: 1,
-              totalPages: 2
-            }.to_json
-          )
+          expect(response).to have_http_status(200)
+          response_body = JSON.parse(response.body, symbolize_names: true)
+          expect(response_body[:selections].count).to eq(16)
+          expect(response_body[:page]).to eq(1)
+          expect(response_body[:totalPages]).to eq(2)
         end
       end
 
@@ -29,21 +25,16 @@ RSpec.describe Api::V1::Admin::SelectionsController do
         it "should return page 2 of all selections" do
           admin = create(:admin_user)
           selections = []
-          10.times do
-            selections << create(:selection)
-            selections << create(:online_selection)
-          end
+          selections << create_list(:selection, 10)
+          selections << create_list(:online_selection, 10)
 
           request.headers['x-client-id'] = generate_token(admin)
 
           get :index, params: { page: 2 }
-          expect(response.body).to eq(
-            {
-              selections: selections.last(4).map { |s| Dto::V1::Selection::Response.create(s).to_h },
-              page: 2,
-              totalPages: 2
-            }.to_json
-          )
+          response_body = JSON.parse(response.body, symbolize_names: true)
+          expect(response_body[:selections].count).to eq(4)
+          expect(response_body[:page]).to eq(2)
+          expect(response_body[:totalPages]).to eq(2)
         end
       end
     end
