@@ -8,7 +8,6 @@ module Dao
         category_id: product_params.category_id,
         brand_id: ::Brand.where(name: product_params.brand).first_or_create.id,
         is_a_service: product_params.is_service,
-        status: product_params.status || 'offline',
         pro_advice: product_params.seller_advice,
         origin: product_params.origin,
         allergens: product_params.allergens,
@@ -90,6 +89,18 @@ module Dao
           reference.good_deal.save!
         end
       end
+
+      case product_params.status
+      when "submitted"
+        product.status = :submitted
+      when "offline"
+        product.status = :offline
+      else
+        ::Products::StatusSpecifications::CanBeOnline.new.is_satisfied_by?(product) ?
+          product.status = :online :
+          product.status = :offline
+      end
+      product.save!
       return product
     end
 
@@ -121,14 +132,20 @@ module Dao
       product.advice.content = dto_product_request.citizen_advice if dto_product_request.citizen_advice && product.advice
 
       update_or_create_variant(variant_dtos: dto_product_request.variants, product: product) if dto_product_request.variants.present?
-      if dto_product_request.status.present?
-        if dto_product_request.status == "online" && product.status != "online"
-          Products::StatusSpecifications::CanBeOnline.new.is_satisfied_by?(product) ?
-            product.status = "online" :
-            product.status = "offline"
-        else
+
+      case dto_product_request.status
+      when "submitted"
+        product.status = :submitted
+      when "refused"
+        product.status = :refused if product.submitted?
+      when "offline"
+        product.status = :offline
+      else
+        if product.submitted? && (dto_product_request.status == 'online' || dto_product_request.status == 'offline')
           product.status = dto_product_request.status
         end
+        product.status = :online if ::Products::StatusSpecifications::CanBeOnline.new.is_satisfied_by?(product)
+        product.status = :offline if ::Products::StatusSpecifications::CanBeOffline.new.is_satisfied_by?(product)
       end
       product.save!
       product
