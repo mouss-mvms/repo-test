@@ -11,6 +11,7 @@ module Dto
         shop.update!(
           name: dto_shop_request.name,
           email: dto_shop_request.email,
+          mobile_phone_number: dto_shop_request.mobile_number,
           siret: dto_shop_request.siret,
           descriptions_attributes: [
             { lang: "fr", field: "description", content: dto_shop_request.description },
@@ -23,6 +24,7 @@ module Dto
           facebook_url: dto_shop_request.facebook_link,
           instagram_url: dto_shop_request.instagram_link,
           url: dto_shop_request.website_link,
+          profil_id: dto_shop_request.avatar_image_id
           )
         dto_shop_request.address_request.addressable_id = shop.id
         Dto::V1::Address.build(dto_shop_request.address_request)
@@ -33,6 +35,7 @@ module Dto
         shop = ::Shop.create!(
           name: dto_shop_request.name,
           email: dto_shop_request.email,
+          mobile_phone_number: dto_shop_request.mobile_number,
           siret: dto_shop_request.siret,
           descriptions_attributes: [
             { lang: "fr", field: "description", content: dto_shop_request.description },

@@ -54,8 +54,8 @@
                     ]
                   },
                   "page": {
-                    "type": "string",
-                    "example": "2",
+                    "type": "integer",
+                    "example": 2,
                     "description": "Search page number."
                   }
                 }
@@ -310,6 +310,33 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "created_at-asc",
+                "created_at-desc"
+              ]
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of desired object per page. (default: 16)",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Number of desired page. (default: 1)",
+            "schema": {
+              "type": "integer"
+            }
           }
         ],
         "tags": [
@@ -329,9 +356,29 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Product"
+                  "type": "object",
+                  "properties": {
+                    "products": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Product"
+                      }
+                    },
+                    "page": {
+                      "type": "integer",
+                      "description": "Search page number.",
+                      "example": 2
+                    },
+                    "totalPages": {
+                      "type": "integer",
+                      "description": "Total search page number.",
+                      "example": 15
+                    },
+                    "totalCount": {
+                      "type": "integer",
+                      "description": "Total of citizen's products.",
+                      "example": 250
+                    }
                   }
                 }
               }
@@ -1597,6 +1644,11 @@
                     "example": "Chaussures",
                     "description": "Query for search."
                   },
+                  "selectionId": {
+                    "type": "integer",
+                    "example": 3,
+                    "description": "Unique identifier of a selection."
+                  },
                   "category": {
                     "type": "string",
                     "example": "homme",
@@ -1641,6 +1693,11 @@
                     "type": "integer",
                     "example": 1,
                     "description": "Search page number."
+                  },
+                  "shopId": {
+                    "type": "integer",
+                    "example": 45,
+                    "description": "Shop id to get products of a shop"
                   }
                 }
               }
@@ -7409,8 +7466,8 @@
           }
         ],
         "responses": {
-          "201": {
-            "description": "Created",
+          "200": {
+            "description": "Succesful",
             "content": {
               "application/json": {
                 "schema": {
@@ -7472,6 +7529,11 @@
                     "example": "L'email d'une boutique",
                     "description": "Shop's email"
                   },
+                  "mobileNumber": {
+                    "type": "string",
+                    "example": "0677777777",
+                    "description": "Shop's mobile number"
+                  },
                   "description": {
                     "type": "string",
                     "example": "La description d'une boutique",
@@ -7503,12 +7565,73 @@
                     "description": "Shop's website link"
                   },
                   "address": {
-                    "$ref": "#/components/schemas/Address",
-                    "description": "Shop's address"
+                    "type": "object",
+                    "properties": {
+                      "streetNumber": {
+                        "type": "string",
+                        "example": "33",
+                        "description": "Address's street number"
+                      },
+                      "route": {
+                        "type": "string",
+                        "example": "Rue Georges Bonnac",
+                        "description": "Address's route"
+                      },
+                      "locality": {
+                        "type": "string",
+                        "example": "Bordeaux",
+                        "description": "Address's locality"
+                      },
+                      "country": {
+                        "type": "string",
+                        "example": "France",
+                        "description": "Address's country"
+                      },
+                      "postalCode": {
+                        "type": "string",
+                        "example": "33000",
+                        "description": "Address's postal code"
+                      },
+                      "latitude": {
+                        "type": "number",
+                        "example": 44.82408,
+                        "description": "Address's latitude"
+                      },
+                      "longitude": {
+                        "type": "number",
+                        "example": -0.62295,
+                        "description": "Address's longitude"
+                      },
+                      "inseeCode": {
+                        "type": "string",
+                        "example": "33063",
+                        "description": "Insee code"
+                      }
+                    },
+                    "required": [
+                      "streetNumber",
+                      "route",
+                      "locality",
+                      "country",
+                      "postalCode",
+                      "latitude",
+                      "longitude",
+                      "inseeCode"
+                    ]
+                  },
+                  "avatarImageId": {
+                    "type": "integer",
+                    "example": 14,
+                    "description": "Image id wanted to be the shop's avatar image"
                   }
                 },
                 "required": [
-                  "id"
+                  "id",
+                  "name",
+                  "address",
+                  "email",
+                  "mobileNumber",
+                  "siret"
                 ]
               }
             }
@@ -7604,6 +7727,11 @@
                     "example": "L'email d'une boutique",
                     "description": "Shop's email"
                   },
+                  "mobileNumber": {
+                    "type": "string",
+                    "example": "0677777777",
+                    "description": "Shop's mobile number"
+                  },
                   "description": {
                     "type": "string",
                     "example": "La description d'une boutique",
@@ -7640,133 +7768,12 @@
                   }
                 },
                 "required": [
-                  "name,",
-                  "address,",
-                  "email,",
+                  "name",
+                  "address",
+                  "email",
+                  "mobileNumber",
                   "siret"
                 ]
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/shops": {
-      "get": {
-        "summary": "get shops",
-        "tags": [
-          "Shops"
-        ],
-        "description": "Get a list of shops",
-        "security": [
-          {
-            "authorization": [
-
-            ]
-          }
-        ],
-        "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "description": "Search query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "location",
-            "in": "query",
-            "description": "City or territory slug",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "categories",
-            "in": "query",
-            "description": "Categories slugs concatened with double \"_\" if more than one.",
-            "example": "vin-et-spiritueux/aperitif-et-spiritueux/rhum__maison-et-bricolage/cuisine",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "perimeter",
-            "in": "query",
-            "description": " 'around_me' : dans mon département, 'all' : dans toute la France",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "services",
-            "in": "query",
-            "example": "livraison-par-la-poste__click-collect",
-            "description": "Service slugs concatened with double \"_\" if more than one.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "description": "Number of the researches page",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "fields[]",
-            "in": "query",
-            "description": "Return only the fields requested",
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Ok",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Shop"
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "detail": {
-                      "type": "string",
-                      "example": "Resource not found",
-                      "description": "Message of an error."
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Not found",
-                      "description": "Display description error."
-                    },
-                    "status": {
-                      "type": "integer",
-                      "example": 404,
-                      "description": "Status of an error."
-                    }
-                  }
-                }
               }
             }
           }
@@ -7947,6 +7954,12 @@
                       "lat",
                       "long"
                     ]
+                  },
+                  "includeOffline": {
+                    "type": "boolean",
+                    "example": false,
+                    "default": false,
+                    "description": "Search with offline shops"
                   }
                 }
               }
@@ -9114,9 +9127,19 @@
             }
           },
           "page": {
-            "type": "string",
+            "type": "integer",
             "description": "Search page number.",
-            "example": "2"
+            "example": 2
+          },
+          "totalPages": {
+            "type": "integer",
+            "description": "Total number of page",
+            "example": 2
+          },
+          "totalCount": {
+            "type": "integer",
+            "description": "Total Result count",
+            "example": 2
           }
         }
       },
@@ -9828,6 +9851,11 @@
             "type": "integer",
             "description": "Total search page number.",
             "example": 15
+          },
+          "totalCount": {
+            "type": "integer",
+            "description": "Total count result number.",
+            "example": 4329
           }
         }
       },
@@ -10170,6 +10198,16 @@
             },
             "description": "Images of a shop"
           },
+          "avatarImageUrl": {
+            "type": "string",
+            "example": "http://www.image.com/avatar.jpg",
+            "description": "Avatar image of a shop"
+          },
+          "coverImageUrl": {
+            "type": "string",
+            "example": "http://www.image.com/cover.jpg",
+            "description": "Avatar image of a shop"
+          },
           "description": {
             "type": "string",
             "example": "La description d'une boutique",
@@ -10184,6 +10222,11 @@
             "type": "string",
             "example": "boutique@email.com",
             "description": "Shop's email"
+          },
+          "mobileNumber": {
+            "type": "string",
+            "example": "0677777777",
+            "description": "Shop's mobile number"
           },
           "baseline": {
             "type": "string",

@@ -9,11 +9,11 @@ module Api
 
         def search
           raise ActionController::BadRequest.new("perPage params must be an integer between #{MIN_PER_PAGE} and #{MAX_PER_PAGE}.") unless search_params[:per_page].blank? || (search_params[:per_page].is_a?(Integer) && search_params[:per_page].between?(MIN_PER_PAGE, MAX_PER_PAGE))
-          search_criterias = ::Criterias::Composite.new(::Criterias::Shops::WithOnlineProducts)
-                                                   .and(::Criterias::Shops::NotDeleted)
+          search_criterias = ::Criterias::Composite.new(::Criterias::Shops::NotDeleted)
                                                    .and(::Criterias::Shops::NotTemplated)
                                                    .and(::Criterias::NotInHolidays)
 
+          search_criterias.and(::Criterias::Shops::WithOnlineProducts) unless params[:includeOffline] == true
           if search_params[:geoloc]
             geoloc_params = search_params[:geoloc]
             radius_in_km = (geoloc_params[:radius].to_f / 1000)
@@ -50,7 +50,7 @@ module Api
             search_criterias.and(::Criterias::InCategories.new([category.id]))
           end
 
-          shops = ::Requests::ShopSearches.new(
+          search_results = ::Requests::ShopSearches.new(
             query: search_params[:query],
             criterias: search_criterias.create,
             aggs: [:brands_name, :services, :category_tree_ids, :category_id],
@@ -59,7 +59,13 @@ module Api
             random: search_params[:random]
           ).call
 
-          render json: Dto::V1::Shop::Search::Response.new({ shops: shops.map { |p| p }, aggs: shops.aggs, page: shops.options[:page], total_pages: shops.total_pages }).to_h, status: :ok
+          search = { shops: search_results.map { |s| s },
+                     aggs: search_results.aggs,
+                     page: search_results.options[:page],
+                     total_pages: search_results.total_pages,
+                     total_count: search_results.total_entries }
+
+          render json: Dto::V1::Shop::Search::Response.create(search).to_h, status: :ok
         end
 
         private

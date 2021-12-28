@@ -11,7 +11,9 @@ module V1
                   type: :array,
                   items: V1::Examples::Response::BrandSummary.to_h
                 },
-                page: { type: :string, description: 'Search page number.', example: "2" }
+                page: { type: :integer, description: 'Search page number.', example: 2 },
+                totalPages: { type: :integer, description: 'Total number of page', example: 2 },
+                totalCount: { type: :integer, description: 'Total Result count', example: 2 },
               }
             }
           end
