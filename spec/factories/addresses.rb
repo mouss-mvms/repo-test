@@ -12,5 +12,8 @@ FactoryBot.define do
     is_default { false }
     latitude { 45.79923399999999 }
     longitude { 4.8470666 }
+    after :create do |address|
+      address.city = FactoryBot.create(:city)
+    end
   end
 end

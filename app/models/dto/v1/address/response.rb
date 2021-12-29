@@ -2,7 +2,7 @@ module Dto
   module V1
     module Address
       class Response
-        attr_accessor :street_number, :route, :locality, :country, :postal_code, :latitude, :longitude
+        attr_accessor :street_number, :route, :locality, :country, :postal_code, :latitude, :longitude, :insee_code
 
         def initialize(**args)
           @street_number = args[:street_number]
@@ -12,6 +12,7 @@ module Dto
           @postal_code = args[:postal_code]
           @latitude = args[:latitude]
           @longitude = args[:longitude]
+          @insee_code = args[:insee_code]
         end
 
         def self.create(address)
@@ -23,6 +24,7 @@ module Dto
                                               postal_code: address.postal_code,
                                               latitude: address.latitude,
                                               longitude: address.longitude,
+                                              insee_code: address.city&.insee_code
                                             })
         end
 
@@ -34,7 +36,8 @@ module Dto
             country: @country,
             postalCode: @postal_code,
             latitude: @latitude,
-            longitude: @longitude
+            longitude: @longitude,
+            inseeCode: @insee_code
           }
         end
       end

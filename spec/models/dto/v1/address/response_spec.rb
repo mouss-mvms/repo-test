@@ -16,7 +16,8 @@ RSpec.describe Dto::V1::Address::Response do
         expect(dto_response.country).to eq(address.country)
         expect(dto_response.postal_code).to eq(address.postal_code)
         expect(dto_response.latitude).to eq(address.latitude)
-        expect(dto_response.longitude).to eq(address.longitude)
+        expect(dto_response.latitude).to eq(address.latitude)
+        expect(dto_response.insee_code).to eq(address.city.insee_code)
       end
     end
   end
@@ -36,6 +37,7 @@ RSpec.describe Dto::V1::Address::Response do
         expect(dto_hash[:postalCode]). to eq(dto_response.postal_code)
         expect(dto_hash[:latitude]). to eq(dto_response.latitude)
         expect(dto_hash[:longitude]). to eq(dto_response.longitude)
+        expect(dto_hash[:inseeCode]). to eq(dto_response.insee_code)
       end
     end
   end
