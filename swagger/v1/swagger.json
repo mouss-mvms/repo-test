@@ -12,7 +12,7 @@
         "tags": [
           "Brands"
         ],
-        "description": "Return brand-summaries list",
+        "description": "Return brand -summaries list",
         "security": [
           {
             "authorization": [
