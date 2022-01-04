@@ -56,9 +56,9 @@ module Api
         shop_params[:website_link] = params[:websiteLink]
         shop_params[:address] = {}
         shop_params[:address][:street_number] = params.require(:address).permit(:streetNumber).values.first
-        shop_params[:address][:route] = params.require(:address).permit(:route).values.first
-        shop_params[:address][:locality] = params.require(:address).permit(:locality).values.first
-        shop_params[:address][:country] = params.require(:address).permit(:country).values.first
+        shop_params[:address][:route] = params.require(:address).require(:route)
+        shop_params[:address][:locality] = params.require(:address).require(:locality)
+        shop_params[:address][:country] = params.require(:address).require(:country)
         shop_params[:address][:postal_code] = params.require(:address).permit(:postalCode).values.first
         shop_params[:address][:latitude] = params.require(:address).permit(:latitude).values.first
         shop_params[:address][:longitude] = params.require(:address).permit(:longitude).values.first
