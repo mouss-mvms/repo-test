@@ -122,7 +122,7 @@ module Api
             hash = {}
             hash[:base_price] = v[:basePrice] || 0.0
             hash[:weight] = v[:weight]
-            hash[:quantity] = v[:quantity]
+            hash[:quantity] = v[:quantity] || 0
             hash[:is_default] = v[:isDefault]
             raise ActionController::ParameterMissing.new("imageIds or imageUrls") unless v[:imageIds] || v[:imageUrls]
             raise ActionController::BadRequest.new("You can only pass imageIds or imageUrls, not both.") if v[:imageIds] && v[:imageUrls]

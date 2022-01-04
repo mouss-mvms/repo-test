@@ -241,6 +241,121 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         end
 
       end
+      context "Bad params address" do
+        before(:all) do
+          @categories = []
+          @categories << create(:category)
+          @categories << create(:homme)
+        end
+        after(:all) do
+          Category.destroy_all
+        end
+
+        context "No locality params in address params" do
+          it "should return 400 HTTP status" do
+            @create_params = {
+              name: "Boutique Test",
+              address: {
+                streetNumber: "52",
+                route: "Rue Georges Bonnac",
+                country: "France",
+                postalCode: "33000",
+                longitude: 44.8399608,
+                latitude: 0.5862431,
+                inseeCode: "33063"
+              },
+              email: "test@boutique.com",
+              mobileNumber: "0666666666",
+              siret: "75409821800029",
+              categoryIds: [
+                @categories[0].id,
+                @categories[1].id
+              ],
+              description: "Test description",
+              baseline: "Test baseline",
+              facebookLink: "http://www.facebook.com",
+              instagramLink: "http://www.instagram.com",
+              websiteLink: "http://www.website.com",
+            }
+            shop_employee_user = create(:shop_employee_user, email: 'shop.employee878@ecity.fr')
+            request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
+
+            post :create, params: @create_params
+
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("param is missing or the value is empty: locality").to_h.to_json)
+          end
+        end
+
+        context "No country params in address params" do
+          it "should return 400 HTTP status" do
+            @create_params = {
+              name: "Boutique Test",
+              address: {
+                streetNumber: "52",
+                route: "Rue Georges Bonnac",
+                locality: "Bordeaux",
+                postalCode: "33000",
+                longitude: 44.8399608,
+                latitude: 0.5862431,
+                inseeCode: "33063"
+              },
+              email: "test@boutique.com",
+              mobileNumber: "0666666666",
+              siret: "75409821800029",
+              categoryIds: [
+                @categories[0].id,
+                @categories[1].id
+              ],
+              description: "Test description",
+              baseline: "Test baseline",
+              facebookLink: "http://www.facebook.com",
+              instagramLink: "http://www.instagram.com",
+              websiteLink: "http://www.website.com",
+            }
+            shop_employee_user = create(:shop_employee_user, email: 'shop.employee878@ecity.fr')
+            request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
+
+            post :create, params: @create_params
+
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("param is missing or the value is empty: country").to_h.to_json)
+          end
+        end
+
+        context "No route params in address params" do
+          it "should return 400 HTTP status" do
+            @create_params = {
+              name: "Boutique Test",
+              address: {
+                streetNumber: "52",
+                locality: "Bordeaux",
+                country: "France",
+                postalCode: "33000",
+                longitude: 44.8399608,
+                latitude: 0.5862431,
+                inseeCode: "33063"
+              },
+              email: "test@boutique.com",
+              mobileNumber: "0666666666",
+              siret: "75409821800029",
+              categoryIds: [
+                @categories[0].id,
+                @categories[1].id
+              ],
+              description: "Test description",
+              baseline: "Test baseline",
+              facebookLink: "http://www.facebook.com",
+              instagramLink: "http://www.instagram.com",
+              websiteLink: "http://www.website.com",
+            }
+            shop_employee_user = create(:shop_employee_user, email: 'shop.employee878@ecity.fr')
+            request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
+
+            post :create, params: @create_params
+
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("param is missing or the value is empty: route").to_h.to_json)
+          end
+        end
+      end
     end
 
     context 'Authentication incorrect' do
@@ -456,10 +571,13 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
 
       end
       context "No Address" do
-        before(:each) do
+        before(:all) do
           @categories = []
           @categories << create(:category)
           @categories << create(:homme)
+        end
+        after(:all) do
+          Category.destroy_all
         end
         it "should return 400 HTTP status" do
           @update_params = {
@@ -482,6 +600,112 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
           expect(response).to have_http_status(400)
         end
 
+      end
+      context "Bad Params Address" do
+        before(:all) do
+          @categories = []
+          @categories << create(:category)
+          @categories << create(:homme)
+        end
+        after(:all) do
+          Category.destroy_all
+        end
+        context "No locality params in address params" do
+          it "should return 400 HTTP status" do
+            @update_params = {
+              name: "oui",
+              mobileNumber: "0666666666",
+              email: "test@boutique.com",
+              siret: "75409821800029",
+              categoryIds: [
+                @categories[0].id,
+                @categories[1].id
+              ],
+              address: {
+                streetNumber: "52",
+                route: "Rue Georges Bonnac",
+                country: "France",
+                postalCode: "33000",
+                longitude: 44.8399608,
+                latitude: 0.5862431
+              }
+            }
+            shop_employee_user = create(:shop_employee_user, email: 'shop.employee5681@ecity.fr')
+            shop = create(:shop)
+            shop.assign_ownership(shop_employee_user)
+            shop.save
+
+            request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
+
+            put :update, params: @update_params.merge(id: shop.id)
+
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("param is missing or the value is empty: locality").to_h.to_json)
+          end
+        end
+        context "No country params in address params" do
+          it "should return 400 HTTP status" do
+            @update_params = {
+              name: "oui",
+              email: "test@boutique.com",
+              mobileNumber: "0666666666",
+              siret: "75409821800029",
+              categoryIds: [
+                @categories[0].id,
+                @categories[1].id
+              ],
+              address: {
+                streetNumber: "52",
+                route: "Rue Georges Bonnac",
+                locality: "Bordeaux",
+                postalCode: "33000",
+                longitude: 44.8399608,
+                latitude: 0.5862431
+              }
+            }
+            shop_employee_user = create(:shop_employee_user, email: 'shop.employee5681@ecity.fr')
+            shop = create(:shop)
+            shop.assign_ownership(shop_employee_user)
+            shop.save
+
+            request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
+
+            put :update, params: @update_params.merge(id: shop.id)
+
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("param is missing or the value is empty: country").to_h.to_json)
+          end
+        end
+        context "No route params in address params" do
+          it "should return 400 HTTP status" do
+            @update_params = {
+              name: "oui",
+              email: "test@boutique.com",
+              siret: "75409821800029",
+              mobileNumber: "0666666666",
+              categoryIds: [
+                @categories[0].id,
+                @categories[1].id
+              ],
+              address: {
+                streetNumber: "52",
+                locality: "Bordeaux",
+                country: "France",
+                postalCode: "33000",
+                longitude: 44.8399608,
+                latitude: 0.5862431
+              }
+            }
+            shop_employee_user = create(:shop_employee_user, email: 'shop.employee5681@ecity.fr')
+            shop = create(:shop)
+            shop.assign_ownership(shop_employee_user)
+            shop.save
+
+            request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
+
+            put :update, params: @update_params.merge(id: shop.id)
+
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("param is missing or the value is empty: route").to_h.to_json)
+          end
+        end
       end
     end
 
