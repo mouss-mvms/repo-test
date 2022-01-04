@@ -242,10 +242,13 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
 
       end
       context "Bad params address" do
-        before(:each) do
+        before(:all) do
           @categories = []
           @categories << create(:category)
           @categories << create(:homme)
+        end
+        after(:all) do
+          Category.destroy_all
         end
 
         context "No locality params in address params" do
@@ -568,10 +571,13 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
 
       end
       context "No Address" do
-        before(:each) do
+        before(:all) do
           @categories = []
           @categories << create(:category)
           @categories << create(:homme)
+        end
+        after(:all) do
+          Category.destroy_all
         end
         it "should return 400 HTTP status" do
           @update_params = {
@@ -596,10 +602,13 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
 
       end
       context "Bad Params Address" do
-        before(:each) do
+        before(:all) do
           @categories = []
           @categories << create(:category)
           @categories << create(:homme)
+        end
+        after(:all) do
+          Category.destroy_all
         end
         context "No locality params in address params" do
           it "should return 400 HTTP status" do
