@@ -95,6 +95,7 @@ module Dao
       end
       update_characteristics(dto_variant_request: dto_variant_request) if dto_variant_request.characteristics
       @reference.save!
+      update_product_status
       @reference
     end
 
@@ -125,6 +126,13 @@ module Dao
       @reference.color_id = color_characteristic ? ::Color.where(name: color_characteristic.value).first_or_create.id : nil
       @reference.size_id = size_characteristic ? ::Size.where(name: size_characteristic.value).first_or_create.id : nil
       @reference
+    end
+
+    def self.update_product_status
+      product = @reference.product
+      product.status = :online if ::Products::StatusSpecifications::CanBeOnline.new.is_satisfied_by?(product)
+      product.status = :offline if ::Products::StatusSpecifications::CanBeOffline.new.is_satisfied_by?(product)
+      product.save!
     end
   end
 end

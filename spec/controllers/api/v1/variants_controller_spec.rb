@@ -31,6 +31,100 @@ RSpec.describe Api::V1::VariantsController, type: :controller do
           result[:characteristics].each do |charac|
             expect(variant_params_mapped.include?([charac[:name], charac[:value]])).to eq(true)
           end
+          expect(reference.product.reload.status).to eq("online")
+        end
+
+        context "when last variant has quantity = 0" do
+          it 'should return 200 HTTP status code with the updated variant and change the status product' do
+            user_shop_employee = create(:shop_employee_user, email: "shop.employee3@ecity.fr")
+            reference = create(:reference)
+            product = reference.product
+            user_shop_employee.shop_employee.shops << product.shop
+            user_shop_employee.shop_employee.save
+            request.headers["x-client-id"] = generate_token(user_shop_employee)
+            request.env["CONTENT_TYPE"] = "multipart/form-data"
+            uploaded_file = fixture_file_upload(Rails.root.join("spec/fixtures/files/images/harry-and-marv.jpg"), 'image/jpeg')
+
+            patch :update, params: variant_params.merge(id: reference.id, files: [uploaded_file], external_variant_id: "yh64b", quantity: 0)
+
+            should respond_with(200)
+            result = JSON.parse(response.body, symbolize_names: true)
+            expect(result[:basePrice]).to eq(variant_params[:basePrice])
+            expect(result[:weight]).to eq(variant_params[:weight])
+            expect(result[:quantity]).to eq(0)
+            expect(result[:isDefault]).to eq(variant_params[:isDefault])
+            expect(result[:goodDeal]).to eq(JSON.parse(variant_params[:goodDeal], symbolize_names: true))
+            expect(result[:imageUrls]).to_not be_nil
+            hash_variant_params = JSON.parse(variant_params[:characteristics], symbolize_names: true)
+            variant_params_mapped = hash_variant_params.map { |c| [c[:name], c[:value]] }
+            result[:characteristics].each do |charac|
+              expect(variant_params_mapped.include?([charac[:name], charac[:value]])).to eq(true)
+            end
+            expect(reference.product.reload.status).to eq("offline")
+          end
+        end
+
+        context "when last variant has base_price = 0" do
+          it 'should return 200 HTTP status code with the updated variant and change the status product' do
+            user_shop_employee = create(:shop_employee_user, email: "shop.employee3@ecity.fr")
+            reference = create(:reference)
+            product = reference.product
+            user_shop_employee.shop_employee.shops << product.shop
+            user_shop_employee.shop_employee.save
+            request.headers["x-client-id"] = generate_token(user_shop_employee)
+            request.env["CONTENT_TYPE"] = "multipart/form-data"
+            uploaded_file = fixture_file_upload(Rails.root.join("spec/fixtures/files/images/harry-and-marv.jpg"), 'image/jpeg')
+
+            patch :update, params: variant_params.merge(id: reference.id, files: [uploaded_file], external_variant_id: "yh64b", basePrice: 0)
+
+            should respond_with(200)
+            result = JSON.parse(response.body, symbolize_names: true)
+            expect(result[:basePrice]).to eq(0)
+            expect(result[:weight]).to eq(variant_params[:weight])
+            expect(result[:quantity]).to eq(variant_params[:quantity])
+            expect(result[:isDefault]).to eq(variant_params[:isDefault])
+            expect(result[:goodDeal]).to eq(JSON.parse(variant_params[:goodDeal], symbolize_names: true))
+            expect(result[:imageUrls]).to_not be_nil
+            hash_variant_params = JSON.parse(variant_params[:characteristics], symbolize_names: true)
+            variant_params_mapped = hash_variant_params.map { |c| [c[:name], c[:value]] }
+            result[:characteristics].each do |charac|
+              expect(variant_params_mapped.include?([charac[:name], charac[:value]])).to eq(true)
+            end
+            expect(reference.product.reload.status).to eq("offline")
+          end
+        end
+
+        context "when product has many variants" do
+          context "when last variant has base_price = 0" do
+            it 'should return 200 HTTP status code with the updated variant and not change the status product' do
+              user_shop_employee = create(:shop_employee_user, email: "shop.employee3@ecity.fr")
+              reference = create(:reference)
+              product = reference.product
+              user_shop_employee.shop_employee.shops << product.shop
+              user_shop_employee.shop_employee.save
+              request.headers["x-client-id"] = generate_token(user_shop_employee)
+              request.env["CONTENT_TYPE"] = "multipart/form-data"
+              create(:reference, product: product)
+              uploaded_file = fixture_file_upload(Rails.root.join("spec/fixtures/files/images/harry-and-marv.jpg"), 'image/jpeg')
+
+              patch :update, params: variant_params.merge(id: reference.id, files: [uploaded_file], external_variant_id: "yh64b", basePrice: 0)
+
+              should respond_with(200)
+              result = JSON.parse(response.body, symbolize_names: true)
+              expect(result[:basePrice]).to eq(0)
+              expect(result[:weight]).to eq(variant_params[:weight])
+              expect(result[:quantity]).to eq(variant_params[:quantity])
+              expect(result[:isDefault]).to eq(variant_params[:isDefault])
+              expect(result[:goodDeal]).to eq(JSON.parse(variant_params[:goodDeal], symbolize_names: true))
+              expect(result[:imageUrls]).to_not be_nil
+              hash_variant_params = JSON.parse(variant_params[:characteristics], symbolize_names: true)
+              variant_params_mapped = hash_variant_params.map { |c| [c[:name], c[:value]] }
+              result[:characteristics].each do |charac|
+                expect(variant_params_mapped.include?([charac[:name], charac[:value]])).to eq(true)
+              end
+              expect(reference.product.reload.status).to eq("online")
+            end
+          end
         end
       end
 
@@ -136,6 +230,68 @@ RSpec.describe Api::V1::VariantsController, type: :controller do
         variant_params_mapped = hash_variant_params.map { |c| [c[:name], c[:value]] }
         result[:characteristics].each do |charac|
           expect(variant_params_mapped.include?([charac[:name], charac[:value]])).to eq(true)
+        end
+      end
+
+      context "when last variant has quantity = 0" do
+        it 'should return 200 HTTP status code with the updated variant' do
+          provider = create(:api_provider, name: 'wynd')
+          user_shop_employee = create(:shop_employee_user, email: "shop.employee3@ecity.fr")
+          api_provider_variant = ApiProviderVariant.create!(api_provider: provider, external_variant_id: "12vd1")
+          reference = create(:reference, api_provider_variant: api_provider_variant)
+          product = reference.product
+          user_shop_employee.shop_employee.shops << product.shop
+          user_shop_employee.shop_employee.save
+          request.env["CONTENT_TYPE"] = "multipart/form-data"
+          uploaded_file = fixture_file_upload(Rails.root.join("spec/fixtures/files/images/harry-and-marv.jpg"), 'image/jpeg')
+
+          patch :update_offline, params: variant_params.merge(id: reference.id, files: [uploaded_file], external_variant_id: "yh64b", quantity: 0)
+
+          should respond_with(200)
+          result = JSON.parse(response.body, symbolize_names: true)
+          expect(result[:basePrice]).to eq(variant_params[:basePrice])
+          expect(result[:weight]).to eq(variant_params[:weight])
+          expect(result[:quantity]).to eq(0)
+          expect(result[:isDefault]).to eq(variant_params[:isDefault])
+          expect(result[:goodDeal]).to eq(JSON.parse(variant_params[:goodDeal], symbolize_names: true))
+          expect(result[:imageUrls]).to_not be_nil
+          hash_variant_params = JSON.parse(variant_params[:characteristics], symbolize_names: true)
+          variant_params_mapped = hash_variant_params.map { |c| [c[:name], c[:value]] }
+          result[:characteristics].each do |charac|
+            expect(variant_params_mapped.include?([charac[:name], charac[:value]])).to eq(true)
+          end
+          expect(reference.product.reload.status).to eq("offline")
+        end
+      end
+
+      context "when last variant has base_price = 0" do
+        it 'should return 200 HTTP status code with the updated variant' do
+          provider = create(:api_provider, name: 'wynd')
+          user_shop_employee = create(:shop_employee_user, email: "shop.employee3@ecity.fr")
+          api_provider_variant = ApiProviderVariant.create!(api_provider: provider, external_variant_id: "12vd1")
+          reference = create(:reference, api_provider_variant: api_provider_variant)
+          product = reference.product
+          user_shop_employee.shop_employee.shops << product.shop
+          user_shop_employee.shop_employee.save
+          request.env["CONTENT_TYPE"] = "multipart/form-data"
+          uploaded_file = fixture_file_upload(Rails.root.join("spec/fixtures/files/images/harry-and-marv.jpg"), 'image/jpeg')
+
+          patch :update_offline, params: variant_params.merge(id: reference.id, files: [uploaded_file], external_variant_id: "yh64b", basePrice: 0)
+
+          should respond_with(200)
+          result = JSON.parse(response.body, symbolize_names: true)
+          expect(result[:basePrice]).to eq(0)
+          expect(result[:weight]).to eq(variant_params[:weight])
+          expect(result[:quantity]).to eq(variant_params[:quantity])
+          expect(result[:isDefault]).to eq(variant_params[:isDefault])
+          expect(result[:goodDeal]).to eq(JSON.parse(variant_params[:goodDeal], symbolize_names: true))
+          expect(result[:imageUrls]).to_not be_nil
+          hash_variant_params = JSON.parse(variant_params[:characteristics], symbolize_names: true)
+          variant_params_mapped = hash_variant_params.map { |c| [c[:name], c[:value]] }
+          result[:characteristics].each do |charac|
+            expect(variant_params_mapped.include?([charac[:name], charac[:value]])).to eq(true)
+          end
+          expect(reference.product.reload.status).to eq("offline")
         end
       end
     end
