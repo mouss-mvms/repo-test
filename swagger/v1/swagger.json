@@ -10557,6 +10557,11 @@
             "type": "integer",
             "description": "Total search page number.",
             "example": 15
+          },
+          "totalCount": {
+            "type": "integer",
+            "description": "Total search hit number.",
+            "example": 302
           }
         }
       },

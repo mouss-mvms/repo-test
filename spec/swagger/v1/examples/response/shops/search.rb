@@ -13,7 +13,8 @@ module V1
                 },
                 filters: ::V1::Examples::Response::Searches::Filter.to_h,
                 page: { type: :integer, description: 'Search page number.', example: 1 },
-                totalPages: { type: :integer, description: 'Total search page number.', example: 15 }
+                totalPages: { type: :integer, description: 'Total search page number.', example: 15 },
+                totalCount: { type: :integer, description: 'Total search hit number.', example: 302 }
               },
             }
           end
