@@ -15,12 +15,12 @@ module Dto
 
         def self.create(image)
           new(
-            id: image.id,
-            original_url: image.file_url,
-            mini_url: image.file_url(:mini),
-            thumb_url: image.file_url(:thumb),
-            square_url: image.file_url(:square),
-            wide_url: image.file_url(:wide)
+            id: image&.id,
+            original_url: image&.file_url,
+            mini_url: image&.file_url(:mini),
+            thumb_url: image&.file_url(:thumb),
+            square_url: image&.file_url(:square),
+            wide_url: image&.file_url(:wide)
           )
         end
 

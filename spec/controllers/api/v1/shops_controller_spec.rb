@@ -449,7 +449,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         expect(shop_result["facebookLink"]).to eq(@update_params[:facebookLink])
         expect(shop_result["instagramLink"]).to eq(@update_params[:instagramLink])
         expect(shop_result["websiteLink"]).to eq(@update_params[:websiteLink])
-        expect(shop_result["avatarImageUrl"].blank?).to be_falsey
+        expect(shop_result["avatar"].blank?).to be_falsey
         expect((Shop.find(shop_result["id"]).owner == shop_employee_user.shop_employee)).to be_truthy
       end
     end
