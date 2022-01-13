@@ -22,28 +22,218 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
   # GET #index
   describe "GET #index" do
-    context "with invalid params" do
-      context "shop_id not a Numeric" do
-        it "should returns 400 HTTP Status" do
-          get :index, params: { id: 'Xenomorph' }
-          should respond_with(400)
-          expect(response.body).to eq(Dto::Errors::BadRequest.new('Shop_id is incorrect').to_h.to_json)
+    context 'All ok' do
+      before(:all) do
+        @shop = create(:shop)
+        @shop_employee_user = create(:shop_employee_user)
+        @shop_employee_user.shop_employee.shops << @shop
+        @shop_employee_user.shop_employee.save
+
+        3.times do
+          @shop.products << create(:product, status: 'submitted')
+        end
+
+        6.times do
+          @shop.products << create(:product, status: 'online')
+        end
+
+        19.times do
+          @shop.products << create(:product, status: 'offline')
         end
       end
 
-      context "shop doesn't exists" do
-        it "should returns 404 HTTP Status" do
-          id = 1
-          Shop.all.each do |shop|
-            break if shop.id != id
-            id = id + 1
+      after(:all) do
+        Product.destroy_all
+        Shop.destroy_all
+        User.destroy_all
+      end
+
+      it 'should return 200 HTTP Status list of products for shop' do
+        current_page = 1
+        limit = 15
+
+        request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+        get :index
+
+        expect(response).to have_http_status(:ok)
+        result = JSON.parse(response.body, {symbolize_names: true})
+        expect(result[:products]).not_to be_nil
+        expect(result[:page]).to eq(current_page)
+        expect(result[:totalCount]).to eq(@shop.products.where(status: 'online').count + @shop.products.where(status: 'offline').count)
+        expected_total_page = (result[:totalCount].to_f / limit.to_f).ceil
+        expect(result[:totalPages]).to eq(expected_total_page)
+      end
+
+      context 'Request contain status filter' do
+        it 'should return 200 HTTP Status list of products for shop filtered by status' do
+          current_page = 1
+          limit = 15
+
+          possible_product_status = [Product.statuses.keys.find{|key| key =='submitted'},
+                                     Product.statuses.keys.find{|key| key =='online'},
+                                     Product.statuses.keys.find{|key| key =='offline'}]
+
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+
+          possible_product_status.each do |product_status|
+            get :index, params: {status: product_status}
+
+            expect(response).to have_http_status(:ok)
+            result = JSON.parse(response.body, {symbolize_names: true})
+            expect(result[:products]).not_to be_nil
+            expect(result[:page]).to eq(current_page)
+            if product_status == 'online'
+              expect(result[:totalCount]).to eq(@shop.products.where(status: 'online').count)
+            end
+            if product_status == 'offline'
+              expect(result[:totalCount]).to eq(@shop.products.where(status: 'offline').count)
+            end
+            if product_status == 'submitted'
+              expect(result[:totalCount]).to eq(@shop.products.where(status: 'submitted').count)
+            end
+            expected_total_page = (result[:totalCount].to_f / limit.to_f).ceil
+            expect(result[:totalPages]).to eq(expected_total_page)
           end
-          get :index, params: { id: id }
-          should respond_with(404)
-          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Shop with 'id'=#{id}").to_h.to_json)
+        end
+
+        context 'Status set is incorrect' do
+          it 'should return 400 HTTP Status' do
+
+            request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+
+            get :index, params: {status: 'wrong status'}
+
+            expect(response).to have_http_status(:bad_request)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("Status is incorrect").to_h.to_json)
+          end
+        end
+      end
+
+      context 'Request contain name filter' do
+        it 'should return 200 HTTP Status list of products for shop filtered by name' do
+          current_page = 1
+          limit = 15
+
+          pain_products = 4
+
+          pain_products.times do
+            @shop.products << create(:product, status: 'online', name: "Pain")
+          end
+
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+          get :index, params:{name: 'Pai'}
+
+          expect(response).to have_http_status(:ok)
+          result = JSON.parse(response.body, {symbolize_names: true})
+          expect(result[:products]).not_to be_nil
+          expect(result[:page]).to eq(current_page)
+          expect(result[:totalCount]).to eq(pain_products)
+          expected_total_page = (result[:totalCount].to_f / limit.to_f).ceil
+          expect(result[:totalPages]).to eq(expected_total_page)
+        end
+      end
+
+      context 'Request contain category filter' do
+        it 'should return 200 HTTP Status list of products for shop filtered by name' do
+          current_page = 1
+          limit = 15
+
+          sirop_category = create(:category, name: 'Sirop')
+          sauce_category = create(:category, name: 'Sauce')
+
+          sirop_category_products = 4
+          sirop_category_products.times do
+            @shop.products << create(:product, status: 'online', category: sirop_category)
+          end
+
+          sauce_category_products = 4
+          sauce_category_products.times do
+            @shop.products << create(:product, status: 'online', category: sauce_category)
+          end
+
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+          get :index, params: {category: 'Sa'}
+
+          expect(response).to have_http_status(:ok)
+          result = JSON.parse(response.body, {symbolize_names: true})
+          expect(result[:products]).not_to be_nil
+          expect(result[:page]).to eq(current_page)
+          expect(result[:totalCount]).to eq(sauce_category_products)
+          expected_total_page = (result[:totalCount].to_f / limit.to_f).ceil
+          expect(result[:totalPages]).to eq(expected_total_page)
+        end
+      end
+
+      context 'Request contain name and category filters' do
+        it 'should return 200 HTTP Status list of products for shop filtered by name and category' do
+          current_page = 1
+          limit = 15
+
+          sirop_category = create(:category, name: 'Sirop')
+          sauce_category = create(:category, name: 'Sauce')
+
+          pain_sirop_products = 7
+          pain_sirop_products.times do
+            @shop.products << create(:product, status: 'online', name: "Pain", category: sirop_category)
+          end
+
+          pain_sauce_products = 4
+          pain_sauce_products.times do
+            @shop.products << create(:product, status: 'online', name: "Pain", category: sauce_category)
+          end
+
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+          get :index, params:{name: 'Pai', category: "Sa"}
+
+          expect(response).to have_http_status(:ok)
+          result = JSON.parse(response.body, {symbolize_names: true})
+          expect(result[:products]).not_to be_nil
+          expect(result[:page]).to eq(current_page)
+          expect(result[:totalCount]).to eq(pain_sauce_products)
+          expected_total_page = (result[:totalCount].to_f / limit.to_f).ceil
+          expect(result[:totalPages]).to eq(expected_total_page)
+        end
+      end
+
+      context 'Result is cached' do
+        it 'should return 304 HTTP Status' do
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+          get :index
+          expect(response).to have_http_status(:ok)
+          etag = response.headers["ETag"]
+
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+          request.env["HTTP_IF_NONE_MATCH"] = etag
+          get :index
+          expect(response).to have_http_status(304)
         end
       end
     end
+
+    context 'User is not a shop employee' do
+      it 'should return 403 HTTP Status' do
+        customer_user = create(:customer_user)
+
+        request.headers['HTTP_X_CLIENT_ID'] = generate_token(customer_user)
+        get :index
+
+        expect(response).to have_http_status(:forbidden)
+        expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
+      end
+    end
+
+    context 'User is a shop employee but has not shop' do
+      it 'should return 404 HTTP Status' do
+        shop_employee_user = create(:shop_employee_user)
+
+        request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
+        get :index
+
+        expect(response).to have_http_status(:not_found)
+        expect(response.body).to eq(Dto::Errors::NotFound.new("Shop not found for this user").to_h.to_json)
+      end
+    end
+
   end
 
   describe "POST #create" do
