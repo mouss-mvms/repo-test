@@ -6277,6 +6277,16 @@
           {
             "name": "category",
             "in": "query"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Set as 1 if not set"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Set as 15 if not set"
           }
         ],
         "responses": {
