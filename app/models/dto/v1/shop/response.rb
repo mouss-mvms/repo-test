@@ -2,18 +2,18 @@ module Dto
   module V1
     module Shop
       class Response
-        attr_accessor :id, :name, :slug, :image_urls, :cover_image_url, :avatar_image_url, :description, :baseline, :facebook_link, :instagram_link, :website_link, :address, :siret, :email, :mobile_number, :lowest_product_price, :highest_product_price
+        attr_accessor :id, :name, :slug, :images, :cover, :avatar, :description, :baseline, :facebook_link, :instagram_link, :website_link, :address, :siret, :email, :mobile_number, :lowest_product_price, :highest_product_price
 
         def initialize(**args)
           @id = args[:id]
           @name = args[:name]
           @slug = args[:slug]
-          @image_urls = []
-          args[:image_urls]&.each do |img_url|
-            @image_urls << img_url
+          @images = []
+          args[:images]&.each do |img|
+            @images << img
           end
-          @avatar_image_url = args[:avatar_image_url]
-          @cover_image_url = args[:cover_image_url]
+          @avatar = args[:avatar]
+          @cover = args[:cover_image_url]
           @description = args[:description]
           @baseline = args[:baseline]
           @facebook_link = args[:facebook_link]
@@ -28,16 +28,16 @@ module Dto
         end
 
         def self.create(shop)
-          image_urls = []
+          images = []
           shop.images.each do |shop_image|
-            image_urls << shop_image.file.url
+            images << Dto::V1::Image::Response.create(shop_image)
           end
 
           return Dto::V1::Shop::Response.new({
                                            id: shop.id,
                                            name: shop.name,
                                            slug: shop.slug,
-                                           image_urls: image_urls,
+                                           images: images,
                                            description: shop.french_description&.content,
                                            baseline: shop.french_baseline&.content,
                                            facebook_link: shop.facebook_url,
@@ -47,8 +47,8 @@ module Dto
                                            siret: shop.siret,
                                            email: shop.email,
                                            mobile_number: shop.mobile_phone_number,
-                                           avatar_image_url: shop.profil&.file_url(:thumb) || shop.profil&.file_url,
-                                           cover_image_url: shop.featured&.file_url(:thumb) || shop.featured&.file_url,
+                                           avatar: Dto::V1::Image::Response.create(shop.profil) || nil,
+                                           cover_image_url: Dto::V1::Image::Response.create(shop.featured) || nil,
                                            lowest_product_price: shop.cheapest_ref&.base_price,
                                            highest_product_price: shop.most_expensive_ref&.base_price
                                          })
@@ -70,9 +70,9 @@ module Dto
           hash[:id] = @id if fields.nil? || (fields.any? && fields.include?('id'))
           hash[:name] = @name if fields.nil? || (fields.any? && fields.include?('name'))
           hash[:slug] = @slug if fields.nil? || (fields.any? && fields.include?('slug'))
-          hash[:imageUrls] = @image_urls if fields.nil? || (fields.any? && fields.include?('imageUrls'))
-          hash[:avatarImageUrl] = @avatar_image_url if fields.nil? || (fields.any? && fields.include?('avatarImageUrl'))
-          hash[:coverImageUrl] = @cover_image_url if fields.nil? || (fields.any? && fields.include?('coverImageUrl'))
+          hash[:images] = @images.map(&:to_h) if fields.nil? || (fields.any? && fields.include?('images'))
+          hash[:avatar] = @avatar.to_h if fields.nil? || (fields.any? && fields.include?('avatar'))
+          hash[:cover] = @cover.to_h if fields.nil? || (fields.any? && fields.include?('cover'))
           hash[:baseline] = @baseline if fields.nil? || (fields.any? && fields.include?('baseline'))
           hash[:description] = @description if fields.nil? || (fields.any? && fields.include?('description'))
           hash[:facebookLink] = @facebook_link if fields.nil? || (fields.any? && fields.include?('facebookLink'))
