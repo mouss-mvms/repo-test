@@ -420,6 +420,8 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
             latitude: @shop.address.latitude,
             inseeCode: @shop.address.city.insee_code
           },
+          description: "Description mise à jour de la boutique",
+          baseline: "Baseline mise à jour de la boutique",
           facebookLink: "http://www.facebook.com",
           instagramLink: "http://www.instagram.com",
           websiteLink: "http://www.website.com",
@@ -428,6 +430,8 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         shop_employee_user = create(:shop_employee_user, email: 'shop.employee78@ecity.fr')
         @shop.assign_ownership(shop_employee_user)
         @shop.profil&.file_url = nil
+        @shop.descriptions << I18nshop.new(lang: "fr", field: "description", content: "Description de la boutique")
+        @shop.baselines << I18nshop.new(lang: "fr", field: "Baseline", content: "Baseline de la boutique")
         @shop.save
         request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
 
@@ -439,6 +443,8 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         expect(shop_result["name"]).to eq(@update_params[:name])
         expect(shop_result["siret"]).to eq(@shop.siret)
         expect(shop_result["email"]).to eq(@shop.email)
+        expect(shop_result["description"]).to eq(@update_params[:description])
+        expect(shop_result["baseline"]).to eq(@update_params[:baseline])
         expect(shop_result["address"]["streetNumber"]).to eq(@shop.address.street_number)
         expect(shop_result["address"]["route"]).to eq(@shop.address.route)
         expect(shop_result["address"]["locality"]).to eq(@shop.address.locality)
@@ -749,9 +755,4 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
       end
     end
   end
-end
-
-def generate_token(user)
-  exp_payload = { id: user.id, exp: Time.now.to_i + 1 * 3600 * 24 }
-  JWT.encode exp_payload, ENV["JWT_SECRET"], 'HS256'
 end
