@@ -5933,131 +5933,6 @@
         }
       }
     },
-    "/api/v1/shops/{shop_id}/products": {
-      "parameters": [
-        {
-          "name": "shop_id",
-          "in": "path",
-          "description": "Unique identifier of the shop.",
-          "required": true,
-          "schema": {
-            "type": "integer"
-          }
-        },
-        {
-          "name": "search_query",
-          "in": "query",
-          "description": "Query for search.",
-          "example": "Air jordan",
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
-          "name": "categories",
-          "in": "query",
-          "description": "Categories slugs concatened with double \"_\" if more than one.",
-          "example": "vin-et-spiritueux/aperitif-et-spiritueux/rhum__maison-et-bricolage/cuisine",
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
-          "name": "prices",
-          "in": "query",
-          "description": "Prices range",
-          "example": "4__19",
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
-          "name": "services",
-          "in": "query",
-          "example": "livraison-par-la-poste__click-collect",
-          "description": "Service slugs concatened with double \"_\" if more than one.",
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
-          "name": "sort_by",
-          "in": "query",
-          "schema": {
-            "type": "string",
-            "enum": [
-              "price-asc",
-              "price-desc",
-              "newest"
-            ]
-          }
-        },
-        {
-          "name": "page",
-          "in": "query",
-          "description": "Number of the researches page",
-          "schema": {
-            "type": "string"
-          }
-        }
-      ],
-      "get": {
-        "summary": "list products",
-        "tags": [
-          "Products"
-        ],
-        "description": "Retrieve all products from the given shop.",
-        "security": [
-          {
-            "authorization": [
-
-            ]
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Product"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "detail": {
-                      "type": "string",
-                      "example": "The syntax of the query is incorrect.",
-                      "description": "Message of an error."
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Bad Request",
-                      "description": "Display description error."
-                    },
-                    "status": {
-                      "type": "integer",
-                      "example": 400,
-                      "description": "Status of an error."
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v1/auth/shops/self/products": {
       "parameters": [
         {
@@ -6074,7 +5949,6 @@
         "tags": [
           "Products"
         ],
-        "description": "Return created product polling url.",
         "security": [
           {
             "authorization": [
@@ -6370,6 +6244,157 @@
             }
           }
         }
+      },
+      "get": {
+        "summary": "Retrieve products' shop",
+        "tags": [
+          "Products"
+        ],
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "offline",
+                "online",
+                "submitted"
+              ]
+            }
+          },
+          {
+            "name": "name",
+            "in": "query"
+          },
+          {
+            "name": "category",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "products": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Product"
+                      }
+                    },
+                    "page": {
+                      "type": "integer",
+                      "example": 1,
+                      "description": "Current page of result"
+                    },
+                    "totalPages": {
+                      "type": "integer",
+                      "example": 1,
+                      "description": "Total number of pages for result"
+                    },
+                    "totalCount": {
+                      "type": "integer",
+                      "example": 1,
+                      "description": "Total products' count for the shop"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "The syntax of the query is incorrect.",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Bad Request",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 400,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 401,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 403,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/v1/auth/shops/self/products/{id}": {
@@ -6396,7 +6421,6 @@
         "tags": [
           "Products"
         ],
-        "description": "Update product",
         "security": [
           {
             "authorization": [
