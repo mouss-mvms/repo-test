@@ -17,6 +17,7 @@ module Dto
         end
 
         def self.create(reference)
+          good_deal = reference.good_deal.active ? Dto::V1::GoodDeal::Response.create(reference.good_deal) : nil
           variant = Dto::V1::Variant::Response.new(
             id: reference.id,
             weight: reference.weight,
@@ -24,7 +25,7 @@ module Dto
             image_urls: reference.sample.images.map(&:file_url),
             base_price: reference.base_price,
             is_default: reference.sample.default,
-            good_deal: Dto::V1::GoodDeal::Response.create(reference.good_deal),
+            good_deal: good_deal,
             provider: { name: reference.api_provider_variant&.api_provider&.name,
                         externalVariantId: reference.api_provider_variant&.external_variant_id }
           )

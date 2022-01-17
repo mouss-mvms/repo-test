@@ -316,8 +316,8 @@ def variant_params
     quantity: 4,
     isDefault: true,
     goodDeal: {
-      startAt: "17/05/2021",
-      endAt: "18/06/2021",
+      startAt: (DateTime.now-2).strftime('%d/%m/%Y'),
+      endAt: (DateTime.now+2).strftime('%d/%m/%Y'),
       discount: 20.0,
     }.to_json,
     characteristics: [

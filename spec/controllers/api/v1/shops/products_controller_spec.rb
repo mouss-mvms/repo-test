@@ -28,6 +28,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
         @shop_employee_user = create(:shop_employee_user)
         @shop_employee_user.shop_employee.shops << @shop
         @shop_employee_user.shop_employee.save
+        @shop_employee_user_token = generate_token(@shop_employee_user)
 
         3.times do
           @shop.products << create(:product, status: 'submitted')
@@ -43,16 +44,16 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
       end
 
       after(:all) do
-        Product.destroy_all
-        Shop.destroy_all
-        User.destroy_all
+        @shop.products.destroy_all
+        @shop_employee_user_token = nil
+        @shop_employee_user.destroy
       end
 
       it 'should return 200 HTTP Status list of products for shop' do
         current_page = 1
         limit = 15
 
-        request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+        request.headers['HTTP_X_CLIENT_ID'] = @shop_employee_user_token
         get :index
 
         expect(response).to have_http_status(:ok)
@@ -73,7 +74,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
                                      Product.statuses.keys.find{|key| key =='online'},
                                      Product.statuses.keys.find{|key| key =='offline'}]
 
-          request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+          request.headers['HTTP_X_CLIENT_ID'] = @shop_employee_user_token
 
           possible_product_status.each do |product_status|
             get :index, params: {status: product_status}
@@ -99,7 +100,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
         context 'Status set is incorrect' do
           it 'should return 400 HTTP Status' do
 
-            request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+            request.headers['HTTP_X_CLIENT_ID'] = @shop_employee_user_token
 
             get :index, params: {status: 'wrong status'}
 
@@ -120,7 +121,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
             @shop.products << create(:product, status: 'online', name: "Pain")
           end
 
-          request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+          request.headers['HTTP_X_CLIENT_ID'] = @shop_employee_user_token
           get :index, params:{name: 'Pai'}
 
           expect(response).to have_http_status(:ok)
@@ -151,7 +152,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
             @shop.products << create(:product, status: 'online', category: sauce_category)
           end
 
-          request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+          request.headers['HTTP_X_CLIENT_ID'] = @shop_employee_user_token
           get :index, params: {category: 'Sa'}
 
           expect(response).to have_http_status(:ok)
@@ -182,7 +183,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
             @shop.products << create(:product, status: 'online', name: "Pain", category: sauce_category)
           end
 
-          request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+          request.headers['HTTP_X_CLIENT_ID'] = @shop_employee_user_token
           get :index, params:{name: 'Pai', category: "Sa"}
 
           expect(response).to have_http_status(:ok)
@@ -197,12 +198,12 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
       context 'Result is cached' do
         it 'should return 304 HTTP Status' do
-          request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+          request.headers['HTTP_X_CLIENT_ID'] = @shop_employee_user_token
           get :index
           expect(response).to have_http_status(:ok)
           etag = response.headers["ETag"]
 
-          request.headers['HTTP_X_CLIENT_ID'] = generate_token(@shop_employee_user)
+          request.headers['HTTP_X_CLIENT_ID'] = @shop_employee_user_token
           request.env["HTTP_IF_NONE_MATCH"] = etag
           get :index
           expect(response).to have_http_status(304)

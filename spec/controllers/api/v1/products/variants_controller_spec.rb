@@ -214,8 +214,8 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
           imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
           isDefault: false,
           goodDeal: {
-            startAt: "17/05/2021",
-            endAt: "18/06/2021",
+            startAt: (DateTime.now-2).strftime('%d/%m/%Y'),
+            endAt: (DateTime.now+2).strftime('%d/%m/%Y'),
             discount: 20,
           },
           characteristics: [
@@ -760,8 +760,8 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
           imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
           isDefault: false,
           goodDeal: {
-            startAt: "17/05/2021",
-            endAt: "18/06/2021",
+            startAt: (DateTime.now-2).strftime('%d/%m/%Y'),
+            endAt: (DateTime.now+2).strftime('%d/%m/%Y'),
             discount: 20,
           },
           characteristics: [
