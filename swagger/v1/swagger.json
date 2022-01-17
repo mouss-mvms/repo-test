@@ -9293,6 +9293,11 @@
             "minimum": 1,
             "maximum": 100,
             "description": "Discount amount of a good deal."
+          },
+          "discountedPrice": {
+            "type": "number",
+            "example": 15.9,
+            "description": "Price discounted of the variant's products"
           }
         },
         "required": [

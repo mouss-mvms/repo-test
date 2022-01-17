@@ -19,6 +19,68 @@ RSpec.describe Dto::V1::Variant::Response do
         expect(result.provider[:name]).to eq(reference.api_provider_variant.api_provider.name)
         expect(result.provider[:externalVariantId]).to eq(reference.api_provider_variant.external_variant_id)
       end
+
+      context 'Variant has a good deal' do
+        context 'Good deal is valid' do
+          it 'should return a Dto::V1::Variant::Response with good deal property' do
+            api_provider = create(:api_provider, name: "wynd")
+
+            reference = create(:reference, good_deal: create(:good_deal, starts_at: (DateTime.now-2), ends_at: (DateTime.now+2)) ,api_provider_variant: ApiProviderVariant.create(external_variant_id: 'trf67', api_provider: api_provider))
+
+            result = Dto::V1::Variant::Response.create(reference)
+            expect(result).to be_instance_of(Dto::V1::Variant::Response)
+            expect(result.weight).to eq(reference.weight)
+            expect(result.quantity).to eq(reference.quantity)
+            expect(result.image_urls).to eq(reference.sample.images.map(&:file_url))
+            expect(result.base_price).to eq(reference.base_price)
+            expect(result.is_default).to eq(reference.sample.default)
+            expect(result.good_deal).to be_instance_of(Dto::V1::GoodDeal::Response)
+            expect(result.characteristics).to be_instance_of(Array)
+            expect(result.provider[:name]).to eq(reference.api_provider_variant.api_provider.name)
+            expect(result.provider[:externalVariantId]).to eq(reference.api_provider_variant.external_variant_id)
+          end
+        end
+
+        context 'Good deal starts after the date' do
+          it 'should return a Dto::V1::Variant::Response with good deal property to nil' do
+            api_provider = create(:api_provider, name: "wynd")
+
+            reference = create(:reference, good_deal: create(:good_deal, starts_at: (DateTime.now+2), ends_at: (DateTime.now+4)) ,api_provider_variant: ApiProviderVariant.create(external_variant_id: 'trf67', api_provider: api_provider))
+
+            result = Dto::V1::Variant::Response.create(reference)
+            expect(result).to be_instance_of(Dto::V1::Variant::Response)
+            expect(result.weight).to eq(reference.weight)
+            expect(result.quantity).to eq(reference.quantity)
+            expect(result.image_urls).to eq(reference.sample.images.map(&:file_url))
+            expect(result.base_price).to eq(reference.base_price)
+            expect(result.is_default).to eq(reference.sample.default)
+            expect(result.good_deal).to be_nil
+            expect(result.characteristics).to be_instance_of(Array)
+            expect(result.provider[:name]).to eq(reference.api_provider_variant.api_provider.name)
+            expect(result.provider[:externalVariantId]).to eq(reference.api_provider_variant.external_variant_id)
+          end
+        end
+
+        context 'Good deal ends before the date' do
+          it 'should return a Dto::V1::Variant::Response with good deal property to nil' do
+            api_provider = create(:api_provider, name: "wynd")
+
+            reference = create(:reference, good_deal: create(:good_deal, starts_at: (DateTime.now-4), ends_at: (DateTime.now-1)) ,api_provider_variant: ApiProviderVariant.create(external_variant_id: 'trf67', api_provider: api_provider))
+
+            result = Dto::V1::Variant::Response.create(reference)
+            expect(result).to be_instance_of(Dto::V1::Variant::Response)
+            expect(result.weight).to eq(reference.weight)
+            expect(result.quantity).to eq(reference.quantity)
+            expect(result.image_urls).to eq(reference.sample.images.map(&:file_url))
+            expect(result.base_price).to eq(reference.base_price)
+            expect(result.is_default).to eq(reference.sample.default)
+            expect(result.good_deal).to be_nil
+            expect(result.characteristics).to be_instance_of(Array)
+            expect(result.provider[:name]).to eq(reference.api_provider_variant.api_provider.name)
+            expect(result.provider[:externalVariantId]).to eq(reference.api_provider_variant.external_variant_id)
+          end
+        end
+      end
     end
   end
 

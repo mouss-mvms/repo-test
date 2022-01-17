@@ -24,6 +24,11 @@ module V1
                 minimum: 1,
                 maximum: 100,
                 description: 'Discount amount of a good deal.'
+              },
+              discountedPrice: {
+                type: 'number',
+                example: 15.90,
+                description: "Price discounted of the variant's products"
               }
             },
             required: %w[startAt endAt discount]
