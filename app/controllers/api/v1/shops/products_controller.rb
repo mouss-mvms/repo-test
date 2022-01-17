@@ -29,7 +29,7 @@ module Api
                                       {page: (params[:page] || 1), items: (params[:limit] || PER_PAGE) })
 
           if stale?(products)
-            response = products.map{ |product| Dto::V1::Product::Response::create(product)}
+            response = products.map{ |product| Dto::V1::Product::Response::create(product).to_h}
             render json: { products: response, page: pagination.page, totalPages: pagination.pages, totalCount: pagination.count }, status: :ok
           end
         end
