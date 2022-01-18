@@ -17,7 +17,7 @@ module Dto
         end
 
         def self.create(reference)
-          good_deal = reference.good_deal.active ? Dto::V1::GoodDeal::Response.create(reference.good_deal) : nil
+          good_deal = reference.good_deal&.active ? Dto::V1::GoodDeal::Response.from_reference(reference) : nil
           variant = Dto::V1::Variant::Response.new(
             id: reference.id,
             weight: reference.weight,
