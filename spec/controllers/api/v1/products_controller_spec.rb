@@ -6468,7 +6468,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             status: "online",
             isService: true,
             sellerAdvice: "pouet",
-            shopId: create(:shop).id,
+            shopId: 0,
             description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
             variants: [
               {
@@ -6503,7 +6503,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               externalProductId: '56ty'
             }
           }
-          Shop.destroy_all
 
           post :create_offline, params: create_params
 
@@ -6569,7 +6568,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             slug: "manteau-mac",
             brand: "3sixteen",
             status: "online",
-            categoryId: create(:category).id,
+            categoryId: 0,
             isService: true,
             sellerAdvice: "pouet",
             shopId: create(:shop).id,
@@ -6607,11 +6606,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               externalProductId: '56ty'
             }
           }
-          Product.all.each do |p|
-            p.category_id = nil
-            p.save
-          end
-          Category.delete_all
 
           post :create_offline, params: create_params
 

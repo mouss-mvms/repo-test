@@ -20,20 +20,10 @@ module V1
                 '$ref': '#/components/schemas/Category',
                 description: 'Category of a product'
               },
-=begin
-              imageUrls: {
-                type: 'array',
-                items: {
-                  type: 'string'
-                },
-                example: [
-                  'https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr',
-                  'https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg'
-                ],
-                default: [],
-                description: 'List of product images urls'
+              citizen: {
+                '$ref': '#/components/schemas/Citizen',
+                description: 'Information about citizen who shared the products'
               },
-=end
               variants: {
                 type: :array,
                 items: { '$ref': '#/components/schemas/Variant' }

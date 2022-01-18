@@ -455,7 +455,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
           it "should return 404 HTTP Status" do
             create_params = {
               name: "manteau MAC",
-              categoryId: create(:category).id,
+              categoryId: 0,
               shopId: create(:shop).id,
               citizenAdvice: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
               variants: [
@@ -483,11 +483,6 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                 },
               ],
             }
-            Product.all.each do |p|
-              p.category_id = nil
-              p.save
-            end
-            Category.delete_all
 
             request.headers["x-client-id"] = generate_token(user_citizen)
 

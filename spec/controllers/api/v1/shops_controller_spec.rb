@@ -42,22 +42,20 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
 
     context "Shop id is not numeric" do
       it 'should return 400 HTTP Status' do
-        shop = create(:shop)
         get :show, params: {id: "jjei"}
-
-
+        
         expect(response).to have_http_status(400)
       end
     end
 
     context "Shop doesn't exist" do
-      before(:each) do
-        Shop.destroy_all
-      end
       it 'should return 404 HTTP Status' do
-        get :show, params: {id: 200}
+        shop = create(:shop)
+        shop.destroy
+        get :show, params: {id: shop.id}
 
         expect(response).to have_http_status(404)
+        expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Shop with 'id'=#{response.request.params[:id]}").to_h.to_json)
       end
     end
   end
@@ -248,7 +246,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
           @categories << create(:homme)
         end
         after(:all) do
-          Category.destroy_all
+          @categories.each { |cat| cat.destroy }
         end
 
         context "No locality params in address params" do

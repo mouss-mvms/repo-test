@@ -873,6 +873,10 @@
                       "$ref": "#/components/schemas/Category",
                       "description": "Category of a product"
                     },
+                    "citizen": {
+                      "$ref": "#/components/schemas/Citizen",
+                      "description": "Information about citizen who shared the products"
+                    },
                     "variants": {
                       "type": "array",
                       "items": {
@@ -6510,6 +6514,10 @@
                       "$ref": "#/components/schemas/Category",
                       "description": "Category of a product"
                     },
+                    "citizen": {
+                      "$ref": "#/components/schemas/Citizen",
+                      "description": "Information about citizen who shared the products"
+                    },
                     "variants": {
                       "type": "array",
                       "items": {
@@ -9222,6 +9230,21 @@
           "type"
         ]
       },
+      "Citizen": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 15,
+            "description": "Id of citizen"
+          },
+          "nickName": {
+            "type": "string",
+            "example": "nick name",
+            "description": "Nickname of citizen"
+          }
+        }
+      },
       "Delivery": {
         "type": "object",
         "properties": {
@@ -9398,6 +9421,10 @@
           "category": {
             "$ref": "#/components/schemas/Category",
             "description": "Category of a product"
+          },
+          "citizen": {
+            "$ref": "#/components/schemas/Citizen",
+            "description": "Information about citizen who shared the products"
           },
           "variants": {
             "type": "array",

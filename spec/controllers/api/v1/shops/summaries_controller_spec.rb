@@ -35,9 +35,7 @@ RSpec.describe Api::V1::Shops::SummariesController, type: :controller do
       context 'Category' do
         context 'Category not found' do
           it 'should return 404 HTTP Status' do
-            Category.destroy_all
-
-            post :search, params: { category: 'test' }
+            post :search, params: { category: 'cat qui nexiste pas' }
 
             expect(response).to have_http_status(:not_found)
             expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Category").to_h.to_json)
