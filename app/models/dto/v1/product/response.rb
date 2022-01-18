@@ -2,7 +2,7 @@ module Dto
   module V1
     module Product
       class Response
-        attr_reader :id, :name, :slug, :category, :brand, :status, :seller_advice, :is_service, :description, :variants, :image_urls, :citizen_advice, :origin, :allergens, :composition, :provider, :shop_id, :shop_name
+        attr_reader :id, :name, :slug, :category, :brand, :status, :seller_advice, :is_service, :description, :variants, :image_urls, :citizen_advice, :origin, :allergens, :composition, :provider, :shop_id, :shop_name, :citizen
 
         def initialize(**args)
           @id = args[:id]
@@ -23,9 +23,11 @@ module Dto
           end
           @citizen_advice = args[:citizen_advice]
           @provider = args[:provider]
+          @citizen = args[:citizen]
         end
 
         def self.create(product)
+          citizen = product.citizens.any? ? Dto::V1::Citizen::Response.create(product.citizens.first) : nil
           Dto::V1::Product::Response.new(
             id: product.id,
             name: product.name,
@@ -41,7 +43,8 @@ module Dto
             category: Dto::V1::Category::Response.create(product.category),
             variants: product.references&.map { |reference| Dto::V1::Variant::Response.create(reference) },
             citizen_advice: product.advice&.content,
-            provider: { name: product.api_provider_product&.api_provider&.name, externalProductId: product.api_provider_product&.external_product_id }
+            provider: { name: product.api_provider_product&.api_provider&.name, externalProductId: product.api_provider_product&.external_product_id },
+            citizen: citizen
           )
         end
 
@@ -61,7 +64,8 @@ module Dto
             isService: @is_service,
             variants: @variants&.map { |variant| variant.to_h },
             citizenAdvice: @citizen_advice,
-            provider: @provider
+            provider: @provider,
+            citizen: @citizen&.to_h,
           }
         end
       end

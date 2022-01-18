@@ -338,7 +338,6 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
       context "Shop not found" do
         it "should return 404 HTTP status" do
-          shop = create(:shop)
           create_params = {
             name: "manteau MAC",
             slug: "manteau-mac",
@@ -347,7 +346,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
             status: "online",
             isService: true,
             sellerAdvice: "pouet",
-            shopId: shop.id,
+            shopId: 0,
             description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
             variants: [
               {
@@ -374,9 +373,6 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               },
             ],
           }
-          user_shop_employee.shop_employee.shops << shop
-          user_shop_employee.shop_employee.save
-          Shop.destroy_all
 
           request.headers["x-client-id"] = generate_token(user_shop_employee)
 
@@ -438,7 +434,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
             slug: "manteau-mac",
             brand: "3sixteen",
             status: "online",
-            categoryId: create(:category).id,
+            categoryId: 0,
             isService: true,
             sellerAdvice: "pouet",
             shopId: create(:shop).id,
@@ -468,11 +464,6 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               },
             ],
           }
-          Product.all.each do |p|
-            p.category_id = nil
-            p.save
-          end
-          Category.delete_all
 
           request.headers["x-client-id"] = generate_token(user_shop_employee)
 

@@ -34,7 +34,8 @@ module Dto
           {
             startAt: @start_at,
             endAt: @end_at,
-            discount: @discount
+            discount: @discount,
+            discountedPrice: @discounted_price
           }
         end
       end
