@@ -10,8 +10,8 @@ RSpec.describe Dto::V1::GoodDeal::Response do
   end
 
   after(:all) do
-    @good_deal.destroy
     @reference.destroy
+    @good_deal.destroy
   end
 
   describe 'create' do
