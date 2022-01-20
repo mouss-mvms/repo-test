@@ -712,8 +712,8 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         end
         context "Avatar image not found" do
           it "returns a 404 http status" do
-            Image.destroy_all
-            wrong_avatar_id = 1
+            image = create(:image)
+            wrong_avatar_id = image.id
             @update_params = {
               name: "oui",
               email: "test@boutique.com",
@@ -741,6 +741,8 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
             shop.save
 
             request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
+
+            image.delete
 
             put :update, params: @update_params.merge(id: shop.id)
             expect(response).to have_http_status(404)
