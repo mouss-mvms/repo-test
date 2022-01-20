@@ -37,5 +37,6 @@ module MvmsApi
     config.autoload_paths += Dir["#{config.root}/app/**/*.rb"]
     config.api_only = true
     config.active_job.queue_adapter = :sidekiq
+    config.time_zone = 'Europe/Paris'
   end
 end

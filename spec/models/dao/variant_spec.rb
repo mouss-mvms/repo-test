@@ -45,7 +45,7 @@ RSpec.describe Dao::Variant, :type => :model do
       expect(reference.sample.default).to eq(dto_variant.is_default)
       expect(reference.sample.images).not_to be_empty
       expect(reference.sample.images.first.file_derivatives.values_at(:mini, :thumb, :square, :wide).all?(&:present?)).to be true
-      expect(reference.good_deal.starts_at).to eq(date_from_string(date_string: dto_variant.good_deal.start_at))
+      expect(reference.good_deal.starts_at.strftime("%d/%m/%Y")).to eq(dto_variant.good_deal.start_at)
       expect(reference.good_deal.discount).to eq(dto_variant.good_deal.discount)
       expect(reference.api_provider_variant.external_variant_id).to eq(dto_variant.provider[:external_variant_id])
       expect(reference.api_provider_variant.api_provider.name).to eq(dto_variant.provider[:name])
@@ -104,7 +104,7 @@ RSpec.describe Dao::Variant, :type => :model do
       expect(reference.sample.default).to eq(dto_variant.is_default)
       expect(reference.sample.images).not_to be_empty
       expect(reference.sample.images.first.file_derivatives.values_at(:mini, :thumb, :square, :wide).all?(&:present?)).to be true
-      expect(reference.good_deal.starts_at).to eq(date_from_string(date_string: dto_variant.good_deal.start_at))
+      expect(reference.good_deal.starts_at.strftime("%d/%m/%Y")).to eq(dto_variant.good_deal.start_at)
       expect(reference.good_deal.discount).to eq(dto_variant.good_deal.discount)
       expect(reference.api_provider_variant.external_variant_id).to eq(dto_variant.provider[:external_variant_id])
       expect(reference.api_provider_variant.api_provider.name).to eq(dto_variant.provider[:name])
