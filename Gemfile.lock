@@ -134,9 +134,6 @@ GEM
     data_migrate (7.0.2)
       activerecord (>= 5.0)
       railties (>= 5.0)
-    debase (0.2.4.1)
-      debase-ruby_core_source (>= 0.10.2)
-    debase-ruby_core_source (0.10.14)
     declarative (0.0.20)
     delayed_job (4.1.9)
       activesupport (>= 3.0, < 6.2)
@@ -401,8 +398,6 @@ GEM
     rswag-ui (2.4.0)
       actionpack (>= 3.1, < 7.0)
       railties (>= 3.1, < 7.0)
-    ruby-debug-ide (0.7.3)
-      rake (>= 0.8.1)
     ruby-ole (1.2.12.2)
     ruby-vips (2.1.4)
       ffi (~> 1.12)
@@ -475,7 +470,6 @@ DEPENDENCIES
   bootsnap (>= 1.4.4)
   byebug
   dalli
-  debase (~> 0.2.4)
   delayed_job_active_record
   factory_bot_rails
   figaro
@@ -498,7 +492,6 @@ DEPENDENCIES
   rswag-api
   rswag-specs
   rswag-ui
-  ruby-debug-ide (~> 0.7.3)
   shoulda-matchers
   sidekiq-status
   simple_token_authentication (~> 1.0)
