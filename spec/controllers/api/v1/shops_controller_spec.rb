@@ -710,7 +710,44 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
             expect(response.body).to eq(Dto::Errors::BadRequest.new("param is missing or the value is empty: route").to_h.to_json)
           end
         end
+        context "Avatar image not found" do
+          it "returns a 404 http status" do
+            Image.destroy_all
+            wrong_avatar_id = 1
+            @update_params = {
+              name: "oui",
+              email: "test@boutique.com",
+              siret: "75409821800029",
+              mobileNumber: "0666666666",
+              categoryIds: [
+                @categories[0].id,
+                @categories[1].id
+              ],
+              address: {
+                streetNumber: "52",
+                route: "Rue Georges Bonnac",
+                locality: "Bordeaux",
+                country: "France",
+                postalCode: "33000",
+                longitude: 44.8399608,
+                latitude: 0.5862431,
+                inseeCode: "33063"
+              },
+              avatarImageId: wrong_avatar_id
+            }
+            shop_employee_user = create(:shop_employee_user, email: 'shop.employee5681@ecity.fr')
+            shop = create(:shop)
+            shop.assign_ownership(shop_employee_user)
+            shop.save
+
+            request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
+
+            put :update, params: @update_params.merge(id: shop.id)
+            expect(response).to have_http_status(404)
+          end
+        end
       end
+
     end
 
     context 'Authentication incorrect' do

@@ -77,3 +77,6 @@ gem 'newrelic_rpm'
 #Pagination
 gem 'kaminari'
 
+
+gem "ruby-debug-ide", "~> 0.7.3"
+gem "debase", "~> 0.2.4"

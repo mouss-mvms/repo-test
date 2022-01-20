@@ -29,6 +29,7 @@ module Api
 
       def update
         shop_request = Dto::V1::Shop::Request.new(shop_params)
+        Image.find(shop_request.avatar_image_id) if shop_request.avatar_image_id
         ActiveRecord::Base.transaction do
           shop = Dto::V1::Shop.build(dto_shop_request: shop_request, shop: @shop)
           response = Dto::V1::Shop::Response.create(shop).to_h
