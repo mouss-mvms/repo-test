@@ -12,7 +12,7 @@ module Dto
           @children = args[:children]
         end
 
-        def self.create(category, with_children = "false")
+        def self.create(category)
           return nil if category.nil?
           children = category.children.to_a
           Dto::V1::Category::Response.new(
@@ -20,18 +20,18 @@ module Dto
             name: category.name,
             has_children: children.present?,
             slug: category.slug,
-            children: with_children == "true" ? children.map { |child_category| self.create(child_category, false) } : nil
+            children: children.map { |child_category| self.create(child_category) }
           )
         end
 
-        def to_h
-          {
-            id: @id,
-            name: @name,
-            slug: @slug,
-            hasChildren: @has_children,
-            children: @children&.map(&:to_h)
-          }
+        def to_h(fields = nil)
+          hash = {}
+          hash[:id] = @id
+          hash[:name] = @name
+          hash[:slug] = @slug
+          hash[:hasChildren] = @has_children
+          hash[:children] = @children&.map { |child| child.to_h } if fields&.any? && fields.include?(:children)
+          hash
         end
       end
     end

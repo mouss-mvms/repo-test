@@ -23,17 +23,17 @@ RSpec.describe Api::V1::CategoriesController, type: :controller do
           categories = Category.where(parent_id: nil).map { |category| Dto::V1::Category::Response.create(category).to_h }
           expect(response_body).to eq(categories)
           response_body.each do |category|
-            expect(category[:children]).to be_nil
+            expect(category.has_key?(:children)).to eq(false)
           end
         end
       end
 
       context "when params children" do
         it "should respond HTTP Status 200 with all parents category without they children" do
-          get :roots, params: { children: "true"}
+          get :roots, params: { children: "true" }
           expect(response).to have_http_status(:ok)
           response_body = JSON.parse(response.body, symbolize_names: true)
-          categories = Category.where(parent_id: nil).map { |category| Dto::V1::Category::Response.create(category, "true").to_h }
+          categories = Category.where(parent_id: nil).map { |category| Dto::V1::Category::Response.create(category).to_h({ children: true }) }
           expect(response_body).to eq(categories)
         end
       end
@@ -82,7 +82,7 @@ RSpec.describe Api::V1::CategoriesController, type: :controller do
           response_body = JSON.parse(response.body, symbolize_names: true)
           category = Dto::V1::Category::Response.create(@category_1).to_h
           expect(response_body).to eq(category)
-          expect(category[:children]).to eq(nil)
+          expect(category.has_key?(:children)).to eq(false)
         end
       end
 
@@ -91,7 +91,7 @@ RSpec.describe Api::V1::CategoriesController, type: :controller do
           get :show, params: { id: @category_1.id, children: true }
           expect(response).to have_http_status(:ok)
           response_body = JSON.parse(response.body, symbolize_names: true)
-          category = Dto::V1::Category::Response.create(@category_1, "true").to_h
+          category = Dto::V1::Category::Response.create(@category_1).to_h({ children: true })
           expect(response_body).to eq(category)
         end
       end
