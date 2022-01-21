@@ -16,9 +16,9 @@ Rails.application.routes.draw do
       instance_eval(File.read(Rails.root.join("config/routes/v1/shops.rb")))
       instance_eval(File.read(Rails.root.join("config/routes/v1/variants.rb")))
       instance_eval(File.read(Rails.root.join("config/routes/v1/selections.rb")))
+      instance_eval(File.read(Rails.root.join("config/routes/v1/category.rb")))
       instance_eval(File.read(Rails.root.join("config/routes/v1/tags.rb")))
       get "/citizens/:id/products", to: "citizens/products#index"
-      get "/categories", to: "categories#index"
       scope :auth do
         resources :images, only: [:create]
       end

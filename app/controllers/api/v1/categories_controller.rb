@@ -1,26 +1,27 @@
 module Api
   module V1
     class CategoriesController < ApplicationController
-      def index
-        @categories = Category.search('*', load: false)
-        categories_response = []
-        parent_categories = Category.search('*', {where: {parent_id: nil}, page: params[:page], per_page: 1,  load: false})
-        parent_categories.each do |parent_category|
-          parent_category_response = Dto::V1::Category::Response.new({id: parent_category.id, name: parent_category.name, slug: parent_category.slug})
-          categories_response << build_children_category_response(parent_category_response)
+
+      def show
+        if params[:children].present?
+          raise ActionController::BadRequest.new('children must be true or false.') unless  %w(true false).include?(params[:children])
         end
-        render json: { categories: categories_response, page: parent_categories.options[:page]}
+        category = Category.find(params[:id])
+        if stale?(category)
+          response = Dto::V1::Category::Response.create(category, params[:children] || false).to_h
+          render json: response, status: :ok
+        end
       end
 
-      private
-
-      def build_children_category_response(parent_category_response)
-        children_categories = @categories.select{|cc| cc[:parent_id] == parent_category_response.id}
-        children_categories.each do |child_category|
-          child_category_response = Dto::V1::Category::Response.new({id: child_category.id, name: child_category.name, slug: child_category.slug})
-          parent_category_response.children << build_children_category_response(child_category_response)
+      def roots
+        if params[:children].present?
+          raise ActionController::BadRequest.new('children must be true or false.') unless  %w(true false).include?(params[:children])
         end
-        return parent_category_response
+        categories = Category.where(parent_id: nil).to_a
+        if stale?(categories)
+          response = categories.map { |category| Dto::V1::Category::Response.create(category, params[:children] || "false").to_h }
+          render json: response, status: :ok
+        end
       end
     end
   end
