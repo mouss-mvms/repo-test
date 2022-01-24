@@ -36,7 +36,7 @@ RSpec.describe 'api/v1/categories', swagger_doc: 'v1/swagger.json', type: :reque
       security [{ authorization: [] }]
 
       response(200, 'successful') do
-        schema ::V1::Examples::Response::Categories.to_h
+        schema ::V1::Examples::Response::Category.to_h
         run_test!
       end
 
