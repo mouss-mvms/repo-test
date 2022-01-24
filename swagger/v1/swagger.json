@@ -10582,6 +10582,11 @@
             "$ref": "#/components/schemas/Address",
             "description": "Shop's address"
           },
+          "webUri": {
+            "type": "string",
+            "example": "bordeaux/boutique/ma_boutique_slug",
+            "description": "MVMS web uri"
+          },
           "lowestProductPrice": {
             "type": "number",
             "example": 23.55,
