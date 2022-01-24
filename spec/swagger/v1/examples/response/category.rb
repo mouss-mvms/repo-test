@@ -16,6 +16,11 @@ module V1
                 example: 'Non classée',
                 description: 'Display name of a category.'
               },
+              hasChildren: {
+                type: 'boolean',
+                example: 'true',
+                description: 'Category has children.'
+              },
               children: {
                 type: 'array',
                 items: {

@@ -67,7 +67,7 @@ RSpec.describe Api::V1::Shops::SchedulesController do
 
         request.headers['x-client-id'] = generate_token(user_shop_employee)
 
-        put :update, params: {id: shop.id, _json: params}
+        put :update, params: { id: shop.id, _json: params }
 
         expect(response).to have_http_status(:ok)
         result = JSON.parse(response.body)
@@ -101,7 +101,7 @@ RSpec.describe Api::V1::Shops::SchedulesController do
             generate_schedule_param(shop.schedules[6].id, nil, nil, nil, nil)
           ]
 
-          put :update, params: {id: shop.id, _json: params}
+          put :update, params: { id: shop.id, _json: params }
 
           expect(response).to have_http_status(:unauthorized)
           expect(response.body).to eq(Dto::Errors::Unauthorized.new.to_h.to_json)
@@ -125,7 +125,7 @@ RSpec.describe Api::V1::Shops::SchedulesController do
 
           request.headers['x-client-id'] = generate_token(user_citizen)
 
-          put :update, params: {id: shop.id, _json: params}
+          put :update, params: { id: shop.id, _json: params }
 
           expect(response).to have_http_status(:forbidden)
           expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
@@ -149,7 +149,7 @@ RSpec.describe Api::V1::Shops::SchedulesController do
 
           request.headers['x-client-id'] = generate_token(user_citizen)
 
-          put :update, params: {id: shop.id, _json: params}
+          put :update, params: { id: shop.id, _json: params }
 
           expect(response).to have_http_status(:forbidden)
           expect(response.body).to eq(Dto::Errors::Forbidden.new('').to_h.to_json)
@@ -173,7 +173,7 @@ RSpec.describe Api::V1::Shops::SchedulesController do
 
           request.headers['x-client-id'] = generate_token(user_shop_employee)
 
-          put :update, params: {id: shop.id, _json: params}
+          put :update, params: { id: shop.id, _json: params }
 
           expect(response).to have_http_status(:forbidden)
           expect(response.body).to eq(Dto::Errors::Forbidden.new('').to_h.to_json)
@@ -196,11 +196,11 @@ RSpec.describe Api::V1::Shops::SchedulesController do
             generate_schedule_param(shop.schedules[5].id, "08:00", "14:00", "12:00", "19:00"),
             generate_schedule_param(shop.schedules[6].id, nil, nil, nil, nil)
           ]
-          Shop.destroy_all
+          shop.destroy
 
           request.headers['x-client-id'] = generate_token(user_shop_employee)
 
-          put :update, params: {id: shop.id, _json: params}
+          put :update, params: { id: shop.id, _json: params }
 
           expect(response).to have_http_status(:not_found)
           expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Shop with 'id'=#{shop.id}").to_h.to_json)
@@ -226,7 +226,7 @@ RSpec.describe Api::V1::Shops::SchedulesController do
 
           request.headers['x-client-id'] = generate_token(user_shop_employee)
 
-          put :update, params: {id: shop.id, _json: params}
+          put :update, params: { id: shop.id, _json: params }
 
           expect(response).to have_http_status(:bad_request)
           expect(response.body).to eq(Dto::Errors::BadRequest.new("param is missing or the value is empty: id").to_h.to_json)
@@ -252,7 +252,7 @@ RSpec.describe Api::V1::Shops::SchedulesController do
 
           request.headers['x-client-id'] = generate_token(user_shop_employee)
 
-          put :update, params: {id: shop.id, _json: params}
+          put :update, params: { id: shop.id, _json: params }
 
           expect(response).to have_http_status(:not_found)
           expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Schedule with 'id'=#{schedule.id} [WHERE \"schedules\".\"shop_id\" = $1]").to_h.to_json)
