@@ -2,7 +2,7 @@ module Dto
   module V1
     module Shop
       class Response
-        attr_accessor :id, :name, :slug, :images, :cover, :avatar, :description, :baseline, :facebook_link, :instagram_link, :website_link, :address, :siret, :email, :mobile_number, :lowest_product_price, :highest_product_price
+        attr_accessor :id, :name, :slug, :images, :cover, :avatar, :description, :baseline, :facebook_link, :instagram_link, :website_link, :web_uri, :address, :siret, :email, :mobile_number, :lowest_product_price, :highest_product_price
 
         def initialize(**args)
           @id = args[:id]
@@ -19,6 +19,7 @@ module Dto
           @facebook_link = args[:facebook_link]
           @instagram_link = args[:instagram_link]
           @website_link = args[:website_link]
+          @web_uri = args[:web_uri]
           @address = args[:address] || Dto::V1::Address::Response.new
           @siret = args[:siret]
           @email = args[:email]
@@ -34,35 +35,36 @@ module Dto
           end
 
           return Dto::V1::Shop::Response.new({
-                                           id: shop.id,
-                                           name: shop.name,
-                                           slug: shop.slug,
-                                           images: images,
-                                           description: shop.french_description&.content,
-                                           baseline: shop.french_baseline&.content,
-                                           facebook_link: shop.facebook_url,
-                                           instagram_link: shop.instagram_url,
-                                           website_link: shop.url,
-                                           address: Dto::V1::Address::Response.create(shop.address),
-                                           siret: shop.siret,
-                                           email: shop.email,
-                                           mobile_number: shop.mobile_phone_number,
-                                           avatar: Dto::V1::Image::Response.create(shop.profil) || nil,
-                                           cover_image_url: Dto::V1::Image::Response.create(shop.featured) || nil,
-                                           lowest_product_price: shop.cheapest_ref&.base_price,
-                                           highest_product_price: shop.most_expensive_ref&.base_price
-                                         })
+                                               id: shop.id,
+                                               name: shop.name,
+                                               slug: shop.slug,
+                                               images: images,
+                                               description: shop.french_description&.content,
+                                               baseline: shop.french_baseline&.content,
+                                               facebook_link: shop.facebook_url,
+                                               instagram_link: shop.instagram_url,
+                                               website_link: shop.url,
+                                               web_uri: "#{shop&.city&.slug}/boutiques/#{shop.slug}",
+                                               address: Dto::V1::Address::Response.create(shop.address),
+                                               siret: shop.siret,
+                                               email: shop.email,
+                                               mobile_number: shop.mobile_phone_number,
+                                               avatar: Dto::V1::Image::Response.create(shop.profil) || nil,
+                                               cover_image_url: Dto::V1::Image::Response.create(shop.featured) || nil,
+                                               lowest_product_price: shop.cheapest_ref&.base_price,
+                                               highest_product_price: shop.most_expensive_ref&.base_price
+                                             })
         end
 
         def self.from_searchkick(shop)
           return Dto::V1::Shop::Response.new({
-                                           id: shop['id'].to_i,
-                                           name: shop['name'],
-                                           slug: shop['slug'],
-                                           image_urls: [shop['image_url']],
-                                           description: shop['description'],
-                                           baseline: shop['baseline']
-                                         })
+                                               id: shop['id'].to_i,
+                                               name: shop['name'],
+                                               slug: shop['slug'],
+                                               image_urls: [shop['image_url']],
+                                               description: shop['description'],
+                                               baseline: shop['baseline']
+                                             })
         end
 
         def to_h(fields = nil)
@@ -78,6 +80,7 @@ module Dto
           hash[:facebookLink] = @facebook_link if fields.nil? || (fields.any? && fields.include?('facebookLink'))
           hash[:instagramLink] = @instagram_link if fields.nil? || (fields.any? && fields.include?('instagramLink'))
           hash[:websiteLink] = @website_link if fields.nil? || (fields.any? && fields.include?('websiteLink'))
+          hash[:webUri] = @web_uri if fields.nil? || (fields.any? && fields.include?('webUri'))
           hash[:address] = @address.to_h if fields.nil? || (fields.any? && fields.include?('address'))
           hash[:siret] = @siret if fields.nil? || (fields.any? && fields.include?('siret'))
           hash[:email] = @email if fields.nil? || (fields.any? && fields.include?('email'))
