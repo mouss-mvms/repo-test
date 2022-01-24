@@ -4,15 +4,20 @@ RSpec.describe Api::V1::CategoriesController, type: :controller do
   describe "GET #roots" do
     context "All ok" do
       before(:all) do
-        category_1 = create(:category, name: "Category 1")
-        category_2 = create(:category, name: "Category 2")
-        category_3 = create(:category, name: "Category 3")
-        subcategory_1 = create(:category, name: "subcategory 1", parent_id: category_1.id)
-        subcategory_2 = create(:category, name: "subcategory 2", parent_id: category_2.id)
-        subcategory_3 = create(:category, name: "subcategory 2", parent_id: subcategory_2.id)
+        @category_1 = create(:category, name: "Category 1")
+        @category_2 = create(:category, name: "Category 2")
+        @category_3 = create(:category, name: "Category 3")
+        @subcategory_1 = create(:category, name: "subcategory 1", parent_id: @category_1.id)
+        @subcategory_2 = create(:category, name: "subcategory 2", parent_id: @category_2.id)
+        @subcategory_3 = create(:category, name: "subcategory 2", parent_id: @subcategory_2.id)
       end
       after(:all) do
-        Category.destroy_all
+        @subcategory_1.destroy
+        @subcategory_2.destroy
+        @subcategory_3.destroy
+        @category_1.destroy
+        @category_2.destroy
+        @category_3.destroy
       end
 
       context "when no params children" do
@@ -23,7 +28,7 @@ RSpec.describe Api::V1::CategoriesController, type: :controller do
           categories = Category.where(parent_id: nil).map { |category| Dto::V1::Category::Response.create(category).to_h }
           expect(response_body).to eq(categories)
           response_body.each do |category|
-            expect(category.has_key?(:children)).to eq(false)
+            expect(category.key?(:children)).to eq(false)
           end
         end
       end
@@ -62,19 +67,23 @@ RSpec.describe Api::V1::CategoriesController, type: :controller do
   end
 
   describe "GET #show" do
+    before(:all) do
+      @category_1 = create(:category, name: "Category 1")
+      @category_2 = create(:category, name: "Category 2")
+      @category_3 = create(:category, name: "Category 3")
+      @subcategory_1 = create(:category, name: "subcategory 1", parent_id: @category_1.id)
+      @subcategory_2 = create(:category, name: "subcategory 2", parent_id: @category_2.id)
+      @subcategory_3 = create(:category, name: "subcategory 2", parent_id: @subcategory_2.id)
+    end
+    after(:all) do
+      @subcategory_1.destroy
+      @subcategory_2.destroy
+      @subcategory_3.destroy
+      @category_1.destroy
+      @category_2.destroy
+      @category_3.destroy
+    end
     context "All ok" do
-      before(:all) do
-        @category_1 = create(:category, name: "Category 1")
-        @category_2 = create(:category, name: "Category 2")
-        category_3 = create(:category, name: "Category 3")
-        subcategory_1 = create(:category, name: "subcategory 1", parent_id: @category_1.id)
-        @subcategory_2 = create(:category, name: "subcategory 2", parent_id: @category_2.id)
-        subcategory_3 = create(:category, name: "subcategory 2", parent_id: @subcategory_2.id)
-      end
-      after(:all) do
-        Category.destroy_all
-      end
-
       context "when no params children" do
         it "should respond HTTP Status 200 with desire category without children" do
           get :show, params: { id: @category_1.id }
@@ -82,7 +91,7 @@ RSpec.describe Api::V1::CategoriesController, type: :controller do
           response_body = JSON.parse(response.body, symbolize_names: true)
           category = Dto::V1::Category::Response.create(@category_1).to_h
           expect(response_body).to eq(category)
-          expect(category.has_key?(:children)).to eq(false)
+          expect(category.key?(:children)).to eq(false)
         end
       end
 
@@ -121,7 +130,6 @@ RSpec.describe Api::V1::CategoriesController, type: :controller do
 
       context "when children params has invalid value" do
         it "should return http status 400 with message" do
-          @category_1 = create(:category)
           get :show, params: { id: @category_1.id, children: "yes" }
           should respond_with(400)
           expect(response.body).to eq(Dto::Errors::BadRequest.new('children must be true or false.').to_h.to_json)
