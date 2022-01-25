@@ -24,6 +24,12 @@ RSpec.describe Api::V1::CategoriesController, type: :controller do
     context "When problems" do
       context "when category doesn't not exist" do
         it "should return http status 404 with message" do
+          searchkick_categories = Searchkick::Results.new(
+            Category,
+            { "hits" => { "total" => { "value" => 0, "relation" => "eq" }, "max_score" => nil, "hits" => [] } },
+            {}
+          )
+          allow(::Category).to receive(:search).and_return(searchkick_categories)
           @category_0 = create(:category, name: "Category 0")
           deleted_category_id = @category_0.id
           @category_0.destroy
