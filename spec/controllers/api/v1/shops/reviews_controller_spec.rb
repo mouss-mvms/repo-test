@@ -33,10 +33,9 @@ RSpec.describe Api::V1::Shops::ReviewsController, type: :controller do
     context "Bad params" do
       context "Shop doesn't exists" do
         it "should return 404 HTTP status" do
-          ::Shop.destroy_all
-          get :index, params: { id: 666 }
+          get :index, params: { id: 0 }
           should respond_with(404)
-          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Shop with 'id'=666").to_h.to_json)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Shop with 'id'=#{response.request.params[:id]}").to_h.to_json)
         end
       end
     end
@@ -202,17 +201,16 @@ RSpec.describe Api::V1::Shops::ReviewsController, type: :controller do
           shop = create(:shop)
           params = {
             content: "Avis de la boutique",
-            shopId: shop.id,
+            shopId: 0,
             mark: 4
           }
 
           request.headers['x-client-id'] = generate_token(user)
-          Shop.destroy_all
 
-          post :create, params: params.merge(id: shop.id)
+          post :create, params: params.merge(id: 0)
 
           expect(response).to have_http_status(:not_found)
-          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Shop with 'id'=#{shop.id}").to_h.to_json)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Shop with 'id'=#{response.request.params[:id]}").to_h.to_json)
         end
       end
 

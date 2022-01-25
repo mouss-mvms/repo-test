@@ -5,6 +5,7 @@ scope :auth do
     put ":id/schedules", to: "schedules#update"
     post ":id/reviews", to: "reviews#create"
     put ":id/deliveries", to: "deliveries#update"
+    instance_eval(File.read(Rails.root.join("config/routes/v1/shops/products.rb")))
   end
 end
 

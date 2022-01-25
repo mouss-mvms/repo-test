@@ -13,7 +13,7 @@ RSpec.describe Dto::V1::Product::Response do
         expect(result.name).to eq(product.name)
         expect(result.description).to eq(product.description)
         expect(result.slug).to eq(product.slug)
-        expect(result.brand).to eq(product&.brand&.name)
+        expect(result.brand).to eq(product.brand&.name)
         expect(result.status).to eq(product.status)
         expect(result.is_service).to eq(product.is_a_service)
         expect(result.seller_advice).to eq(product.pro_advice)
@@ -24,13 +24,40 @@ RSpec.describe Dto::V1::Product::Response do
         expect(result.variants).to eq(product.references&.map { |reference| Dto::V1::Variant::Response.create(reference) })
         expect(result.citizen_advice).to eq(product.advice&.content)
       end
+
+      context 'Product was created by a citizen' do
+        it 'should return a Dto::V1::Product::Response with citizen informations' do
+          user_citizen = create(:citizen_user)
+          product = create(:product, citizens: [user_citizen.citizen])
+
+          result = Dto::V1::Product::Response.create(product)
+
+          expect(result).to be_instance_of(Dto::V1::Product::Response)
+          expect(result.id).to eq(product.id)
+          expect(result.name).to eq(product.name)
+          expect(result.description).to eq(product.description)
+          expect(result.slug).to eq(product.slug)
+          expect(result.brand).to eq(product.brand&.name)
+          expect(result.status).to eq(product.status)
+          expect(result.is_service).to eq(product.is_a_service)
+          expect(result.seller_advice).to eq(product.pro_advice)
+          expect(result.shop_id).to eq(product.shop.id)
+          expect(result.shop_name).to eq(product.shop.name)
+          expect(result.image_urls).to eq(product.images.map(&:file_url))
+          expect(result.category).to be_instance_of(Dto::V1::Category::Response)
+          expect(result.variants).to eq(product.references&.map { |reference| Dto::V1::Variant::Response.create(reference) })
+          expect(result.citizen_advice).to eq(product.advice&.content)
+          expect(result.citizen).to be_instance_of(Dto::V1::Citizen::Response)
+        end
+      end
     end
   end
 
   describe 'to_h' do
     context 'All ok' do
       it 'should a hash representation of Dto::V1::Product::Response' do
-        product = create(:product_created_by_citizen)
+        user_citizen = create(:citizen_user)
+        product = create(:product, citizens: [user_citizen.citizen])
         dto = Dto::V1::Product::Response.create(product)
 
         dto_hash = dto.to_h
@@ -49,6 +76,7 @@ RSpec.describe Dto::V1::Product::Response do
         expect(dto_hash[:isService]).to eq(dto.is_service)
         expect(dto_hash[:variants]).to eq(dto.variants&.map { |variant| variant.to_h })
         expect(dto_hash[:citizenAdvice]).to eq(dto.citizen_advice)
+        expect(dto_hash[:citizen]).to eq(dto.citizen.to_h)
       end
     end
   end

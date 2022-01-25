@@ -14,6 +14,7 @@ module Dto
         end
 
         def self.create(image)
+          return nil if image.nil?
           new(
             id: image.id,
             original_url: image.file_url,

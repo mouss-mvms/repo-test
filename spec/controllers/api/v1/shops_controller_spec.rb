@@ -42,22 +42,20 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
 
     context "Shop id is not numeric" do
       it 'should return 400 HTTP Status' do
-        shop = create(:shop)
         get :show, params: {id: "jjei"}
-
-
+        
         expect(response).to have_http_status(400)
       end
     end
 
     context "Shop doesn't exist" do
-      before(:each) do
-        Shop.destroy_all
-      end
       it 'should return 404 HTTP Status' do
-        get :show, params: {id: 200}
+        shop = create(:shop)
+        shop.destroy
+        get :show, params: {id: shop.id}
 
         expect(response).to have_http_status(404)
+        expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Shop with 'id'=#{response.request.params[:id]}").to_h.to_json)
       end
     end
   end
@@ -248,7 +246,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
           @categories << create(:homme)
         end
         after(:all) do
-          Category.destroy_all
+          @categories.each { |cat| cat.destroy }
         end
 
         context "No locality params in address params" do
@@ -420,6 +418,8 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
             latitude: @shop.address.latitude,
             inseeCode: @shop.address.city.insee_code
           },
+          description: "Description mise à jour de la boutique",
+          baseline: "Baseline mise à jour de la boutique",
           facebookLink: "http://www.facebook.com",
           instagramLink: "http://www.instagram.com",
           websiteLink: "http://www.website.com",
@@ -428,6 +428,8 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         shop_employee_user = create(:shop_employee_user, email: 'shop.employee78@ecity.fr')
         @shop.assign_ownership(shop_employee_user)
         @shop.profil&.file_url = nil
+        @shop.descriptions << I18nshop.new(lang: "fr", field: "description", content: "Description de la boutique")
+        @shop.baselines << I18nshop.new(lang: "fr", field: "Baseline", content: "Baseline de la boutique")
         @shop.save
         request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
 
@@ -439,6 +441,8 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         expect(shop_result["name"]).to eq(@update_params[:name])
         expect(shop_result["siret"]).to eq(@shop.siret)
         expect(shop_result["email"]).to eq(@shop.email)
+        expect(shop_result["description"]).to eq(@update_params[:description])
+        expect(shop_result["baseline"]).to eq(@update_params[:baseline])
         expect(shop_result["address"]["streetNumber"]).to eq(@shop.address.street_number)
         expect(shop_result["address"]["route"]).to eq(@shop.address.route)
         expect(shop_result["address"]["locality"]).to eq(@shop.address.locality)
@@ -449,7 +453,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         expect(shop_result["facebookLink"]).to eq(@update_params[:facebookLink])
         expect(shop_result["instagramLink"]).to eq(@update_params[:instagramLink])
         expect(shop_result["websiteLink"]).to eq(@update_params[:websiteLink])
-        expect(shop_result["avatarImageUrl"].blank?).to be_falsey
+        expect(shop_result["avatar"].blank?).to be_falsey
         expect((Shop.find(shop_result["id"]).owner == shop_employee_user.shop_employee)).to be_truthy
       end
     end
@@ -706,7 +710,46 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
             expect(response.body).to eq(Dto::Errors::BadRequest.new("param is missing or the value is empty: route").to_h.to_json)
           end
         end
+        context "Avatar image not found" do
+          it "returns a 404 http status" do
+            image = create(:image)
+            wrong_avatar_id = image.id
+            @update_params = {
+              name: "oui",
+              email: "test@boutique.com",
+              siret: "75409821800029",
+              mobileNumber: "0666666666",
+              categoryIds: [
+                @categories[0].id,
+                @categories[1].id
+              ],
+              address: {
+                streetNumber: "52",
+                route: "Rue Georges Bonnac",
+                locality: "Bordeaux",
+                country: "France",
+                postalCode: "33000",
+                longitude: 44.8399608,
+                latitude: 0.5862431,
+                inseeCode: "33063"
+              },
+              avatarImageId: wrong_avatar_id
+            }
+            shop_employee_user = create(:shop_employee_user, email: 'shop.employee5681@ecity.fr')
+            shop = create(:shop)
+            shop.assign_ownership(shop_employee_user)
+            shop.save
+
+            request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
+
+            image.delete
+
+            put :update, params: @update_params.merge(id: shop.id)
+            expect(response).to have_http_status(404)
+          end
+        end
       end
+
     end
 
     context 'Authentication incorrect' do
@@ -749,9 +792,4 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
       end
     end
   end
-end
-
-def generate_token(user)
-  exp_payload = { id: user.id, exp: Time.now.to_i + 1 * 3600 * 24 }
-  JWT.encode exp_payload, ENV["JWT_SECRET"], 'HS256'
 end

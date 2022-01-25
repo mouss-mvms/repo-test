@@ -214,8 +214,8 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
           imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
           isDefault: false,
           goodDeal: {
-            startAt: "17/05/2021",
-            endAt: "18/06/2021",
+            startAt: (DateTime.now-2).strftime('%d/%m/%Y'),
+            endAt: (DateTime.now+2).strftime('%d/%m/%Y'),
             discount: 20,
           },
           characteristics: [
@@ -247,7 +247,7 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
         expect(response_body[:weight]).to eq(variant_params[:weight])
         expect(response_body[:quantity]).to eq(variant_params[:quantity])
         expect(response_body[:imageUrls].count).to eq(variant_params[:imageUrls].count)
-        expect(response_body[:goodDeal]).to eq(variant_params[:goodDeal])
+        expect(response_body[:goodDeal]).not_to be_nil
         expect(response_body[:characteristics].map(&:values)).to eq(variant_params[:characteristics].map(&:values))
         expect(response_body[:provider]).to eq(variant_params[:provider])
       end
@@ -760,8 +760,8 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
           imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
           isDefault: false,
           goodDeal: {
-            startAt: "17/05/2021",
-            endAt: "18/06/2021",
+            startAt: (DateTime.now-2).strftime('%d/%m/%Y'),
+            endAt: (DateTime.now+2).strftime('%d/%m/%Y'),
             discount: 20,
           },
           characteristics: [
@@ -786,7 +786,7 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
         expect(response_body[:weight]).to eq(variant_params[:weight])
         expect(response_body[:quantity]).to eq(variant_params[:quantity])
         expect(response_body[:imageUrls].count).to eq(variant_params[:imageUrls].count)
-        expect(response_body[:goodDeal]).to eq(variant_params[:goodDeal])
+        expect(response_body[:goodDeal]).not_to be_nil
         expect(response_body[:characteristics].map(&:values)).to eq(variant_params[:characteristics].map(&:values))
         expect(response_body[:externalVariantId]).to eq(variant_params[:externalVariantId])
       end

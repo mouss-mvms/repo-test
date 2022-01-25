@@ -57,6 +57,7 @@ RSpec.configure do |config|
           BrandSearch: V1::Examples::Response::Brands::Search.to_h,
           Category: V1::Examples::Response::Category.to_h,
           Characteristic: V1::Examples::Response::Characteristics.to_h,
+          Citizen: V1::Examples::Response::Citizen.to_h,
           Delivery: V1::Examples::Response::Delivery.to_h,
           GoodDeal: V1::Examples::Response::GoodDeal.to_h,
           Image: V1::Examples::Response::Image.to_h,

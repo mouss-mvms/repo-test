@@ -3612,7 +3612,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           expect(ref1_updated.quantity).to eq(ref1_update_params[:quantity])
           expect(ref1_updated.sample.default).to eq(ref1_update_params[:isDefault])
           expect(ref1_updated.sample.images).not_to be_empty
-          expect(ref1_updated.good_deal.starts_at).to eq(date_from_string(date_string:ref1_update_params[:goodDeal][:startAt]))
+          expect(ref1_updated.good_deal.starts_at.strftime("%d/%m/%Y")).to eq(ref1_update_params[:goodDeal][:startAt])
           expect(ref1_updated.good_deal.discount).to eq(ref1_update_params[:goodDeal][:discount])
           expect(ref1_updated.size.name ).to eq(ref1_update_params[:characteristics].last[:value])
           expect(ref1_updated.color.name ).to eq(ref1_update_params[:characteristics].first[:value])
@@ -3625,7 +3625,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           expect(ref2_updated.quantity).to eq(ref2_update_params[:quantity])
           expect(ref2_updated.sample.default).to eq(ref2_update_params[:isDefault])
           expect(ref2_updated.sample.images).to be_empty
-          expect(ref2_updated.good_deal.starts_at).to eq(date_from_string(date_string:ref2_update_params[:goodDeal][:startAt]))
+          expect(ref2_updated.good_deal.starts_at.strftime("%d/%m/%Y")).to eq(ref2_update_params[:goodDeal][:startAt])
           expect(ref2_updated.good_deal.discount).to eq(ref2_update_params[:goodDeal][:discount])
           expect(ref2_updated.size.name ).to eq(ref2_update_params[:characteristics].last[:value])
           expect(ref2_updated.color.name ).to eq(ref2_update_params[:characteristics].first[:value])
@@ -3637,13 +3637,10 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           expect(new_variant.quantity).to eq(new_ref_update_params[:quantity])
           expect(new_variant.sample.default).to eq(new_ref_update_params[:isDefault])
           expect(new_variant.sample.images).not_to be_empty
-          expect(new_variant.good_deal.starts_at).to eq(date_from_string(date_string: new_ref_update_params[:goodDeal][:startAt]))
+          expect(new_variant.good_deal.starts_at.strftime("%d/%m/%Y")).to eq(new_ref_update_params[:goodDeal][:startAt])
           expect(new_variant.good_deal.discount).to eq(new_ref_update_params[:goodDeal][:discount])
           expect(new_variant.size.name ).to eq(new_ref_update_params[:characteristics].last[:value])
           expect(new_variant.color.name ).to eq(new_ref_update_params[:characteristics].first[:value])
-
-
-
           expect(Reference.where(id: ref3.id).first).to be_nil
         end
       end
@@ -6468,7 +6465,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             status: "online",
             isService: true,
             sellerAdvice: "pouet",
-            shopId: create(:shop).id,
+            shopId: 0,
             description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
             variants: [
               {
@@ -6503,7 +6500,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               externalProductId: '56ty'
             }
           }
-          Shop.destroy_all
 
           post :create_offline, params: create_params
 
@@ -6569,7 +6565,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             slug: "manteau-mac",
             brand: "3sixteen",
             status: "online",
-            categoryId: create(:category).id,
+            categoryId: 0,
             isService: true,
             sellerAdvice: "pouet",
             shopId: create(:shop).id,
@@ -6607,11 +6603,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               externalProductId: '56ty'
             }
           }
-          Product.all.each do |p|
-            p.category_id = nil
-            p.save
-          end
-          Category.delete_all
 
           post :create_offline, params: create_params
 
@@ -8334,16 +8325,4 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
       end
     end
   end
-end
-
-def generate_token(user)
-  exp_payload = { id: user.id, exp: Time.now.to_i + 1 * 3600 * 24 }
-  JWT.encode exp_payload, ENV["JWT_SECRET"], "HS256"
-end
-
-def date_from_string(date_string:)
-  return nil unless date_string
-
-  date_array = date_string.split('/').map(&:to_i).reverse
-  DateTime.new(date_array[0], date_array[1], date_array[2])
 end

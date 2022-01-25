@@ -29,13 +29,11 @@ RSpec.describe Api::V1::Shops::SchedulesController do
 
     context 'Shop not found' do
       it 'should return 404 HTTP Status' do
-        shop = create(:shop)
-        Shop.destroy_all
 
-        get :index, params: { id: shop.id }
+        get :index, params: { id: 0 }
 
         expect(response).to have_http_status(:not_found)
-        expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Shop with 'id'=#{shop.id}").to_h.to_json)
+        expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Shop with 'id'=#{response.request.params[:id]}").to_h.to_json)
       end
     end
   end

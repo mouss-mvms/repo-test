@@ -2,41 +2,6 @@ require 'swagger_helper'
 
 RSpec.describe 'api/v1/shops/products', swagger_doc: 'v1/swagger.json', type: :request do
 
-  path '/api/v1/shops/{shop_id}/products' do
-    # You'll want to customize the parameter types...
-    parameter name: :shop_id, in: :path, type: :integer, description: 'Unique identifier of the shop.'
-    parameter name: :search_query, in: :query, type: :string, description: 'Query for search.', example: 'Air jordan'
-    parameter name: :categories, in: :query, type: :string, description: 'Categories slugs concatened with double "_" if more than one.', example: "vin-et-spiritueux/aperitif-et-spiritueux/rhum__maison-et-bricolage/cuisine"
-    parameter name: :prices, in: :query, type: :string, description: 'Prices range', example: '4__19'
-    parameter name: :services, in: :query, type: :string, example: "livraison-par-la-poste__click-collect", description: 'Service slugs concatened with double "_" if more than one.'
-    parameter name: :sort_by, in: :query, schema: {
-      type: :string,
-      enum: [
-        "price-asc",
-        "price-desc",
-        "newest"
-      ]
-    }
-    parameter name: :page, in: :query, type: :string, description: 'Number of the researches page'
-
-    get('list products') do
-      tags 'Products'
-      produces 'application/json'
-      description 'Retrieve all products from the given shop.'
-      security [{ authorization: [] }]
-
-      response(200, 'Successful') do
-        schema type: :array, items: { '$ref': '#/components/schemas/Product' }
-        run_test!
-      end
-
-      response(400, 'Bad request') do
-        schema Examples::Errors::BadRequest.new.error
-        run_test!
-      end
-    end
-  end
-
   path '/api/v1/auth/shops/self/products' do
     parameter name: 'X-client-id', in: :header, type: :string, required: true
 
@@ -44,7 +9,6 @@ RSpec.describe 'api/v1/shops/products', swagger_doc: 'v1/swagger.json', type: :r
       tags 'Products'
       produces 'application/json'
       consumes 'application/json'
-      description 'Return created product polling url.'
       security [{ authorization: [] }]
 
       parameter name: :product, in: :body, schema: {
@@ -145,6 +109,59 @@ RSpec.describe 'api/v1/shops/products', swagger_doc: 'v1/swagger.json', type: :r
         run_test!
       end
     end
+
+    get("Retrieve products' shop") do
+      tags 'Products'
+      produces 'application/json'
+      security [{ authorization: [] }]
+
+      parameter name: :status, in: :query, schema: { type: :string, enum: [:offline, :online, :submitted] }
+      parameter name: :name, in: :query
+      parameter name: :category, in: :query
+      parameter name: :page, in: :query, description: 'Set as 1 if not set'
+      parameter name: :limit, in: :query, description: 'Set as 15 if not set'
+
+      response(200, 'Successful') do
+        schema type: :object,
+               properties:{
+                 products: {
+                   type: :array,
+                   items: { '$ref': '#/components/schemas/Product' }
+                 },
+                 page: {
+                   type: :integer,
+                   example: 1,
+                   description: "Current page of result"
+                 },
+                 totalPages: {
+                   type: :integer,
+                   example: 1,
+                   description: "Total number of pages for result"
+                 },
+                 totalCount: {
+                   type: :integer,
+                   example: 1,
+                   description: "Total products' count for the shop"
+                 },
+               }
+        run_test!
+      end
+
+      response(400, 'Bad request') do
+        schema Examples::Errors::BadRequest.new.error
+        run_test!
+      end
+
+      response(401, 'Unauthorized') do
+        schema Examples::Errors::Unauthorized.new.error
+        run_test!
+      end
+
+      response(403, 'Forbidden') do
+        schema Examples::Errors::Forbidden.new.error
+        run_test!
+      end
+    end
   end
 
   path '/api/v1/auth/shops/self/products/{id}' do
@@ -155,7 +172,6 @@ RSpec.describe 'api/v1/shops/products', swagger_doc: 'v1/swagger.json', type: :r
       tags 'Products'
       produces 'application/json'
       consumes 'application/json'
-      description 'Update product'
       security [{ authorization: [] }]
 
       parameter name: :product, in: :body, schema: {
