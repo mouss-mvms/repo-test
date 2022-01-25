@@ -4,7 +4,6 @@ RSpec.describe 'api/v1/categories', swagger_doc: 'v1/swagger.json', type: :reque
 
   path '/api/v1/categories/roots' do
     parameter name: :children, in: :query, type: :boolean, description: 'Should return category children.'
-    parameter name: 'If-None-Match', in: :header, type: :string, description: 'Etag checker.'
 
     get('list parents categories') do
       tags 'Categories'
@@ -27,7 +26,6 @@ RSpec.describe 'api/v1/categories', swagger_doc: 'v1/swagger.json', type: :reque
   path '/api/v1/categories/{id}' do
     parameter name: :id, in: :path, type: :integer, description: 'Unique identifier of the category.', required: true
     parameter name: :children, in: :query, type: :boolean, description: 'Should return category children.'
-    parameter name: 'If-None-Match', in: :header, type: :string, description: 'Etag checker.'
 
     get('Show a category with it children') do
       tags 'Categories'
