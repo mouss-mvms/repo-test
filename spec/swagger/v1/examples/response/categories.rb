@@ -4,14 +4,8 @@ module V1
       class Categories
         def self.to_h
           {
-            type: 'object',
-            properties: {
-              categories: {
-                type: :array,
-                items: V1::Examples::Response::Category.to_h
-              },
-              page: { type: 'string', example: 1 }
-            }
+            type: :array,
+            items: V1::Examples::Response::Category.to_h
           }
         end
       end
