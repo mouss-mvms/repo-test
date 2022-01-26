@@ -40,7 +40,8 @@ module Api
           raise ActionController::ParameterMissing.new('shopId') if dto_product_request.shop_id.blank?
           shop = Shop.find(dto_product_request.shop_id)
           category = Category.find(dto_product_request.category_id)
-          raise ActionController::BadRequest.new('origin and composition is required') if ::Products::CategoriesSpecifications::MustHaveLabelling.new.is_satisfied_by?(category) && (dto_product_request.origin.blank? || dto_product_request.composition.blank?)
+          raise ActionController::BadRequest.new('composition is required') if ::Products::CategoriesSpecifications::RequireComposition.new.is_satisfied_by?(category) && dto_product_request.composition.blank?
+          raise ActionController::BadRequest.new('origin is required') if ::Products::CategoriesSpecifications::RequireOrigin.new.is_satisfied_by?(category) && dto_product_request.origin.blank?
           raise ActionController::BadRequest.new('allergens is required') if ::Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
           raise ApplicationController::Forbidden.new("You could not create a product for this shop.") unless @user.shops.include?(shop)
           ActiveRecord::Base.transaction do
