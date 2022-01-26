@@ -22,7 +22,7 @@ staging:
 
 test:
   <<: *default
-  database: mvms-test
+  database: <%= ENV["DATABASE_NAME"] %>
 
 production:
   <<: *default
