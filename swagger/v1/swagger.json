@@ -227,14 +227,6 @@
           "schema": {
             "type": "boolean"
           }
-        },
-        {
-          "name": "If-None-Match",
-          "in": "header",
-          "description": "Etag checker.",
-          "schema": {
-            "type": "string"
-          }
         }
       ],
       "get": {
@@ -256,41 +248,59 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "categories": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "integer",
-                            "example": "3442",
-                            "description": "Unique identifier of a category."
-                          },
-                          "name": {
-                            "type": "string",
-                            "example": "Non classée",
-                            "description": "Display name of a category."
-                          },
-                          "hasChildren": {
-                            "type": "boolean",
-                            "example": "true",
-                            "description": "Category has children."
-                          },
-                          "children": {
-                            "type": "array",
-                            "items": {
-                              "$ref": "#/components/schemas/Category"
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "example": "3442",
+                        "description": "Unique identifier of a category."
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "Non classée",
+                        "description": "Display name of a category."
+                      },
+                      "slug": {
+                        "type": "string",
+                        "example": "non_classée",
+                        "description": "Display slug of a category."
+                      },
+                      "hasChildren": {
+                        "type": "boolean",
+                        "example": "true",
+                        "description": "Category has children."
+                      },
+                      "children": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "example": "3442",
+                              "description": "Unique identifier of a category."
                             },
-                            "description": "List of children category."
+                            "name": {
+                              "type": "string",
+                              "example": "Non classée",
+                              "description": "Display name of a category."
+                            },
+                            "slug": {
+                              "type": "string",
+                              "example": "non_classée",
+                              "description": "Display slug of a category."
+                            },
+                            "hasChildren": {
+                              "type": "boolean",
+                              "example": "true",
+                              "description": "Category has children."
+                            }
                           }
-                        }
+                        },
+                        "description": "List of children category."
                       }
-                    },
-                    "page": {
-                      "type": "string",
-                      "example": 1
                     }
                   }
                 }
@@ -345,14 +355,6 @@
           "schema": {
             "type": "boolean"
           }
-        },
-        {
-          "name": "If-None-Match",
-          "in": "header",
-          "description": "Etag checker.",
-          "schema": {
-            "type": "string"
-          }
         }
       ],
       "get": {
@@ -376,7 +378,27 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "categories": {
+                    "id": {
+                      "type": "integer",
+                      "example": "3442",
+                      "description": "Unique identifier of a category."
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "Non classée",
+                      "description": "Display name of a category."
+                    },
+                    "slug": {
+                      "type": "string",
+                      "example": "non_classée",
+                      "description": "Display slug of a category."
+                    },
+                    "hasChildren": {
+                      "type": "boolean",
+                      "example": "true",
+                      "description": "Category has children."
+                    },
+                    "children": {
                       "type": "array",
                       "items": {
                         "type": "object",
@@ -391,24 +413,19 @@
                             "example": "Non classée",
                             "description": "Display name of a category."
                           },
+                          "slug": {
+                            "type": "string",
+                            "example": "non_classée",
+                            "description": "Display slug of a category."
+                          },
                           "hasChildren": {
                             "type": "boolean",
                             "example": "true",
                             "description": "Category has children."
-                          },
-                          "children": {
-                            "type": "array",
-                            "items": {
-                              "$ref": "#/components/schemas/Category"
-                            },
-                            "description": "List of children category."
                           }
                         }
-                      }
-                    },
-                    "page": {
-                      "type": "string",
-                      "example": 1
+                      },
+                      "description": "List of children category."
                     }
                   }
                 }
@@ -9382,6 +9399,11 @@
             "example": "Non classée",
             "description": "Display name of a category."
           },
+          "slug": {
+            "type": "string",
+            "example": "non_classée",
+            "description": "Display slug of a category."
+          },
           "hasChildren": {
             "type": "boolean",
             "example": "true",
@@ -9390,7 +9412,29 @@
           "children": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Category"
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "example": "3442",
+                  "description": "Unique identifier of a category."
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Non classée",
+                  "description": "Display name of a category."
+                },
+                "slug": {
+                  "type": "string",
+                  "example": "non_classée",
+                  "description": "Display slug of a category."
+                },
+                "hasChildren": {
+                  "type": "boolean",
+                  "example": "true",
+                  "description": "Category has children."
+                }
+              }
             },
             "description": "List of children category."
           }
