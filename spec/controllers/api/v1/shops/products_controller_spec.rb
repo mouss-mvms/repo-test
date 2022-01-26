@@ -489,6 +489,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               status: "online",
               isService: true,
               sellerAdvice: "pouet",
+              composition: "kqhsdghqsgd",
               shopId: create(:shop).id,
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
               variants: [
@@ -523,7 +524,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("origin is required")
           end
         end
 
@@ -572,7 +573,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
 
@@ -637,6 +638,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               brand: "3sixteen",
               status: "online",
               isService: true,
+              composition: 'ksdjfhjker',
               sellerAdvice: "pouet",
               shopId: create(:shop).id,
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
@@ -672,7 +674,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("origin is required")
           end
         end
 
@@ -685,6 +687,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               brand: "3sixteen",
               status: "online",
               isService: true,
+              allergens: 'hdfhzeidh',
               sellerAdvice: "pouet",
               shopId: create(:shop).id,
               origin: "France",
@@ -721,7 +724,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
 
@@ -786,6 +789,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               brand: "3sixteen",
               status: "online",
               isService: true,
+              composition: 'qskhdgqjhdg',
               sellerAdvice: "pouet",
               shopId: create(:shop).id,
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
@@ -821,7 +825,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("origin is required")
           end
         end
 
@@ -870,7 +874,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
 
@@ -936,6 +940,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               brand: "3sixteen",
               status: "online",
               isService: true,
+              composition: 'kqjsdfjksd',
               sellerAdvice: "pouet",
               shopId: create(:shop).id,
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
@@ -971,7 +976,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("origin is required")
           end
         end
 
@@ -1020,7 +1025,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
 
@@ -1087,6 +1092,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               brand: "3sixteen",
               status: "online",
               isService: true,
+              composition: "khedzeghd",
               sellerAdvice: "pouet",
               shopId: create(:shop).id,
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
@@ -1122,7 +1128,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("origin is required")
           end
         end
 
@@ -1171,7 +1177,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
 
@@ -1236,6 +1242,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               brand: "3sixteen",
               status: "online",
               isService: true,
+              composition: "ksjdhfjkhfs",
               sellerAdvice: "pouet",
               shopId: create(:shop).id,
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
@@ -1271,7 +1278,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("origin is required")
           end
         end
 
@@ -1320,7 +1327,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
 
@@ -1378,54 +1385,6 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
       context "Category is clothing group" do
         let(:category) { create(:category, group: "clothing") }
 
-        context "Origin of product is missing" do
-          it "should return 400 HTTP Status" do
-            create_params = {
-              name: "manteau MAC",
-              slug: "manteau-mac",
-              categoryId: category.id,
-              brand: "3sixteen",
-              status: "online",
-              isService: true,
-              sellerAdvice: "pouet",
-              shopId: create(:shop).id,
-              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
-              variants: [
-                {
-                  basePrice: 379,
-                  weight: 1,
-                  quantity: 0,
-                  imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
-                  isDefault: false,
-                  goodDeal: {
-                    startAt: "17/05/2021",
-                    endAt: "18/06/2021",
-                    discount: 20,
-                  },
-                  characteristics: [
-                    {
-                      value: "coloris black",
-                      name: "color",
-                    },
-                    {
-                      value: "S",
-                      name: "size",
-                    },
-                  ],
-                },
-              ],
-            }
-
-            request.headers["x-client-id"] = generate_token(user_shop_employee)
-
-            post :create, params: create_params
-
-            should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
-          end
-        end
-
         context "Composition of product is missing" do
           it "should return 400 HTTP Status" do
             create_params = {
@@ -1471,7 +1430,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
       end
