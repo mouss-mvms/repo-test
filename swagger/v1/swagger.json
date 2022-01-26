@@ -218,24 +218,151 @@
         }
       }
     },
-    "/api/v1/categories": {
+    "/api/v1/categories/roots": {
       "parameters": [
         {
-          "name": "page",
+          "name": "children",
           "in": "query",
-          "description": "Desired page.",
-          "required": true,
+          "description": "Should return category children.",
           "schema": {
-            "type": "string"
+            "type": "boolean"
           }
         }
       ],
       "get": {
-        "summary": "list categories",
+        "summary": "list parents categories",
         "tags": [
           "Categories"
         ],
-        "description": "Return the list of categories.",
+        "description": "Return the list of parents categories.",
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "example": "3442",
+                        "description": "Unique identifier of a category."
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "Non classée",
+                        "description": "Display name of a category."
+                      },
+                      "slug": {
+                        "type": "string",
+                        "example": "non_classée",
+                        "description": "Display slug of a category."
+                      },
+                      "hasChildren": {
+                        "type": "boolean",
+                        "example": "true",
+                        "description": "Category has children."
+                      },
+                      "children": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer",
+                              "example": "3442",
+                              "description": "Unique identifier of a category."
+                            },
+                            "name": {
+                              "type": "string",
+                              "example": "Non classée",
+                              "description": "Display name of a category."
+                            },
+                            "slug": {
+                              "type": "string",
+                              "example": "non_classée",
+                              "description": "Display slug of a category."
+                            },
+                            "hasChildren": {
+                              "type": "boolean",
+                              "example": "true",
+                              "description": "Category has children."
+                            }
+                          }
+                        },
+                        "description": "List of children category."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Resource not found",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Not found",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/categories/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of the category.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "children",
+          "in": "query",
+          "description": "Should return category children.",
+          "schema": {
+            "type": "boolean"
+          }
+        }
+      ],
+      "get": {
+        "summary": "Show a category with it children",
+        "tags": [
+          "Categories"
+        ],
+        "description": "Return a category with it children.",
         "security": [
           {
             "authorization": [
@@ -251,14 +378,34 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "categories": {
+                    "id": {
+                      "type": "integer",
+                      "example": "3442",
+                      "description": "Unique identifier of a category."
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "Non classée",
+                      "description": "Display name of a category."
+                    },
+                    "slug": {
+                      "type": "string",
+                      "example": "non_classée",
+                      "description": "Display slug of a category."
+                    },
+                    "hasChildren": {
+                      "type": "boolean",
+                      "example": "true",
+                      "description": "Category has children."
+                    },
+                    "children": {
                       "type": "array",
                       "items": {
                         "type": "object",
                         "properties": {
                           "id": {
                             "type": "integer",
-                            "example": "3527",
+                            "example": "3442",
                             "description": "Unique identifier of a category."
                           },
                           "name": {
@@ -266,19 +413,73 @@
                             "example": "Non classée",
                             "description": "Display name of a category."
                           },
-                          "children": {
-                            "type": "array",
-                            "items": {
-                              "$ref": "#/components/schemas/Category"
-                            },
-                            "description": "List of children category."
+                          "slug": {
+                            "type": "string",
+                            "example": "non_classée",
+                            "description": "Display slug of a category."
+                          },
+                          "hasChildren": {
+                            "type": "boolean",
+                            "example": "true",
+                            "description": "Category has children."
                           }
                         }
-                      }
-                    },
-                    "page": {
+                      },
+                      "description": "List of children category."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
                       "type": "string",
-                      "example": 1
+                      "example": "The syntax of the query is incorrect.",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Bad Request",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 400,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Resource not found",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Not found",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404,
+                      "description": "Status of an error."
                     }
                   }
                 }
@@ -621,7 +822,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3527",
+                    "example": "3442",
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -2597,7 +2798,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3527",
+                    "example": "3442",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -2870,7 +3071,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3527",
+                    "example": "3442",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -3383,7 +3584,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3527",
+                    "example": "3442",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -3706,7 +3907,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3527",
+                    "example": "3442",
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -6113,7 +6314,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3527",
+                    "example": "3442",
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -6717,7 +6918,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3527",
+                    "example": "3442",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -9039,7 +9240,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-staging"
+      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
     }
   ],
   "components": {
@@ -9190,7 +9391,7 @@
         "properties": {
           "id": {
             "type": "integer",
-            "example": "3527",
+            "example": "3442",
             "description": "Unique identifier of a category."
           },
           "name": {
@@ -9198,10 +9399,42 @@
             "example": "Non classée",
             "description": "Display name of a category."
           },
+          "slug": {
+            "type": "string",
+            "example": "non_classée",
+            "description": "Display slug of a category."
+          },
+          "hasChildren": {
+            "type": "boolean",
+            "example": "true",
+            "description": "Category has children."
+          },
           "children": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Category"
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "example": "3442",
+                  "description": "Unique identifier of a category."
+                },
+                "name": {
+                  "type": "string",
+                  "example": "Non classée",
+                  "description": "Display name of a category."
+                },
+                "slug": {
+                  "type": "string",
+                  "example": "non_classée",
+                  "description": "Display slug of a category."
+                },
+                "hasChildren": {
+                  "type": "boolean",
+                  "example": "true",
+                  "description": "Category has children."
+                }
+              }
             },
             "description": "List of children category."
           }
@@ -10392,6 +10625,11 @@
           "address": {
             "$ref": "#/components/schemas/Address",
             "description": "Shop's address"
+          },
+          "webUri": {
+            "type": "string",
+            "example": "bordeaux/boutique/ma_boutique_slug",
+            "description": "MVMS web uri"
           },
           "lowestProductPrice": {
             "type": "number",

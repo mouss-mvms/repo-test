@@ -9,7 +9,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         shop.address.addressable = shop
         shop.save
 
-        get :show, params: {id: shop.id}
+        get :show, params: { id: shop.id }
 
         expect(response).to have_http_status(200)
         expect(response.body).to eq(Dto::V1::Shop::Response.create(shop).to_h.to_json)
@@ -19,12 +19,12 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         shop = create(:shop)
         shop.address.addressable = shop
         shop.save
-        get :show, params: {id: shop.id}
+        get :show, params: { id: shop.id }
         expect(response).to have_http_status(200)
 
         etag = response.headers["ETag"]
         request.env["HTTP_IF_NONE_MATCH"] = etag
-        get :show, params: {id: shop.id}
+        get :show, params: { id: shop.id }
 
         expect(response).to have_http_status(304)
       end
@@ -34,7 +34,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
       it 'should return 400 HTTP Status' do
         shop = create(:shop)
 
-        get :show, params: {id: 0}
+        get :show, params: { id: 0 }
 
         expect(response).to have_http_status(400)
       end
@@ -42,8 +42,8 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
 
     context "Shop id is not numeric" do
       it 'should return 400 HTTP Status' do
-        get :show, params: {id: "jjei"}
-        
+        get :show, params: { id: "jjei" }
+
         expect(response).to have_http_status(400)
       end
     end
@@ -52,7 +52,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
       it 'should return 404 HTTP Status' do
         shop = create(:shop)
         shop.destroy
-        get :show, params: {id: shop.id}
+        get :show, params: { id: shop.id }
 
         expect(response).to have_http_status(404)
         expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Shop with 'id'=#{response.request.params[:id]}").to_h.to_json)
@@ -433,7 +433,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         @shop.save
         request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
 
-        put :update, params: @update_params.merge({id: @shop.id})
+        put :update, params: @update_params.merge({ id: @shop.id })
 
         expect(response).to have_http_status(200)
         shop_result = JSON.parse(response.body)
@@ -463,10 +463,10 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         shop_employee_user = create(:shop_employee_user, email: 'shop.employee5678@ecity.fr')
 
         shop = create(:shop)
-        Shop.destroy_all
+        shop.destroy
 
         request.headers["HTTP_X_CLIENT_ID"] = generate_token(shop_employee_user)
-        put :update, params: {id: shop.id}
+        put :update, params: { id: shop.id }
 
         expect(response).to have_http_status(404)
         expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Shop with 'id'=#{shop.id}").to_h.to_json)
@@ -581,7 +581,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
           @categories << create(:homme)
         end
         after(:all) do
-          Category.destroy_all
+          @categories.each { |category| category.destroy }
         end
         it "should return 400 HTTP status" do
           @update_params = {
@@ -612,7 +612,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
           @categories << create(:homme)
         end
         after(:all) do
-          Category.destroy_all
+          @categories.each { |category| category.destroy }
         end
         context "No locality params in address params" do
           it "should return 400 HTTP status" do
@@ -755,7 +755,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
     context 'Authentication incorrect' do
       context "No user" do
         it "should return 401" do
-          put :update, params: {id: 33}
+          put :update, params: { id: 33 }
           expect(response).to have_http_status(401)
         end
       end
@@ -764,7 +764,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         it "should return 403" do
           customer_user = create(:customer_user, email: 'customer5678@ecity.fr')
           request.headers['HTTP_X_CLIENT_ID'] = generate_token(customer_user)
-          put :update, params: {id: 33}
+          put :update, params: { id: 33 }
           expect(response).to have_http_status(403)
         end
       end
@@ -775,7 +775,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         end
         it "should return 403" do
           request.headers['HTTP_X_CLIENT_ID'] = generate_token(@admin_user)
-          put :update, params: {id: 33}
+          put :update, params: { id: 33 }
           expect(response).to have_http_status(403)
         end
       end
@@ -785,7 +785,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
           shop_employee_user = create(:shop_employee_user, email: 'shop.employee536@ecity.fr')
           @shop = create(:shop)
           request.headers["HTTP_X_CLIENT_ID"] = generate_token(shop_employee_user)
-          put :update, params: {id: @shop.id}
+          put :update, params: { id: @shop.id }
 
           expect(response).to have_http_status(403)
         end
