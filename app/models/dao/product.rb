@@ -35,7 +35,7 @@ module Dao
           api_provider = ApiProvider.where(name: dto_product_request.provider[:name]).first
           if api_provider
             product.api_provider_product = ApiProviderProduct.create!(api_provider: api_provider,
-                                                                        external_product_id: dto_product_request.provider[:external_product_id])
+                                                                      external_product_id: dto_product_request.provider[:external_product_id])
           end
         end
 
@@ -169,13 +169,8 @@ module Dao
     end
 
     def self.set_image(object:, image_url:)
-      begin
-        image = Shrine.remote_url(image_url)
-        object.images.create(file: image, position: 1)
-      rescue StandardError => e
-        Rails.logger.error(e)
-        Rails.logger.error(e.message)
-      end
+      image = Shrine.remote_url(image_url)
+      object.images.create!(file: image, position: 1)
     end
 
     def self.date_from_string(date_string:)

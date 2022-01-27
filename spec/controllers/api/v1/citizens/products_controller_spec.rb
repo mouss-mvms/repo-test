@@ -112,7 +112,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
 
             create_params = {
               name: "manteau MAC",
-              citizenAdvice: "pouet",
+              citizenAdvice: "pouet ohfiuahia oihjafoih oiaijafiojf",
               shopId: create(:shop).id,
               variants: [
                 {
@@ -145,7 +145,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
 
             create_params = {
               name: "manteau MAC",
-              citizenAdvice: "pouet",
+              citizenAdvice: "pouet ohfiuahia oihjafoih oiaijafiojf",
               shopId: create(:shop).id,
               variants: [
                 {

@@ -106,6 +106,10 @@ module Api
         ActiveRecord::Base.transaction do
           begin
             product = Dao::Product.create(dto_product_request)
+          rescue ActiveRecord::RecordInvalid => e
+            Rails.logger.error(e.message)
+            error = Dto::Errors::UnprocessableEntity.new(detail: e.message)
+            return render json: error.to_h, status: error.status
           rescue => e
             Rails.logger.error(e.message)
             error = Dto::Errors::InternalServer.new(detail: e.message)

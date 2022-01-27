@@ -128,7 +128,7 @@ module Api
             raise ActionController::ParameterMissing.new("imageIds or imageUrls") unless v[:imageIds] || v[:imageUrls]
             raise ActionController::BadRequest.new("You can only pass imageIds or imageUrls, not both.") if v[:imageIds] && v[:imageUrls]
             if v[:imageIds] && v[:imageIds].count <= 5
-              hash[:image_ids] = v.require(:imageIds) if v[:imageIds].each {|id| Image.find(id)}
+              hash[:image_ids] = v.require(:imageIds) if v[:imageIds].each { |id| Image.find(id) }
             elsif v[:imageUrls] && v[:imageUrls].count <= 5
               hash[:image_urls] = v.require(:imageUrls)
             else
