@@ -176,20 +176,6 @@ RSpec.describe 'api/v1/citizens/products', swagger_doc: 'v1/swagger.json', type:
           brand: { type: :string, example: "Nike", description: 'Brand of product' },
           isService: { type: :boolean, example: false, description: 'Tell if the product is a service' },
           citizenAdvice: { type: :string, example: "Ce produit est super, je recommande !", description: 'Citizen advice of product' },
-=begin
-          imageUrls: {
-            type: 'array',
-            items: {
-              type: 'string'
-            },
-            example: [
-              'https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr',
-              'https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg'
-            ],
-            default: [],
-            description: 'List of product images urls'
-          },
-=end
           variants: {
             type: :array,
             items: {
@@ -197,6 +183,16 @@ RSpec.describe 'api/v1/citizens/products', swagger_doc: 'v1/swagger.json', type:
               properties: {
                 id: { type: :integer, example: 67, description: "Id of product's variant wanted to update (No id means new variant for the product)" },
                 basePrice: { type: :number, example: 44.99, description: "Price of product's variant (Required if new variant)" },
+                imageIds: {
+                  type: 'array',
+                  maxItems: 5,
+                  items: {
+                    type: 'number'
+                  },
+                  example: [234, 45566, 345],
+                  default: [],
+                  description: 'List of product images ids (required if no imageUrls)'
+                },
                 imageUrls: {
                   type: 'array',
                   items: {
