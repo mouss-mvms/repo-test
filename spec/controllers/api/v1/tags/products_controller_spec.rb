@@ -7,13 +7,13 @@ RSpec.describe Api::V1::Tags::ProductsController do
         tag = create(:tag)
         count = 10
         count.times do
-          tag.products << create(:product)
+          tag.products << create(:available_product)
         end
         15.times do
           create(:product)
         end
 
-        get :index, params: {id: tag.id}
+        get :index, params: { id: tag.id }
 
         expect(response).to have_http_status(:ok)
         result = JSON.parse(response.body).deep_symbolize_keys
