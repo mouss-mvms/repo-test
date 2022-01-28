@@ -2,7 +2,7 @@ module Dto
   module V1
     module Variant
       class Request
-        attr_accessor :id, :base_price, :weight, :quantity, :is_default, :good_deal, :characteristics, :image_urls, :external_variant_id, :product_id, :files, :provider
+        attr_accessor :id, :base_price, :weight, :quantity, :is_default, :good_deal, :characteristics, :image_urls, :image_ids, :external_variant_id, :product_id, :files, :provider
 
         def initialize(**args)
           @id = args[:id]
@@ -12,6 +12,8 @@ module Dto
           @quantity = args[:quantity]
           @image_urls = []
           args[:image_urls]&.each { |img_url| @image_urls << img_url }
+          @image_ids = []
+          args[:image_ids]&.each { |image_id| @image_ids << image_id}
           @is_default = args[:is_default]
           @good_deal = Dto::V1::GoodDeal::Request.new(**args[:good_deal]) if args[:good_deal]
           @characteristics = []
@@ -35,6 +37,7 @@ module Dto
             weight: @weight,
             quantity: @quantity,
             image_urls: @image_urls,
+            image_ids: @image_ids,
             is_default: @is_default,
             good_deal: @good_deal.to_h,
             characteristics: @characteristics&.map { |characteristic| characteristic.to_h },

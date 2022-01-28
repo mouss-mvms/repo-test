@@ -32,17 +32,8 @@ module Api
           category = Category.find(dto_product_request.category_id)
           dto_product_request.status = 'submitted'
           dto_product_request.citizen_id = @user.citizen.id
-          ActiveRecord::Base.transaction do
-            begin
-              job_id = Dao::Product.create_async(dto_product_request.to_h)
-            rescue => e
-              Rails.logger.error(e.message)
-              error = Dto::Errors::InternalServer.new(detail: e.message)
-              return render json: error.to_h, status: error.status
-            else
-              return render json: { url: ENV["API_BASE_URL"] + api_v1_product_job_status_path(job_id) }, status: :accepted
-            end
-          end
+          job_id = Dao::Product.create_async(dto_product_request.to_h)
+          return render json: { url: ENV["API_BASE_URL"] + api_v1_product_job_status_path(job_id) }, status: :accepted
         end
 
         def update
@@ -56,10 +47,6 @@ module Api
           rescue ActiveRecord::RecordNotFound => e
             Rails.logger.error(e.message)
             error = Dto::Errors::NotFound.new(e.message)
-            return render json: error.to_h, status: error.status
-          rescue => e
-            Rails.logger.error(e.message)
-            error = Dto::Errors::InternalServer.new(detail: e.message)
             return render json: error.to_h, status: error.status
           else
             return render json: Dto::V1::Product::Response.create(product).to_h, status: :ok
@@ -86,14 +73,18 @@ module Api
           if params[:variants]
             params[:variants].each do |v|
               hash = {}
+              raise ActionController::BadRequest.new("You can only pass imageIds or imageUrls, not both.") if v[:imageIds] && v[:imageUrls]
+              if params[:imageIds] || params[:imageUrls]
+                image_urls = params[:imageUrls] ? params[:imageUrls] : params[:imageIds].map { |id| Image.find(id).file_url }
+              end
               if v[:id]
                 hash[:id] = v[:id]
                 hash[:base_price] = v[:basePrice]
-                hash[:image_urls] = v[:imageUrls]
+                hash[:image_urls] = image_urls
                 hash
               else
                 hash[:base_price] = v.require(:basePrice)
-                hash[:image_urls] = v[:imageUrls]
+                hash[:image_urls] = image_urls
               end
               product_params[:variants] << hash
             end
@@ -111,7 +102,6 @@ module Api
           product_params[:seller_advice] = params[:sellerAdvice]
           product_params[:is_service] = params[:isService]
           product_params[:citizen_advice] = params.require(:citizenAdvice)
-          #product_params[:image_urls] = params[:imageUrls]
           product_params[:category_id] = params[:categoryId] || Category.find_by(slug: 'non-classee').id
           product_params[:shop_id] = params.require(:shopId)
           product_params[:allergens] = params[:allergens]
@@ -126,15 +116,14 @@ module Api
             hash[:is_default] = v[:isDefault]
             raise ActionController::ParameterMissing.new("imageIds or imageUrls") unless v[:imageIds] || v[:imageUrls]
             raise ActionController::BadRequest.new("You can only pass imageIds or imageUrls, not both.") if v[:imageIds] && v[:imageUrls]
-            image_urls = if v[:imageIds]
-                           image_ids = v.require(:imageIds)
-                           image_ids.map { |id| Image.find(id).file_url }
-                         else
-                           v.require(:imageUrls)
-                         end
-            raise ActionController::BadRequest.new("You can't pass more than 5 image ids") if image_urls.count > 5
+            if v[:imageIds] && v[:imageIds].count <= 5
+              hash[:image_ids] = v.require(:imageIds) if v[:imageIds].each { |id| Image.find(id) }
+            elsif v[:imageUrls] && v[:imageUrls].count <= 5
+              hash[:image_urls] = v.require(:imageUrls)
+            else
+              raise ActionController::BadRequest.new("You can't pass more than 5 image ids")
+            end
 
-            hash[:image_urls] = image_urls
             if v[:goodDeal]
               hash[:good_deal] = {}
               hash[:good_deal][:start_at] = v[:goodDeal][:startAt]

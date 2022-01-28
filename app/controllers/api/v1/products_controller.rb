@@ -105,7 +105,9 @@ module Api
         raise ActionController::BadRequest.new('allergens is required') if ::Products::CategoriesSpecifications::RequireAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
         ActiveRecord::Base.transaction do
           begin
-            product = Dao::Product.create(dto_product_request.to_h)
+            product = Dao::Product.create(dto_product_request)
+          rescue ActiveRecord::RecordInvalid => e
+            raise ApplicationController::UnprocessableEntity
           rescue => e
             Rails.logger.error(e.message)
             error = Dto::Errors::InternalServer.new(detail: e.message)

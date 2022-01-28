@@ -5,7 +5,8 @@ class CreateProductJob
 
   def perform(*serialized_params)
     product_params = JSON.load(serialized_params.first).deep_symbolize_keys
-    product = Dao::Product.create(product_params)
+    dto_product_request = Dto::V1::Product::Request.new(product_params)
+    product = Dao::Product.create(dto_product_request)
     store product_id: product.id
   end
 end
