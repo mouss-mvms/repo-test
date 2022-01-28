@@ -34,10 +34,6 @@ module Api
           dto_product_request.citizen_id = @user.citizen.id
           begin
             job_id = Dao::Product.create_async(dto_product_request.to_h)
-          rescue => e
-            Rails.logger.error(e.message)
-            error = Dto::Errors::InternalServer.new(detail: e.message)
-            return render json: error.to_h, status: error.status
           else
             return render json: { url: ENV["API_BASE_URL"] + api_v1_product_job_status_path(job_id) }, status: :accepted
           end
