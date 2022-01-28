@@ -685,38 +685,83 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
 
   describe "PATCH #update" do
     context "All ok" do
-      it "should return 200 HTTP Status" do
-        user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
-        reference = create(:reference, base_price: 400)
-        product = reference.product
-        product.name = "Before MAJ"
-        product.status = "submitted"
-        product.save
-        product_params = {
-          name: "After MAJ",
-          variants: [
-            {
-              id: reference.id,
-              basePrice: 300,
-            },
-          ],
-        }
-        user_citizen.citizen.products << product
-        user_citizen.citizen.save
+      context "when image_urls" do
+        it "should return 200 HTTP Status" do
+          image_1 = create(:image)
+          image_2 = create(:image)
+          user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
+          reference = create(:reference, base_price: 400)
+          product = reference.product
+          product.samples << reference.sample
+          reference.sample.images << image_1
+          product.name = "Before MAJ"
+          product.status = "submitted"
+          product.save
+          product_params = {
+            name: "After MAJ",
+            variants: [
+              {
+                id: reference.id,
+                basePrice: 300,
+                imageUrls: [image_2.file_url]
+              },
+            ],
+          }
+          user_citizen.citizen.products << product
+          user_citizen.citizen.save
 
-        request.headers["x-client-id"] = generate_token(user_citizen)
-        patch :update, params: product_params.merge(id: product.id)
+          request.headers["x-client-id"] = generate_token(user_citizen)
+          patch :update, params: product_params.merge(id: product.id)
 
-        should respond_with(200)
-        result = JSON.parse(response.body)
-        product.reload
-        expect(result["id"]).to eq(product.id)
-        expect(result["name"]).to eq(product.name)
-        expect(result["name"]).to eq(product_params[:name])
-        variant_params_expected = product_params[:variants].find { |variant| variant[:id] == reference.id }
-        variant_to_compare = result["variants"].find { |variant| variant["id"] == variant_params_expected[:id] }
-        expect(variant_to_compare).not_to be_nil
-        expect(variant_to_compare["basePrice"]).to eq(variant_params_expected[:basePrice])
+          should respond_with(200)
+          result = JSON.parse(response.body)
+          product.reload
+          expect(result["id"]).to eq(product.id)
+          expect(result["name"]).to eq(product.name)
+          expect(result["name"]).to eq(product_params[:name])
+          variant_params_expected = product_params[:variants].find { |variant| variant[:id] == reference.id }
+          variant_to_compare = result["variants"].find { |variant| variant["id"] == variant_params_expected[:id] }
+          expect(variant_to_compare).not_to be_nil
+          expect(variant_to_compare["basePrice"]).to eq(variant_params_expected[:basePrice])
+        end
+      end
+
+      context "when image_ids" do
+        it "should return 200 HTTP Status" do
+          image = create(:image)
+          user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
+          reference = create(:reference, base_price: 400)
+          product = reference.product
+          product.name = "Before MAJ"
+          product.status = "submitted"
+          product.save
+          product_params = {
+            name: "After MAJ",
+            variants: [
+              {
+                id: reference.id,
+                basePrice: 300,
+                image_ids: [image.id]
+              },
+            ],
+          }
+          user_citizen.citizen.products << product
+          user_citizen.citizen.save
+
+          request.headers["x-client-id"] = generate_token(user_citizen)
+          patch :update, params: product_params.merge(id: product.id)
+
+          should respond_with(200)
+          result = JSON.parse(response.body)
+          product.reload
+          expect(result["id"]).to eq(product.id)
+          expect(result["name"]).to eq(product.name)
+          expect(result["name"]).to eq(product_params[:name])
+          variant_params_expected = product_params[:variants].find { |variant| variant[:id] == reference.id }
+          variant_to_compare = result["variants"].find { |variant| variant["id"] == variant_params_expected[:id] }
+          expect(variant_to_compare).not_to be_nil
+          expect(variant_to_compare["basePrice"]).to eq(variant_params_expected[:basePrice])
+        end
       end
     end
 
@@ -864,6 +909,35 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
 
           should respond_with(400)
           expect(response.body).to eq(Dto::Errors::BadRequest.new("You can only pass imageIds or imageUrls, not both.").to_h.to_json)
+        end
+      end
+
+      context "imageIds are not in db" do
+        it "should return 404 HTTP status" do
+          image_id = 0
+          user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
+          reference = create(:reference, base_price: 400)
+          product = reference.product
+          product.name = "Before MAJ"
+          product.status = "submitted"
+          product.save
+          product_params = {
+            name: "After MAJ",
+            variants: [
+              {
+                id: reference.id,
+                basePrice: 300,
+                imageIds: [image_id],
+              },
+            ],
+          }
+          user_citizen.citizen.products << product
+          user_citizen.citizen.save
+
+          request.headers["x-client-id"] = generate_token(user_citizen)
+          patch :update, params: product_params.merge(id: product.id)
+          should respond_with(404)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Image with 'id'=#{image_id}").to_h.to_json)
         end
       end
     end
