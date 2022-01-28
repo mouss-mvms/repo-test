@@ -7971,7 +7971,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               }
             }
             post :create_offline, params: create_params
-            expect(response.body).to eq(Dto::Errors::UnprocessableEntity.new.to_h.to_json)
+            expect(response).to have_http_status(422)
           end
         end
       end
