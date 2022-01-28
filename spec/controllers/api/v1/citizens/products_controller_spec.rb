@@ -4,11 +4,13 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
   describe "GET #index" do
     context "All ok" do
       let(:citizen) { create(:citizen) }
-      let(:products) { create_list(:product, 17) }
+      let(:products) { create_list(:available_product, 17) }
+      let(:product_without_reference) { create(:product) }
 
       context "without :limit" do
         it "should return 200 HTTP status and handle pagination" do
           citizen.products << products
+          citizen.products << product_without_reference
           citizen.save
           get :index, params: { id: citizen.id }
           expect(response).to have_http_status(:ok)

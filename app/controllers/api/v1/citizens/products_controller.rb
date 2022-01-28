@@ -12,7 +12,7 @@ module Api
           order = [params[:sort_by].split('-')].to_h if params[:sort_by]
           page = params[:page] ? params[:page].to_i : 1
           limit = params[:limit] || PER_PAGE
-          products = Kaminari.paginate_array(@citizen.products.order(order).includes(:category, :brand, references: [:sample, :color, :size, :good_deal]).actives).page(page).per(limit)
+          products = Kaminari.paginate_array(@citizen.products.joins(:references).distinct.order(order).includes(:category, :brand, references: [:sample, :color, :size, :good_deal]).actives).page(page).per(limit)
           if stale?(products)
             response = {
               products: products.map { |product| Dto::V1::Product::Response.create(product).to_h },
