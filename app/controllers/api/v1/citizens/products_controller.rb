@@ -32,11 +32,8 @@ module Api
           category = Category.find(dto_product_request.category_id)
           dto_product_request.status = 'submitted'
           dto_product_request.citizen_id = @user.citizen.id
-          begin
-            job_id = Dao::Product.create_async(dto_product_request.to_h)
-          else
-            return render json: { url: ENV["API_BASE_URL"] + api_v1_product_job_status_path(job_id) }, status: :accepted
-          end
+          job_id = Dao::Product.create_async(dto_product_request.to_h)
+          return render json: { url: ENV["API_BASE_URL"] + api_v1_product_job_status_path(job_id) }, status: :accepted
         end
 
         def update
