@@ -55,10 +55,6 @@ module Api
             Rails.logger.error(e.message)
             error = Dto::Errors::NotFound.new(e.message)
             return render json: error.to_h, status: error.status
-          rescue => e
-            Rails.logger.error(e.message)
-            error = Dto::Errors::InternalServer.new(detail: e.message)
-            return render json: error.to_h, status: error.status
           else
             return render json: Dto::V1::Product::Response.create(product).to_h, status: :ok
           end
