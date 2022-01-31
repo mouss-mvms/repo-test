@@ -1117,6 +1117,14 @@
                         "name,",
                         "externalProductId"
                       ]
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "description": "DateTime of creation of product"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "description": "DateTime of last update of product"
                     }
                   }
                 }
@@ -6492,6 +6500,17 @@
             "name": "limit",
             "in": "query",
             "description": "Set as 15 if not set"
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "created_at_desc",
+                "created_at_asc"
+              ]
+            }
           }
         ],
         "responses": {
@@ -6758,6 +6777,14 @@
                         "name,",
                         "externalProductId"
                       ]
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "description": "DateTime of creation of product"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "description": "DateTime of last update of product"
                     }
                   }
                 }
@@ -9698,6 +9725,14 @@
               "name,",
               "externalProductId"
             ]
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "DateTime of creation of product"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "DateTime of last update of product"
           }
         }
       },

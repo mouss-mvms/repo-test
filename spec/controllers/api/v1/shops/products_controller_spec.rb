@@ -65,7 +65,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
         expect(result[:totalPages]).to eq(expected_total_page)
       end
 
-      context 'Request contain status filter' do
+      context 'Request contains status filter' do
         it 'should return 200 HTTP Status list of products for shop filtered by status' do
           current_page = 1
           limit = 15
@@ -110,7 +110,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
         end
       end
 
-      context 'Request contain name filter' do
+      context 'Request contains name filter' do
         it 'should return 200 HTTP Status list of products for shop filtered by name' do
           current_page = 1
           limit = 15
@@ -134,7 +134,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
         end
       end
 
-      context 'Request contain category filter' do
+      context 'Request contains category filter' do
         it 'should return 200 HTTP Status list of products for shop filtered by name' do
           current_page = 1
           limit = 15
@@ -165,7 +165,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
         end
       end
 
-      context 'Request contain name and category filters' do
+      context 'Request contains name and category filters' do
         it 'should return 200 HTTP Status list of products for shop filtered by name and category' do
           current_page = 1
           limit = 15

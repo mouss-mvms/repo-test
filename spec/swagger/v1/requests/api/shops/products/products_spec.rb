@@ -120,6 +120,7 @@ RSpec.describe 'api/v1/shops/products', swagger_doc: 'v1/swagger.json', type: :r
       parameter name: :category, in: :query
       parameter name: :page, in: :query, description: 'Set as 1 if not set'
       parameter name: :limit, in: :query, description: 'Set as 15 if not set'
+      parameter name: :sortBy, in: :query,  schema: { type: :string, enum: [:created_at_desc, :created_at_asc] }
 
       response(200, 'Successful') do
         schema type: :object,
