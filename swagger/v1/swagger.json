@@ -1273,6 +1273,22 @@
                           "example": 44.99,
                           "description": "Price of product's variant (Required if new variant)"
                         },
+                        "imageIds": {
+                          "type": "array",
+                          "maxItems": 5,
+                          "items": {
+                            "type": "number"
+                          },
+                          "example": [
+                            234,
+                            45566,
+                            345
+                          ],
+                          "default": [
+
+                          ],
+                          "description": "List of product images ids (required if no imageUrls)"
+                        },
                         "imageUrls": {
                           "type": "array",
                           "items": {

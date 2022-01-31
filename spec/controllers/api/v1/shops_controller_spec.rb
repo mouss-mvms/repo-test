@@ -456,6 +456,64 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         expect(shop_result["avatar"].blank?).to be_falsey
         expect((Shop.find(shop_result["id"]).owner == shop_employee_user.shop_employee)).to be_truthy
       end
+
+      context 'Shop has no description' do
+        it 'should return 200 HTTP status code with shop response object and description' do
+          avatar_image = create(:image)
+          @update_params = {
+            name: "Boutique Test",
+            email: @shop.email,
+            mobileNumber: "0666666666",
+            siret: @shop.siret,
+            address: {
+              streetNumber: @shop.address.street_number,
+              route: @shop.address.route,
+              locality: @shop.address.locality,
+              country: @shop.address.country,
+              postalCode: @shop.address.postal_code,
+              longitude: @shop.address.longitude,
+              latitude: @shop.address.latitude,
+              inseeCode: @shop.address.city.insee_code
+            },
+            description: "Description mise à jour de la boutique",
+            baseline: "Baseline mise à jour de la boutique",
+            facebookLink: "http://www.facebook.com",
+            instagramLink: "http://www.instagram.com",
+            websiteLink: "http://www.website.com",
+            avatarImageId: avatar_image.id
+          }
+          shop_employee_user = create(:shop_employee_user, email: 'shop.employee78@ecity.fr')
+          @shop.assign_ownership(shop_employee_user)
+          @shop.profil&.file_url = nil
+          @shop.baselines << I18nshop.new(lang: "fr", field: "Baseline", content: "Baseline de la boutique")
+          @shop.save
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
+
+          put :update, params: @update_params.merge({ id: @shop.id })
+
+          expect(response).to have_http_status(200)
+          shop_result = JSON.parse(response.body)
+          expect(shop_result["id"]).not_to be_nil
+          expect(shop_result["name"]).to eq(@update_params[:name])
+          expect(shop_result["siret"]).to eq(@shop.siret)
+          expect(shop_result["email"]).to eq(@shop.email)
+          expect(shop_result["description"]).to eq(@update_params[:description])
+          expect(shop_result["baseline"]).to eq(@update_params[:baseline])
+          expect(shop_result["address"]["streetNumber"]).to eq(@shop.address.street_number)
+          expect(shop_result["address"]["route"]).to eq(@shop.address.route)
+          expect(shop_result["address"]["locality"]).to eq(@shop.address.locality)
+          expect(shop_result["address"]["country"]).to eq(@shop.address.country)
+          expect(shop_result["address"]["postalCode"]).to eq(@shop.address.postal_code)
+          expect(shop_result["address"]["longitude"]).to eq(@shop.address.longitude)
+          expect(shop_result["address"]["latitude"]).to eq(@shop.address.latitude)
+          expect(shop_result["facebookLink"]).to eq(@update_params[:facebookLink])
+          expect(shop_result["instagramLink"]).to eq(@update_params[:instagramLink])
+          expect(shop_result["websiteLink"]).to eq(@update_params[:websiteLink])
+          expect(shop_result["avatar"].blank?).to be_falsey
+          expect((Shop.find(shop_result["id"]).owner == shop_employee_user.shop_employee)).to be_truthy
+        end
+
+      end
     end
 
     context 'Shop not found' do
