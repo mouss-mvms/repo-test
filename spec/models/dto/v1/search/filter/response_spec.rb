@@ -3,6 +3,18 @@ require 'rails_helper'
 RSpec.describe Dto::V1::Search::Filter::Response do
 
   describe 'create' do
+    before(:all) do
+      @alim_cat = create(:category, id: 2054, name: "Alimentaire")
+      @ps_cat = create(:category, id: 2835, name: "PS5", parent_id: @alim_cat.id)
+      @vets_cat = create(:category, id: 2340, name: "Vetements")
+    end
+
+    after(:all) do
+      @alim_cat.destroy
+      @ps_cat.destroy
+      @vets_cat.destroy
+    end
+
     context 'All ok without category' do
       let(:aggs) {
         {
@@ -76,10 +88,6 @@ RSpec.describe Dto::V1::Search::Filter::Response do
       }
 
       it 'should return a Dto::V1::Search::Filter::Response' do
-        create(:category, id: 2054, name: "Alimentaire")
-        create(:category, id: 2835, name: "PS5")
-        create(:category, id: 2340, name: "Vetements")
-
         result = Dto::V1::Search::Filter::Response.create(aggs)
         expect(result).to be_instance_of(Dto::V1::Search::Filter::Response)
 
@@ -111,10 +119,9 @@ RSpec.describe Dto::V1::Search::Filter::Response do
     end
 
     context 'All ok with category' do
-      let(:category_id) { 2054 }
       let(:aggs) {
         {
-          "category_id" => category_id,
+          "category_id" => @alim_cat.id,
           "category_tree_ids" =>
             { "doc_count" => 293,
               "doc_count_error_upper_bound" => 0,
@@ -186,10 +193,6 @@ RSpec.describe Dto::V1::Search::Filter::Response do
 
 
       it 'should return a Dto::V1::Search::Filter::Response' do
-        category_1 = create(:category, id: category_id, name: "Alimentaire")
-        create(:category, id: 2835, name: "PS5", parent_id: category_1.id)
-        create(:category, id: 2340, name: "Vetements")
-
         result = Dto::V1::Search::Filter::Response.create(aggs)
         expect(result).to be_instance_of(Dto::V1::Search::Filter::Response)
 
@@ -209,7 +212,7 @@ RSpec.describe Dto::V1::Search::Filter::Response do
         expect(result.brands).to eq(aggs["brand_name"]["buckets"].map { |item| { key: item["key"], value: item["doc_count"] } }.sort_by { |item| item[:value] }.reverse)
 
         expect(result.categories).to be_instance_of(Array)
-        categories = Category.find(category_id).children
+        categories = Category.find(@alim_cat.id).children
         counts = aggs['category_tree_ids']['buckets'].map { |c| c["key"] }
         categories = categories.map do |category|
           if counts.include?(category.id)
