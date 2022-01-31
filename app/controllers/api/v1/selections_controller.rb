@@ -1,13 +1,14 @@
 module Api
   module V1
     class SelectionsController < ApplicationController
+      include Pagy::Backend
       before_action :uncrypt_token, only: [:create, :patch, :destroy]
       before_action :retrieve_user, only: [:create, :patch, :destroy]
 
       def index
-        params[:page] ||= 1
-        selections = Kaminari.paginate_array(Selection.online).page(params[:page])
-        response = { selections: selections.map { |selection| Dto::V1::Selection::Response.create(selection).to_h }, page: params[:page].to_i, totalPages: selections.total_pages }
+        per_page = params[:limit] || 16
+        pagination, selections = pagy(Selection.online, items: per_page)
+        response = { selections: selections.map { |selection| Dto::V1::Selection::Response.create(selection).to_h }, page: pagination.page, totalPages: pagination.pages, totalCount: pagination.count }
         render json: response, status: :ok
       end
 
