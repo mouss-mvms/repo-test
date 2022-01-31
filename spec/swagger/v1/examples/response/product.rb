@@ -38,7 +38,9 @@ module V1
                   externalProductId: { type: :string, example: '33ur', description: 'Id used by the provider' }
                 },
                 required: %w[name, externalProductId]
-              }
+              },
+              createdAt: { type: :string, description: 'DateTime of creation of product' },
+              updatedAt: { type: :string, description: 'DateTime of last update of product' },
             },
           }
         end

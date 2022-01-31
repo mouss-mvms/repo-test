@@ -254,7 +254,7 @@
                     "properties": {
                       "id": {
                         "type": "integer",
-                        "example": "3442",
+                        "example": "3527",
                         "description": "Unique identifier of a category."
                       },
                       "name": {
@@ -279,7 +279,7 @@
                           "properties": {
                             "id": {
                               "type": "integer",
-                              "example": "3442",
+                              "example": "3527",
                               "description": "Unique identifier of a category."
                             },
                             "name": {
@@ -380,7 +380,7 @@
                   "properties": {
                     "id": {
                       "type": "integer",
-                      "example": "3442",
+                      "example": "3527",
                       "description": "Unique identifier of a category."
                     },
                     "name": {
@@ -405,7 +405,7 @@
                         "properties": {
                           "id": {
                             "type": "integer",
-                            "example": "3442",
+                            "example": "3527",
                             "description": "Unique identifier of a category."
                           },
                           "name": {
@@ -822,7 +822,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -1117,6 +1117,14 @@
                         "name,",
                         "externalProductId"
                       ]
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "description": "DateTime of creation of product"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "description": "DateTime of last update of product"
                     }
                   }
                 }
@@ -2814,7 +2822,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -3087,7 +3095,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -3600,7 +3608,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -3923,7 +3931,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -6330,7 +6338,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -6508,6 +6516,17 @@
             "name": "limit",
             "in": "query",
             "description": "Set as 15 if not set"
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "created_at_desc",
+                "created_at_asc"
+              ]
+            }
           }
         ],
         "responses": {
@@ -6774,6 +6793,14 @@
                         "name,",
                         "externalProductId"
                       ]
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "description": "DateTime of creation of product"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "description": "DateTime of last update of product"
                     }
                   }
                 }
@@ -6934,7 +6961,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -9256,7 +9283,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-staging"
     }
   ],
   "components": {
@@ -9407,7 +9434,7 @@
         "properties": {
           "id": {
             "type": "integer",
-            "example": "3442",
+            "example": "3527",
             "description": "Unique identifier of a category."
           },
           "name": {
@@ -9432,7 +9459,7 @@
               "properties": {
                 "id": {
                   "type": "integer",
-                  "example": "3442",
+                  "example": "3527",
                   "description": "Unique identifier of a category."
                 },
                 "name": {
@@ -9714,6 +9741,14 @@
               "name,",
               "externalProductId"
             ]
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "DateTime of creation of product"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "DateTime of last update of product"
           }
         }
       },
