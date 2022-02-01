@@ -16,12 +16,8 @@ RSpec.describe Api::V1::Tags::ProductsController do
         get :index, params: { id: tag.id }
 
         expect(response).to have_http_status(:ok)
-        result = JSON.parse(response.body).deep_symbolize_keys
+        result = JSON.parse(response.body, symbolize_names: true)
         expect(result[:products].count).to eq(count)
-        result[:products].each do |result_product|
-          expect_product = Product.find(result_product[:id])
-          expect(result_product).to eq(Dto::V1::Product::Response.create(expect_product).to_h)
-        end
       end
     end
   end

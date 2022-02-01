@@ -3,6 +3,7 @@ module Dto
     module Product
       class Response
         attr_reader :id, :name, :slug, :category, :brand, :status, :seller_advice, :is_service, :description, :variants, :citizen_advice, :origin, :allergens, :composition, :provider, :shop_id, :shop_name, :citizen
+        attr_reader :created_at, :updated_at
 
         def initialize(**args)
           @id = args[:id]
@@ -23,6 +24,8 @@ module Dto
           @citizen_advice = args[:citizen_advice]
           @provider = args[:provider]
           @citizen = args[:citizen]
+          @created_at = args[:created_at]
+          @updated_at = args[:updated_at]
         end
 
         def self.create(product)
@@ -42,7 +45,9 @@ module Dto
             variants: product.references&.map { |reference| Dto::V1::Variant::Response.create(reference) },
             citizen_advice: product.advice&.content,
             provider: { name: product.api_provider_product&.api_provider&.name, externalProductId: product.api_provider_product&.external_product_id },
-            citizen: citizen
+            citizen: citizen,
+            created_at: product.created_at,
+            updated_at: product.updated_at,
           )
         end
 
@@ -63,6 +68,8 @@ module Dto
             citizenAdvice: @citizen_advice,
             provider: @provider,
             citizen: @citizen&.to_h,
+            createdAt: @created_at,
+            updatedAt: @updated_at
           }
         end
       end
