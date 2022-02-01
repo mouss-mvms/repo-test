@@ -7983,7 +7983,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
       context "All ok" do
         it "should return 204 HTTP status" do
           user_citizen = create(:citizen_user, email: "citizen6@ecity.fr")
-          product = create(:product)
+          product = create(:product, status: 3)
           user_citizen.citizen.products << product
           user_citizen.citizen.save
           request.headers["x-client-id"] = generate_token(user_citizen)
@@ -8009,6 +8009,32 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(404)
           end
+        end
+
+      end
+
+      context "Product shared was accepted by the shop's owner" do
+        it 'should return 403 HTTP Status' do
+          user_citizen = create(:citizen_user, email: "citizen6@ecity.fr")
+          product = create(:product, status: 0)
+          user_citizen.citizen.products << product
+          user_citizen.citizen.save
+
+          user_shop_employee = create(:shop_employee_user)
+          shop = create(:shop, products: [product])
+          product.shop_id = shop.id
+          product.save
+
+
+          user_shop_employee.shop_employee.shops << shop
+          user_shop_employee.shop_employee.save
+
+          request.headers["x-client-id"] = generate_token(user_citizen)
+
+          delete :destroy, params: { id: product.id }
+
+          should respond_with(403)
+          expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
         end
       end
 
