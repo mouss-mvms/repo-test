@@ -4,11 +4,13 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
   describe "GET #index" do
     context "All ok" do
       let(:citizen) { create(:citizen) }
-      let(:products) { create_list(:product, 17) }
+      let(:products) { create_list(:available_product, 17) }
+      let(:product_without_reference) { create(:product) }
 
       context "without :limit" do
         it "should return 200 HTTP status and handle pagination" do
           citizen.products << products
+          citizen.products << product_without_reference
           citizen.save
           get :index, params: { id: citizen.id }
           expect(response).to have_http_status(:ok)
@@ -112,7 +114,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
 
             create_params = {
               name: "manteau MAC",
-              citizenAdvice: "pouet",
+              citizenAdvice: "pouet ohfiuahia oihjafoih oiaijafiojf",
               shopId: create(:shop).id,
               variants: [
                 {
@@ -145,7 +147,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
 
             create_params = {
               name: "manteau MAC",
-              citizenAdvice: "pouet",
+              citizenAdvice: "pouet ohfiuahia oihjafoih oiaijafiojf",
               shopId: create(:shop).id,
               variants: [
                 {
@@ -422,8 +424,8 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
                   basePrice: 379,
                   weight: 1,
                   quantity: 0,
-                  imageIds: [1, 2, 3, 4, 5, 6],
-                  imageUrls: ["1", "2", "3", "4", "5", "6"],
+                  imageIds: [1, 2, 3, 4, 5],
+                  imageUrls: ["1", "2", "3", "4", "5"],
                   isDefault: false,
                   goodDeal: {
                     startAt: "17/05/2021",
@@ -448,6 +450,53 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
             post :create, params: create_params
             should respond_with(400)
             expect(response.body).to eq(Dto::Errors::BadRequest.new('You can only pass imageIds or imageUrls, not both.').to_h.to_json)
+          end
+        end
+
+        context "imageIds are not in db" do
+          it "should return 404 HTTP status" do
+            image_id = 0
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: create(:category).id,
+              shopId: create(:shop).id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              citizenAdvice: "pouet",
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageIds: [image_id],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    }
+                  ]
+                }
+              ]
+            }
+            request.headers["x-client-id"] = generate_token(user_citizen)
+
+            post :create, params: create_params
+            should respond_with(404)
+            expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Image with 'id'=#{image_id}").to_h.to_json)
           end
         end
 
@@ -673,118 +722,151 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
       end
     end
 
-    context "When product'status is not submitted or refused" do
-      it "should return 403 HTTP Status" do
-        user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
-        reference = create(:reference, base_price: 400)
-        product = reference.product
-        product.name = "Before MAJ"
-        product.status = "online"
-        product.save
-        product_params = {
-          name: "After MAJ",
-          variants: [
-            {
-              id: reference.id,
-              basePrice: 300,
-            },
-          ],
-        }
-        user_citizen.citizen.products << product
-        user_citizen.citizen.save
+    context 'Bad Params' do
+      context "When product'status is not submitted or refused" do
+        it "should return 403 HTTP Status" do
+          user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
+          reference = create(:reference, base_price: 400)
+          product = reference.product
+          product.name = "Before MAJ"
+          product.status = "online"
+          product.save
+          product_params = {
+            name: "After MAJ",
+            variants: [
+              {
+                id: reference.id,
+                basePrice: 300,
+              },
+            ],
+          }
+          user_citizen.citizen.products << product
+          user_citizen.citizen.save
 
-        request.headers["x-client-id"] = generate_token(user_citizen)
-        patch :update, params: product_params.merge(id: product.id)
+          request.headers["x-client-id"] = generate_token(user_citizen)
+          patch :update, params: product_params.merge(id: product.id)
 
-        should respond_with(403)
-        expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
+          should respond_with(403)
+          expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
+        end
       end
-    end
 
-    context "Want to modify the product' status" do
-      it "should return 403 HTTP Status" do
-        user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
-        reference = create(:reference, base_price: 400)
-        product = reference.product
-        product.name = "Before MAJ"
-        product.status = "submitted"
-        product.save
-        product_params = {
-          name: "After MAJ",
-          status: "online",
-          variants: [
-            {
-              id: reference.id,
-              basePrice: 300,
-            },
-          ],
-        }
-        user_citizen.citizen.products << product
-        user_citizen.citizen.save
+      context "Want to modify the product' status" do
+        it "should return 403 HTTP Status" do
+          user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
+          reference = create(:reference, base_price: 400)
+          product = reference.product
+          product.name = "Before MAJ"
+          product.status = "submitted"
+          product.save
+          product_params = {
+            name: "After MAJ",
+            status: "online",
+            variants: [
+              {
+                id: reference.id,
+                basePrice: 300,
+              },
+            ],
+          }
+          user_citizen.citizen.products << product
+          user_citizen.citizen.save
 
-        request.headers["x-client-id"] = generate_token(user_citizen)
-        patch :update, params: product_params.merge(id: product.id)
+          request.headers["x-client-id"] = generate_token(user_citizen)
+          patch :update, params: product_params.merge(id: product.id)
 
-        should respond_with(403)
-        expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
+          should respond_with(403)
+          expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
+        end
       end
-    end
 
-    context "Citizen is not the product's author" do
-      it "should return 403 HTTP status" do
-        user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
-        reference = create(:reference, base_price: 400)
-        product = reference.product
-        product.name = "Before MAJ"
-        product.status = "submitted"
-        product.save
+      context "Citizen is not the product's author" do
+        it "should return 403 HTTP status" do
+          user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
+          reference = create(:reference, base_price: 400)
+          product = reference.product
+          product.name = "Before MAJ"
+          product.status = "submitted"
+          product.save
 
-        product_params = {
-          name: "After MAJ",
-          status: "online",
-          variants: [
-            {
-              id: reference.id,
-              basePrice: 300,
-            },
-          ],
-        }
+          product_params = {
+            name: "After MAJ",
+            status: "online",
+            variants: [
+              {
+                id: reference.id,
+                basePrice: 300,
+              },
+            ],
+          }
 
-        request.headers["x-client-id"] = generate_token(user_citizen)
-        patch :update, params: product_params.merge(id: product.id)
+          request.headers["x-client-id"] = generate_token(user_citizen)
+          patch :update, params: product_params.merge(id: product.id)
 
-        should respond_with(404)
-        expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Product with 'id'=#{product.id} [WHERE \"citizen_products\".\"citizen_id\" = $1]").to_h.to_json)
+          should respond_with(404)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Product with 'id'=#{product.id} [WHERE \"citizen_products\".\"citizen_id\" = $1]").to_h.to_json)
+        end
       end
-    end
 
-    context "Can't find product wanted in citizen product" do
-      it "should return 404 HTTP Status" do
-        user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
-        reference = create(:reference, base_price: 400)
-        reference2 = create(:reference, base_price: 500)
-        product = reference.product
-        product2 = reference2.product
-        product.name = "Before MAJ"
-        product.status = "submitted"
-        product.save
-        product_params = {
-          name: "After MAJ",
-          variants: [
-            {
-              id: reference.id,
-              basePrice: 300,
-            },
-          ],
-        }
-        user_citizen.citizen.products << product
-        user_citizen.citizen.save
+      context "Can't find product wanted in citizen product" do
+        it "should return 404 HTTP Status" do
+          user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
+          reference = create(:reference, base_price: 400)
+          reference2 = create(:reference, base_price: 500)
+          product = reference.product
+          product2 = reference2.product
+          product.name = "Before MAJ"
+          product.status = "submitted"
+          product.save
+          product_params = {
+            name: "After MAJ",
+            variants: [
+              {
+                id: reference.id,
+                basePrice: 300,
+              },
+            ],
+          }
+          user_citizen.citizen.products << product
+          user_citizen.citizen.save
 
-        request.headers["x-client-id"] = generate_token(user_citizen)
-        patch :update, params: product_params.merge(id: product2.id)
+          request.headers["x-client-id"] = generate_token(user_citizen)
+          patch :update, params: product_params.merge(id: product2.id)
 
-        should respond_with(404)
-        expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Product with 'id'=#{product2.id} [WHERE \"citizen_products\".\"citizen_id\" = $1]").to_h.to_json)
+          should respond_with(404)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Product with 'id'=#{product2.id} [WHERE \"citizen_products\".\"citizen_id\" = $1]").to_h.to_json)
+        end
+      end
+
+      context "imageIds and imageUrls are both sent" do
+        it "should return 400 HTTP status" do
+          image = create(:image)
+          user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
+          reference = create(:reference, base_price: 400)
+          product = reference.product
+          product.name = "Before MAJ"
+          product.status = "submitted"
+          product.save
+          product_params = {
+            name: "After MAJ",
+            variants: [
+              {
+                id: reference.id,
+                basePrice: 300,
+                imageIds: [image.id],
+                imageUrls: [image.file_url]
+              },
+            ],
+          }
+          user_citizen.citizen.products << product
+          user_citizen.citizen.save
+
+          request.headers["x-client-id"] = generate_token(user_citizen)
+          patch :update, params: product_params.merge(id: product.id)
+
+          should respond_with(400)
+          expect(response.body).to eq(Dto::Errors::BadRequest.new("You can only pass imageIds or imageUrls, not both.").to_h.to_json)
+        end
       end
     end
 

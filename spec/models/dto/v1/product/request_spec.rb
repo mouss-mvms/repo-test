@@ -23,6 +23,8 @@ RSpec.describe Dto::V1::Product::Response do
               weight: 20.5,
               quantity: 20,
               is_default: false,
+              image_ids: [ 1, 2 ],
+              image_urls: [ "http://path/to/image.jpg" ],
               good_deal: {
                 start_at: "20/01/2021",
                 end_at: "16/02/2021",
@@ -109,7 +111,6 @@ RSpec.describe Dto::V1::Product::Response do
         expect(dto_hash[:category_id]).to eq(dto_product.category_id)
         expect(dto_hash[:brand]).to eq(dto_product.brand)
         expect(dto_hash[:status]).to eq(dto_product.status)
-        expect(dto_hash[:image_urls]).to eq(dto_product.image_urls)
         expect(dto_hash[:seller_advice]).to eq(dto_product.seller_advice)
         expect(dto_hash[:is_service]).to eq(dto_product.is_service)
         expect(dto_hash[:variants]).to eq(dto_product.variants&.map { |variant| variant.to_h })
