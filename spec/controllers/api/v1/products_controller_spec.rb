@@ -337,7 +337,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
 
@@ -391,7 +391,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
 
@@ -505,7 +505,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
 
@@ -560,7 +560,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
 
@@ -635,6 +635,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               brand: "AOC",
               status: "online",
               isService: false,
+              composition: "Avec de la matière qui fait cale!",
               sellerAdvice: "Les tasses donneront du style à votre pause café !",
               description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
               variants: [
@@ -675,7 +676,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("origin is required")
           end
         end
 
@@ -730,7 +731,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
 
@@ -805,6 +806,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               brand: "AOC",
               status: "online",
               isService: false,
+              composition: "Avec de la matière",
               sellerAdvice: "Les tasses donneront du style à votre pause café !",
               description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
               variants: [
@@ -845,7 +847,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("origin is required")
           end
         end
 
@@ -900,7 +902,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
 
@@ -975,6 +977,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               brand: "AOC",
               status: "online",
               isService: false,
+              composition: "Avec de la matière",
               sellerAdvice: "Les tasses donneront du style à votre pause café !",
               description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
               variants: [
@@ -1015,7 +1018,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("origin is required")
           end
         end
 
@@ -1070,7 +1073,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
 
@@ -1145,6 +1148,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               brand: "AOC",
               status: "online",
               isService: false,
+              composition: "Avec de la matière",
               sellerAdvice: "Les tasses donneront du style à votre pause café !",
               description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
               variants: [
@@ -1185,7 +1189,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("origin is required")
           end
         end
 
@@ -1240,7 +1244,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
 
@@ -1305,60 +1309,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
         let(:product) { create(:product) }
         let(:category) { create(:category, group: "clothing") }
 
-        context "Origin of product is missing" do
-          it "should return 400 HTTP Status" do
-            provider = create(:api_provider, name: 'wynd')
-
-            update_params = {
-              name: "Lot de 4 tasses à café style rétro AOC",
-              categoryId: category.id,
-              brand: "AOC",
-              status: "online",
-              isService: false,
-              sellerAdvice: "Les tasses donneront du style à votre pause café !",
-              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
-              variants: [
-                {
-                  basePrice: 19.9,
-                  weight: 0.24,
-                  quantity: 4,
-                  isDefault: true,
-                  goodDeal: {
-                    startAt: "17/05/2021",
-                    endAt: "18/06/2021",
-                    discount: 20,
-                  },
-                  characteristics: [
-                    {
-                      value: "coloris black",
-                      name: "color",
-                    },
-                    {
-                      value: "S",
-                      name: "size",
-                    },
-                  ],
-                  provider: {
-                    name: "wynd",
-                    externalVariantId: 'Rt33'
-                  }
-                },
-              ],
-              provider: {
-                name: provider.name,
-                externalProductId: 'tye65'
-              }
-
-            }
-
-            put :update_offline, params: update_params.merge(id: product.id)
-
-            should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
-          end
-        end
-
         context "Composition of product is missing" do
           it "should return 400 HTTP Status" do
             provider = create(:api_provider, name: 'wynd')
@@ -1410,7 +1360,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
       end
@@ -2342,6 +2292,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 brand: "AOC",
                 status: "online",
                 isService: false,
+                composition: "Avec de la matière",
                 sellerAdvice: "Les tasses donneront du style à votre pause café !",
                 description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
                 variants: [
@@ -2375,7 +2326,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
               should respond_with(400)
               result = JSON.parse(response.body)
-              expect(result["detail"]).to eq("origin and composition is required")
+              expect(result["detail"]).to eq("origin is required")
             end
           end
 
@@ -2421,7 +2372,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
               should respond_with(400)
               result = JSON.parse(response.body)
-              expect(result["detail"]).to eq("origin and composition is required")
+              expect(result["detail"]).to eq("composition is required")
             end
           end
 
@@ -2488,6 +2439,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 brand: "AOC",
                 status: "online",
                 isService: false,
+                composition: "Avec de la matière",
                 sellerAdvice: "Les tasses donneront du style à votre pause café !",
                 description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
                 variants: [
@@ -2521,7 +2473,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
               should respond_with(400)
               result = JSON.parse(response.body)
-              expect(result["detail"]).to eq("origin and composition is required")
+              expect(result["detail"]).to eq("origin is required")
             end
           end
 
@@ -2567,7 +2519,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
               should respond_with(400)
               result = JSON.parse(response.body)
-              expect(result["detail"]).to eq("origin and composition is required")
+              expect(result["detail"]).to eq("composition is required")
             end
           end
 
@@ -2634,6 +2586,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 brand: "AOC",
                 status: "online",
                 isService: false,
+                composition: "Avec de la matière",
                 sellerAdvice: "Les tasses donneront du style à votre pause café !",
                 description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
                 variants: [
@@ -2667,7 +2620,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
               should respond_with(400)
               result = JSON.parse(response.body)
-              expect(result["detail"]).to eq("origin and composition is required")
+              expect(result["detail"]).to eq("origin is required")
             end
           end
 
@@ -2713,7 +2666,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
               should respond_with(400)
               result = JSON.parse(response.body)
-              expect(result["detail"]).to eq("origin and composition is required")
+              expect(result["detail"]).to eq("composition is required")
             end
           end
 
@@ -2780,6 +2733,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 brand: "AOC",
                 status: "online",
                 isService: false,
+                composition: "Avec de la matière",
                 sellerAdvice: "Les tasses donneront du style à votre pause café !",
                 description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
                 variants: [
@@ -2813,7 +2767,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
               should respond_with(400)
               result = JSON.parse(response.body)
-              expect(result["detail"]).to eq("origin and composition is required")
+              expect(result["detail"]).to eq("origin is required")
             end
           end
 
@@ -2859,7 +2813,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
               should respond_with(400)
               result = JSON.parse(response.body)
-              expect(result["detail"]).to eq("origin and composition is required")
+              expect(result["detail"]).to eq("composition is required")
             end
           end
 
@@ -2926,6 +2880,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 brand: "AOC",
                 status: "online",
                 isService: false,
+                composition: "Avec de la matière",
                 sellerAdvice: "Les tasses donneront du style à votre pause café !",
                 description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
                 variants: [
@@ -2959,7 +2914,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
               should respond_with(400)
               result = JSON.parse(response.body)
-              expect(result["detail"]).to eq("origin and composition is required")
+              expect(result["detail"]).to eq("origin is required")
             end
           end
 
@@ -3005,7 +2960,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
               should respond_with(400)
               result = JSON.parse(response.body)
-              expect(result["detail"]).to eq("origin and composition is required")
+              expect(result["detail"]).to eq("composition is required")
             end
           end
 
@@ -3072,6 +3027,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 brand: "AOC",
                 status: "online",
                 isService: false,
+                composition: "Avec de la matière",
                 sellerAdvice: "Les tasses donneront du style à votre pause café !",
                 description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
                 variants: [
@@ -3105,7 +3061,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
               should respond_with(400)
               result = JSON.parse(response.body)
-              expect(result["detail"]).to eq("origin and composition is required")
+              expect(result["detail"]).to eq("origin is required")
             end
           end
 
@@ -3151,7 +3107,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
               should respond_with(400)
               result = JSON.parse(response.body)
-              expect(result["detail"]).to eq("origin and composition is required")
+              expect(result["detail"]).to eq("composition is required")
             end
           end
 
@@ -3207,54 +3163,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           let(:product) { create(:product) }
           let(:category) { create(:category, group: "clothing") }
 
-          context "Origin of product is missing" do
-            it "should return 400 HTTP Status" do
-              user_citizen.citizen.products << product
-              user_citizen.citizen.save
-
-              update_params = {
-                name: "Lot de 4 tasses à café style rétro AOC",
-                categoryId: category.id,
-                brand: "AOC",
-                status: "online",
-                isService: false,
-                sellerAdvice: "Les tasses donneront du style à votre pause café !",
-                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
-                variants: [
-                  {
-                    basePrice: 19.9,
-                    weight: 0.24,
-                    quantity: 4,
-                    isDefault: true,
-                    goodDeal: {
-                      startAt: "17/05/2021",
-                      endAt: "18/06/2021",
-                      discount: 20,
-                    },
-                    characteristics: [
-                      {
-                        value: "coloris black",
-                        name: "color",
-                      },
-                      {
-                        value: "S",
-                        name: "size",
-                      },
-                    ],
-                  },
-                ],
-              }
-
-              request.headers["x-client-id"] = generate_token(user_citizen)
-
-              put :update, params: update_params.merge(id: product.id)
-
-              should respond_with(400)
-              result = JSON.parse(response.body)
-              expect(result["detail"]).to eq("origin and composition is required")
-            end
-          end
-
           context "Composition of product is missing" do
             it "should return 400 HTTP Status" do
               update_params = {
@@ -3297,7 +3205,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
               should respond_with(400)
               result = JSON.parse(response.body)
-              expect(result["detail"]).to eq("origin and composition is required")
+              expect(result["detail"]).to eq("composition is required")
             end
           end
         end
@@ -3614,9 +3522,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           expect(ref1_updated.sample.images).not_to be_empty
           expect(ref1_updated.good_deal.starts_at.strftime("%d/%m/%Y")).to eq(ref1_update_params[:goodDeal][:startAt])
           expect(ref1_updated.good_deal.discount).to eq(ref1_update_params[:goodDeal][:discount])
-          expect(ref1_updated.size.name ).to eq(ref1_update_params[:characteristics].last[:value])
-          expect(ref1_updated.color.name ).to eq(ref1_update_params[:characteristics].first[:value])
-
+          expect(ref1_updated.size.name).to eq(ref1_update_params[:characteristics].last[:value])
+          expect(ref1_updated.color.name).to eq(ref1_update_params[:characteristics].first[:value])
 
           ref2_updated = Reference.where(id: ref2.id).first
           expect(ref2_updated).to_not be_nil
@@ -3627,8 +3534,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           expect(ref2_updated.sample.images).to be_empty
           expect(ref2_updated.good_deal.starts_at.strftime("%d/%m/%Y")).to eq(ref2_update_params[:goodDeal][:startAt])
           expect(ref2_updated.good_deal.discount).to eq(ref2_update_params[:goodDeal][:discount])
-          expect(ref2_updated.size.name ).to eq(ref2_update_params[:characteristics].last[:value])
-          expect(ref2_updated.color.name ).to eq(ref2_update_params[:characteristics].first[:value])
+          expect(ref2_updated.size.name).to eq(ref2_update_params[:characteristics].last[:value])
+          expect(ref2_updated.color.name).to eq(ref2_update_params[:characteristics].first[:value])
 
           new_variant = Reference.where(product_id: product.id).where.not(id: [ref1.id, ref2.id]).first
           expect(new_variant).to_not be_nil
@@ -3639,8 +3546,8 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           expect(new_variant.sample.images).not_to be_empty
           expect(new_variant.good_deal.starts_at.strftime("%d/%m/%Y")).to eq(new_ref_update_params[:goodDeal][:startAt])
           expect(new_variant.good_deal.discount).to eq(new_ref_update_params[:goodDeal][:discount])
-          expect(new_variant.size.name ).to eq(new_ref_update_params[:characteristics].last[:value])
-          expect(new_variant.color.name ).to eq(new_ref_update_params[:characteristics].first[:value])
+          expect(new_variant.size.name).to eq(new_ref_update_params[:characteristics].last[:value])
+          expect(new_variant.color.name).to eq(new_ref_update_params[:characteristics].first[:value])
           expect(Reference.where(id: ref3.id).first).to be_nil
         end
       end
@@ -3992,6 +3899,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 brand: "AOC",
                 status: "online",
                 isService: false,
+                composition: "Avec de la matière",
                 sellerAdvice: "Les tasses donneront du style à votre pause café !",
                 description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
                 variants: [
@@ -4025,7 +3933,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
               should respond_with(400)
               result = JSON.parse(response.body)
-              expect(result["detail"]).to eq("origin and composition is required")
+              expect(result["detail"]).to eq("origin is required")
             end
           end
 
@@ -4073,7 +3981,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
               should respond_with(400)
               result = JSON.parse(response.body)
-              expect(result["detail"]).to eq("origin and composition is required")
+              expect(result["detail"]).to eq("composition is required")
             end
           end
 
@@ -4142,6 +4050,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 brand: "AOC",
                 status: "online",
                 isService: false,
+                composition: "Avec de la matière",
                 sellerAdvice: "Les tasses donneront du style à votre pause café !",
                 description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
                 variants: [
@@ -4175,7 +4084,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
               should respond_with(400)
               result = JSON.parse(response.body)
-              expect(result["detail"]).to eq("origin and composition is required")
+              expect(result["detail"]).to eq("origin is required")
             end
           end
 
@@ -4223,7 +4132,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
               should respond_with(400)
               result = JSON.parse(response.body)
-              expect(result["detail"]).to eq("origin and composition is required")
+              expect(result["detail"]).to eq("composition is required")
             end
           end
 
@@ -4292,6 +4201,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 brand: "AOC",
                 status: "online",
                 isService: false,
+                composition: "Avec de la matière",
                 sellerAdvice: "Les tasses donneront du style à votre pause café !",
                 description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
                 variants: [
@@ -4325,7 +4235,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
               should respond_with(400)
               result = JSON.parse(response.body)
-              expect(result["detail"]).to eq("origin and composition is required")
+              expect(result["detail"]).to eq("origin is required")
             end
           end
 
@@ -4373,7 +4283,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
               should respond_with(400)
               result = JSON.parse(response.body)
-              expect(result["detail"]).to eq("origin and composition is required")
+              expect(result["detail"]).to eq("composition is required")
             end
           end
 
@@ -4442,6 +4352,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 brand: "AOC",
                 status: "online",
                 isService: false,
+                composition: "Avec de la matière",
                 sellerAdvice: "Les tasses donneront du style à votre pause café !",
                 description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
                 variants: [
@@ -4475,7 +4386,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
               should respond_with(400)
               result = JSON.parse(response.body)
-              expect(result["detail"]).to eq("origin and composition is required")
+              expect(result["detail"]).to eq("origin is required")
             end
           end
 
@@ -4523,7 +4434,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
               should respond_with(400)
               result = JSON.parse(response.body)
-              expect(result["detail"]).to eq("origin and composition is required")
+              expect(result["detail"]).to eq("composition is required")
             end
           end
 
@@ -4592,6 +4503,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 brand: "AOC",
                 status: "online",
                 isService: false,
+                composition: "Avec de la matière",
                 sellerAdvice: "Les tasses donneront du style à votre pause café !",
                 description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
                 variants: [
@@ -4625,7 +4537,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
               should respond_with(400)
               result = JSON.parse(response.body)
-              expect(result["detail"]).to eq("origin and composition is required")
+              expect(result["detail"]).to eq("origin is required")
             end
           end
 
@@ -4673,7 +4585,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
               should respond_with(400)
               result = JSON.parse(response.body)
-              expect(result["detail"]).to eq("origin and composition is required")
+              expect(result["detail"]).to eq("composition is required")
             end
           end
 
@@ -4742,6 +4654,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 brand: "AOC",
                 status: "online",
                 isService: false,
+                composition: "Avec de la matière",
                 sellerAdvice: "Les tasses donneront du style à votre pause café !",
                 description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
                 variants: [
@@ -4775,7 +4688,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
               should respond_with(400)
               result = JSON.parse(response.body)
-              expect(result["detail"]).to eq("origin and composition is required")
+              expect(result["detail"]).to eq("origin is required")
             end
           end
 
@@ -4823,7 +4736,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
               should respond_with(400)
               result = JSON.parse(response.body)
-              expect(result["detail"]).to eq("origin and composition is required")
+              expect(result["detail"]).to eq("composition is required")
             end
           end
 
@@ -4881,54 +4794,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           let(:product) { create(:product) }
           let(:category) { create(:category, group: "clothing") }
 
-          context "Origin of product is missing" do
-            it "should return 400 HTTP Status" do
-              user_shop_employee.shop_employee.shops << product.shop
-              user_shop_employee.shop_employee.save
-
-              update_params = {
-                name: "Lot de 4 tasses à café style rétro AOC",
-                categoryId: category.id,
-                brand: "AOC",
-                status: "online",
-                isService: false,
-                sellerAdvice: "Les tasses donneront du style à votre pause café !",
-                description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
-                variants: [
-                  {
-                    basePrice: 19.9,
-                    weight: 0.24,
-                    quantity: 4,
-                    isDefault: true,
-                    goodDeal: {
-                      startAt: "17/05/2021",
-                      endAt: "18/06/2021",
-                      discount: 20,
-                    },
-                    characteristics: [
-                      {
-                        value: "coloris black",
-                        name: "color",
-                      },
-                      {
-                        value: "S",
-                        name: "size",
-                      },
-                    ],
-                  },
-                ],
-              }
-
-              request.headers["x-client-id"] = generate_token(user_shop_employee)
-
-              put :update, params: update_params.merge(id: product.id)
-
-              should respond_with(400)
-              result = JSON.parse(response.body)
-              expect(result["detail"]).to eq("origin and composition is required")
-            end
-          end
-
           context "Composition of product is missing" do
             it "should return 400 HTTP Status" do
               update_params = {
@@ -4973,7 +4838,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
               should respond_with(400)
               result = JSON.parse(response.body)
-              expect(result["detail"]).to eq("origin and composition is required")
+              expect(result["detail"]).to eq("composition is required")
             end
           end
         end
@@ -5256,6 +5121,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               brand: "AOC",
               status: "online",
               isService: false,
+              composition: "Avec de la matière",
               sellerAdvice: "Les tasses donneront du style à votre pause café !",
               description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
               variants: [
@@ -5286,7 +5152,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin is required").to_h.to_json)
           end
         end
 
@@ -5329,7 +5195,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("composition is required").to_h.to_json)
           end
         end
 
@@ -5390,6 +5256,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               brand: "AOC",
               status: "online",
               isService: false,
+              composition: "Avec de la matière",
               sellerAdvice: "Les tasses donneront du style à votre pause café !",
               description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
               variants: [
@@ -5420,7 +5287,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin is required").to_h.to_json)
           end
         end
 
@@ -5462,7 +5329,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             patch :patch, params: update_params.merge(id: product.id)
             should respond_with(400)
-            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("composition is required").to_h.to_json)
           end
         end
 
@@ -5523,6 +5390,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               brand: "AOC",
               status: "online",
               isService: false,
+              composition: "Avec de la xxxxx",
               sellerAdvice: "Les tasses donneront du style à votre pause café !",
               description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
               variants: [
@@ -5553,7 +5421,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin is required").to_h.to_json)
           end
         end
 
@@ -5596,7 +5464,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("composition is required").to_h.to_json)
           end
         end
 
@@ -5657,6 +5525,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               brand: "AOC",
               status: "online",
               isService: false,
+              composition: "AJhgjhgfsdfgjzehfgd",
               sellerAdvice: "Les tasses donneront du style à votre pause café !",
               description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
               variants: [
@@ -5687,7 +5556,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin is required").to_h.to_json)
           end
         end
 
@@ -5730,7 +5599,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("composition is required").to_h.to_json)
           end
         end
 
@@ -5791,6 +5660,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               brand: "AOC",
               status: "online",
               isService: false,
+              composition: "jhqsgdjhqegdjhegd",
               sellerAdvice: "Les tasses donneront du style à votre pause café !",
               description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
               variants: [
@@ -5821,7 +5691,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin is required").to_h.to_json)
           end
         end
 
@@ -5864,7 +5734,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("composition is required").to_h.to_json)
           end
         end
 
@@ -5925,6 +5795,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               brand: "AOC",
               status: "online",
               isService: false,
+              composition: "jhqsgdjq",
               sellerAdvice: "Les tasses donneront du style à votre pause café !",
               description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
               variants: [
@@ -5955,7 +5826,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin is required").to_h.to_json)
           end
         end
 
@@ -5998,7 +5869,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             patch :patch, params: update_params.merge(id: product.id)
 
             should respond_with(400)
-            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("composition is required").to_h.to_json)
           end
         end
 
@@ -6051,48 +5922,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
         let(:product) { create(:product) }
         let(:category) { create(:category, group: "clothing") }
 
-        context "Origin of product is missing" do
-          it "should return 400 HTTP Status" do
-            update_params = {
-              name: "Lot de 4 tasses à café style rétro AOC",
-              categoryId: category.id,
-              brand: "AOC",
-              status: "online",
-              isService: false,
-              sellerAdvice: "Les tasses donneront du style à votre pause café !",
-              description: "Lot de 4 tasses à café rétro chic en porcelaine. 4 tasses et 4 sous-tasses de 4 couleurs différentes.",
-              variants: [
-                {
-                  basePrice: 19.9,
-                  weight: 0.24,
-                  quantity: 4,
-                  isDefault: true,
-                  goodDeal: {
-                    startAt: "17/05/2021",
-                    endAt: "18/06/2021",
-                    discount: 20,
-                  },
-                  characteristics: [
-                    {
-                      value: "coloris black",
-                      name: "color",
-                    },
-                    {
-                      value: "S",
-                      name: "size",
-                    },
-                  ],
-                },
-              ],
-            }
-
-            patch :patch, params: update_params.merge(id: product.id)
-
-            should respond_with(400)
-            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
-          end
-        end
-
         context "Composition of product is missing" do
           it "should return 400 HTTP Status" do
             update_params = {
@@ -6133,7 +5962,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(response.body).to eq(Dto::Errors::BadRequest.new("origin and composition is required").to_h.to_json)
+            expect(response.body).to eq(Dto::Errors::BadRequest.new("composition is required").to_h.to_json)
           end
         end
       end
@@ -6625,6 +6454,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               brand: "3sixteen",
               status: "online",
               isService: true,
+              composition: "jdfgsjegd",
               sellerAdvice: "pouet",
               shopId: create(:shop).id,
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
@@ -6666,7 +6496,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("origin is required")
           end
         end
 
@@ -6726,7 +6556,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
 
@@ -6807,6 +6637,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               brand: "3sixteen",
               status: "online",
               isService: true,
+              composition: "qjsdghq",
               sellerAdvice: "pouet",
               shopId: create(:shop).id,
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
@@ -6849,7 +6680,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("origin is required")
           end
         end
 
@@ -6910,7 +6741,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
 
@@ -6992,6 +6823,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               brand: "3sixteen",
               status: "online",
               isService: true,
+              composition: "kshdgcjhsdg",
               sellerAdvice: "pouet",
               shopId: create(:shop).id,
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
@@ -7034,7 +6866,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("origin is required")
           end
         end
 
@@ -7095,7 +6927,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
 
@@ -7177,6 +7009,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               brand: "3sixteen",
               status: "online",
               isService: true,
+              composition: "hjdsgcj",
               sellerAdvice: "pouet",
               shopId: create(:shop).id,
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
@@ -7218,7 +7051,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("origin is required")
           end
         end
 
@@ -7279,7 +7112,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
 
@@ -7361,6 +7194,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               brand: "3sixteen",
               status: "online",
               isService: true,
+              composition: "jhsgdhjqgdg",
               sellerAdvice: "pouet",
               shopId: create(:shop).id,
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
@@ -7403,7 +7237,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("origin is required")
           end
         end
 
@@ -7464,7 +7298,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
 
@@ -7548,6 +7382,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               brand: "3sixteen",
               status: "online",
               isService: true,
+              composition: "jhqgsjgfqs",
               sellerAdvice: "pouet",
               shopId: create(:shop).id,
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
@@ -7590,7 +7425,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("origin is required")
           end
         end
 
@@ -7651,7 +7486,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
 
@@ -7719,66 +7554,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
       end
 
       context "Category is clothing group" do
-        context "Origin of product is missing" do
-          it "should return 400 HTTP Status" do
-            category = create(:category)
-            category.group = "clothing"
-            category.save
-            provider = create(:api_provider, name: 'wynd')
-
-
-            create_params = {
-              name: "manteau MAC",
-              slug: "manteau-mac",
-              categoryId: category.id,
-              brand: "3sixteen",
-              status: "online",
-              isService: true,
-              sellerAdvice: "pouet",
-              shopId: create(:shop).id,
-              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
-              variants: [
-                {
-                  basePrice: 379,
-                  weight: 1,
-                  quantity: 0,
-                  imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
-                  isDefault: false,
-                  goodDeal: {
-                    startAt: "17/05/2021",
-                    endAt: "18/06/2021",
-                    discount: 20,
-                  },
-                  characteristics: [
-                    {
-                      value: "coloris black",
-                      name: "color",
-                    },
-                    {
-                      value: "S",
-                      name: "size",
-                    },
-                  ],
-                  provider: {
-                    name: provider.name,
-                    externalVariantId: "tyh46"
-                  }
-
-                },
-              ],
-              provider: {
-                name: 'wynd',
-                externalProductId: '56ty'
-              }
-            }
-
-            post :create_offline, params: create_params
-
-            should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
-          end
-        end
 
         context "Composition of product is missing" do
           it "should return 400 HTTP Status" do
@@ -7786,7 +7561,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
             category.group = "clothing"
             category.save
             provider = create(:api_provider, name: 'wynd')
-
 
             create_params = {
               name: "manteau MAC",
@@ -7838,7 +7612,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
       end
@@ -8148,6 +7922,56 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               should respond_with(400)
               expect(response.body).to eq(Dto::Errors::BadRequest.new('param is missing or the value is empty: variant.provider.name').to_h.to_json)
             end
+          end
+        end
+        context 'when image url format is incorrect' do
+          it 'should return 422 HTTP Status' do
+            provider = create(:api_provider, name: 'wynd')
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: create(:category).id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              shopId: create(:shop).id,
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageUrls: ["https://fr.wikipedia.org/wiki/Emma_Watson#/media/Fichier:Emma_Watson_2013.jpg"],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                  provider: {
+                    name: provider.name,
+                    externalVariantId: "tyh46"
+                  }
+                },
+              ],
+              provider: {
+                name: provider.name,
+                externalProductId: '56ty'
+              }
+            }
+            post :create_offline, params: create_params
+            expect(response).to have_http_status(422)
           end
         end
       end

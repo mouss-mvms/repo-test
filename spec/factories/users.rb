@@ -39,6 +39,8 @@ FactoryBot.define do
   end
 
   factory :citizen_user, class: User do
+    firstname { "Chuck" }
+    lastname { "Noris" }
     email { 'citizen@ecity.fr' }
     password { 'Azerty123!' }
     password_confirmation { 'Azerty123!' }

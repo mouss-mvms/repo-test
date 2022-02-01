@@ -31,15 +31,15 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
         @shop_employee_user_token = generate_token(@shop_employee_user)
 
         3.times do
-          @shop.products << create(:product, status: 'submitted')
+          @shop.products << create(:available_product, status: 'submitted')
         end
 
         6.times do
-          @shop.products << create(:product, status: 'online')
+          @shop.products << create(:available_product, status: 'online')
         end
 
         19.times do
-          @shop.products << create(:product, status: 'offline')
+          @shop.products << create(:available_product, status: 'offline')
         end
       end
 
@@ -57,7 +57,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
         get :index
 
         expect(response).to have_http_status(:ok)
-        result = JSON.parse(response.body, {symbolize_names: true})
+        result = JSON.parse(response.body, { symbolize_names: true })
         expect(result[:products]).not_to be_nil
         expect(result[:page]).to eq(current_page)
         expect(result[:totalCount]).to eq(@shop.products.where(status: 'online').count + @shop.products.where(status: 'offline').count)
@@ -65,22 +65,22 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
         expect(result[:totalPages]).to eq(expected_total_page)
       end
 
-      context 'Request contain status filter' do
+      context 'Request contains status filter' do
         it 'should return 200 HTTP Status list of products for shop filtered by status' do
           current_page = 1
           limit = 15
 
-          possible_product_status = [Product.statuses.keys.find{|key| key =='submitted'},
-                                     Product.statuses.keys.find{|key| key =='online'},
-                                     Product.statuses.keys.find{|key| key =='offline'}]
+          possible_product_status = [Product.statuses.keys.find { |key| key == 'submitted' },
+                                     Product.statuses.keys.find { |key| key == 'online' },
+                                     Product.statuses.keys.find { |key| key == 'offline' }]
 
           request.headers['HTTP_X_CLIENT_ID'] = @shop_employee_user_token
 
           possible_product_status.each do |product_status|
-            get :index, params: {status: product_status}
+            get :index, params: { status: product_status }
 
             expect(response).to have_http_status(:ok)
-            result = JSON.parse(response.body, {symbolize_names: true})
+            result = JSON.parse(response.body, { symbolize_names: true })
             expect(result[:products]).not_to be_nil
             expect(result[:page]).to eq(current_page)
             if product_status == 'online'
@@ -102,7 +102,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
             request.headers['HTTP_X_CLIENT_ID'] = @shop_employee_user_token
 
-            get :index, params: {status: 'wrong status'}
+            get :index, params: { status: 'wrong status' }
 
             expect(response).to have_http_status(:bad_request)
             expect(response.body).to eq(Dto::Errors::BadRequest.new("Status is incorrect").to_h.to_json)
@@ -110,7 +110,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
         end
       end
 
-      context 'Request contain name filter' do
+      context 'Request contains name filter' do
         it 'should return 200 HTTP Status list of products for shop filtered by name' do
           current_page = 1
           limit = 15
@@ -118,14 +118,14 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
           pain_products = 4
 
           pain_products.times do
-            @shop.products << create(:product, status: 'online', name: "Pain")
+            @shop.products << create(:available_product, status: 'online', name: "Pain")
           end
 
           request.headers['HTTP_X_CLIENT_ID'] = @shop_employee_user_token
-          get :index, params:{name: 'Pai'}
+          get :index, params: { name: 'Pai' }
 
           expect(response).to have_http_status(:ok)
-          result = JSON.parse(response.body, {symbolize_names: true})
+          result = JSON.parse(response.body, { symbolize_names: true })
           expect(result[:products]).not_to be_nil
           expect(result[:page]).to eq(current_page)
           expect(result[:totalCount]).to eq(pain_products)
@@ -134,7 +134,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
         end
       end
 
-      context 'Request contain category filter' do
+      context 'Request contains category filter' do
         it 'should return 200 HTTP Status list of products for shop filtered by name' do
           current_page = 1
           limit = 15
@@ -144,19 +144,19 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
           sirop_category_products = 4
           sirop_category_products.times do
-            @shop.products << create(:product, status: 'online', category: sirop_category)
+            @shop.products << create(:available_product, status: 'online', category: sirop_category)
           end
 
           sauce_category_products = 4
           sauce_category_products.times do
-            @shop.products << create(:product, status: 'online', category: sauce_category)
+            @shop.products << create(:available_product, status: 'online', category: sauce_category)
           end
 
           request.headers['HTTP_X_CLIENT_ID'] = @shop_employee_user_token
-          get :index, params: {category: 'Sa'}
+          get :index, params: { category: 'Sa' }
 
           expect(response).to have_http_status(:ok)
-          result = JSON.parse(response.body, {symbolize_names: true})
+          result = JSON.parse(response.body, { symbolize_names: true })
           expect(result[:products]).not_to be_nil
           expect(result[:page]).to eq(current_page)
           expect(result[:totalCount]).to eq(sauce_category_products)
@@ -165,7 +165,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
         end
       end
 
-      context 'Request contain name and category filters' do
+      context 'Request contains name and category filters' do
         it 'should return 200 HTTP Status list of products for shop filtered by name and category' do
           current_page = 1
           limit = 15
@@ -175,19 +175,19 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
           pain_sirop_products = 7
           pain_sirop_products.times do
-            @shop.products << create(:product, status: 'online', name: "Pain", category: sirop_category)
+            @shop.products << create(:available_product, status: 'online', name: "Pain", category: sirop_category)
           end
 
           pain_sauce_products = 4
           pain_sauce_products.times do
-            @shop.products << create(:product, status: 'online', name: "Pain", category: sauce_category)
+            @shop.products << create(:available_product, status: 'online', name: "Pain", category: sauce_category)
           end
 
           request.headers['HTTP_X_CLIENT_ID'] = @shop_employee_user_token
-          get :index, params:{name: 'Pai', category: "Sa"}
+          get :index, params: { name: 'Pai', category: "Sa" }
 
           expect(response).to have_http_status(:ok)
-          result = JSON.parse(response.body, {symbolize_names: true})
+          result = JSON.parse(response.body, { symbolize_names: true })
           expect(result[:products]).not_to be_nil
           expect(result[:page]).to eq(current_page)
           expect(result[:totalCount]).to eq(pain_sauce_products)
@@ -489,6 +489,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               status: "online",
               isService: true,
               sellerAdvice: "pouet",
+              composition: "kqhsdghqsgd",
               shopId: create(:shop).id,
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
               variants: [
@@ -523,7 +524,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("origin is required")
           end
         end
 
@@ -572,7 +573,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
 
@@ -637,6 +638,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               brand: "3sixteen",
               status: "online",
               isService: true,
+              composition: 'ksdjfhjker',
               sellerAdvice: "pouet",
               shopId: create(:shop).id,
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
@@ -672,7 +674,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("origin is required")
           end
         end
 
@@ -685,6 +687,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               brand: "3sixteen",
               status: "online",
               isService: true,
+              allergens: 'hdfhzeidh',
               sellerAdvice: "pouet",
               shopId: create(:shop).id,
               origin: "France",
@@ -721,7 +724,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
 
@@ -786,6 +789,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               brand: "3sixteen",
               status: "online",
               isService: true,
+              composition: 'qskhdgqjhdg',
               sellerAdvice: "pouet",
               shopId: create(:shop).id,
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
@@ -821,7 +825,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("origin is required")
           end
         end
 
@@ -870,7 +874,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
 
@@ -936,6 +940,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               brand: "3sixteen",
               status: "online",
               isService: true,
+              composition: 'kqjsdfjksd',
               sellerAdvice: "pouet",
               shopId: create(:shop).id,
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
@@ -971,7 +976,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("origin is required")
           end
         end
 
@@ -1020,7 +1025,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
 
@@ -1087,6 +1092,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               brand: "3sixteen",
               status: "online",
               isService: true,
+              composition: "khedzeghd",
               sellerAdvice: "pouet",
               shopId: create(:shop).id,
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
@@ -1122,7 +1128,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("origin is required")
           end
         end
 
@@ -1171,7 +1177,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
 
@@ -1236,6 +1242,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               brand: "3sixteen",
               status: "online",
               isService: true,
+              composition: "ksjdhfjkhfs",
               sellerAdvice: "pouet",
               shopId: create(:shop).id,
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
@@ -1271,7 +1278,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("origin is required")
           end
         end
 
@@ -1320,7 +1327,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
 
@@ -1378,54 +1385,6 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
       context "Category is clothing group" do
         let(:category) { create(:category, group: "clothing") }
 
-        context "Origin of product is missing" do
-          it "should return 400 HTTP Status" do
-            create_params = {
-              name: "manteau MAC",
-              slug: "manteau-mac",
-              categoryId: category.id,
-              brand: "3sixteen",
-              status: "online",
-              isService: true,
-              sellerAdvice: "pouet",
-              shopId: create(:shop).id,
-              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
-              variants: [
-                {
-                  basePrice: 379,
-                  weight: 1,
-                  quantity: 0,
-                  imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
-                  isDefault: false,
-                  goodDeal: {
-                    startAt: "17/05/2021",
-                    endAt: "18/06/2021",
-                    discount: 20,
-                  },
-                  characteristics: [
-                    {
-                      value: "coloris black",
-                      name: "color",
-                    },
-                    {
-                      value: "S",
-                      name: "size",
-                    },
-                  ],
-                },
-              ],
-            }
-
-            request.headers["x-client-id"] = generate_token(user_shop_employee)
-
-            post :create, params: create_params
-
-            should respond_with(400)
-            result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
-          end
-        end
-
         context "Composition of product is missing" do
           it "should return 400 HTTP Status" do
             create_params = {
@@ -1471,7 +1430,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
             should respond_with(400)
             result = JSON.parse(response.body)
-            expect(result["detail"]).to eq("origin and composition is required")
+            expect(result["detail"]).to eq("composition is required")
           end
         end
       end
@@ -1602,8 +1561,8 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
         expect(result["id"]).to eq(product.id)
         expect(result["name"]).to eq(product.name)
         expect(result["name"]).to eq(product_params[:name])
-        variant_params_expected = product_params[:variants].find { |variant| variant[:id] == reference.id}
-        variant_to_compare = result["variants"].find { |variant| variant["id"] == variant_params_expected[:id]}
+        variant_params_expected = product_params[:variants].find { |variant| variant[:id] == reference.id }
+        variant_to_compare = result["variants"].find { |variant| variant["id"] == variant_params_expected[:id] }
         expect(variant_to_compare).not_to be_nil
         expect(variant_to_compare["basePrice"]).to eq(variant_params_expected[:basePrice])
       end

@@ -3,13 +3,14 @@ module Api
     module Admin
       module Selections
         class ProductsController < AdminsController
+          include Pagy::Backend
+
           def index
-            params[:page] ||= 1
             selection = Selection.preload(:products).find(params[:id])
-            products = Kaminari.paginate_array(selection.products).page(params[:page])
+            pagination, products = pagy(selection.products, items: params[:limit] || 16)
 
             selection_products_dtos = products.map { |product| Dto::V1::Product::Response.create(product).to_h }
-            response = { products: selection_products_dtos, page: params[:page].to_i, totalPages: products.total_pages}
+            response = { products: selection_products_dtos, page: pagination.page, totalPages: pagination.pages, totalCount: pagination.count }
             render json: response, status: :ok
           end
         end
