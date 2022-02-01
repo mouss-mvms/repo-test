@@ -740,55 +740,168 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
 
   describe "POST #create (auth)" do
     context "All ok" do
-      it "should return created a variant" do
-        shop = create(:shop)
-        product = create(:available_product)
-        shop.products << product
-        user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
-        user_shop_employee.shop_employee.shops << shop
-        user_shop_employee.shop_employee.save
+      context "with image_urls" do
+        it "should return created a variant" do
+          shop = create(:shop)
+          product = create(:available_product)
+          shop.products << product
+          user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
+          user_shop_employee.shop_employee.shops << shop
+          user_shop_employee.shop_employee.save
 
-        shop.owner = user_shop_employee.shop_employee
-        shop.save
+          shop.owner = user_shop_employee.shop_employee
+          shop.save
 
-        request.headers["x-client-id"] = generate_token(user_shop_employee)
+          request.headers["x-client-id"] = generate_token(user_shop_employee)
 
-        variant_params = {
-          basePrice: 379,
-          weight: 1,
-          quantity: 0,
-          imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
-          isDefault: false,
-          goodDeal: {
-            startAt: (DateTime.now-2).strftime('%d/%m/%Y'),
-            endAt: (DateTime.now+2).strftime('%d/%m/%Y'),
-            discount: 20,
-          },
-          characteristics: [
-            {
-              name: "color",
-              value: "coloris black",
+          variant_params = {
+            basePrice: 379,
+            weight: 1,
+            quantity: 0,
+            imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+            isDefault: false,
+            goodDeal: {
+              startAt: (DateTime.now-2).strftime('%d/%m/%Y'),
+              endAt: (DateTime.now+2).strftime('%d/%m/%Y'),
+              discount: 20,
             },
-            {
-              name: "size",
-              value: "S",
+            characteristics: [
+              {
+                name: "color",
+                value: "coloris black",
+              },
+              {
+                name: "size",
+                value: "S",
+              },
+            ],
+
+          }
+
+          post :create, params: variant_params.merge(id: product.id)
+          should respond_with(201)
+          expect(response.body).to eq(Dto::V1::Variant::Response.create(Reference.last).to_h.to_json)
+          response_body = JSON.parse(response.body).deep_symbolize_keys
+          expect(product.references.pluck(:id)).to include(response_body[:id])
+          expect(response_body[:basePrice]).to eq(variant_params[:basePrice])
+          expect(response_body[:weight]).to eq(variant_params[:weight])
+          expect(response_body[:quantity]).to eq(variant_params[:quantity])
+          expect(response_body[:imageUrls].count).to eq(variant_params[:imageUrls].count)
+          expect(response_body[:goodDeal]).not_to be_nil
+          expect(response_body[:characteristics].map(&:values)).to eq(variant_params[:characteristics].map(&:values))
+          expect(response_body[:externalVariantId]).to eq(variant_params[:externalVariantId])
+        end
+      end
+
+      context "with image_ids" do
+        it "should return created a variant" do
+          image = create(:image)
+          shop = create(:shop)
+          product = create(:available_product)
+          shop.products << product
+          user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
+          user_shop_employee.shop_employee.shops << shop
+          user_shop_employee.shop_employee.save
+
+          shop.owner = user_shop_employee.shop_employee
+          shop.save
+
+          request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+          variant_params = {
+            basePrice: 379,
+            weight: 1,
+            quantity: 0,
+            imageIds: [image.id],
+            isDefault: false,
+            goodDeal: {
+              startAt: (DateTime.now-2).strftime('%d/%m/%Y'),
+              endAt: (DateTime.now+2).strftime('%d/%m/%Y'),
+              discount: 20,
             },
-          ],
+            characteristics: [
+              {
+                name: "color",
+                value: "coloris black",
+              },
+              {
+                name: "size",
+                value: "S",
+              },
+            ],
 
-        }
+          }
 
-        post :create, params: variant_params.merge(id: product.id)
-        should respond_with(201)
-        expect(response.body).to eq(Dto::V1::Variant::Response.create(Reference.last).to_h.to_json)
-        response_body = JSON.parse(response.body).deep_symbolize_keys
-        expect(product.references.pluck(:id)).to include(response_body[:id])
-        expect(response_body[:basePrice]).to eq(variant_params[:basePrice])
-        expect(response_body[:weight]).to eq(variant_params[:weight])
-        expect(response_body[:quantity]).to eq(variant_params[:quantity])
-        expect(response_body[:imageUrls].count).to eq(variant_params[:imageUrls].count)
-        expect(response_body[:goodDeal]).not_to be_nil
-        expect(response_body[:characteristics].map(&:values)).to eq(variant_params[:characteristics].map(&:values))
-        expect(response_body[:externalVariantId]).to eq(variant_params[:externalVariantId])
+          post :create, params: variant_params.merge(id: product.id)
+          should respond_with(201)
+          expect(response.body).to eq(Dto::V1::Variant::Response.create(Reference.last).to_h.to_json)
+          response_body = JSON.parse(response.body).deep_symbolize_keys
+          expect(product.references.pluck(:id)).to include(response_body[:id])
+          expect(response_body[:basePrice]).to eq(variant_params[:basePrice])
+          expect(response_body[:weight]).to eq(variant_params[:weight])
+          expect(response_body[:quantity]).to eq(variant_params[:quantity])
+          expect(response_body[:imageUrls].count).to eq(variant_params[:imageIds].count)
+          expect(response_body[:imageUrls]).to include(image.file_url)
+          expect(response_body[:goodDeal]).not_to be_nil
+          expect(response_body[:characteristics].map(&:values)).to eq(variant_params[:characteristics].map(&:values))
+          expect(response_body[:externalVariantId]).to eq(variant_params[:externalVariantId])
+        end
+      end
+
+      context "imageIds and imageUrls are both sent" do
+        it "should return created a variant" do
+          image = create(:image)
+          shop = create(:shop)
+          product = create(:available_product)
+          shop.products << product
+          user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
+          user_shop_employee.shop_employee.shops << shop
+          user_shop_employee.shop_employee.save
+
+          shop.owner = user_shop_employee.shop_employee
+          shop.save
+
+          request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+          variant_params = {
+            basePrice: 379,
+            weight: 1,
+            quantity: 0,
+            imageIds: [image.id],
+            imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+            isDefault: false,
+            goodDeal: {
+              startAt: (DateTime.now-2).strftime('%d/%m/%Y'),
+              endAt: (DateTime.now+2).strftime('%d/%m/%Y'),
+              discount: 20,
+            },
+            characteristics: [
+              {
+                name: "color",
+                value: "coloris black",
+              },
+              {
+                name: "size",
+                value: "S",
+              },
+            ],
+
+          }
+
+          post :create, params: variant_params.merge(id: product.id)
+          should respond_with(201)
+          expect(response.body).to eq(Dto::V1::Variant::Response.create(Reference.last).to_h.to_json)
+          response_body = JSON.parse(response.body).deep_symbolize_keys
+          expect(product.references.pluck(:id)).to include(response_body[:id])
+          expect(response_body[:basePrice]).to eq(variant_params[:basePrice])
+          expect(response_body[:weight]).to eq(variant_params[:weight])
+          expect(response_body[:quantity]).to eq(variant_params[:quantity])
+          expect(response_body[:imageUrls].count).to eq(variant_params[:imageIds].count)
+          expect(response_body[:imageUrls]).to include(image.file_url)
+          expect(response_body[:goodDeal]).not_to be_nil
+          expect(response_body[:characteristics].map(&:values)).to eq(variant_params[:characteristics].map(&:values))
+          expect(response_body[:externalVariantId]).to eq(variant_params[:externalVariantId])
+        end
       end
     end
 
@@ -1105,6 +1218,54 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
               should respond_with(400)
               expect(response.body).to eq(Dto::Errors::BadRequest.new("param is missing or the value is empty: #{required_param}").to_h.to_json)
             end
+          end
+        end
+      end
+
+      context "images" do
+        context "images not found" do
+          it "returns 404 HTTP status" do
+            image_id = 0
+            shop = create(:shop)
+            product = create(:available_product)
+            shop.products << product
+            user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
+            user_shop_employee.shop_employee.shops << shop
+            user_shop_employee.shop_employee.save
+
+            shop.owner = user_shop_employee.shop_employee
+            shop.save
+
+            request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+            variant_params = {
+              basePrice: 379,
+              weight: 1,
+              quantity: 0,
+              imageIds: [image_id],
+              isDefault: false,
+              goodDeal: {
+                startAt: (DateTime.now-2).strftime('%d/%m/%Y'),
+                endAt: (DateTime.now+2).strftime('%d/%m/%Y'),
+                discount: 20,
+              },
+              characteristics: [
+                {
+                  name: "color",
+                  value: "coloris black",
+                },
+                {
+                  name: "size",
+                  value: "S",
+                },
+              ],
+
+            }
+
+            post :create, params: variant_params.merge(id: product.id)
+            should respond_with(404)
+            expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Image with 'id'=#{image_id}").to_h.to_json)
+
           end
         end
       end
