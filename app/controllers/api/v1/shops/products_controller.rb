@@ -22,14 +22,25 @@ module Api
             status = [:offline, :online]
           end
 
+          case params[:sortBy]
+          when 'created_at_asc'
+            sort_by = 'created_at ASC'
+          when 'created_at_desc'
+            sort_by = 'created_at DESC'
+          else
+            sort_by = 'created_at DESC'
+          end
+
           pagination, products = pagy(shop.products.where(status: status)
+                                          .joins(:references).distinct
                                           .where("lower(products.name) LIKE ?", params[:name] ? "%#{params[:name].downcase}%" : '%')
                                           .joins(:category)
-                                          .where("lower(categories.name) LIKE ?", params[:category] ? "%#{params[:category].downcase}%" : '%'),
-                                      {page: (params[:page] || 1), items: (params[:limit] || PER_PAGE) })
+                                          .where("lower(categories.name) LIKE ?", params[:category] ? "%#{params[:category].downcase}%" : '%')
+                                          .order(sort_by),
+                                      { page: (params[:page] || 1), items: (params[:limit] || PER_PAGE) })
 
           if stale?(products)
-            response = products.map{ |product| Dto::V1::Product::Response::create(product).to_h}
+            response = products.map { |product| Dto::V1::Product::Response::create(product).to_h }
             render json: { products: response, page: pagination.page, totalPages: pagination.pages, totalCount: pagination.count }, status: :ok
           end
         end
@@ -40,7 +51,8 @@ module Api
           raise ActionController::ParameterMissing.new('shopId') if dto_product_request.shop_id.blank?
           shop = Shop.find(dto_product_request.shop_id)
           category = Category.find(dto_product_request.category_id)
-          raise ActionController::BadRequest.new('origin and composition is required') if ::Products::CategoriesSpecifications::MustHaveLabelling.new.is_satisfied_by?(category) && (dto_product_request.origin.blank? || dto_product_request.composition.blank?)
+          raise ActionController::BadRequest.new('composition is required') if ::Products::CategoriesSpecifications::RequireComposition.new.is_satisfied_by?(category) && dto_product_request.composition.blank?
+          raise ActionController::BadRequest.new('origin is required') if ::Products::CategoriesSpecifications::RequireOrigin.new.is_satisfied_by?(category) && dto_product_request.origin.blank?
           raise ActionController::BadRequest.new('allergens is required') if ::Products::CategoriesSpecifications::HasAllergens.new.is_satisfied_by?(category) && dto_product_request.allergens.blank?
           raise ApplicationController::Forbidden.new("You could not create a product for this shop.") unless @user.shops.include?(shop)
           ActiveRecord::Base.transaction do

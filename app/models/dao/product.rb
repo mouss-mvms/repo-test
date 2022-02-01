@@ -1,111 +1,106 @@
 module Dao
   class Product
-    def self.create(product_params)
-      product_params = OpenStruct.new(product_params)
-      product = ::Product.create!(
-        name: product_params.name,
-        shop_id: product_params.shop_id,
-        category_id: product_params.category_id,
-        brand_id: ::Brand.where(name: product_params.brand).first_or_create.id,
-        is_a_service: product_params.is_service,
-        pro_advice: product_params.seller_advice,
-        origin: product_params.origin,
-        allergens: product_params.allergens,
-        composition: product_params.composition,
-        fields_attributes: [
-          { lang: "fr", field: "description", content: product_params.description },
-          { lang: "en", field: "description", content: "" }
-        ]
-      )
-
-      if product_params.citizen_id.present?
-        citizen = Citizen.find(product_params.citizen_id)
-        citizen.products << product
-        citizen.save
-        if product_params.citizen_advice
-          ::Advice.create!(
-            content: product_params.citizen_advice,
-            product_id: product.id,
-            citizen_id: product_params.citizen_id
-          )
-        end
-      end
-
-      if product_params.image_urls.present?
-        product_params.image_urls.each do |image_url|
-          Dao::Product.set_image(object: product, image_url: image_url)
-        end
-      end
-
-      if product_params.provider
-        api_provider = ApiProvider.where(name: product_params.provider[:name]).first
-        if api_provider
-          product.api_provider_product = ApiProviderProduct.create!(api_provider: api_provider,
-                                                                      external_product_id: product_params.provider[:external_product_id])
-        end
-      end
-
-      product_params.variants.each do |variant_params|
-        variant_params = OpenStruct.new(variant_params)
-        sample = ::Sample.create!(name: product_params.name, default: variant_params.is_default, product_id: product.id)
-
-        if variant_params.image_urls.present?
-          variant_params.image_urls.each do |image_url|
-            Dao::Product.set_image(object: sample, image_url: image_url)
-          end
-        end
-        characteristics = variant_params.characteristics.map { |char| OpenStruct.new(char) }
-        color_characteristic = characteristics.detect { |char| char.name == "color" }
-        size_characteristic = characteristics.detect { |char| char.name == "size" }
-
-        reference = ::Reference.create!(
-          weight: variant_params.weight,
-          quantity: variant_params.quantity,
-          base_price: variant_params.base_price,
-          product_id: product.id,
-          sample_id: sample.id,
-          shop_id: product.shop.id,
-          color_id: color_characteristic ? ::Color.where(name: color_characteristic.value).first_or_create.id : nil,
-          size_id: size_characteristic ? ::Size.where(name: size_characteristic.value).first_or_create.id : nil
+    def self.create(dto_product_request)
+      ActiveRecord::Base.transaction do
+        product = ::Product.create!(
+          name: dto_product_request.name,
+          shop_id: dto_product_request.shop_id,
+          category_id: dto_product_request.category_id,
+          brand_id: ::Brand.where(name: dto_product_request.brand).first_or_create.id,
+          is_a_service: dto_product_request.is_service,
+          pro_advice: dto_product_request.seller_advice,
+          origin: dto_product_request.origin,
+          allergens: dto_product_request.allergens,
+          composition: dto_product_request.composition,
+          fields_attributes: [
+            { lang: "fr", field: "description", content: dto_product_request.description },
+            { lang: "en", field: "description", content: "" }
+          ]
         )
 
-        good_deal_params = variant_params.good_deal ? OpenStruct.new(variant_params.good_deal) : nil
-
-        if variant_params.provider
-          api_provider = ApiProvider.where(name: variant_params.provider[:name]).first
-          if api_provider
-            reference.api_provider_variant = ApiProviderVariant.create!(api_provider: api_provider,
-                                                                        external_variant_id: variant_params.provider[:external_variant_id])
-            reference.save!
+        if dto_product_request.citizen_id.present?
+          citizen = Citizen.find(dto_product_request.citizen_id)
+          citizen.products << product
+          citizen.save
+          if dto_product_request.citizen_advice
+            ::Advice.create!(
+              content: dto_product_request.citizen_advice,
+              product_id: product.id,
+              citizen_id: dto_product_request.citizen_id
+            )
           end
         end
 
-        if good_deal_params && good_deal_params&.discount && good_deal_params&.end_at && good_deal_params&.start_at
-          reference.good_deal = ::GoodDeal.new
-          reference.good_deal.starts_at = date_from_string(date_string: good_deal_params.start_at)
-          reference.good_deal.ends_at = date_from_string(date_string: good_deal_params.end_at)
-          reference.good_deal.discount = good_deal_params.discount
-          reference.good_deal.kind = "percentage"
-          reference.good_deal.save!
+        if dto_product_request.provider
+          api_provider = ApiProvider.where(name: dto_product_request.provider[:name]).first
+          if api_provider
+            product.api_provider_product = ApiProviderProduct.create!(api_provider: api_provider,
+                                                                      external_product_id: dto_product_request.provider[:external_product_id])
+          end
         end
-      end
 
-      case product_params.status
-      when "submitted"
-        product.status = :submitted
-      when "offline"
-        product.status = :offline
-      else
-        ::Products::StatusSpecifications::CanBeOnline.new.is_satisfied_by?(product) ?
-          product.status = :online :
+        dto_product_request.variants.each do |variant_params|
+          sample = ::Sample.create!(name: dto_product_request.name, default: variant_params.is_default, product_id: product.id)
+          if variant_params.image_ids.present?
+            images = Image.where(id: variant_params.image_ids)
+            sample.images << images
+          elsif variant_params.image_urls.present?
+            variant_params.image_urls.each do |image_url|
+              Dao::Product.set_image(object: sample, image_url: image_url)
+            end
+          end
+          characteristics = variant_params.characteristics
+          color_characteristic = characteristics.detect { |char| char.name == "color" }
+          size_characteristic = characteristics.detect { |char| char.name == "size" }
+
+          reference = ::Reference.create!(
+            weight: variant_params.weight,
+            quantity: variant_params.quantity,
+            base_price: variant_params.base_price,
+            product_id: product.id,
+            sample_id: sample.id,
+            shop_id: product.shop.id,
+            color_id: color_characteristic ? ::Color.where(name: color_characteristic.value).first_or_create.id : nil,
+            size_id: size_characteristic ? ::Size.where(name: size_characteristic.value).first_or_create.id : nil
+          )
+          good_deal_params = variant_params.good_deal ? variant_params.good_deal : nil
+
+          if variant_params.provider
+            api_provider = ApiProvider.where(name: variant_params.provider[:name]).first
+            if api_provider
+              reference.api_provider_variant = ApiProviderVariant.create!(api_provider: api_provider,
+                                                                          external_variant_id: variant_params.provider[:external_variant_id])
+              reference.save!
+            end
+          end
+
+          if good_deal_params && good_deal_params&.discount && good_deal_params&.end_at && good_deal_params&.start_at
+            reference.good_deal = ::GoodDeal.new
+            reference.good_deal.starts_at = date_from_string(date_string: good_deal_params.start_at)
+            reference.good_deal.ends_at = date_from_string(date_string: good_deal_params.end_at)
+            reference.good_deal.discount = good_deal_params.discount
+            reference.good_deal.kind = "percentage"
+            reference.good_deal.save!
+          end
+        end
+
+        case dto_product_request.status
+        when "submitted"
+          product.status = :submitted
+        when "offline"
           product.status = :offline
+        else
+          ::Products::StatusSpecifications::CanBeOnline.new.is_satisfied_by?(product) ?
+            product.status = :online :
+            product.status = :offline
+        end
+        product.save!
+        return product
       end
-      product.save!
-      return product
     end
 
-    def self.create_async(product_params)
-      CreateProductJob.perform_async(JSON.dump(product_params))
+    def self.create_async(dto_product_request)
+      CreateProductJob.perform_async(JSON.dump(dto_product_request))
     end
 
     def self.update(dto_product_request:)
@@ -174,13 +169,8 @@ module Dao
     end
 
     def self.set_image(object:, image_url:)
-      begin
-        image = Shrine.remote_url(image_url)
-        object.images.create(file: image, position: 1)
-      rescue StandardError => e
-        Rails.logger.error(e)
-        Rails.logger.error(e.message)
-      end
+      image = Shrine.remote_url(image_url)
+      object.images.create!(file: image, position: 1)
     end
 
     def self.date_from_string(date_string:)

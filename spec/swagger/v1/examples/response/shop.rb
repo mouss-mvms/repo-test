@@ -27,11 +27,11 @@ module V1
                   type: :object,
                   properties: {
                     id: { type: :integer, example: 42 },
-                    originalUrl: { type: :string, example: 'https://path/to/original-image.jpg'},
-                    miniUrl: { type: :string, example: 'https://path/to/mini-format.jpg'},
-                    thumbUrl: { type: :string, example: 'https://path/to/thumb-format.jpg'},
-                    squareUrl: { type: :string, example: 'https://path/to/square-format.jpg'},
-                    wideUrl: { type: :string, example: 'https://path/to/wide-format.jpg'}
+                    originalUrl: { type: :string, example: 'https://path/to/original-image.jpg' },
+                    miniUrl: { type: :string, example: 'https://path/to/mini-format.jpg' },
+                    thumbUrl: { type: :string, example: 'https://path/to/thumb-format.jpg' },
+                    squareUrl: { type: :string, example: 'https://path/to/square-format.jpg' },
+                    wideUrl: { type: :string, example: 'https://path/to/wide-format.jpg' }
                   }
                 },
                 description: 'Images of a shop'
@@ -40,11 +40,11 @@ module V1
                 type: :object,
                 properties: {
                   id: { type: :integer, example: 42 },
-                  originalUrl: { type: :string, example: 'https://path/to/original-image.jpg'},
-                  miniUrl: { type: :string, example: 'https://path/to/mini-format.jpg'},
-                  thumbUrl: { type: :string, example: 'https://path/to/thumb-format.jpg'},
-                  squareUrl: { type: :string, example: 'https://path/to/square-format.jpg'},
-                  wideUrl: { type: :string, example: 'https://path/to/wide-format.jpg'}
+                  originalUrl: { type: :string, example: 'https://path/to/original-image.jpg' },
+                  miniUrl: { type: :string, example: 'https://path/to/mini-format.jpg' },
+                  thumbUrl: { type: :string, example: 'https://path/to/thumb-format.jpg' },
+                  squareUrl: { type: :string, example: 'https://path/to/square-format.jpg' },
+                  wideUrl: { type: :string, example: 'https://path/to/wide-format.jpg' }
                 },
                 description: "Avatar image of a shops"
               },
@@ -52,11 +52,11 @@ module V1
                 type: :object,
                 properties: {
                   id: { type: :integer, example: 42 },
-                  originalUrl: { type: :string, example: 'https://path/to/original-image.jpg'},
-                  miniUrl: { type: :string, example: 'https://path/to/mini-format.jpg'},
-                  thumbUrl: { type: :string, example: 'https://path/to/thumb-format.jpg'},
-                  squareUrl: { type: :string, example: 'https://path/to/square-format.jpg'},
-                  wideUrl: { type: :string, example: 'https://path/to/wide-format.jpg'}
+                  originalUrl: { type: :string, example: 'https://path/to/original-image.jpg' },
+                  miniUrl: { type: :string, example: 'https://path/to/mini-format.jpg' },
+                  thumbUrl: { type: :string, example: 'https://path/to/thumb-format.jpg' },
+                  squareUrl: { type: :string, example: 'https://path/to/square-format.jpg' },
+                  wideUrl: { type: :string, example: 'https://path/to/wide-format.jpg' }
                 },
                 description: "Cover image of a shops"
               },
@@ -103,6 +103,11 @@ module V1
               address: {
                 '$ref': '#/components/schemas/Address',
                 description: "Shop's address"
+              },
+              webUri: {
+                type: 'string',
+                example: 'bordeaux/boutique/ma_boutique_slug',
+                description: "MVMS web uri"
               },
               lowestProductPrice: {
                 type: :number,

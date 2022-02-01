@@ -3,7 +3,7 @@ module Dto
     module Product
       class Request
 
-        attr_accessor :id, :name, :slug, :category_id, :brand, :status, :seller_advice, :is_service, :description, :variants, :image_urls, :citizen_advice, :citizen_id, :shop_id, :origin, :composition, :allergens, :provider
+        attr_accessor :id, :name, :slug, :category_id, :brand, :status, :seller_advice, :is_service, :description, :variants, :citizen_advice, :citizen_id, :shop_id, :origin, :composition, :allergens, :provider
 
         def initialize(**args)
           @id = args[:id]
@@ -11,8 +11,6 @@ module Dto
           @slug = args[:slug]
           @brand = args[:brand]
           @status = args[:status]
-          @image_urls = []
-          args[:image_urls]&.each { |v| @image_urls << v}
           @is_service = args[:is_service]
           @seller_advice = args[:seller_advice]
           @description = args[:description]
@@ -44,6 +42,7 @@ module Dto
             brand: @brand,
             status: @status,
             image_urls: @image_urls,
+            image_ids: @image_ids,
             seller_advice: @seller_advice,
             is_service: @is_service,
             variants: @variants&.map { |variant| variant.to_h },
