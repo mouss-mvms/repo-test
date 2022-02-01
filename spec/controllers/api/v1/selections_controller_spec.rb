@@ -90,7 +90,7 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
           expect(response_body[:homePage]).to eq(@create_params[:homePage])
           expect(response_body[:event]).to eq(@create_params[:event])
           expect(response_body[:state]).to eq(@create_params[:state])
-          expect(response_body[:imageUrl]).to_not be_empty
+          expect(response_body[:image]).to_not be_empty
         end
       end
 
@@ -127,8 +127,8 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
           expect(response_body[:homePage]).to eq(@create_params[:homePage])
           expect(response_body[:event]).to eq(@create_params[:event])
           expect(response_body[:state]).to eq(@create_params[:state])
-          expect(response_body[:imageUrl]).to_not be_empty
-          expect(response_body[:imageUrl]).to eq(image.file_url)
+          expect(response_body[:image]).to_not be_empty
+          expect(response_body[:image][:originalUrl]).to eq(image.file_url)
         end
       end
 
@@ -166,8 +166,8 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
           expect(response_body[:homePage]).to eq(@create_params[:homePage])
           expect(response_body[:event]).to eq(@create_params[:event])
           expect(response_body[:state]).to eq(@create_params[:state])
-          expect(response_body[:imageUrl]).to_not be_empty
-          expect(response_body[:imageUrl]).to eq(image.file_url)
+          expect(response_body[:image]).to_not be_empty
+          expect(response_body[:image][:originalUrl]).to eq(image.file_url)
         end
       end
     end
@@ -335,7 +335,7 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
           expect(response_body[:homePage]).to eq(update_params[:homePage])
           expect(response_body[:event]).to eq(update_params[:event])
           expect(response_body[:state]).to eq(update_params[:state])
-          expect(response_body[:imageUrl]).to_not be_empty
+          expect(response_body[:image]).to_not be_empty
         end
       end
 
@@ -370,8 +370,8 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
           expect(response_body[:homePage]).to eq(update_params[:homePage])
           expect(response_body[:event]).to eq(update_params[:event])
           expect(response_body[:state]).to eq(update_params[:state])
-          expect(response_body[:imageUrl]).to_not be_empty
-          expect(response_body[:imageUrl]).to eq(image.file_url)
+          expect(response_body[:image]).to_not be_empty
+          expect(response_body[:image][:originalUrl]).to eq(image.file_url)
         end
       end
 
@@ -407,8 +407,8 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
           expect(response_body[:homePage]).to eq(update_params[:homePage])
           expect(response_body[:event]).to eq(update_params[:event])
           expect(response_body[:state]).to eq(update_params[:state])
-          expect(response_body[:imageUrl]).to_not be_empty
-          expect(response_body[:imageUrl]).to eq(image.file_url)
+          expect(response_body[:image]).to_not be_empty
+          expect(response_body[:image][:originalUrl]).to eq(image.file_url)
         end
       end
     end

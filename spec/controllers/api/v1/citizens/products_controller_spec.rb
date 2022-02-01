@@ -731,7 +731,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
           variant_to_compare = result["variants"].find { |variant| variant["id"] == variant_params_expected[:id] }
           expect(variant_to_compare).not_to be_nil
           expect(variant_to_compare["basePrice"]).to eq(variant_params_expected[:basePrice])
-          expect(variant_to_compare["imageUrls"].count).to eq(expected_images_count)
+          expect(variant_to_compare["images"].count).to eq(expected_images_count)
         end
       end
 
@@ -774,7 +774,8 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
           variant_to_compare = result["variants"].find { |variant| variant["id"] == variant_params_expected[:id] }
           expect(variant_to_compare).not_to be_nil
           expect(variant_to_compare["basePrice"]).to eq(variant_params_expected[:basePrice])
-          expect(variant_to_compare["imageUrls"].count).to eq(expected_images_count)
+          expect(variant_to_compare["images"].count).to eq(expected_images_count)
+          expect(variant_to_compare["images"].pluck("originalUrl")).to include(image_2.file_url)
         end
       end
 
@@ -818,8 +819,8 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
           variant_to_compare = result["variants"].find { |variant| variant["id"] == variant_params_expected[:id] }
           expect(variant_to_compare).not_to be_nil
           expect(variant_to_compare["basePrice"]).to eq(variant_params_expected[:basePrice])
-          expect(variant_to_compare["imageUrls"].count).to eq(expected_images_count)
-          expect(variant_to_compare["imageUrls"]).to include(image_2.file_url)
+          expect(variant_to_compare["images"].count).to eq(expected_images_count)
+          expect(variant_to_compare["images"].pluck("originalUrl")).to include(image_2.file_url)
         end
       end
     end
