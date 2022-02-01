@@ -11,7 +11,7 @@ RSpec.describe Dto::V1::Variant::Response do
         expect(result).to be_instance_of(Dto::V1::Variant::Response)
         expect(result.weight).to eq(reference.weight)
         expect(result.quantity).to eq(reference.quantity)
-        expect(result.image_urls).to eq(reference.sample.images.map(&:file_url))
+        expect(result.images).to eq(reference.sample.images.map { |image| Dto::V1::Image::Response.new(image) })
         expect(result.base_price).to eq(reference.base_price)
         expect(result.is_default).to eq(reference.sample.default)
         expect(result.good_deal).to be_instance_of(Dto::V1::GoodDeal::Response)
@@ -25,13 +25,13 @@ RSpec.describe Dto::V1::Variant::Response do
           it 'should return a Dto::V1::Variant::Response with good deal property' do
             api_provider = create(:api_provider, name: "wynd")
 
-            reference = create(:reference, good_deal: create(:good_deal, starts_at: (DateTime.now-2), ends_at: (DateTime.now+2)) ,api_provider_variant: ApiProviderVariant.create(external_variant_id: 'trf67', api_provider: api_provider))
+            reference = create(:reference, good_deal: create(:good_deal, starts_at: (DateTime.now - 2), ends_at: (DateTime.now + 2)), api_provider_variant: ApiProviderVariant.create(external_variant_id: 'trf67', api_provider: api_provider))
 
             result = Dto::V1::Variant::Response.create(reference)
             expect(result).to be_instance_of(Dto::V1::Variant::Response)
             expect(result.weight).to eq(reference.weight)
             expect(result.quantity).to eq(reference.quantity)
-            expect(result.image_urls).to eq(reference.sample.images.map(&:file_url))
+            expect(result.images).to eq(reference.sample.images.map { |image| Dto::V1::Image::Response.new(image) })
             expect(result.base_price).to eq(reference.base_price)
             expect(result.is_default).to eq(reference.sample.default)
             expect(result.good_deal).to be_instance_of(Dto::V1::GoodDeal::Response)
@@ -45,13 +45,13 @@ RSpec.describe Dto::V1::Variant::Response do
           it 'should return a Dto::V1::Variant::Response with good deal property to nil' do
             api_provider = create(:api_provider, name: "wynd")
 
-            reference = create(:reference, good_deal: create(:good_deal, starts_at: (DateTime.now+2), ends_at: (DateTime.now+4)) ,api_provider_variant: ApiProviderVariant.create(external_variant_id: 'trf67', api_provider: api_provider))
+            reference = create(:reference, good_deal: create(:good_deal, starts_at: (DateTime.now + 2), ends_at: (DateTime.now + 4)), api_provider_variant: ApiProviderVariant.create(external_variant_id: 'trf67', api_provider: api_provider))
 
             result = Dto::V1::Variant::Response.create(reference)
             expect(result).to be_instance_of(Dto::V1::Variant::Response)
             expect(result.weight).to eq(reference.weight)
             expect(result.quantity).to eq(reference.quantity)
-            expect(result.image_urls).to eq(reference.sample.images.map(&:file_url))
+            expect(result.images).to eq(reference.sample.images.map { |image| Dto::V1::Image::Response.new(image) })
             expect(result.base_price).to eq(reference.base_price)
             expect(result.is_default).to eq(reference.sample.default)
             expect(result.good_deal).to be_nil
@@ -65,13 +65,13 @@ RSpec.describe Dto::V1::Variant::Response do
           it 'should return a Dto::V1::Variant::Response with good deal property to nil' do
             api_provider = create(:api_provider, name: "wynd")
 
-            reference = create(:reference, good_deal: create(:good_deal, starts_at: (DateTime.now-4), ends_at: (DateTime.now-1)) ,api_provider_variant: ApiProviderVariant.create(external_variant_id: 'trf67', api_provider: api_provider))
+            reference = create(:reference, good_deal: create(:good_deal, starts_at: (DateTime.now - 4), ends_at: (DateTime.now - 1)), api_provider_variant: ApiProviderVariant.create(external_variant_id: 'trf67', api_provider: api_provider))
 
             result = Dto::V1::Variant::Response.create(reference)
             expect(result).to be_instance_of(Dto::V1::Variant::Response)
             expect(result.weight).to eq(reference.weight)
             expect(result.quantity).to eq(reference.quantity)
-            expect(result.image_urls).to eq(reference.sample.images.map(&:file_url))
+            expect(result.images).to eq(reference.sample.images.map { |image| Dto::V1::Image::Response.new(image) })
             expect(result.base_price).to eq(reference.base_price)
             expect(result.is_default).to eq(reference.sample.default)
             expect(result.good_deal).to be_nil
@@ -96,7 +96,7 @@ RSpec.describe Dto::V1::Variant::Response do
         expect(dto_hash[:basePrice]).to eq(dto.base_price)
         expect(dto_hash[:weight]).to eq(dto.weight)
         expect(dto_hash[:quantity]).to eq(dto.quantity)
-        expect(dto_hash[:imageUrls]).to eq(dto.image_urls)
+        expect(dto_hash[:images]).to eq(dto.images.map(&:to_h))
         expect(dto_hash[:isDefault]).to eq(dto.is_default)
         expect(dto_hash[:goodDeal]).to eq(dto.good_deal.to_h)
         expect(dto_hash[:provider][:name]).to eq(dto.provider[:name])
