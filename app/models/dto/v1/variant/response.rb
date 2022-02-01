@@ -2,14 +2,14 @@ module Dto
   module V1
     module Variant
       class Response
-        attr_reader :id, :base_price, :weight, :quantity, :is_default, :good_deal, :characteristics, :image_urls, :provider
+        attr_reader :id, :base_price, :weight, :quantity, :is_default, :good_deal, :characteristics, :images, :provider
 
         def initialize(**args)
           @id = args[:id]
           @base_price = args[:base_price]
           @weight = args[:weight]
           @quantity = args[:quantity]
-          @image_urls = args[:image_urls]
+          @images = args[:images] || []
           @is_default = args[:is_default]
           @good_deal = args[:good_deal]
           @characteristics = args[:characteristics] || []
@@ -22,7 +22,7 @@ module Dto
             id: reference.id,
             weight: reference.weight,
             quantity: reference.quantity,
-            image_urls: reference.sample.images.map(&:file_url),
+            images: reference.sample&.images&.map { |image| Dto::V1::Image::Response.create(image) },
             base_price: reference.base_price,
             is_default: reference.sample.default,
             good_deal: good_deal,
@@ -39,7 +39,7 @@ module Dto
             basePrice: @base_price,
             weight: @weight,
             quantity: @quantity,
-            imageUrls: @image_urls,
+            images: @images.map(&:to_h),
             isDefault: @is_default,
             goodDeal: @good_deal&.to_h,
             characteristics: @characteristics&.map { |characteristic| characteristic.to_h },

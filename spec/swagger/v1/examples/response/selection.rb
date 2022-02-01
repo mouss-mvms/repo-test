@@ -23,8 +23,8 @@ module V1
                 enum: ["active", "inactive"]
               },
               order: { type: :integer, example: 79, description: "Order of the  selection." },
-              imageUrl: { type: :string, example: "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg" },
-              productsCount: { type: :integer, example: 100, description: "Number of a selection's produ"}
+              image: { '$ref': '#/components/schemas/Image' },
+              productsCount: { type: :integer, example: 100, description: "Number of a selection's produ" }
             }
           }
         end

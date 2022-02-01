@@ -10,7 +10,7 @@ GEM
       redcarpet
       rubyzip (>= 1.0.0)
       will_paginate
-    mvms-core (2.5.463)
+    mvms-core (2.5.464)
       MailchimpMarketing (~> 3.0.34)
       MailchimpTransactional (~> 1.0.40)
       active_model_otp
@@ -102,7 +102,7 @@ GEM
     awesome_nested_set (3.4.0)
       activerecord (>= 4.0.0, < 7.0)
     aws-eventstream (1.2.0)
-    aws-partitions (1.549.0)
+    aws-partitions (1.551.0)
     aws-sdk-core (3.125.5)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.525.0)
@@ -485,7 +485,7 @@ DEPENDENCIES
   kaminari
   listen (~> 3.3)
   memcachier
-  mvms-core (= 2.5.463)!
+  mvms-core (= 2.5.464)!
   newrelic_rpm
   omniauth (= 1.3.1)
   pagy

@@ -22,14 +22,25 @@ module Api
             status = [:offline, :online]
           end
 
+          case params[:sortBy]
+          when 'created_at_asc'
+            sort_by = 'created_at ASC'
+          when 'created_at_desc'
+            sort_by = 'created_at DESC'
+          else
+            sort_by = 'created_at DESC'
+          end
+
           pagination, products = pagy(shop.products.where(status: status)
+                                          .joins(:references).distinct
                                           .where("lower(products.name) LIKE ?", params[:name] ? "%#{params[:name].downcase}%" : '%')
                                           .joins(:category)
-                                          .where("lower(categories.name) LIKE ?", params[:category] ? "%#{params[:category].downcase}%" : '%'),
-                                      {page: (params[:page] || 1), items: (params[:limit] || PER_PAGE) })
+                                          .where("lower(categories.name) LIKE ?", params[:category] ? "%#{params[:category].downcase}%" : '%')
+                                          .order(sort_by),
+                                      { page: (params[:page] || 1), items: (params[:limit] || PER_PAGE) })
 
           if stale?(products)
-            response = products.map{ |product| Dto::V1::Product::Response::create(product).to_h}
+            response = products.map { |product| Dto::V1::Product::Response::create(product).to_h }
             render json: { products: response, page: pagination.page, totalPages: pagination.pages, totalCount: pagination.count }, status: :ok
           end
         end

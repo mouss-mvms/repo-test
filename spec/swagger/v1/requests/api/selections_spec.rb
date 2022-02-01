@@ -75,14 +75,14 @@ RSpec.describe 'api/v1/selections', swagger_doc: 'v1/swagger.json', type: :reque
 
       response(200, 'Successful') do
         schema type: :object,
-          properties: {
-            selections: {
-              type: :array,
-              items: { '$ref': '#/components/schemas/Selection' }
-            },
-            page: { type: :integer, example: 1 },
-            totalPages: { type: :integer, example: 19 }
-          }
+               properties: {
+                 selections: {
+                   type: :array,
+                   items: { '$ref': '#/components/schemas/Selection' }
+                 },
+                 page: { type: :integer, example: 1 },
+                 totalPages: { type: :integer, example: 19 }
+               }
         run_test!
       end
 
@@ -232,14 +232,14 @@ RSpec.describe 'api/v1/selections', swagger_doc: 'v1/swagger.json', type: :reque
 
       response(200, 'successful') do
         schema type: :object,
-          properties: {
-            selections: {
-              type: :array,
-              items: { '$ref': '#/components/schemas/Selection' }
-            },
-            page: { type: :integer, example: 1 },
-            totalPages: { type: :integer, example: 19 }
-          }
+               properties: {
+                 selections: {
+                   type: :array,
+                   items: { '$ref': '#/components/schemas/Selection' }
+                 },
+                 page: { type: :integer, example: 1 },
+                 totalPages: { type: :integer, example: 19 }
+               }
         run_test!
       end
     end

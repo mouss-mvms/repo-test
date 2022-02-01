@@ -33,7 +33,7 @@ module Dao
         api_provider = ApiProvider.where(name: dto_variant_request.provider[:name]).first
         if api_provider
           reference.api_provider_variant = ApiProviderVariant.create!(api_provider: api_provider,
-                                                                    external_variant_id: dto_variant_request.provider[:external_variant_id])
+                                                                      external_variant_id: dto_variant_request.provider[:external_variant_id])
           reference.save!
 
         end
@@ -112,6 +112,7 @@ module Dao
       begin
         image = Shrine.remote_url(image_url)
         object.images.create(file: image, position: 1)
+        object.save!
       rescue StandardError => e
         Rails.logger.error(e)
         Rails.logger.error(e.message)

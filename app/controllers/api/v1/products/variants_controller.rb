@@ -24,7 +24,7 @@ module Api
           dto_variant_request = Dto::V1::Variant::Request.new(offline_variant_params)
           ActiveRecord::Base.transaction do
             variant = Dao::Variant.create(dto_variant_request: dto_variant_request)
-            response = Dto::V1::Variant::Response.create(variant).to_h
+            response = Dto::V1::Variant::Response.create(Reference.find(variant.id)).to_h
             return render json: response, status: 201
           end
         end
