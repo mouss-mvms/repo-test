@@ -2,7 +2,7 @@ module Dto
   module V1
     module Product
       class Response
-        attr_reader :id, :name, :slug, :category, :brand, :status, :seller_advice, :is_service, :description, :variants, :image_urls, :citizen_advice, :origin, :allergens, :composition, :provider, :shop_id, :shop_name, :citizen
+        attr_reader :id, :name, :slug, :category, :brand, :status, :seller_advice, :is_service, :description, :variants, :citizen_advice, :origin, :allergens, :composition, :provider, :shop_id, :shop_name, :citizen
         attr_reader :created_at, :updated_at
 
         def initialize(**args)
@@ -16,7 +16,6 @@ module Dto
           @seller_advice = args[:seller_advice]
           @shop_id = args[:shop_id]
           @shop_name = args[:shop_name]
-          @image_urls = args[:image_urls]
           @description = args[:description]
           @variants = []
           args[:variants]&.each do |variant|
@@ -42,7 +41,6 @@ module Dto
             seller_advice: product.pro_advice,
             shop_id: product.shop.id,
             shop_name: product.shop.name,
-            image_urls: product.images.map(&:file_url),
             category: Dto::V1::Category::Response.create(product.category),
             variants: product.references&.map { |reference| Dto::V1::Variant::Response.create(reference) },
             citizen_advice: product.advice&.content,
@@ -62,7 +60,6 @@ module Dto
             category: @category.to_h,
             brand: @brand,
             status: @status,
-            imageUrls: @image_urls,
             shopId: @shop_id,
             shopName: @shop_name,
             sellerAdvice: @seller_advice,

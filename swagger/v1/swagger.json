@@ -8518,8 +8518,8 @@
                     },
                     "imageUrl": {
                       "type": "string",
-                      "example": "https://path/to/image.jpeg",
-                      "description": "Image url of the Tag."
+                      "example": "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg",
+                      "description": "ImageUrl of a tag."
                     }
                   }
                 }
@@ -8705,19 +8705,12 @@
                       "example": 20,
                       "description": "Quantity in stock of a variant."
                     },
-                    "imageUrls": {
+                    "images": {
                       "type": "array",
                       "items": {
-                        "type": "string"
+                        "$ref": "#/components/schemas/Image"
                       },
-                      "example": [
-                        "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr",
-                        "https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg"
-                      ],
-                      "default": [
-
-                      ],
-                      "description": "List of variant images urls"
+                      "description": "Array of images"
                     },
                     "isDefault": {
                       "type": "boolean",
@@ -9012,19 +9005,12 @@
                       "example": 20,
                       "description": "Quantity in stock of a variant."
                     },
-                    "imageUrls": {
+                    "images": {
                       "type": "array",
                       "items": {
-                        "type": "string"
+                        "$ref": "#/components/schemas/Image"
                       },
-                      "example": [
-                        "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr",
-                        "https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg"
-                      ],
-                      "default": [
-
-                      ],
-                      "description": "List of variant images urls"
+                      "description": "Array of images"
                     },
                     "isDefault": {
                       "type": "boolean",
@@ -10511,9 +10497,8 @@
             "example": 79,
             "description": "Order of the  selection."
           },
-          "imageUrl": {
-            "type": "string",
-            "example": "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg"
+          "image": {
+            "$ref": "#/components/schemas/Image"
           },
           "productsCount": {
             "type": "integer",
@@ -11188,8 +11173,8 @@
           },
           "imageUrl": {
             "type": "string",
-            "example": "https://path/to/image.jpeg",
-            "description": "Image url of the Tag."
+            "example": "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg",
+            "description": "ImageUrl of a tag."
           }
         }
       },
@@ -11219,19 +11204,12 @@
             "example": 20,
             "description": "Quantity in stock of a variant."
           },
-          "imageUrls": {
+          "images": {
             "type": "array",
             "items": {
-              "type": "string"
+              "$ref": "#/components/schemas/Image"
             },
-            "example": [
-              "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr",
-              "https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg"
-            ],
-            "default": [
-
-            ],
-            "description": "List of variant images urls"
+            "description": "Array of images"
           },
           "isDefault": {
             "type": "boolean",

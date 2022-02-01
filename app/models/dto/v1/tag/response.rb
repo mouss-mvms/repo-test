@@ -18,7 +18,7 @@ module Dto
             name: tag.name,
             status: tag.status,
             featured: tag.featured,
-            image_url: tag.image_url,
+            image_url: tag.image_url
           )
         end
 
