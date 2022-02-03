@@ -88,7 +88,26 @@ module Api
           end
         end
 
+        def reject
+          raise ApplicationController::Forbidden.new unless @user.is_a_business_user?
+          product = @user.shop_employee.shops.last.products.find(params[:id])
+          raise ApplicationController::UnprocessableEntity.new unless product.submitted?
+          product.status = :refused
+          product.type_citizen_refuse = reject_params[:type_citizen_refuse].to_sym
+          product.text_citizen_refuse = reject_params[:text_citizen_refuse]
+          product.save!
+
+          render json: Dto::V1::Product::Response.create(product).to_h, status: :ok
+        end
+
         private
+
+        def reject_params
+          {
+            type_citizen_refuse: params[:typeCitizenRefuse],
+            text_citizen_refuse: params[:textCitizenRefuse]
+          }
+        end
 
         def product_params_update
           product_params = {}

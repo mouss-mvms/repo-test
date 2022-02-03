@@ -24,6 +24,8 @@ RSpec.describe Dto::V1::Product::Response do
         expect(result.citizen_advice).to eq(product.advice&.content)
         expect(result.created_at).to eq(product.created_at)
         expect(result.updated_at).to eq(product.updated_at)
+        expect(result.type_citizen_refuse).to eq(product.type_citizen_refuse)
+        expect(result.text_citizen_refuse).to eq(product.text_citizen_refuse)
       end
 
       context 'Product was created by a citizen' do
@@ -50,6 +52,8 @@ RSpec.describe Dto::V1::Product::Response do
           expect(result.citizen).to be_instance_of(Dto::V1::Citizen::Response)
           expect(result.created_at).to eq(product.created_at)
           expect(result.updated_at).to eq(product.updated_at)
+          expect(result.type_citizen_refuse).to eq(product.type_citizen_refuse)
+          expect(result.text_citizen_refuse).to eq(product.text_citizen_refuse)
         end
       end
     end
@@ -80,6 +84,8 @@ RSpec.describe Dto::V1::Product::Response do
         expect(dto_hash[:citizen]).to eq(dto.citizen.to_h)
         expect(dto_hash[:createdAt]).to eq(dto.created_at)
         expect(dto_hash[:updatedAt]).to eq(dto.updated_at)
+        expect(dto_hash[:typeCitizenRefuse]).to eq(dto.type_citizen_refuse)
+        expect(dto_hash[:textCitizenRefuse]).to eq(dto.text_citizen_refuse)
       end
     end
   end
