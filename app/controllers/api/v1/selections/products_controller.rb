@@ -13,10 +13,10 @@ module Api
           selection = Selection.preload(:products).find(params[:id])
           raise ApplicationController::Forbidden unless Selection.online.include?(selection)
 
-          products = Kaminari.paginate_array(selection.products).page(params[:page])
+          products = Kaminari.paginate_array(selection.products.joins(:references).distinct).page(params[:page])
 
           selection_products_dtos = products.map { |product| Dto::V1::Product::Response.create(product).to_h }
-          response = { products: selection_products_dtos, page: params[:page].to_i, totalPages: products.total_pages}
+          response = { products: selection_products_dtos, page: params[:page].to_i, totalPages: products.total_pages }
           render json: response, status: :ok
         end
 

@@ -25,7 +25,7 @@ RSpec.describe Api::V1::VariantsController, type: :controller do
           expect(result[:quantity]).to eq(variant_params[:quantity])
           expect(result[:isDefault]).to eq(variant_params[:isDefault])
           expect(result[:goodDeal]).not_to be_nil
-          expect(result[:imageUrls]).to_not be_nil
+          expect(result[:images]).to eq(reference.sample.images.map { |image| Dto::V1::Image::Response.create(image).to_h })
           hash_variant_params = JSON.parse(variant_params[:characteristics], symbolize_names: true)
           variant_params_mapped = hash_variant_params.map { |c| [c[:name], c[:value]] }
           result[:characteristics].each do |charac|
@@ -54,7 +54,7 @@ RSpec.describe Api::V1::VariantsController, type: :controller do
             expect(result[:quantity]).to eq(0)
             expect(result[:isDefault]).to eq(variant_params[:isDefault])
             expect(result[:goodDeal]).not_to be_nil
-            expect(result[:imageUrls]).to_not be_nil
+            expect(result[:images]).to eq(reference.sample.images.map { |image| Dto::V1::Image::Response.create(image).to_h })
             hash_variant_params = JSON.parse(variant_params[:characteristics], symbolize_names: true)
             variant_params_mapped = hash_variant_params.map { |c| [c[:name], c[:value]] }
             result[:characteristics].each do |charac|
@@ -84,7 +84,7 @@ RSpec.describe Api::V1::VariantsController, type: :controller do
             expect(result[:quantity]).to eq(variant_params[:quantity])
             expect(result[:isDefault]).to eq(variant_params[:isDefault])
             expect(result[:goodDeal]).not_to be_nil
-            expect(result[:imageUrls]).to_not be_nil
+            expect(result[:images]).to eq(reference.sample.images.map { |image| Dto::V1::Image::Response.create(image).to_h })
             hash_variant_params = JSON.parse(variant_params[:characteristics], symbolize_names: true)
             variant_params_mapped = hash_variant_params.map { |c| [c[:name], c[:value]] }
             result[:characteristics].each do |charac|
@@ -116,7 +116,7 @@ RSpec.describe Api::V1::VariantsController, type: :controller do
               expect(result[:quantity]).to eq(variant_params[:quantity])
               expect(result[:isDefault]).to eq(variant_params[:isDefault])
               expect(result[:goodDeal]).not_to be_nil
-              expect(result[:imageUrls]).to_not be_nil
+              expect(result[:images]).to eq(reference.sample.images.map { |image| Dto::V1::Image::Response.create(image).to_h })
               hash_variant_params = JSON.parse(variant_params[:characteristics], symbolize_names: true)
               variant_params_mapped = hash_variant_params.map { |c| [c[:name], c[:value]] }
               result[:characteristics].each do |charac|
@@ -148,7 +148,7 @@ RSpec.describe Api::V1::VariantsController, type: :controller do
           expect(result[:quantity]).to eq(variant_params[:quantity])
           expect(result[:isDefault]).to eq(variant_params[:isDefault])
           expect(result[:goodDeal]).not_to be_nil
-          expect(result[:imageUrls]).to_not be_nil
+          expect(result[:images]).to eq(reference.sample.images.map { |image| Dto::V1::Image::Response.create(image).to_h })
           hash_variant_params = JSON.parse(variant_params[:characteristics], symbolize_names: true)
           variant_params_mapped = hash_variant_params.map { |c| [c[:name], c[:value]] }
           result[:characteristics].each do |charac|
@@ -225,7 +225,7 @@ RSpec.describe Api::V1::VariantsController, type: :controller do
         expect(result[:quantity]).to eq(variant_params[:quantity])
         expect(result[:isDefault]).to eq(variant_params[:isDefault])
         expect(result[:goodDeal]).not_to be_nil
-        expect(result[:imageUrls]).to_not be_nil
+        expect(result[:images]).to eq(reference.sample.images.map { |image| Dto::V1::Image::Response.create(image).to_h })
         hash_variant_params = JSON.parse(variant_params[:characteristics], symbolize_names: true)
         variant_params_mapped = hash_variant_params.map { |c| [c[:name], c[:value]] }
         result[:characteristics].each do |charac|
@@ -254,7 +254,7 @@ RSpec.describe Api::V1::VariantsController, type: :controller do
           expect(result[:quantity]).to eq(0)
           expect(result[:isDefault]).to eq(variant_params[:isDefault])
           expect(result[:goodDeal]).not_to be_nil
-          expect(result[:imageUrls]).to_not be_nil
+          expect(result[:images]).to eq(reference.sample.images.map { |image| Dto::V1::Image::Response.create(image).to_h })
           hash_variant_params = JSON.parse(variant_params[:characteristics], symbolize_names: true)
           variant_params_mapped = hash_variant_params.map { |c| [c[:name], c[:value]] }
           result[:characteristics].each do |charac|
@@ -285,7 +285,7 @@ RSpec.describe Api::V1::VariantsController, type: :controller do
           expect(result[:quantity]).to eq(variant_params[:quantity])
           expect(result[:isDefault]).to eq(variant_params[:isDefault])
           expect(result[:goodDeal]).not_to be_nil
-          expect(result[:imageUrls]).to_not be_nil
+          expect(result[:images]).to eq(reference.sample.images.map { |image| Dto::V1::Image::Response.create(image).to_h })
           hash_variant_params = JSON.parse(variant_params[:characteristics], symbolize_names: true)
           variant_params_mapped = hash_variant_params.map { |c| [c[:name], c[:value]] }
           result[:characteristics].each do |charac|
@@ -316,8 +316,8 @@ def variant_params
     quantity: 4,
     isDefault: true,
     goodDeal: {
-      startAt: (DateTime.now-2).strftime('%d/%m/%Y'),
-      endAt: (DateTime.now+2).strftime('%d/%m/%Y'),
+      startAt: (DateTime.now - 2).strftime('%d/%m/%Y'),
+      endAt: (DateTime.now + 2).strftime('%d/%m/%Y'),
       discount: 20.0,
     }.to_json,
     characteristics: [

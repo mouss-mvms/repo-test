@@ -1117,6 +1117,14 @@
                         "name,",
                         "externalProductId"
                       ]
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "description": "DateTime of creation of product"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "description": "DateTime of last update of product"
                     }
                   }
                 }
@@ -1287,7 +1295,7 @@
                           "default": [
 
                           ],
-                          "description": "List of product images ids (required if no imageUrls)"
+                          "description": "List of product images ids"
                         },
                         "imageUrls": {
                           "type": "array",
@@ -2321,6 +2329,22 @@
                     "type": "boolean",
                     "example": true,
                     "description": "Tell if this variant is the product's default variant"
+                  },
+                  "imageIds": {
+                    "type": "array",
+                    "maxItems": 5,
+                    "items": {
+                      "type": "number"
+                    },
+                    "example": [
+                      234,
+                      45566,
+                      345
+                    ],
+                    "default": [
+
+                    ],
+                    "description": "List of product images ids"
                   },
                   "imageUrls": {
                     "type": "array",
@@ -4779,7 +4803,7 @@
 
         ],
         "responses": {
-          "201": {
+          "200": {
             "description": "successful",
             "content": {
               "application/json": {
@@ -4951,15 +4975,20 @@
                       "active"
                     ]
                   },
+                  "imageId": {
+                    "type": "ninteger",
+                    "example": 1,
+                    "description": "Required if no imageUrl"
+                  },
                   "imageUrl": {
                     "type": "string",
-                    "example": "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg"
+                    "example": "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg",
+                    "description": "Required if no imageId"
                   }
                 },
                 "required": [
                   "name",
-                  "description",
-                  "imageUrl"
+                  "description"
                 ]
               }
             }
@@ -5295,6 +5324,10 @@
                       "disabled",
                       "active"
                     ]
+                  },
+                  "imageId": {
+                    "type": "integer",
+                    "example": 1
                   },
                   "imageUrl": {
                     "type": "string",
@@ -6363,6 +6396,22 @@
                           "example": true,
                           "description": "Tell if this variant is the product's default variant"
                         },
+                        "imageIds": {
+                          "type": "array",
+                          "maxItems": 5,
+                          "items": {
+                            "type": "number"
+                          },
+                          "example": [
+                            234,
+                            45566,
+                            345
+                          ],
+                          "default": [
+
+                          ],
+                          "description": "List of product images ids"
+                        },
                         "imageUrls": {
                           "type": "array",
                           "items": {
@@ -6508,6 +6557,17 @@
             "name": "limit",
             "in": "query",
             "description": "Set as 15 if not set"
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "created_at_desc",
+                "created_at_asc"
+              ]
+            }
           }
         ],
         "responses": {
@@ -6774,6 +6834,14 @@
                         "name,",
                         "externalProductId"
                       ]
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "description": "DateTime of creation of product"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "description": "DateTime of last update of product"
                     }
                   }
                 }
@@ -6966,6 +7034,22 @@
                           "type": "boolean",
                           "example": true,
                           "description": "Tell if this variant is the product's default variant (Required if new variant)"
+                        },
+                        "imageIds": {
+                          "type": "array",
+                          "maxItems": 5,
+                          "items": {
+                            "type": "number"
+                          },
+                          "example": [
+                            234,
+                            45566,
+                            345
+                          ],
+                          "default": [
+
+                          ],
+                          "description": "List of product images ids"
                         },
                         "imageUrls": {
                           "type": "array",
@@ -7775,6 +7859,34 @@
                     "example": "Jardin Local",
                     "description": "Display name of a shop."
                   },
+                  "avatarId": {
+                    "type": "integer",
+                    "example": 1,
+                    "description": "Avatar id of a shop"
+                  },
+                  "avatarUrl": {
+                    "type": "string",
+                    "example": "http://www.image.com/image.jpg",
+                    "description": "Avatar url of a shop"
+                  },
+                  "coverId": {
+                    "type": "integer",
+                    "example": 1,
+                    "description": "Cover id of a shop"
+                  },
+                  "coverUrl": {
+                    "type": "string",
+                    "example": "http://www.image.com/image.jpg",
+                    "description": "Cover url of a shop"
+                  },
+                  "imageIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "description": "Image ids of shop"
+                  },
                   "imageUrls": {
                     "type": "array",
                     "items": {
@@ -7877,11 +7989,6 @@
                       "longitude",
                       "inseeCode"
                     ]
-                  },
-                  "avatarImageId": {
-                    "type": "integer",
-                    "example": 14,
-                    "description": "Image id wanted to be the shop's avatar image"
                   }
                 },
                 "required": [
@@ -7973,13 +8080,41 @@
                     "example": "Jardin Local",
                     "description": "Display name of a shop."
                   },
+                  "avatarId": {
+                    "type": "integer",
+                    "example": 1,
+                    "description": "Avatar id of a shop"
+                  },
+                  "avatarUrl": {
+                    "type": "string",
+                    "example": "http://www.image.com/image.jpg",
+                    "description": "Avatar url of a shop"
+                  },
+                  "coverId": {
+                    "type": "integer",
+                    "example": 1,
+                    "description": "Cover id of a shop"
+                  },
+                  "coverUrl": {
+                    "type": "string",
+                    "example": "http://www.image.com/image.jpg",
+                    "description": "Cover url of a shop"
+                  },
+                  "imageIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "description": "Image ids of shop"
+                  },
                   "imageUrls": {
                     "type": "array",
                     "items": {
                       "type": "string",
                       "example": "http://www.image.com/image.jpg"
                     },
-                    "description": "Images of a shop"
+                    "description": "Image urls of a shop"
                   },
                   "email": {
                     "type": "string",
@@ -8491,8 +8626,8 @@
                     },
                     "imageUrl": {
                       "type": "string",
-                      "example": "https://path/to/image.jpeg",
-                      "description": "Image url of the Tag."
+                      "example": "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg",
+                      "description": "ImageUrl of a tag."
                     }
                   }
                 }
@@ -8678,19 +8813,12 @@
                       "example": 20,
                       "description": "Quantity in stock of a variant."
                     },
-                    "imageUrls": {
+                    "images": {
                       "type": "array",
                       "items": {
-                        "type": "string"
+                        "$ref": "#/components/schemas/Image"
                       },
-                      "example": [
-                        "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr",
-                        "https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg"
-                      ],
-                      "default": [
-
-                      ],
-                      "description": "List of variant images urls"
+                      "description": "Array of images"
                     },
                     "isDefault": {
                       "type": "boolean",
@@ -8985,19 +9113,12 @@
                       "example": 20,
                       "description": "Quantity in stock of a variant."
                     },
-                    "imageUrls": {
+                    "images": {
                       "type": "array",
                       "items": {
-                        "type": "string"
+                        "$ref": "#/components/schemas/Image"
                       },
-                      "example": [
-                        "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr",
-                        "https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg"
-                      ],
-                      "default": [
-
-                      ],
-                      "description": "List of variant images urls"
+                      "description": "Array of images"
                     },
                     "isDefault": {
                       "type": "boolean",
@@ -9714,6 +9835,14 @@
               "name,",
               "externalProductId"
             ]
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "DateTime of creation of product"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "DateTime of last update of product"
           }
         }
       },
@@ -10476,9 +10605,8 @@
             "example": 79,
             "description": "Order of the  selection."
           },
-          "imageUrl": {
-            "type": "string",
-            "example": "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg"
+          "image": {
+            "$ref": "#/components/schemas/Image"
           },
           "productsCount": {
             "type": "integer",
@@ -11153,8 +11281,8 @@
           },
           "imageUrl": {
             "type": "string",
-            "example": "https://path/to/image.jpeg",
-            "description": "Image url of the Tag."
+            "example": "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg",
+            "description": "ImageUrl of a tag."
           }
         }
       },
@@ -11184,19 +11312,12 @@
             "example": 20,
             "description": "Quantity in stock of a variant."
           },
-          "imageUrls": {
+          "images": {
             "type": "array",
             "items": {
-              "type": "string"
+              "$ref": "#/components/schemas/Image"
             },
-            "example": [
-              "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr",
-              "https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg"
-            ],
-            "default": [
-
-            ],
-            "description": "List of variant images urls"
+            "description": "Array of images"
           },
           "isDefault": {
             "type": "boolean",

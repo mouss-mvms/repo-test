@@ -12,7 +12,7 @@ module Api
           order = [params[:sort_by].split('-')].to_h if params[:sort_by]
           page = params[:page] ? params[:page].to_i : 1
           limit = params[:limit] || PER_PAGE
-          products = Kaminari.paginate_array(@citizen.products.order(order).includes(:category, :brand, references: [:sample, :color, :size, :good_deal]).actives).page(page).per(limit)
+          products = Kaminari.paginate_array(@citizen.products.joins(:references).distinct.order(order).includes(:category, :brand, references: [:sample, :color, :size, :good_deal]).actives).page(page).per(limit)
           if stale?(products)
             response = {
               products: products.map { |product| Dto::V1::Product::Response.create(product).to_h },
@@ -73,7 +73,6 @@ module Api
           if params[:variants]
             params[:variants].each do |v|
               hash = {}
-              raise ActionController::BadRequest.new("You can only pass imageIds or imageUrls, not both.") if v[:imageIds] && v[:imageUrls]
               if v[:imageIds]
                 hash[:image_ids] = v.require(:imageIds) if v[:imageIds].each { |id| Image.find(id).file_url }
               elsif v[:imageUrls]
@@ -115,7 +114,6 @@ module Api
             hash[:quantity] = v[:quantity] || 0
             hash[:is_default] = v[:isDefault]
             raise ActionController::ParameterMissing.new("imageIds or imageUrls") unless v[:imageIds] || v[:imageUrls]
-            raise ActionController::BadRequest.new("You can only pass imageIds or imageUrls, not both.") if v[:imageIds] && v[:imageUrls]
             if v[:imageIds] && v[:imageIds].count <= 5
               hash[:image_ids] = v.require(:imageIds) if v[:imageIds].each { |id| Image.find(id) }
             elsif v[:imageUrls] && v[:imageUrls].count <= 5

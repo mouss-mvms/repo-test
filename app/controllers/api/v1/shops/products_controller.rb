@@ -22,14 +22,25 @@ module Api
             status = [:offline, :online]
           end
 
+          case params[:sortBy]
+          when 'created_at_asc'
+            sort_by = 'created_at ASC'
+          when 'created_at_desc'
+            sort_by = 'created_at DESC'
+          else
+            sort_by = 'created_at DESC'
+          end
+
           pagination, products = pagy(shop.products.where(status: status)
+                                          .joins(:references).distinct
                                           .where("lower(products.name) LIKE ?", params[:name] ? "%#{params[:name].downcase}%" : '%')
                                           .joins(:category)
-                                          .where("lower(categories.name) LIKE ?", params[:category] ? "%#{params[:category].downcase}%" : '%'),
-                                      {page: (params[:page] || 1), items: (params[:limit] || PER_PAGE) })
+                                          .where("lower(categories.name) LIKE ?", params[:category] ? "%#{params[:category].downcase}%" : '%')
+                                          .order(sort_by),
+                                      { page: (params[:page] || 1), items: (params[:limit] || PER_PAGE) })
 
           if stale?(products)
-            response = products.map{ |product| Dto::V1::Product::Response::create(product).to_h}
+            response = products.map { |product| Dto::V1::Product::Response::create(product).to_h }
             render json: { products: response, page: pagination.page, totalPages: pagination.pages, totalCount: pagination.count }, status: :ok
           end
         end
@@ -68,10 +79,6 @@ module Api
             Rails.logger.error(e.message)
             error = Dto::Errors::NotFound.new(e.message)
             return render json: error.to_h, status: error.status
-          rescue => e
-            Rails.logger.error(e.message)
-            error = Dto::Errors::InternalServer.new(detail: e.message)
-            return render json: error.to_h, status: error.status
           else
             return render json: Dto::V1::Product::Response.create(product).to_h, status: :ok
           end
@@ -102,7 +109,11 @@ module Api
                 hash[:weight] = v[:weight]
                 hash[:quantity] = v[:quantity]
                 hash[:is_default] = v[:isDefault]
-                hash[:image_urls] = v[:imageUrls]
+                if v[:imageIds]
+                  hash[:image_ids] = v.require(:imageIds) if v[:imageIds].each { |id| Image.find(id).file_url }
+                elsif v[:imageUrls]
+                  hash[:image_urls] = v.require(:imageUrls)
+                end
                 hash[:characteristics] = []
                 if v[:characteristics]
                   v.require(:characteristics).each { |c|
@@ -118,7 +129,6 @@ module Api
                 hash[:weight] = v.require(:weight)
                 hash[:quantity] = v.require(:quantity)
                 hash[:is_default] = v.require(:isDefault)
-                hash[:image_urls] = v[:imageUrls]
                 hash[:characteristics] = []
                 v.require(:characteristics).each { |c|
                   characteristic = {}
@@ -149,7 +159,6 @@ module Api
           product_params[:seller_advice] = params.require(:sellerAdvice)
           product_params[:is_service] = params.require(:isService)
           product_params[:citizen_advice] = params.permit(:citizenAdvice).values.first
-          #product_params[:image_urls] = params[:imageUrls]
           product_params[:category_id] = params.require(:categoryId)
           product_params[:shop_id] = params[:shopId].to_i if params[:shopId]
           product_params[:allergens] = params[:allergens]
@@ -162,7 +171,11 @@ module Api
             hash[:weight] = v.require(:weight)
             hash[:quantity] = v.require(:quantity)
             hash[:is_default] = v.require(:isDefault)
-            hash[:image_urls] = v[:imageUrls]
+            if v[:imageIds]
+              hash[:image_ids] = v.require(:imageIds) if v[:imageIds].each { |id| Image.find(id) }
+            elsif v[:imageUrls]
+              hash[:image_urls] = v.require(:imageUrls)
+            end
             if v[:goodDeal]
               hash[:good_deal] = {}
               hash[:good_deal][:start_at] = v[:goodDeal].require(:startAt)

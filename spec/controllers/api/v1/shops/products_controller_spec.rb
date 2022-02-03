@@ -31,15 +31,15 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
         @shop_employee_user_token = generate_token(@shop_employee_user)
 
         3.times do
-          @shop.products << create(:product, status: 'submitted')
+          @shop.products << create(:available_product, status: 'submitted')
         end
 
         6.times do
-          @shop.products << create(:product, status: 'online')
+          @shop.products << create(:available_product, status: 'online')
         end
 
         19.times do
-          @shop.products << create(:product, status: 'offline')
+          @shop.products << create(:available_product, status: 'offline')
         end
       end
 
@@ -57,7 +57,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
         get :index
 
         expect(response).to have_http_status(:ok)
-        result = JSON.parse(response.body, {symbolize_names: true})
+        result = JSON.parse(response.body, { symbolize_names: true })
         expect(result[:products]).not_to be_nil
         expect(result[:page]).to eq(current_page)
         expect(result[:totalCount]).to eq(@shop.products.where(status: 'online').count + @shop.products.where(status: 'offline').count)
@@ -65,22 +65,22 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
         expect(result[:totalPages]).to eq(expected_total_page)
       end
 
-      context 'Request contain status filter' do
+      context 'Request contains status filter' do
         it 'should return 200 HTTP Status list of products for shop filtered by status' do
           current_page = 1
           limit = 15
 
-          possible_product_status = [Product.statuses.keys.find{|key| key =='submitted'},
-                                     Product.statuses.keys.find{|key| key =='online'},
-                                     Product.statuses.keys.find{|key| key =='offline'}]
+          possible_product_status = [Product.statuses.keys.find { |key| key == 'submitted' },
+                                     Product.statuses.keys.find { |key| key == 'online' },
+                                     Product.statuses.keys.find { |key| key == 'offline' }]
 
           request.headers['HTTP_X_CLIENT_ID'] = @shop_employee_user_token
 
           possible_product_status.each do |product_status|
-            get :index, params: {status: product_status}
+            get :index, params: { status: product_status }
 
             expect(response).to have_http_status(:ok)
-            result = JSON.parse(response.body, {symbolize_names: true})
+            result = JSON.parse(response.body, { symbolize_names: true })
             expect(result[:products]).not_to be_nil
             expect(result[:page]).to eq(current_page)
             if product_status == 'online'
@@ -102,7 +102,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
             request.headers['HTTP_X_CLIENT_ID'] = @shop_employee_user_token
 
-            get :index, params: {status: 'wrong status'}
+            get :index, params: { status: 'wrong status' }
 
             expect(response).to have_http_status(:bad_request)
             expect(response.body).to eq(Dto::Errors::BadRequest.new("Status is incorrect").to_h.to_json)
@@ -110,7 +110,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
         end
       end
 
-      context 'Request contain name filter' do
+      context 'Request contains name filter' do
         it 'should return 200 HTTP Status list of products for shop filtered by name' do
           current_page = 1
           limit = 15
@@ -118,14 +118,14 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
           pain_products = 4
 
           pain_products.times do
-            @shop.products << create(:product, status: 'online', name: "Pain")
+            @shop.products << create(:available_product, status: 'online', name: "Pain")
           end
 
           request.headers['HTTP_X_CLIENT_ID'] = @shop_employee_user_token
-          get :index, params:{name: 'Pai'}
+          get :index, params: { name: 'Pai' }
 
           expect(response).to have_http_status(:ok)
-          result = JSON.parse(response.body, {symbolize_names: true})
+          result = JSON.parse(response.body, { symbolize_names: true })
           expect(result[:products]).not_to be_nil
           expect(result[:page]).to eq(current_page)
           expect(result[:totalCount]).to eq(pain_products)
@@ -134,7 +134,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
         end
       end
 
-      context 'Request contain category filter' do
+      context 'Request contains category filter' do
         it 'should return 200 HTTP Status list of products for shop filtered by name' do
           current_page = 1
           limit = 15
@@ -144,19 +144,19 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
           sirop_category_products = 4
           sirop_category_products.times do
-            @shop.products << create(:product, status: 'online', category: sirop_category)
+            @shop.products << create(:available_product, status: 'online', category: sirop_category)
           end
 
           sauce_category_products = 4
           sauce_category_products.times do
-            @shop.products << create(:product, status: 'online', category: sauce_category)
+            @shop.products << create(:available_product, status: 'online', category: sauce_category)
           end
 
           request.headers['HTTP_X_CLIENT_ID'] = @shop_employee_user_token
-          get :index, params: {category: 'Sa'}
+          get :index, params: { category: 'Sa' }
 
           expect(response).to have_http_status(:ok)
-          result = JSON.parse(response.body, {symbolize_names: true})
+          result = JSON.parse(response.body, { symbolize_names: true })
           expect(result[:products]).not_to be_nil
           expect(result[:page]).to eq(current_page)
           expect(result[:totalCount]).to eq(sauce_category_products)
@@ -165,7 +165,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
         end
       end
 
-      context 'Request contain name and category filters' do
+      context 'Request contains name and category filters' do
         it 'should return 200 HTTP Status list of products for shop filtered by name and category' do
           current_page = 1
           limit = 15
@@ -175,19 +175,19 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
           pain_sirop_products = 7
           pain_sirop_products.times do
-            @shop.products << create(:product, status: 'online', name: "Pain", category: sirop_category)
+            @shop.products << create(:available_product, status: 'online', name: "Pain", category: sirop_category)
           end
 
           pain_sauce_products = 4
           pain_sauce_products.times do
-            @shop.products << create(:product, status: 'online', name: "Pain", category: sauce_category)
+            @shop.products << create(:available_product, status: 'online', name: "Pain", category: sauce_category)
           end
 
           request.headers['HTTP_X_CLIENT_ID'] = @shop_employee_user_token
-          get :index, params:{name: 'Pai', category: "Sa"}
+          get :index, params: { name: 'Pai', category: "Sa" }
 
           expect(response).to have_http_status(:ok)
-          result = JSON.parse(response.body, {symbolize_names: true})
+          result = JSON.parse(response.body, { symbolize_names: true })
           expect(result[:products]).not_to be_nil
           expect(result[:page]).to eq(current_page)
           expect(result[:totalCount]).to eq(pain_sauce_products)
@@ -239,53 +239,160 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
   describe "POST #create" do
     context "All ok" do
-      it "should return 202 HTTP Status with product created" do
-        shop = create(:shop)
-        create_params = {
-          name: "manteau MAC",
-          slug: "manteau-mac",
-          categoryId: create(:category).id,
-          brand: "3sixteen",
-          status: "online",
-          isService: true,
-          sellerAdvice: "pouet",
-          shopId: shop.id,
-          description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
-          variants: [
-            {
-              basePrice: 379,
-              weight: 1,
-              quantity: 0,
-              imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
-              isDefault: false,
-              goodDeal: {
-                startAt: "17/05/2021",
-                endAt: "18/06/2021",
-                discount: 20,
+      context "with variant image_urls" do
+        it "should return 202 HTTP Status with product created" do
+          shop = create(:shop)
+          create_params = {
+            name: "manteau MAC",
+            slug: "manteau-mac",
+            categoryId: create(:category).id,
+            brand: "3sixteen",
+            status: "online",
+            isService: true,
+            sellerAdvice: "pouet",
+            shopId: shop.id,
+            description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+            variants: [
+              {
+                basePrice: 379,
+                weight: 1,
+                quantity: 0,
+                imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                isDefault: false,
+                goodDeal: {
+                  startAt: "17/05/2021",
+                  endAt: "18/06/2021",
+                  discount: 20,
+                },
+                characteristics: [
+                  {
+                    value: "coloris black",
+                    name: "color",
+                  },
+                  {
+                    value: "S",
+                    name: "size",
+                  },
+                ],
               },
-              characteristics: [
-                {
-                  value: "coloris black",
-                  name: "color",
+            ],
+          }
+          user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
+          user_shop_employee.shop_employee.shops << shop
+          user_shop_employee.shop_employee.save
+          request.headers["x-client-id"] = generate_token(user_shop_employee)
+          job_id = "10aad2e35138aa982e0d848a"
+          allow(Dao::Product).to receive(:create_async).and_return(job_id)
+          expect(Dao::Product).to receive(:create_async)
+          post :create, params: create_params
+          should respond_with(202)
+          expect(JSON.parse(response.body)["url"]).to eq(ENV["API_BASE_URL"] + api_v1_product_job_status_path(job_id))
+        end
+      end
+
+      context "with variant image_ids" do
+        it "should return 202 HTTP Status with product created" do
+          image = create(:image)
+          shop = create(:shop)
+          create_params = {
+            name: "manteau MAC",
+            slug: "manteau-mac",
+            categoryId: create(:category).id,
+            brand: "3sixteen",
+            status: "online",
+            isService: true,
+            sellerAdvice: "pouet",
+            shopId: shop.id,
+            description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+            variants: [
+              {
+                basePrice: 379,
+                weight: 1,
+                quantity: 0,
+                imageIds: [image.id],
+                isDefault: false,
+                goodDeal: {
+                  startAt: "17/05/2021",
+                  endAt: "18/06/2021",
+                  discount: 20,
                 },
-                {
-                  value: "S",
-                  name: "size",
+                characteristics: [
+                  {
+                    value: "coloris black",
+                    name: "color",
+                  },
+                  {
+                    value: "S",
+                    name: "size",
+                  },
+                ],
+              },
+            ],
+          }
+          user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
+          user_shop_employee.shop_employee.shops << shop
+          user_shop_employee.shop_employee.save
+          request.headers["x-client-id"] = generate_token(user_shop_employee)
+          job_id = "10aad2e35138aa982e0d848a"
+          allow(Dao::Product).to receive(:create_async).and_return(job_id)
+          expect(Dao::Product).to receive(:create_async)
+          post :create, params: create_params
+          should respond_with(202)
+          expect(JSON.parse(response.body)["url"]).to eq(ENV["API_BASE_URL"] + api_v1_product_job_status_path(job_id))
+        end
+      end
+
+      context "imageUrls and imageIds are both sent" do
+        it "should return 202 HTTP status" do
+          shop = create(:shop)
+          image = create(:image)
+          create_params = {
+            name: "manteau MAC",
+            slug: "manteau-mac",
+            categoryId: create(:category).id,
+            brand: "3sixteen",
+            status: "online",
+            isService: true,
+            sellerAdvice: "pouet",
+            shopId: shop.id,
+            description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+            variants: [
+              {
+                basePrice: 379,
+                weight: 1,
+                quantity: 0,
+                imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                imageIds: [image.id],
+                isDefault: false,
+                goodDeal: {
+                  startAt: "17/05/2021",
+                  endAt: "18/06/2021",
+                  discount: 20,
                 },
-              ],
-            },
-          ],
-        }
-        user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
-        user_shop_employee.shop_employee.shops << shop
-        user_shop_employee.shop_employee.save
-        request.headers["x-client-id"] = generate_token(user_shop_employee)
-        job_id = "10aad2e35138aa982e0d848a"
-        allow(Dao::Product).to receive(:create_async).and_return(job_id)
-        expect(Dao::Product).to receive(:create_async)
-        post :create, params: create_params
-        should respond_with(202)
-        expect(JSON.parse(response.body)["url"]).to eq(ENV["API_BASE_URL"] + api_v1_product_job_status_path(job_id))
+                characteristics: [
+                  {
+                    value: "coloris black",
+                    name: "color",
+                  },
+                  {
+                    value: "S",
+                    name: "size",
+                  },
+                ],
+              },
+            ],
+          }
+          user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
+          user_shop_employee.shop_employee.shops << shop
+          user_shop_employee.shop_employee.save
+          request.headers["x-client-id"] = generate_token(user_shop_employee)
+          job_id = "10aad2e35138aa982e0d848a"
+          allow(Dao::Product).to receive(:create_async).and_return(job_id)
+          expect(Dao::Product).to receive(:create_async)
+          post :create, params: create_params
+          should respond_with(202)
+          expect(JSON.parse(response.body)["url"]).to eq(ENV["API_BASE_URL"] + api_v1_product_job_status_path(job_id))
+        end
       end
     end
 
@@ -379,6 +486,54 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
           post :create, params: create_params
 
           should respond_with(404)
+        end
+      end
+
+      context "Image not found" do
+        it "should return 404 HTTP status" do
+          shop = create(:shop)
+          image_id = 0
+          create_params = {
+            name: "manteau MAC",
+            slug: "manteau-mac",
+            categoryId: create(:category).id,
+            brand: "3sixteen",
+            status: "online",
+            isService: true,
+            shopId: shop.id,
+            sellerAdvice: "pouet",
+            description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+            variants: [
+              {
+                basePrice: 379,
+                weight: 1,
+                quantity: 0,
+                imageIds: [image_id],
+                isDefault: false,
+                goodDeal: {
+                  startAt: "17/05/2021",
+                  endAt: "18/06/2021",
+                  discount: 20,
+                },
+                characteristics: [
+                  {
+                    value: "coloris black",
+                    name: "color",
+                  },
+                  {
+                    value: "S",
+                    name: "size",
+                  },
+                ],
+              },
+            ],
+          }
+          request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+          post :create, params: create_params
+
+          should respond_with(404)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Image with 'id'=#{image_id}").to_h.to_json)
         end
       end
 
@@ -1531,40 +1686,138 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
   describe "PATCH #update" do
     context "All ok" do
-      it 'should return 200 HTTP Status with product modified' do
-        user_shop_employee = create(:shop_employee_user, email: "shop.employee3@ecity.fr")
-        reference = create(:reference, base_price: 400)
-        product = reference.product
-        product.name = "Before MAJ"
-        product.status = "submitted"
-        product.save
+      context "with variant image_urls" do
+        it 'should return 200 HTTP Status with product modified' do
+          user_shop_employee = create(:shop_employee_user, email: "shop.employee3@ecity.fr")
+          reference = create(:reference, base_price: 400)
+          product = reference.product
+          product.samples << reference.sample
+          product.name = "Before MAJ"
+          product.status = "submitted"
+          product.save
 
-        product_params = {
-          name: "After MAJ",
-          status: "online",
-          variants: [
-            {
-              id: reference.id,
-              basePrice: 300
-            }
-          ]
-        }
-        user_shop_employee.shop_employee.shops << product.shop
-        user_shop_employee.shop_employee.save
+          product_params = {
+            name: "After MAJ",
+            status: "online",
+            variants: [
+              {
+                id: reference.id,
+                basePrice: 300,
+                imageUrls: [
+                  "https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"
+                ]
+              }
+            ]
+          }
+          user_shop_employee.shop_employee.shops << product.shop
+          user_shop_employee.shop_employee.save
 
-        request.headers["x-client-id"] = generate_token(user_shop_employee)
-        patch :update, params: product_params.merge(id: product.id)
+          request.headers["x-client-id"] = generate_token(user_shop_employee)
+          patch :update, params: product_params.merge(id: product.id)
 
-        should respond_with(200)
-        result = JSON.parse(response.body)
-        product.reload
-        expect(result["id"]).to eq(product.id)
-        expect(result["name"]).to eq(product.name)
-        expect(result["name"]).to eq(product_params[:name])
-        variant_params_expected = product_params[:variants].find { |variant| variant[:id] == reference.id}
-        variant_to_compare = result["variants"].find { |variant| variant["id"] == variant_params_expected[:id]}
-        expect(variant_to_compare).not_to be_nil
-        expect(variant_to_compare["basePrice"]).to eq(variant_params_expected[:basePrice])
+          should respond_with(200)
+          result = JSON.parse(response.body)
+          product.reload
+          expect(result["id"]).to eq(product.id)
+          expect(result["name"]).to eq(product.name)
+          expect(result["name"]).to eq(product_params[:name])
+          variant_params_expected = product_params[:variants].find { |variant| variant[:id] == reference.id}
+          variant_to_compare = result["variants"].find { |variant| variant["id"] == variant_params_expected[:id]}
+          expect(variant_to_compare).not_to be_nil
+          expect(variant_to_compare["basePrice"]).to eq(variant_params_expected[:basePrice])
+          expect(variant_to_compare["images"].count).to eq(product.sample_images.count)
+        end
+      end
+
+      context "with variant image_ids" do
+        it 'should return 200 HTTP Status with product modified' do
+          image = create(:image)
+          user_shop_employee = create(:shop_employee_user, email: "shop.employee3@ecity.fr")
+          reference = create(:reference, base_price: 400)
+          product = reference.product
+          product.samples << reference.sample
+          product.name = "Before MAJ"
+          product.status = "submitted"
+          product.save
+
+          product_params = {
+            name: "After MAJ",
+            status: "online",
+            variants: [
+              {
+                id: reference.id,
+                basePrice: 300,
+                imageIds: [
+                  image.id
+                ]
+              }
+            ]
+          }
+          user_shop_employee.shop_employee.shops << product.shop
+          user_shop_employee.shop_employee.save
+
+          request.headers["x-client-id"] = generate_token(user_shop_employee)
+          patch :update, params: product_params.merge(id: product.id)
+
+          should respond_with(200)
+          result = JSON.parse(response.body)
+          product.reload
+          expect(result["id"]).to eq(product.id)
+          expect(result["name"]).to eq(product.name)
+          expect(result["name"]).to eq(product_params[:name])
+          variant_params_expected = product_params[:variants].find { |variant| variant[:id] == reference.id}
+          variant_to_compare = result["variants"].find { |variant| variant["id"] == variant_params_expected[:id]}
+          expect(variant_to_compare).not_to be_nil
+          expect(variant_to_compare["basePrice"]).to eq(variant_params_expected[:basePrice])
+          expect(variant_to_compare["images"].count).to eq(product.sample_images.count)
+          expect(variant_to_compare["images"].pluck("originalUrl")).to include(image.file_url)
+        end
+      end
+
+      context "variant imageUrls and imageIds are both sent" do
+        it 'should return 200 HTTP Status with product modified' do
+          image = create(:image)
+          user_shop_employee = create(:shop_employee_user, email: "shop.employee3@ecity.fr")
+          reference = create(:reference, base_price: 400)
+          product = reference.product
+          product.samples << reference.sample
+          product.name = "Before MAJ"
+          product.status = "submitted"
+          product.save
+
+          product_params = {
+            name: "After MAJ",
+            status: "online",
+            variants: [
+              {
+                id: reference.id,
+                basePrice: 300,
+                imageIds: [
+                  image.id
+                ],
+                imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"]
+              }
+            ]
+          }
+          user_shop_employee.shop_employee.shops << product.shop
+          user_shop_employee.shop_employee.save
+
+          request.headers["x-client-id"] = generate_token(user_shop_employee)
+          patch :update, params: product_params.merge(id: product.id)
+
+          should respond_with(200)
+          result = JSON.parse(response.body)
+          product.reload
+          expect(result["id"]).to eq(product.id)
+          expect(result["name"]).to eq(product.name)
+          expect(result["name"]).to eq(product_params[:name])
+          variant_params_expected = product_params[:variants].find { |variant| variant[:id] == reference.id}
+          variant_to_compare = result["variants"].find { |variant| variant["id"] == variant_params_expected[:id]}
+          expect(variant_to_compare).not_to be_nil
+          expect(variant_to_compare["basePrice"]).to eq(variant_params_expected[:basePrice])
+          expect(variant_to_compare["images"].count).to eq(product.sample_images.count)
+          expect(variant_to_compare["images"].pluck("originalUrl")).to include(image.file_url)
+        end
       end
 
       context "Want to accepted product from citizen" do
@@ -1614,6 +1867,114 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
           product.reload
           expect(result["status"]).to eq("online")
           expect(product.status).to eq("online")
+        end
+      end
+    end
+
+    context "Bad params" do
+      context "Product not found in shop of shop employee" do
+        it 'should return 404 HTTP status' do
+          user_shop_employee = create(:shop_employee_user, email: "shop.employee3@ecity.fr")
+          reference = create(:reference)
+          product = reference.product
+          product_params = {
+            name: "manteau MAC",
+            slug: "manteau-mac",
+            categoryId: create(:category).id,
+            brand: "3sixteen",
+            status: "online",
+            isService: true,
+            sellerAdvice: "pouet",
+            description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+            variants: [
+              {
+                basePrice: 379,
+                weight: 1,
+                quantity: 0,
+                imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                isDefault: false,
+                goodDeal: {
+                  startAt: "17/05/2021",
+                  endAt: "18/06/2021",
+                  discount: 20,
+                },
+                characteristics: [
+                  {
+                    value: "coloris black",
+                    name: "color",
+                  },
+                  {
+                    value: "S",
+                    name: "size",
+                  },
+                ],
+              },
+              {
+                id: reference.id,
+                basePrice: 379,
+                weight: 1,
+                quantity: 0,
+                imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
+                isDefault: false,
+                goodDeal: {
+                  startAt: "17/05/2021",
+                  endAt: "18/06/2021",
+                  discount: 20,
+                },
+                characteristics: [
+                  {
+                    value: "coloris black",
+                    name: "color",
+                  },
+                  {
+                    value: "S",
+                    name: "size",
+                  },
+                ],
+              },
+            ],
+          }
+          user_shop_employee.shop_employee.shops << create(:shop)
+          user_shop_employee.shop_employee.save
+
+          request.headers["x-client-id"] = generate_token(user_shop_employee)
+          patch :update, params: product_params.merge(id: product.id)
+
+          should respond_with(404)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Product with 'id'=#{product.id} [WHERE \"products\".\"shop_id\" = $1]").to_h.to_json)
+        end
+      end
+
+      context "variant image not found" do
+        it 'should return 404 HTTP Status' do
+          image_id = 0
+          user_shop_employee = create(:shop_employee_user, email: "shop.employee3@ecity.fr")
+          reference = create(:reference, base_price: 400)
+          product = reference.product
+          product.samples << reference.sample
+          product.name = "Before MAJ"
+          product.status = "submitted"
+          product.save
+
+          product_params = {
+            name: "After MAJ",
+            status: "online",
+            variants: [
+              {
+                id: reference.id,
+                basePrice: 300,
+                imageIds: [image_id]
+              }
+            ]
+          }
+          user_shop_employee.shop_employee.shops << product.shop
+          user_shop_employee.shop_employee.save
+
+          request.headers["x-client-id"] = generate_token(user_shop_employee)
+          patch :update, params: product_params.merge(id: product.id)
+
+          should respond_with(404)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Image with 'id'=#{image_id}").to_h.to_json)
         end
       end
     end
@@ -1764,80 +2125,6 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
         end
       end
     end
-
-    context "Product not found in shop of shop employee" do
-      it 'should return 404 HTTP status' do
-        user_shop_employee = create(:shop_employee_user, email: "shop.employee3@ecity.fr")
-        reference = create(:reference)
-        product = reference.product
-        product_params = {
-          name: "manteau MAC",
-          slug: "manteau-mac",
-          categoryId: create(:category).id,
-          brand: "3sixteen",
-          status: "online",
-          isService: true,
-          sellerAdvice: "pouet",
-          description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
-          variants: [
-            {
-              basePrice: 379,
-              weight: 1,
-              quantity: 0,
-              imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
-              isDefault: false,
-              goodDeal: {
-                startAt: "17/05/2021",
-                endAt: "18/06/2021",
-                discount: 20,
-              },
-              characteristics: [
-                {
-                  value: "coloris black",
-                  name: "color",
-                },
-                {
-                  value: "S",
-                  name: "size",
-                },
-              ],
-            },
-            {
-              id: reference.id,
-              basePrice: 379,
-              weight: 1,
-              quantity: 0,
-              imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"],
-              isDefault: false,
-              goodDeal: {
-                startAt: "17/05/2021",
-                endAt: "18/06/2021",
-                discount: 20,
-              },
-              characteristics: [
-                {
-                  value: "coloris black",
-                  name: "color",
-                },
-                {
-                  value: "S",
-                  name: "size",
-                },
-              ],
-            },
-          ],
-        }
-        user_shop_employee.shop_employee.shops << create(:shop)
-        user_shop_employee.shop_employee.save
-
-        request.headers["x-client-id"] = generate_token(user_shop_employee)
-        patch :update, params: product_params.merge(id: product.id)
-
-        should respond_with(404)
-        expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Product with 'id'=#{product.id} [WHERE \"products\".\"shop_id\" = $1]").to_h.to_json)
-      end
-    end
-
   end
 end
 

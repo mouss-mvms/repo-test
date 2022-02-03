@@ -1,13 +1,14 @@
 module Api
   module V1
     class SelectionsController < ApplicationController
+      include Pagy::Backend
       before_action :uncrypt_token, only: [:create, :patch, :destroy]
       before_action :retrieve_user, only: [:create, :patch, :destroy]
 
       def index
-        params[:page] ||= 1
-        selections = Kaminari.paginate_array(Selection.online).page(params[:page])
-        response = { selections: selections.map { |selection| Dto::V1::Selection::Response.create(selection).to_h }, page: params[:page].to_i, totalPages: selections.total_pages }
+        per_page = params[:limit] || 16
+        pagination, selections = pagy(Selection.online, items: per_page)
+        response = { selections: selections.map { |selection| Dto::V1::Selection::Response.create(selection).to_h }, page: pagination.page, totalPages: pagination.pages, totalCount: pagination.count }
         render json: response, status: :ok
       end
 
@@ -41,7 +42,7 @@ module Api
         raise ApplicationController::Forbidden.new unless @user.is_an_admin?
         dto_request = Dto::V1::Selection::Request.new(update_params)
         selection = Dao::Selection.update(dto_selection_request: dto_request)
-        render json: Dto::V1::Selection::Response.create(selection).to_h, status: :created
+        render json: Dto::V1::Selection::Response.create(selection).to_h, status: :ok
       end
 
       def destroy
@@ -56,7 +57,13 @@ module Api
         hash = {}
         hash[:name] = params.require(:name)
         hash[:description] = params.require(:description)
-        hash[:image_url] = params.require(:imageUrl)
+        if params[:imageId]
+          hash[:image_id] = params.require(:imageId) if Image.find(params[:imageId])
+        elsif params[:imageUrl]
+          hash[:image_url] = params.require(:imageUrl)
+        else
+          raise ActionController::ParameterMissing.new('imageId or imageUrl')
+        end
         hash[:tag_ids] = params[:tagIds]
         hash[:start_at] = params[:startAt]
         hash[:end_at] = params[:endAt]
@@ -71,7 +78,11 @@ module Api
         hash[:id] = params[:id]
         hash[:name] = params[:name]
         hash[:description] = params[:description]
-        hash[:image_url] = params[:imageUrl]
+        if params[:imageId]
+          hash[:image_id] = params[:imageId] if Image.find(params[:imageId])
+        elsif params[:imageUrl]
+          hash[:image_url] = params[:imageUrl]
+        end
         hash[:tag_ids] = params[:tagIds]
         hash[:start_at] = params[:startAt]
         hash[:end_at] = params[:endAt]
