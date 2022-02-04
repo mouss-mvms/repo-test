@@ -29,7 +29,7 @@ RSpec.describe 'api/v1/selections', swagger_doc: 'v1/swagger.json', type: :reque
             type: :string,
             enum: ["disabled", "active"]
           },
-          imageId: { type: :ninteger, example: 1, description: "Required if no imageUrl"},
+          imageId: { type: :integer, example: 1, description: "Required if no imageUrl"},
           imageUrl: { type: :string, example: "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg", description: "Required if no imageId" }
         },
         required: %w[name description]
