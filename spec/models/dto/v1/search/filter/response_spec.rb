@@ -2,18 +2,19 @@ require 'rails_helper'
 
 RSpec.describe Dto::V1::Search::Filter::Response do
 
-  describe 'create' do
-    before(:all) do
-      @alim_cat = create(:category, id: 2054, name: "Alimentaire")
-      @ps_cat = create(:category, id: 2835, name: "PS5", parent_id: @alim_cat.id)
-      @vets_cat = create(:category, id: 2340, name: "Vetements")
-    end
+  before(:all) do
+    @alim_cat = create(:category, name: "Alimentaire")
+    @ps_cat = create(:category, name: "PS5", parent_id: @alim_cat.id)
+    @vets_cat = create(:category, name: "Vetements")
+  end
 
-    after(:all) do
-      @alim_cat.destroy
-      @ps_cat.destroy
-      @vets_cat.destroy
-    end
+  after(:all) do
+    @alim_cat.destroy
+    @ps_cat.destroy
+    @vets_cat.destroy
+  end
+
+  describe 'create' do
 
     context 'All ok without category' do
       let(:aggs) {
@@ -23,9 +24,9 @@ RSpec.describe Dto::V1::Search::Filter::Response do
               "doc_count_error_upper_bound" => 0,
               "sum_other_doc_count" => 0,
               "buckets" =>
-                [{ "key" => 2054, "doc_count" => 67 },
-                 { "key" => 2835, "doc_count" => 57 },
-                 { "key" => 2340, "doc_count" => 47 }
+                [{ "key" => @alim_cat.id, "doc_count" => 67 },
+                 { "key" => @ps_cat.id, "doc_count" => 57 },
+                 { "key" => @vets_cat.id, "doc_count" => 47 }
                 ] },
           "sizes" =>
             { "doc_count" => 293,
@@ -127,9 +128,9 @@ RSpec.describe Dto::V1::Search::Filter::Response do
               "doc_count_error_upper_bound" => 0,
               "sum_other_doc_count" => 0,
               "buckets" =>
-                [{ "key" => 2054, "doc_count" => 67 },
-                 { "key" => 2835, "doc_count" => 57 },
-                 { "key" => 2340, "doc_count" => 47 }
+                [{ "key" => @alim_cat.id, "doc_count" => 67 },
+                 { "key" => @ps_cat.id, "doc_count" => 57 },
+                 { "key" => @vets_cat.id, "doc_count" => 47 }
                 ] },
           "sizes" =>
             { "doc_count" => 293,
@@ -233,9 +234,9 @@ RSpec.describe Dto::V1::Search::Filter::Response do
               "doc_count_error_upper_bound" => 0,
               "sum_other_doc_count" => 0,
               "buckets" =>
-                [{ "key" => 2054, "doc_count" => 67 },
-                 { "key" => 2835, "doc_count" => 57 },
-                 { "key" => 2340, "doc_count" => 47 }
+                [{ "key" => @alim_cat.id, "doc_count" => 67 },
+                 { "key" => @ps_cat.id, "doc_count" => 57 },
+                 { "key" => @vets_cat.id, "doc_count" => 47 }
                 ] },
           "sizes" =>
             { "doc_count" => 293,

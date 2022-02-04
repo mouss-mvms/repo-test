@@ -3,7 +3,7 @@ module Dto
     module Product
       class Response
         attr_reader :id, :name, :slug, :category, :brand, :status, :seller_advice, :is_service, :description, :variants, :citizen_advice, :origin, :allergens, :composition, :provider, :shop_id, :shop_name, :citizen
-        attr_reader :created_at, :updated_at
+        attr_reader :created_at, :updated_at, :type_citizen_refuse, :text_citizen_refuse
 
         def initialize(**args)
           @id = args[:id]
@@ -26,6 +26,8 @@ module Dto
           @citizen = args[:citizen]
           @created_at = args[:created_at]
           @updated_at = args[:updated_at]
+          @type_citizen_refuse = args[:type_citizen_refuse]
+          @text_citizen_refuse = args[:text_citizen_refuse]
         end
 
         def self.create(product)
@@ -48,6 +50,8 @@ module Dto
             citizen: citizen,
             created_at: product.created_at,
             updated_at: product.updated_at,
+            type_citizen_refuse: product.type_citizen_refuse,
+            text_citizen_refuse: product.text_citizen_refuse
           )
         end
 
@@ -69,7 +73,9 @@ module Dto
             provider: @provider,
             citizen: @citizen&.to_h,
             createdAt: @created_at,
-            updatedAt: @updated_at
+            updatedAt: @updated_at,
+            typeCitizenRefuse: @type_citizen_refuse,
+            textCitizenRefuse: @text_citizen_refuse,
           }
         end
       end

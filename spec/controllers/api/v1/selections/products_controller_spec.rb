@@ -3,18 +3,27 @@ require 'rails_helper'
 RSpec.describe Api::V1::Selections::ProductsController do
   describe "GET #index" do
     context "All ok" do
+      before(:all) do
+        @selection = create(:online_selection2)
+      end
+
+      after(:all) do
+        @selection.products.destroy_all
+        @selection.destroy
+      end
+
       context "No page in query" do
         it "should return 200 HTTP status with page 1 of selection products (16 per page)" do
-          selection = create(:online_selection)
-          17.times do
-            selection.products << create(:available_product)
-          end
+          get :index, params: { id: @selection.id }
 
-          get :index, params: { id: selection.id }
           should respond_with(200)
+          result = JSON.parse(response.body, symbolize_names: true)
+          expected_products = result[:products].map do |product|
+            Dto::V1::Product::Response.create(@selection.products.find(product[:id])).to_h
+          end
           expect(response.body).to eq(
             {
-              products: selection.products.first(16).map { |p| Dto::V1::Product::Response.create(p).to_h },
+              products: expected_products,
               page: 1,
               totalPages: 2
             }.to_json
@@ -24,16 +33,15 @@ RSpec.describe Api::V1::Selections::ProductsController do
 
       context "With page number in query" do
         it "should return 200 HTTP status with page 2 of selection products" do
-          selection = create(:online_selection)
-          17.times do
-            selection.products << create(:available_product)
-          end
-
-          get :index, params: { id: selection.id, page: 2 }
+          get :index, params: { id: @selection.id, page: 2 }
           should respond_with(200)
+          result = JSON.parse(response.body, symbolize_names: true)
+          expected_products = result[:products].map do |product|
+            Dto::V1::Product::Response.create(@selection.products.find(product[:id])).to_h
+          end
           expect(response.body).to eq(
             {
-              products: selection.products.last(2).map { |p| Dto::V1::Product::Response.create(p).to_h },
+              products: expected_products,
               page: 2,
               totalPages: 2
             }.to_json
@@ -53,7 +61,7 @@ RSpec.describe Api::V1::Selections::ProductsController do
 
       context "selection is not online" do
         it "should return a 403 HTTP status" do
-          selection = create(:selection)
+          selection = create(:selection, state: 0)
           get :index, params: { id: selection.id }
           should respond_with(403)
           expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)

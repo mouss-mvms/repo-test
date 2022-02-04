@@ -2126,7 +2126,148 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
       end
     end
   end
-end
 
+  describe "POST #reject" do
+    context "All ok" do
+      before(:all) do
+        @product = create(:product, status: 'submitted')
+        @shop = create(:shop)
+        @shop.products << @product
+        @user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
+        @user_shop_employee.shop_employee.shops << @shop
+        @user_shop_employee.shop_employee.save
+        @user_shop_employee_token = generate_token(@user_shop_employee)
+      end
+
+      after(:all) do
+        @user_shop_employee_token = nil
+        @product.destroy
+        @shop.destroy
+        @user_shop_employee.destroy
+        @user_shop_employee.shop_employee.destroy
+      end
+      context "Reason is product doesn't comply" do
+        it 'should return 200 HTTP Status with product updated to reject with reason set to not_comply' do
+          request.headers["x-client-id"] = @user_shop_employee_token
+
+          post :reject, params: {id: @product.id, typeCitizenRefuse: 'not_comply'}
+
+          expect(response).to have_http_status(:ok)
+          result = JSON.parse(response.body, symbolize_names: true)
+          expect(result[:status]).to eq('refused')
+          expect(result[:typeCitizenRefuse]).to eq(response.request.params[:typeCitizenRefuse])
+        end
+      end
+
+      context "Reason is product doesn't have stock" do
+        it 'should return 200 HTTP Status with product updated to reject with reason set to out_of_stock' do
+          request.headers["x-client-id"] = @user_shop_employee_token
+
+          post :reject, params: {id: @product.id, typeCitizenRefuse: 'out_of_stock'}
+
+          expect(response).to have_http_status(:ok)
+          result = JSON.parse(response.body, symbolize_names: true)
+          expect(result[:status]).to eq('refused')
+          expect(result[:typeCitizenRefuse]).to eq(response.request.params[:typeCitizenRefuse])
+        end
+      end
+
+      context "Reason is product already exists" do
+        it 'should return 200 HTTP Status with product updated to reject with reason set to already_exist' do
+          request.headers["x-client-id"] = @user_shop_employee_token
+
+          post :reject, params: {id: @product.id, typeCitizenRefuse: 'already_exist'}
+
+          expect(response).to have_http_status(:ok)
+          result = JSON.parse(response.body, symbolize_names: true)
+          expect(result[:status]).to eq('refused')
+          expect(result[:typeCitizenRefuse]).to eq(response.request.params[:typeCitizenRefuse])
+        end
+      end
+
+      context "Reason is product is other" do
+        it 'should return 200 HTTP Status with product updated to reject with reason set to other' do
+          request.headers["x-client-id"] = @user_shop_employee_token
+
+          post :reject, params: {id: @product.id, typeCitizenRefuse: 'other', textCitizenRefuse: 'Je refuse'}
+
+          expect(response).to have_http_status(:ok)
+          result = JSON.parse(response.body, symbolize_names: true)
+          expect(result[:status]).to eq('refused')
+          expect(result[:typeCitizenRefuse]).to eq(response.request.params[:typeCitizenRefuse])
+          expect(result[:textCitizenRefuse]).to eq(response.request.params[:textCitizenRefuse])
+        end
+      end
+    end
+
+    context 'Product is online' do
+      it 'should return 422 HTTP Status' do
+        product = create(:product, status: 'online')
+        shop = create(:shop)
+        shop.products << product
+        user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
+        user_shop_employee.shop_employee.shops << shop
+        user_shop_employee.shop_employee.save
+
+        request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+        post :reject, params: {id: product.id, typeCitizenRefuse: 'not_comply'}
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body).to eq(Dto::Errors::UnprocessableEntity.new("ApplicationController::UnprocessableEntity").to_h.to_json)
+      end
+    end
+
+    context 'Product is offline' do
+      it 'should return 422 HTTP Status' do
+        product = create(:product, status: 'offline')
+        shop = create(:shop)
+        shop.products << product
+        user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
+        user_shop_employee.shop_employee.shops << shop
+        user_shop_employee.shop_employee.save
+
+        request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+        post :reject, params: {id: product.id, typeCitizenRefuse: 'not_comply'}
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response.body).to eq(Dto::Errors::UnprocessableEntity.new("ApplicationController::UnprocessableEntity").to_h.to_json)
+      end
+    end
+
+    context "Product does not exist in shop's catalog" do
+      it 'should return 404 HTTP Status' do
+        product = create(:product, status: 'submitted')
+        shop = create(:shop)
+        user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
+        user_shop_employee.shop_employee.shops << shop
+        user_shop_employee.shop_employee.save
+
+        request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+        post :reject, params: {id: product.id, typeCitizenRefuse: 'not_comply'}
+
+        expect(response).to have_http_status(:not_found)
+        expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Product with 'id'=#{product.id} [WHERE \"products\".\"shop_id\" = $1]").to_h.to_json)
+      end
+    end
+
+    context 'User is not a shop employee' do
+      it 'should return 403 HTTP Status' do
+        product = create(:product, status: 'submitted')
+        user_citizen = create(:citizen_user)
+
+        request.headers["x-client-id"] = generate_token(user_citizen)
+
+        post :reject, params: {id: product.id, typeCitizenRefuse: 'not_comply'}
+
+        expect(response).to have_http_status(:forbidden)
+        expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
+      end
+
+    end
+  end
+end
 
 
