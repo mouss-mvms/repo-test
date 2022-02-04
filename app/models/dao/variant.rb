@@ -9,7 +9,7 @@ module Dao
         sample.images << images
       elsif dto_variant_request.image_urls.present?
         dto_variant_request.image_urls.each do |image_url|
-          Dao::Product.set_image(object: sample, image_url: image_url)
+          Dao::Variant.set_image(object: sample, image_url: image_url)
         end
       end
 
@@ -69,7 +69,7 @@ module Dao
         @reference.sample.images << images
       elsif dto_variant_request.image_urls.present?
         dto_variant_request.image_urls.each do |image_url|
-          Dao::Product.set_image(object: @reference.sample, image_url: image_url)
+          Dao::Variant.set_image(object: @reference.sample, image_url: image_url)
         end
       end
 
