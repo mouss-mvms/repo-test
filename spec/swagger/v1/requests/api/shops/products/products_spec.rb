@@ -278,4 +278,40 @@ RSpec.describe 'api/v1/shops/products', swagger_doc: 'v1/swagger.json', type: :r
     end
   end
 
+  path '/api/v1/auth/shops/self/products/{id}/reject' do
+    parameter name: 'X-client-id', in: :header, type: :string, required: true
+    parameter name: 'id', in: :path, type: :string, required: true
+
+    post('Reject a product') do
+      tags 'Products'
+      produces 'application/json'
+      security [{ authorization: [] }]
+
+      response(200, 'Successful') do
+        schema V1::Examples::Response::Product.to_h
+        run_test!
+      end
+
+      response(400, 'Bad request') do
+        schema Examples::Errors::BadRequest.new.error
+        run_test!
+      end
+
+      response(401, 'Unauthorized') do
+        schema Examples::Errors::Unauthorized.new.error
+        run_test!
+      end
+
+      response(403, 'Forbidden') do
+        schema Examples::Errors::Forbidden.new.error
+        run_test!
+      end
+
+      response(404, 'Not found') do
+        schema Examples::Errors::NotFound.new.error
+        run_test!
+      end
+    end
+  end
+
 end
