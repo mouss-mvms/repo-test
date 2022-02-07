@@ -7155,33 +7155,6 @@
           "schema": {
             "type": "string"
           }
-        },
-        {
-          "name": "reject_reason",
-          "in": "body",
-          "schema": {
-            "type": "object",
-            "properties": {
-              "typeCitizenRefuse": {
-                "type": "String",
-                "enum": [
-                  "not_comply",
-                  "out_of_stock",
-                  "already_exist",
-                  "other"
-                ],
-                "required": true
-              },
-              "textCitizenRefuse": {
-                "type": "String",
-                "description": "Describe the reason of reject (required if reason type is other)",
-                "example": "I don't sell this product anymore"
-              }
-            },
-            "required": [
-              "typeCitizenRefuse"
-            ]
-          }
         }
       ],
       "post": {
@@ -7195,6 +7168,9 @@
 
             ]
           }
+        ],
+        "parameters": [
+
         ],
         "responses": {
           "200": {
@@ -7427,6 +7403,35 @@
                     }
                   }
                 }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "typeCitizenRefuse": {
+                    "type": "String",
+                    "enum": [
+                      "not_comply",
+                      "out_of_stock",
+                      "already_exist",
+                      "other"
+                    ],
+                    "required": true
+                  },
+                  "textCitizenRefuse": {
+                    "type": "String",
+                    "description": "Describe the reason of reject (required if reason type is other)",
+                    "example": "I don't sell this product anymore"
+                  }
+                },
+                "required": [
+                  "typeCitizenRefuse"
+                ]
               }
             }
           }
