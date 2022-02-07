@@ -171,6 +171,59 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
             expect(JSON.parse(response.body)["url"]).to eq(ENV["API_BASE_URL"] + api_v1_product_job_status_path(job_id))
           end
         end
+
+        context "imageIds and imageUrls are both sent" do
+          it "should return 202 HTTP status" do
+            user_citizen = create(:citizen_user, email: "citizen0@ecity.fr")
+            image = create(:image)
+            create(:category, name: "Non Classée", slug: "non-classee")
+            image = create(:image)
+            create_params = {
+              name: "manteau MAC",
+              slug: "manteau-mac",
+              categoryId: create(:category).id,
+              shopId: create(:shop).id,
+              brand: "3sixteen",
+              status: "online",
+              isService: true,
+              sellerAdvice: "pouet",
+              citizenAdvice: "pouet",
+              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
+              variants: [
+                {
+                  basePrice: 379,
+                  weight: 1,
+                  quantity: 0,
+                  imageIds: [image.id],
+                  imageUrls: ["1", "2", "3", "4", "5"],
+                  isDefault: false,
+                  goodDeal: {
+                    startAt: "17/05/2021",
+                    endAt: "18/06/2021",
+                    discount: 20,
+                  },
+                  characteristics: [
+                    {
+                      value: "coloris black",
+                      name: "color",
+                    },
+                    {
+                      value: "S",
+                      name: "size",
+                    },
+                  ],
+                },
+              ],
+            }
+            request.headers["x-client-id"] = generate_token(user_citizen)
+            job_id = "10aad2e35138aa982e0d848a"
+            allow(Dao::Product).to receive(:create_async).and_return(job_id)
+            expect(Dao::Product).to receive(:create_async)
+            post :create, params: create_params
+            should respond_with(202)
+            expect(JSON.parse(response.body)["url"]).to eq(ENV["API_BASE_URL"] + api_v1_product_job_status_path(job_id))
+          end
+        end
       end
 
       context "Param incorrect" do
@@ -403,53 +456,6 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
 
               should respond_with(400)
             end
-          end
-        end
-
-        context "imageIds and imageUrls are both sent" do
-          it "should return 400 HTTP status" do
-            create_params = {
-              name: "manteau MAC",
-              slug: "manteau-mac",
-              categoryId: create(:category).id,
-              shopId: create(:shop).id,
-              brand: "3sixteen",
-              status: "online",
-              isService: true,
-              sellerAdvice: "pouet",
-              citizenAdvice: "pouet",
-              description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
-              variants: [
-                {
-                  basePrice: 379,
-                  weight: 1,
-                  quantity: 0,
-                  imageIds: [1, 2, 3, 4, 5],
-                  imageUrls: ["1", "2", "3", "4", "5"],
-                  isDefault: false,
-                  goodDeal: {
-                    startAt: "17/05/2021",
-                    endAt: "18/06/2021",
-                    discount: 20,
-                  },
-                  characteristics: [
-                    {
-                      value: "coloris black",
-                      name: "color",
-                    },
-                    {
-                      value: "S",
-                      name: "size",
-                    },
-                  ],
-                },
-              ],
-            }
-            request.headers["x-client-id"] = generate_token(user_citizen)
-
-            post :create, params: create_params
-            should respond_with(400)
-            expect(response.body).to eq(Dto::Errors::BadRequest.new('You can only pass imageIds or imageUrls, not both.').to_h.to_json)
           end
         end
 
@@ -687,38 +693,135 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
 
   describe "PATCH #update" do
     context "All ok" do
-      it "should return 200 HTTP Status" do
-        user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
-        reference = create(:reference, base_price: 400)
-        product = reference.product
-        product.name = "Before MAJ"
-        product.status = "submitted"
-        product.save
-        product_params = {
-          name: "After MAJ",
-          variants: [
-            {
-              id: reference.id,
-              basePrice: 300,
-            },
-          ],
-        }
-        user_citizen.citizen.products << product
-        user_citizen.citizen.save
+      context "when image_urls" do
+        it "should return 200 HTTP Status" do
+          image_1 = create(:image)
+          user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
+          reference = create(:reference, base_price: 400)
+          product = reference.product
+          product.samples << reference.sample
+          reference.sample.images << image_1
+          product.name = "Before MAJ"
+          product.status = "submitted"
+          product.save
+          expected_images_count = 2
+          product_params = {
+            name: "After MAJ",
+            variants: [
+              {
+                id: reference.id,
+                basePrice: 300,
+                imageUrls: ["https://img.myloview.fr/images/poop-vector-isolated-illustration-700-185627290.jpg"]
+              },
+            ],
+          }
+          user_citizen.citizen.products << product
+          user_citizen.citizen.save
 
-        request.headers["x-client-id"] = generate_token(user_citizen)
-        patch :update, params: product_params.merge(id: product.id)
+          request.headers["x-client-id"] = generate_token(user_citizen)
+          patch :update, params: product_params.merge(id: product.id)
 
-        should respond_with(200)
-        result = JSON.parse(response.body)
-        product.reload
-        expect(result["id"]).to eq(product.id)
-        expect(result["name"]).to eq(product.name)
-        expect(result["name"]).to eq(product_params[:name])
-        variant_params_expected = product_params[:variants].find { |variant| variant[:id] == reference.id }
-        variant_to_compare = result["variants"].find { |variant| variant["id"] == variant_params_expected[:id] }
-        expect(variant_to_compare).not_to be_nil
-        expect(variant_to_compare["basePrice"]).to eq(variant_params_expected[:basePrice])
+          should respond_with(200)
+          result = JSON.parse(response.body)
+          product.reload
+          expect(result["id"]).to eq(product.id)
+          expect(result["name"]).to eq(product.name)
+          expect(result["name"]).to eq(product_params[:name])
+          variant_params_expected = product_params[:variants].find { |variant| variant[:id] == reference.id }
+          variant_to_compare = result["variants"].find { |variant| variant["id"] == variant_params_expected[:id] }
+          expect(variant_to_compare).not_to be_nil
+          expect(variant_to_compare["basePrice"]).to eq(variant_params_expected[:basePrice])
+          expect(variant_to_compare["images"].count).to eq(expected_images_count)
+        end
+      end
+
+      context "when image_ids" do
+        it "should return 200 HTTP Status" do
+          image_1 = create(:image)
+          image_2 = create(:image)
+          user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
+          reference = create(:reference, base_price: 400)
+          product = reference.product
+          product.samples << reference.sample
+          reference.sample.images << image_1
+          product.name = "Before MAJ"
+          product.status = "submitted"
+          product.save
+          expected_images_count = 2
+          product_params = {
+            name: "After MAJ",
+            variants: [
+              {
+                id: reference.id,
+                basePrice: 300,
+                imageIds: [image_2.id]
+              },
+            ],
+          }
+          user_citizen.citizen.products << product
+          user_citizen.citizen.save
+
+          request.headers["x-client-id"] = generate_token(user_citizen)
+          patch :update, params: product_params.merge(id: product.id)
+
+          should respond_with(200)
+          result = JSON.parse(response.body)
+          product.reload
+          expect(result["id"]).to eq(product.id)
+          expect(result["name"]).to eq(product.name)
+          expect(result["name"]).to eq(product_params[:name])
+          variant_params_expected = product_params[:variants].find { |variant| variant[:id] == reference.id }
+          variant_to_compare = result["variants"].find { |variant| variant["id"] == variant_params_expected[:id] }
+          expect(variant_to_compare).not_to be_nil
+          expect(variant_to_compare["basePrice"]).to eq(variant_params_expected[:basePrice])
+          expect(variant_to_compare["images"].count).to eq(expected_images_count)
+          expect(variant_to_compare["images"].pluck("originalUrl")).to include(image_2.file_url)
+        end
+      end
+
+      context "imageIds and imageUrls are both sent" do
+        it "should return 200 HTTP Status" do
+          image_1 = create(:image)
+          image_2 = create(:image)
+          user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
+          reference = create(:reference, base_price: 400)
+          product = reference.product
+          product.samples << reference.sample
+          reference.sample.images << image_1
+          product.name = "Before MAJ"
+          product.status = "submitted"
+          product.save
+          expected_images_count = 2
+          product_params = {
+            name: "After MAJ",
+            variants: [
+              {
+                id: reference.id,
+                basePrice: 300,
+                imageIds: [image_2.id],
+                imageUrls: ["https://www.eklecty-city.fr/wp-content/uploads/2018/07/robocop-paul-verhoeven-banner.jpg"]
+              },
+            ],
+          }
+          user_citizen.citizen.products << product
+          user_citizen.citizen.save
+
+          request.headers["x-client-id"] = generate_token(user_citizen)
+          patch :update, params: product_params.merge(id: product.id)
+
+          should respond_with(200)
+          result = JSON.parse(response.body)
+          product.reload
+          expect(result["id"]).to eq(product.id)
+          expect(result["name"]).to eq(product.name)
+          expect(result["name"]).to eq(product_params[:name])
+          variant_params_expected = product_params[:variants].find { |variant| variant[:id] == reference.id }
+          variant_to_compare = result["variants"].find { |variant| variant["id"] == variant_params_expected[:id] }
+          expect(variant_to_compare).not_to be_nil
+          expect(variant_to_compare["basePrice"]).to eq(variant_params_expected[:basePrice])
+          expect(variant_to_compare["images"].count).to eq(expected_images_count)
+          expect(variant_to_compare["images"].pluck("originalUrl")).to include(image_2.file_url)
+        end
       end
     end
 
@@ -838,9 +941,9 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
         end
       end
 
-      context "imageIds and imageUrls are both sent" do
-        it "should return 400 HTTP status" do
-          image = create(:image)
+      context "imageIds are not in db" do
+        it "should return 404 HTTP status" do
+          image_id = 0
           user_citizen = create(:citizen_user, email: "citizen783@ecity.fr")
           reference = create(:reference, base_price: 400)
           product = reference.product
@@ -853,8 +956,7 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
               {
                 id: reference.id,
                 basePrice: 300,
-                imageIds: [image.id],
-                imageUrls: [image.file_url]
+                imageIds: [image_id],
               },
             ],
           }
@@ -863,9 +965,8 @@ RSpec.describe Api::V1::Citizens::ProductsController, type: :controller do
 
           request.headers["x-client-id"] = generate_token(user_citizen)
           patch :update, params: product_params.merge(id: product.id)
-
-          should respond_with(400)
-          expect(response.body).to eq(Dto::Errors::BadRequest.new("You can only pass imageIds or imageUrls, not both.").to_h.to_json)
+          should respond_with(404)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Image with 'id'=#{image_id}").to_h.to_json)
         end
       end
     end
