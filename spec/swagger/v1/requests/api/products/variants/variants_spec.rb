@@ -97,6 +97,16 @@ RSpec.describe "api/v1/products/variants", swagger_doc: "v1/swagger.json", type:
           weight: { type: :number, example: 0.56, description: "Weight of product's variant (in Kg)" },
           quantity: { type: :integer, example: 9, description: "Stock of product's variant" },
           isDefault: { type: :boolean, example: true, description: "Tell if this variant is the product's default variant" },
+          imageIds: {
+            type: 'array',
+            maxItems: 5,
+            items: {
+              type: 'number'
+            },
+            example: [234, 45566, 345],
+            default: [],
+            description: 'List of product images ids'
+          },
           imageUrls: {
             type: 'array',
             items: {

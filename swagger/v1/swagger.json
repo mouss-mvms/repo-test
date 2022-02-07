@@ -1295,7 +1295,7 @@
                           "default": [
 
                           ],
-                          "description": "List of product images ids (required if no imageUrls)"
+                          "description": "List of product images ids"
                         },
                         "imageUrls": {
                           "type": "array",
@@ -2329,6 +2329,22 @@
                     "type": "boolean",
                     "example": true,
                     "description": "Tell if this variant is the product's default variant"
+                  },
+                  "imageIds": {
+                    "type": "array",
+                    "maxItems": 5,
+                    "items": {
+                      "type": "number"
+                    },
+                    "example": [
+                      234,
+                      45566,
+                      345
+                    ],
+                    "default": [
+
+                    ],
+                    "description": "List of product images ids"
                   },
                   "imageUrls": {
                     "type": "array",
@@ -4787,7 +4803,7 @@
 
         ],
         "responses": {
-          "201": {
+          "200": {
             "description": "successful",
             "content": {
               "application/json": {
@@ -4959,15 +4975,20 @@
                       "active"
                     ]
                   },
+                  "imageId": {
+                    "type": "integer",
+                    "example": 1,
+                    "description": "Required if no imageUrl"
+                  },
                   "imageUrl": {
                     "type": "string",
-                    "example": "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg"
+                    "example": "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg",
+                    "description": "Required if no imageId"
                   }
                 },
                 "required": [
                   "name",
-                  "description",
-                  "imageUrl"
+                  "description"
                 ]
               }
             }
@@ -5303,6 +5324,10 @@
                       "disabled",
                       "active"
                     ]
+                  },
+                  "imageId": {
+                    "type": "integer",
+                    "example": 1
                   },
                   "imageUrl": {
                     "type": "string",
@@ -6371,6 +6396,22 @@
                           "example": true,
                           "description": "Tell if this variant is the product's default variant"
                         },
+                        "imageIds": {
+                          "type": "array",
+                          "maxItems": 5,
+                          "items": {
+                            "type": "number"
+                          },
+                          "example": [
+                            234,
+                            45566,
+                            345
+                          ],
+                          "default": [
+
+                          ],
+                          "description": "List of product images ids"
+                        },
                         "imageUrls": {
                           "type": "array",
                           "items": {
@@ -6993,6 +7034,22 @@
                           "type": "boolean",
                           "example": true,
                           "description": "Tell if this variant is the product's default variant (Required if new variant)"
+                        },
+                        "imageIds": {
+                          "type": "array",
+                          "maxItems": 5,
+                          "items": {
+                            "type": "number"
+                          },
+                          "example": [
+                            234,
+                            45566,
+                            345
+                          ],
+                          "default": [
+
+                          ],
+                          "description": "List of product images ids"
                         },
                         "imageUrls": {
                           "type": "array",
@@ -8070,6 +8127,34 @@
                     "example": "Jardin Local",
                     "description": "Display name of a shop."
                   },
+                  "avatarId": {
+                    "type": "integer",
+                    "example": 1,
+                    "description": "Avatar id of a shop"
+                  },
+                  "avatarUrl": {
+                    "type": "string",
+                    "example": "http://www.image.com/image.jpg",
+                    "description": "Avatar url of a shop"
+                  },
+                  "coverId": {
+                    "type": "integer",
+                    "example": 1,
+                    "description": "Cover id of a shop"
+                  },
+                  "coverUrl": {
+                    "type": "string",
+                    "example": "http://www.image.com/image.jpg",
+                    "description": "Cover url of a shop"
+                  },
+                  "imageIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "description": "Image ids of shop"
+                  },
                   "imageUrls": {
                     "type": "array",
                     "items": {
@@ -8172,11 +8257,6 @@
                       "longitude",
                       "inseeCode"
                     ]
-                  },
-                  "avatarImageId": {
-                    "type": "integer",
-                    "example": 14,
-                    "description": "Image id wanted to be the shop's avatar image"
                   }
                 },
                 "required": [
@@ -8268,13 +8348,41 @@
                     "example": "Jardin Local",
                     "description": "Display name of a shop."
                   },
+                  "avatarId": {
+                    "type": "integer",
+                    "example": 1,
+                    "description": "Avatar id of a shop"
+                  },
+                  "avatarUrl": {
+                    "type": "string",
+                    "example": "http://www.image.com/image.jpg",
+                    "description": "Avatar url of a shop"
+                  },
+                  "coverId": {
+                    "type": "integer",
+                    "example": 1,
+                    "description": "Cover id of a shop"
+                  },
+                  "coverUrl": {
+                    "type": "string",
+                    "example": "http://www.image.com/image.jpg",
+                    "description": "Cover url of a shop"
+                  },
+                  "imageIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "description": "Image ids of shop"
+                  },
                   "imageUrls": {
                     "type": "array",
                     "items": {
                       "type": "string",
                       "example": "http://www.image.com/image.jpg"
                     },
-                    "description": "Images of a shop"
+                    "description": "Image urls of a shop"
                   },
                   "email": {
                     "type": "string",

@@ -29,12 +29,13 @@ RSpec.describe 'api/v1/selections', swagger_doc: 'v1/swagger.json', type: :reque
             type: :string,
             enum: ["disabled", "active"]
           },
-          imageUrl: { type: :string, example: "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg" }
+          imageId: { type: :integer, example: 1, description: "Required if no imageUrl"},
+          imageUrl: { type: :string, example: "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg", description: "Required if no imageId" }
         },
-        required: %w[name description imageUrl]
+        required: %w[name description]
       }
 
-      response(201, 'successful') do
+      response(200, 'successful') do
         schema type: :object, '$ref': '#/components/schemas/Selection'
         run_test!
       end
@@ -126,6 +127,7 @@ RSpec.describe 'api/v1/selections', swagger_doc: 'v1/swagger.json', type: :reque
             type: :string,
             enum: ["disabled", "active"]
           },
+          imageId: { type: :integer, example: 1 },
           imageUrl: { type: :string, example: "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg" }
         }
       }

@@ -67,59 +67,209 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         @categories << create(:category)
         @categories << create(:homme)
       end
-      it 'should return 201 HTTP status code with shop response object' do
-        @create_params = {
-          name: "Boutique Test",
-          address: {
-            streetNumber: "52",
-            route: "Rue Georges Bonnac",
-            locality: "Bordeaux",
-            country: "France",
-            postalCode: "33000",
-            longitude: 44.8399608,
-            latitude: 0.5862431,
-            inseeCode: "33063"
-          },
-          email: "test@boutique.com",
-          mobileNumber: "0666666666",
-          siret: "75409821800029",
-          categoryIds: [
-            @categories[0].id,
-            @categories[1].id
-          ],
-          description: "Test description",
-          baseline: "Test baseline",
-          facebookLink: "http://www.facebook.com",
-          instagramLink: "http://www.instagram.com",
-          websiteLink: "http://www.website.com",
-        }
-        allow(City).to receive(:find_or_create_city).and_return(create(:city))
 
-        shop_employee_user = create(:shop_employee_user, email: 'shop.employee789@ecity.fr')
-        request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
+      context "with avatar, cover, and images as ids" do
+        it 'should return 201 HTTP status code with shop response object' do
+          image = create(:image)
+          @create_params = {
+            name: "Boutique Test",
+            avatarId: image.id,
+            coverId: image.id,
+            imageIds: [image.id],
+            address: {
+              streetNumber: "52",
+              route: "Rue Georges Bonnac",
+              locality: "Bordeaux",
+              country: "France",
+              postalCode: "33000",
+              longitude: 44.8399608,
+              latitude: 0.5862431,
+              inseeCode: "33063"
+            },
+            email: "test@boutique.com",
+            mobileNumber: "0666666666",
+            siret: "75409821800029",
+            categoryIds: [
+              @categories[0].id,
+              @categories[1].id
+            ],
+            description: "Test description",
+            baseline: "Test baseline",
+            facebookLink: "http://www.facebook.com",
+            instagramLink: "http://www.instagram.com",
+            websiteLink: "http://www.website.com",
+          }
+          allow(City).to receive(:find_or_create_city).and_return(create(:city))
 
-        post :create, params: @create_params
+          shop_employee_user = create(:shop_employee_user, email: 'shop.employee789@ecity.fr')
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
 
-        expect(response).to have_http_status(201)
-        shop_result = JSON.parse(response.body)
-        expect(shop_result["id"]).not_to be_nil
-        expect(shop_result["name"]).to eq(@create_params[:name])
-        expect(shop_result["siret"]).to eq(@create_params[:siret])
-        expect(shop_result["email"]).to eq(@create_params[:email])
-        expect(shop_result["mobileNumber"]).to eq(@create_params[:mobileNumber])
-        expect(shop_result["address"]["streetNumber"]).to eq(@create_params[:address][:streetNumber])
-        expect(shop_result["address"]["route"]).to eq(@create_params[:address][:route])
-        expect(shop_result["address"]["locality"]).to eq(@create_params[:address][:locality])
-        expect(shop_result["address"]["country"]).to eq(@create_params[:address][:country])
-        expect(shop_result["address"]["postalCode"]).to eq(@create_params[:address][:postalCode])
-        expect(shop_result["address"]["longitude"]).to eq(@create_params[:address][:longitude])
-        expect(shop_result["address"]["latitude"]).to eq(@create_params[:address][:latitude])
-        expect(shop_result["description"]).to eq(@create_params[:description])
-        expect(shop_result["baseline"]).to eq(@create_params[:baseline])
-        expect(shop_result["facebookLink"]).to eq(@create_params[:facebookLink])
-        expect(shop_result["instagramLink"]).to eq(@create_params[:instagramLink])
-        expect(shop_result["websiteLink"]).to eq(@create_params[:websiteLink])
-        expect((Shop.find(shop_result["id"]).owner == shop_employee_user.shop_employee)).to be_truthy
+          post :create, params: @create_params
+
+          expect(response).to have_http_status(201)
+          shop_result = JSON.parse(response.body)
+          expect(shop_result["id"]).not_to be_nil
+          expect(shop_result["name"]).to eq(@create_params[:name])
+          expect(shop_result["siret"]).to eq(@create_params[:siret])
+          expect(shop_result["email"]).to eq(@create_params[:email])
+          expect(shop_result["avatar"]["id"]).to eq(image.id)
+          expect(shop_result["avatar"]["originalUrl"]).to eq(image.file_url)
+          expect(shop_result["cover"]["id"]).to eq(image.id)
+          expect(shop_result["cover"]["originalUrl"]).to eq(image.file_url)
+          expect(shop_result["images"].count).to eq(@create_params[:imageIds].count)
+          expect(shop_result["images"].first["id"]).to_not be_blank
+          expect(shop_result["images"].first["originalUrl"]).to_not be_blank
+          expect(shop_result["mobileNumber"]).to eq(@create_params[:mobileNumber])
+          expect(shop_result["address"]["streetNumber"]).to eq(@create_params[:address][:streetNumber])
+          expect(shop_result["address"]["route"]).to eq(@create_params[:address][:route])
+          expect(shop_result["address"]["locality"]).to eq(@create_params[:address][:locality])
+          expect(shop_result["address"]["country"]).to eq(@create_params[:address][:country])
+          expect(shop_result["address"]["postalCode"]).to eq(@create_params[:address][:postalCode])
+          expect(shop_result["address"]["longitude"]).to eq(@create_params[:address][:longitude])
+          expect(shop_result["address"]["latitude"]).to eq(@create_params[:address][:latitude])
+          expect(shop_result["description"]).to eq(@create_params[:description])
+          expect(shop_result["baseline"]).to eq(@create_params[:baseline])
+          expect(shop_result["facebookLink"]).to eq(@create_params[:facebookLink])
+          expect(shop_result["instagramLink"]).to eq(@create_params[:instagramLink])
+          expect(shop_result["websiteLink"]).to eq(@create_params[:websiteLink])
+          expect((Shop.find(shop_result["id"]).owner == shop_employee_user.shop_employee)).to be_truthy
+        end
+
+      end
+
+      context "with avatar, cover, and images as urls" do
+        it 'should return 201 HTTP status code with shop response object' do
+          @create_params = {
+            name: "Boutique Test",
+            avatarUrl: "https://dragonballsuper-france.fr/wp-content/uploads/2018/11/final.mp4_snapshot_00.35_2018.11.08_00.18.50-1.jpg",
+            coverUrl: "https://dragonballsuper-france.fr/wp-content/uploads/2018/11/final.mp4_snapshot_00.35_2018.11.08_00.18.50-1.jpg",
+            imageUrls: ["https://dragonballsuper-france.fr/wp-content/uploads/2018/11/final.mp4_snapshot_00.35_2018.11.08_00.18.50-1.jpg"],
+            address: {
+              streetNumber: "52",
+              route: "Rue Georges Bonnac",
+              locality: "Bordeaux",
+              country: "France",
+              postalCode: "33000",
+              longitude: 44.8399608,
+              latitude: 0.5862431,
+              inseeCode: "33063"
+            },
+            email: "test@boutique.com",
+            mobileNumber: "0666666666",
+            siret: "75409821800029",
+            categoryIds: [
+              @categories[0].id,
+              @categories[1].id
+            ],
+            description: "Test description",
+            baseline: "Test baseline",
+            facebookLink: "http://www.facebook.com",
+            instagramLink: "http://www.instagram.com",
+            websiteLink: "http://www.website.com",
+          }
+          allow(City).to receive(:find_or_create_city).and_return(create(:city))
+
+          shop_employee_user = create(:shop_employee_user, email: 'shop.employee789@ecity.fr')
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
+
+          post :create, params: @create_params
+
+          expect(response).to have_http_status(201)
+          shop_result = JSON.parse(response.body)
+          expect(shop_result["id"]).not_to be_nil
+          expect(shop_result["name"]).to eq(@create_params[:name])
+          expect(shop_result["siret"]).to eq(@create_params[:siret])
+          expect(shop_result["email"]).to eq(@create_params[:email])
+          expect(shop_result["avatar"]["id"]).to_not be_blank
+          expect(shop_result["avatar"]["originalUrl"]).to_not be_blank
+          expect(shop_result["cover"]["id"]).to_not be_blank
+          expect(shop_result["cover"]["originalUrl"]).to_not be_blank
+          expect(shop_result["images"].count).to eq(@create_params[:imageUrls].count)
+          expect(shop_result["mobileNumber"]).to eq(@create_params[:mobileNumber])
+          expect(shop_result["address"]["streetNumber"]).to eq(@create_params[:address][:streetNumber])
+          expect(shop_result["address"]["route"]).to eq(@create_params[:address][:route])
+          expect(shop_result["address"]["locality"]).to eq(@create_params[:address][:locality])
+          expect(shop_result["address"]["country"]).to eq(@create_params[:address][:country])
+          expect(shop_result["address"]["postalCode"]).to eq(@create_params[:address][:postalCode])
+          expect(shop_result["address"]["longitude"]).to eq(@create_params[:address][:longitude])
+          expect(shop_result["address"]["latitude"]).to eq(@create_params[:address][:latitude])
+          expect(shop_result["description"]).to eq(@create_params[:description])
+          expect(shop_result["baseline"]).to eq(@create_params[:baseline])
+          expect(shop_result["facebookLink"]).to eq(@create_params[:facebookLink])
+          expect(shop_result["instagramLink"]).to eq(@create_params[:instagramLink])
+          expect(shop_result["websiteLink"]).to eq(@create_params[:websiteLink])
+          expect((Shop.find(shop_result["id"]).owner == shop_employee_user.shop_employee)).to be_truthy
+        end
+
+      end
+
+      context "with avatar, cover, and images as urls and ids" do
+        it 'should return 201 HTTP status code with shop response object and image ids preferred' do
+          image = create(:image)
+          @create_params = {
+            name: "Boutique Test",
+            avatarUrl: "https://dragonballsuper-france.fr/wp-content/uploads/2018/11/final.mp4_snapshot_00.35_2018.11.08_00.18.50-1.jpg",
+            coverUrl: "https://dragonballsuper-france.fr/wp-content/uploads/2018/11/final.mp4_snapshot_00.35_2018.11.08_00.18.50-1.jpg",
+            imageUrls: ["https://dragonballsuper-france.fr/wp-content/uploads/2018/11/final.mp4_snapshot_00.35_2018.11.08_00.18.50-1.jpg"],
+            avatarId: image.id,
+            coverId: image.id,
+            imageIds: [image.id],
+            address: {
+              streetNumber: "52",
+              route: "Rue Georges Bonnac",
+              locality: "Bordeaux",
+              country: "France",
+              postalCode: "33000",
+              longitude: 44.8399608,
+              latitude: 0.5862431,
+              inseeCode: "33063"
+            },
+            email: "test@boutique.com",
+            mobileNumber: "0666666666",
+            siret: "75409821800029",
+            categoryIds: [
+              @categories[0].id,
+              @categories[1].id
+            ],
+            description: "Test description",
+            baseline: "Test baseline",
+            facebookLink: "http://www.facebook.com",
+            instagramLink: "http://www.instagram.com",
+            websiteLink: "http://www.website.com",
+          }
+          allow(City).to receive(:find_or_create_city).and_return(create(:city))
+
+          shop_employee_user = create(:shop_employee_user, email: 'shop.employee789@ecity.fr')
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
+
+          post :create, params: @create_params
+
+          expect(response).to have_http_status(201)
+          shop_result = JSON.parse(response.body)
+          expect(shop_result["id"]).not_to be_nil
+          expect(shop_result["name"]).to eq(@create_params[:name])
+          expect(shop_result["siret"]).to eq(@create_params[:siret])
+          expect(shop_result["email"]).to eq(@create_params[:email])
+          expect(shop_result["avatar"]["id"]).to eq(image.id)
+          expect(shop_result["avatar"]["originalUrl"]).to eq(image.file_url)
+          expect(shop_result["cover"]["id"]).to eq(image.id)
+          expect(shop_result["cover"]["originalUrl"]).to eq(image.file_url)
+          expect(shop_result["images"].count).to eq(@create_params[:imageIds].count)
+          expect(shop_result["mobileNumber"]).to eq(@create_params[:mobileNumber])
+          expect(shop_result["address"]["streetNumber"]).to eq(@create_params[:address][:streetNumber])
+          expect(shop_result["address"]["route"]).to eq(@create_params[:address][:route])
+          expect(shop_result["address"]["locality"]).to eq(@create_params[:address][:locality])
+          expect(shop_result["address"]["country"]).to eq(@create_params[:address][:country])
+          expect(shop_result["address"]["postalCode"]).to eq(@create_params[:address][:postalCode])
+          expect(shop_result["address"]["longitude"]).to eq(@create_params[:address][:longitude])
+          expect(shop_result["address"]["latitude"]).to eq(@create_params[:address][:latitude])
+          expect(shop_result["description"]).to eq(@create_params[:description])
+          expect(shop_result["baseline"]).to eq(@create_params[:baseline])
+          expect(shop_result["facebookLink"]).to eq(@create_params[:facebookLink])
+          expect(shop_result["instagramLink"]).to eq(@create_params[:instagramLink])
+          expect(shop_result["websiteLink"]).to eq(@create_params[:websiteLink])
+          expect((Shop.find(shop_result["id"]).owner == shop_employee_user.shop_employee)).to be_truthy
+        end
       end
     end
 
@@ -354,6 +504,138 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
           end
         end
       end
+      context "Bad params for images" do
+        before(:all) do
+          @categories = []
+          @categories << create(:category)
+          @categories << create(:homme)
+        end
+        after(:all) do
+          @categories.each { |cat| cat.destroy }
+        end
+        context "avatar not found" do
+          it "should return 404 HTTP status" do
+            image = create(:image)
+            @create_params = {
+              name: "Boutique Test",
+              avatarId: 0,
+              coverId: image.id,
+              imageIds: [image.id],
+              address: {
+                streetNumber: "52",
+                route: "Rue Georges Bonnac",
+                locality: "Bordeaux",
+                country: "France",
+                postalCode: "33000",
+                longitude: 44.8399608,
+                latitude: 0.5862431,
+                inseeCode: "33063"
+              },
+              email: "test@boutique.com",
+              mobileNumber: "0666666666",
+              siret: "75409821800029",
+              categoryIds: [
+                @categories[0].id,
+                @categories[1].id
+              ],
+              description: "Test description",
+              baseline: "Test baseline",
+              facebookLink: "http://www.facebook.com",
+              instagramLink: "http://www.instagram.com",
+              websiteLink: "http://www.website.com",
+            }
+            allow(City).to receive(:find_or_create_city).and_return(create(:city))
+
+            shop_employee_user = create(:shop_employee_user, email: 'shop.employee789@ecity.fr')
+            request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
+
+            post :create, params: @create_params
+            expect(response).to have_http_status(404)
+          end
+        end
+
+        context "cover not found" do
+          it "should return 404 HTTP status" do
+            image = create(:image)
+            @create_params = {
+              name: "Boutique Test",
+              avatarId: image.id,
+              coverId: 0,
+              imageIds: [image.id],
+              address: {
+                streetNumber: "52",
+                route: "Rue Georges Bonnac",
+                locality: "Bordeaux",
+                country: "France",
+                postalCode: "33000",
+                longitude: 44.8399608,
+                latitude: 0.5862431,
+                inseeCode: "33063"
+              },
+              email: "test@boutique.com",
+              mobileNumber: "0666666666",
+              siret: "75409821800029",
+              categoryIds: [
+                @categories[0].id,
+                @categories[1].id
+              ],
+              description: "Test description",
+              baseline: "Test baseline",
+              facebookLink: "http://www.facebook.com",
+              instagramLink: "http://www.instagram.com",
+              websiteLink: "http://www.website.com",
+            }
+            allow(City).to receive(:find_or_create_city).and_return(create(:city))
+
+            shop_employee_user = create(:shop_employee_user, email: 'shop.employee789@ecity.fr')
+            request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
+
+            post :create, params: @create_params
+            expect(response).to have_http_status(404)
+          end
+        end
+
+        context "images not found" do
+          it "should return 404 HTTP status" do
+            image = create(:image)
+            @create_params = {
+              name: "Boutique Test",
+              avatarId: image.id,
+              coverId: image.id,
+              imageIds: [image.id, 0],
+              address: {
+                streetNumber: "52",
+                route: "Rue Georges Bonnac",
+                locality: "Bordeaux",
+                country: "France",
+                postalCode: "33000",
+                longitude: 44.8399608,
+                latitude: 0.5862431,
+                inseeCode: "33063"
+              },
+              email: "test@boutique.com",
+              mobileNumber: "0666666666",
+              siret: "75409821800029",
+              categoryIds: [
+                @categories[0].id,
+                @categories[1].id
+              ],
+              description: "Test description",
+              baseline: "Test baseline",
+              facebookLink: "http://www.facebook.com",
+              instagramLink: "http://www.instagram.com",
+              websiteLink: "http://www.website.com",
+            }
+            allow(City).to receive(:find_or_create_city).and_return(create(:city))
+
+            shop_employee_user = create(:shop_employee_user, email: 'shop.employee789@ecity.fr')
+            request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
+
+            post :create, params: @create_params
+            expect(response).to have_http_status(404)
+          end
+        end
+      end
     end
 
     context 'Authentication incorrect' do
@@ -401,60 +683,204 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         @shop_address.addressable_type = "Shop"
         @shop_address.save
       end
-      it 'should return 200 HTTP status code with shop response object' do
-        avatar_image = create(:image)
-        @update_params = {
-          name: "Boutique Test",
-          email: @shop.email,
-          mobileNumber: "0666666666",
-          siret: @shop.siret,
-          address: {
-            streetNumber: @shop.address.street_number,
-            route: @shop.address.route,
-            locality: @shop.address.locality,
-            country: @shop.address.country,
-            postalCode: @shop.address.postal_code,
-            longitude: @shop.address.longitude,
-            latitude: @shop.address.latitude,
-            inseeCode: @shop.address.city.insee_code
-          },
-          description: "Description mise à jour de la boutique",
-          baseline: "Baseline mise à jour de la boutique",
-          facebookLink: "http://www.facebook.com",
-          instagramLink: "http://www.instagram.com",
-          websiteLink: "http://www.website.com",
-          avatarImageId: avatar_image.id
-        }
-        shop_employee_user = create(:shop_employee_user, email: 'shop.employee78@ecity.fr')
-        @shop.assign_ownership(shop_employee_user)
-        @shop.profil&.file_url = nil
-        @shop.descriptions << I18nshop.new(lang: "fr", field: "description", content: "Description de la boutique")
-        @shop.baselines << I18nshop.new(lang: "fr", field: "Baseline", content: "Baseline de la boutique")
-        @shop.save
-        request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
 
-        put :update, params: @update_params.merge({ id: @shop.id })
+      context "with avatar, cover and images as ids" do
+        it 'should return 200 HTTP status code with shop response object' do
+          image = create(:image)
+          @update_params = {
+            name: "Boutique Test",
+            email: @shop.email,
+            mobileNumber: "0666666666",
+            siret: @shop.siret,
+            address: {
+              streetNumber: @shop.address.street_number,
+              route: @shop.address.route,
+              locality: @shop.address.locality,
+              country: @shop.address.country,
+              postalCode: @shop.address.postal_code,
+              longitude: @shop.address.longitude,
+              latitude: @shop.address.latitude,
+              inseeCode: @shop.address.city.insee_code
+            },
+            description: "Description mise à jour de la boutique",
+            baseline: "Baseline mise à jour de la boutique",
+            facebookLink: "http://www.facebook.com",
+            instagramLink: "http://www.instagram.com",
+            websiteLink: "http://www.website.com",
+            avatarId: image.id,
+            coverId: image.id,
+            imageIds: [image.id]
+          }
+          shop_employee_user = create(:shop_employee_user, email: 'shop.employee78@ecity.fr')
+          @shop.assign_ownership(shop_employee_user)
+          @shop.profil&.file_url = nil
+          @shop.descriptions << I18nshop.new(lang: "fr", field: "description", content: "Description de la boutique")
+          @shop.baselines << I18nshop.new(lang: "fr", field: "Baseline", content: "Baseline de la boutique")
+          @shop.save
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
 
-        expect(response).to have_http_status(200)
-        shop_result = JSON.parse(response.body)
-        expect(shop_result["id"]).not_to be_nil
-        expect(shop_result["name"]).to eq(@update_params[:name])
-        expect(shop_result["siret"]).to eq(@shop.siret)
-        expect(shop_result["email"]).to eq(@shop.email)
-        expect(shop_result["description"]).to eq(@update_params[:description])
-        expect(shop_result["baseline"]).to eq(@update_params[:baseline])
-        expect(shop_result["address"]["streetNumber"]).to eq(@shop.address.street_number)
-        expect(shop_result["address"]["route"]).to eq(@shop.address.route)
-        expect(shop_result["address"]["locality"]).to eq(@shop.address.locality)
-        expect(shop_result["address"]["country"]).to eq(@shop.address.country)
-        expect(shop_result["address"]["postalCode"]).to eq(@shop.address.postal_code)
-        expect(shop_result["address"]["longitude"]).to eq(@shop.address.longitude)
-        expect(shop_result["address"]["latitude"]).to eq(@shop.address.latitude)
-        expect(shop_result["facebookLink"]).to eq(@update_params[:facebookLink])
-        expect(shop_result["instagramLink"]).to eq(@update_params[:instagramLink])
-        expect(shop_result["websiteLink"]).to eq(@update_params[:websiteLink])
-        expect(shop_result["avatar"].blank?).to be_falsey
-        expect((Shop.find(shop_result["id"]).owner == shop_employee_user.shop_employee)).to be_truthy
+          put :update, params: @update_params.merge({ id: @shop.id })
+
+          expect(response).to have_http_status(200)
+          shop_result = JSON.parse(response.body)
+          expect(shop_result["id"]).not_to be_nil
+          expect(shop_result["name"]).to eq(@update_params[:name])
+          expect(shop_result["siret"]).to eq(@shop.siret)
+          expect(shop_result["email"]).to eq(@shop.email)
+          expect(shop_result["description"]).to eq(@update_params[:description])
+          expect(shop_result["baseline"]).to eq(@update_params[:baseline])
+          expect(shop_result["address"]["streetNumber"]).to eq(@shop.address.street_number)
+          expect(shop_result["address"]["route"]).to eq(@shop.address.route)
+          expect(shop_result["address"]["locality"]).to eq(@shop.address.locality)
+          expect(shop_result["address"]["country"]).to eq(@shop.address.country)
+          expect(shop_result["address"]["postalCode"]).to eq(@shop.address.postal_code)
+          expect(shop_result["address"]["longitude"]).to eq(@shop.address.longitude)
+          expect(shop_result["address"]["latitude"]).to eq(@shop.address.latitude)
+          expect(shop_result["facebookLink"]).to eq(@update_params[:facebookLink])
+          expect(shop_result["instagramLink"]).to eq(@update_params[:instagramLink])
+          expect(shop_result["websiteLink"]).to eq(@update_params[:websiteLink])
+          expect(shop_result["avatar"]["id"]).to eq(image.id)
+          expect(shop_result["avatar"]["originalUrl"]).to eq(image.file_url)
+          expect(shop_result["cover"]["id"]).to eq(image.id)
+          expect(shop_result["cover"]["originalUrl"]).to eq(image.file_url)
+          expect(shop_result["images"].count).to eq(@update_params[:imageIds].count)
+          expect(shop_result["images"].first["id"]).to_not be_blank
+          expect(shop_result["images"].first["originalUrl"]).to_not be_blank
+          expect((Shop.find(shop_result["id"]).owner == shop_employee_user.shop_employee)).to be_truthy
+        end
+      end
+
+      context "with avatar, cover and images as urls" do
+        it 'should return 200 HTTP status code with shop response object' do
+          image = create(:image)
+          @update_params = {
+            name: "Boutique Test",
+            email: @shop.email,
+            mobileNumber: "0666666666",
+            siret: @shop.siret,
+            address: {
+              streetNumber: @shop.address.street_number,
+              route: @shop.address.route,
+              locality: @shop.address.locality,
+              country: @shop.address.country,
+              postalCode: @shop.address.postal_code,
+              longitude: @shop.address.longitude,
+              latitude: @shop.address.latitude,
+              inseeCode: @shop.address.city.insee_code
+            },
+            description: "Description mise à jour de la boutique",
+            baseline: "Baseline mise à jour de la boutique",
+            facebookLink: "http://www.facebook.com",
+            instagramLink: "http://www.instagram.com",
+            websiteLink: "http://www.website.com",
+            avatarUrl: "https://dragonballsuper-france.fr/wp-content/uploads/2018/11/final.mp4_snapshot_00.35_2018.11.08_00.18.50-1.jpg",
+            coverUrl: "https://dragonballsuper-france.fr/wp-content/uploads/2018/11/final.mp4_snapshot_00.35_2018.11.08_00.18.50-1.jpg",
+            imageUrls: ["https://dragonballsuper-france.fr/wp-content/uploads/2018/11/final.mp4_snapshot_00.35_2018.11.08_00.18.50-1.jpg"]
+          }
+          shop_employee_user = create(:shop_employee_user, email: 'shop.employee78@ecity.fr')
+          @shop.assign_ownership(shop_employee_user)
+          @shop.profil&.file_url = nil
+          @shop.descriptions << I18nshop.new(lang: "fr", field: "description", content: "Description de la boutique")
+          @shop.baselines << I18nshop.new(lang: "fr", field: "Baseline", content: "Baseline de la boutique")
+          @shop.save
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
+
+          put :update, params: @update_params.merge({ id: @shop.id })
+
+          expect(response).to have_http_status(200)
+          shop_result = JSON.parse(response.body)
+          expect(shop_result["id"]).not_to be_nil
+          expect(shop_result["name"]).to eq(@update_params[:name])
+          expect(shop_result["siret"]).to eq(@shop.siret)
+          expect(shop_result["email"]).to eq(@shop.email)
+          expect(shop_result["description"]).to eq(@update_params[:description])
+          expect(shop_result["baseline"]).to eq(@update_params[:baseline])
+          expect(shop_result["address"]["streetNumber"]).to eq(@shop.address.street_number)
+          expect(shop_result["address"]["route"]).to eq(@shop.address.route)
+          expect(shop_result["address"]["locality"]).to eq(@shop.address.locality)
+          expect(shop_result["address"]["country"]).to eq(@shop.address.country)
+          expect(shop_result["address"]["postalCode"]).to eq(@shop.address.postal_code)
+          expect(shop_result["address"]["longitude"]).to eq(@shop.address.longitude)
+          expect(shop_result["address"]["latitude"]).to eq(@shop.address.latitude)
+          expect(shop_result["facebookLink"]).to eq(@update_params[:facebookLink])
+          expect(shop_result["instagramLink"]).to eq(@update_params[:instagramLink])
+          expect(shop_result["websiteLink"]).to eq(@update_params[:websiteLink])
+          expect(shop_result["avatar"]["id"]).to_not be_blank
+          expect(shop_result["avatar"]["originalUrl"]).to_not be_blank
+          expect(shop_result["cover"]["id"]).to_not be_blank
+          expect(shop_result["cover"]["originalUrl"]).to_not be_blank
+          expect(shop_result["images"].count).to eq(@update_params[:imageUrls].count)
+          expect((Shop.find(shop_result["id"]).owner == shop_employee_user.shop_employee)).to be_truthy
+        end
+      end
+
+      context "with avatar, cover and images as ids and urls" do
+        it 'should return 200 HTTP status code with shop response object and image ids preferred' do
+          image = create(:image)
+          @update_params = {
+            name: "Boutique Test",
+            email: @shop.email,
+            mobileNumber: "0666666666",
+            siret: @shop.siret,
+            address: {
+              streetNumber: @shop.address.street_number,
+              route: @shop.address.route,
+              locality: @shop.address.locality,
+              country: @shop.address.country,
+              postalCode: @shop.address.postal_code,
+              longitude: @shop.address.longitude,
+              latitude: @shop.address.latitude,
+              inseeCode: @shop.address.city.insee_code
+            },
+            description: "Description mise à jour de la boutique",
+            baseline: "Baseline mise à jour de la boutique",
+            facebookLink: "http://www.facebook.com",
+            instagramLink: "http://www.instagram.com",
+            websiteLink: "http://www.website.com",
+            avatarId: image.id,
+            coverId: image.id,
+            imageIds: [image.id],
+            avatarUrl: "https://dragonballsuper-france.fr/wp-content/uploads/2018/11/final.mp4_snapshot_00.35_2018.11.08_00.18.50-1.jpg",
+            coverUrl: "https://dragonballsuper-france.fr/wp-content/uploads/2018/11/final.mp4_snapshot_00.35_2018.11.08_00.18.50-1.jpg",
+            imageUrls: ["https://dragonballsuper-france.fr/wp-content/uploads/2018/11/final.mp4_snapshot_00.35_2018.11.08_00.18.50-1.jpg"]
+          }
+          shop_employee_user = create(:shop_employee_user, email: 'shop.employee78@ecity.fr')
+          @shop.assign_ownership(shop_employee_user)
+          @shop.profil&.file_url = nil
+          @shop.descriptions << I18nshop.new(lang: "fr", field: "description", content: "Description de la boutique")
+          @shop.baselines << I18nshop.new(lang: "fr", field: "Baseline", content: "Baseline de la boutique")
+          @shop.save
+          request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
+
+          put :update, params: @update_params.merge({ id: @shop.id })
+
+          expect(response).to have_http_status(200)
+          shop_result = JSON.parse(response.body)
+          expect(shop_result["id"]).not_to be_nil
+          expect(shop_result["name"]).to eq(@update_params[:name])
+          expect(shop_result["siret"]).to eq(@shop.siret)
+          expect(shop_result["email"]).to eq(@shop.email)
+          expect(shop_result["description"]).to eq(@update_params[:description])
+          expect(shop_result["baseline"]).to eq(@update_params[:baseline])
+          expect(shop_result["address"]["streetNumber"]).to eq(@shop.address.street_number)
+          expect(shop_result["address"]["route"]).to eq(@shop.address.route)
+          expect(shop_result["address"]["locality"]).to eq(@shop.address.locality)
+          expect(shop_result["address"]["country"]).to eq(@shop.address.country)
+          expect(shop_result["address"]["postalCode"]).to eq(@shop.address.postal_code)
+          expect(shop_result["address"]["longitude"]).to eq(@shop.address.longitude)
+          expect(shop_result["address"]["latitude"]).to eq(@shop.address.latitude)
+          expect(shop_result["facebookLink"]).to eq(@update_params[:facebookLink])
+          expect(shop_result["instagramLink"]).to eq(@update_params[:instagramLink])
+          expect(shop_result["websiteLink"]).to eq(@update_params[:websiteLink])
+          expect(shop_result["avatar"]["id"]).to eq(image.id)
+          expect(shop_result["avatar"]["originalUrl"]).to eq(image.file_url)
+          expect(shop_result["cover"]["id"]).to eq(image.id)
+          expect(shop_result["cover"]["originalUrl"]).to eq(image.file_url)
+          expect(shop_result["images"].count).to eq(@update_params[:imageIds].count)
+          expect(shop_result["images"].first["id"]).to_not be_blank
+          expect(shop_result["images"].first["originalUrl"]).to_not be_blank
+          expect((Shop.find(shop_result["id"]).owner == shop_employee_user.shop_employee)).to be_truthy
+        end
       end
 
       context 'Shop has no description' do
@@ -480,7 +906,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
             facebookLink: "http://www.facebook.com",
             instagramLink: "http://www.instagram.com",
             websiteLink: "http://www.website.com",
-            avatarImageId: avatar_image.id
+            avatarId: avatar_image.id
           }
           shop_employee_user = create(:shop_employee_user, email: 'shop.employee78@ecity.fr')
           @shop.assign_ownership(shop_employee_user)
@@ -516,22 +942,137 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
       end
     end
 
-    context 'Shop not found' do
-      it 'Should return 404 HTTP status' do
-        shop_employee_user = create(:shop_employee_user, email: 'shop.employee5678@ecity.fr')
-
-        shop = create(:shop)
-        shop.destroy
-
-        request.headers["HTTP_X_CLIENT_ID"] = generate_token(shop_employee_user)
-        put :update, params: { id: shop.id }
-
-        expect(response).to have_http_status(404)
-        expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Shop with 'id'=#{shop.id}").to_h.to_json)
-      end
-    end
-
     context "Bad params" do
+      context "images bad params" do
+        before(:each) do
+          @categories = []
+          @categories << create(:category)
+          @categories << create(:homme)
+        end
+        context "Avatar image not found" do
+          it "returns a 404 http status" do
+            image = create(:image)
+            wrong_avatar_id = image.id
+            @update_params = {
+              name: "oui",
+              email: "test@boutique.com",
+              siret: "75409821800029",
+              mobileNumber: "0666666666",
+              categoryIds: [
+                @categories[0].id,
+                @categories[1].id
+              ],
+              address: {
+                streetNumber: "52",
+                route: "Rue Georges Bonnac",
+                locality: "Bordeaux",
+                country: "France",
+                postalCode: "33000",
+                longitude: 44.8399608,
+                latitude: 0.5862431,
+                inseeCode: "33063"
+              },
+              avatarId: wrong_avatar_id
+            }
+            shop_employee_user = create(:shop_employee_user, email: 'shop.employee5681@ecity.fr')
+            shop = create(:shop)
+            shop.assign_ownership(shop_employee_user)
+            shop.save
+
+            request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
+
+            image.delete
+
+            put :update, params: @update_params.merge(id: shop.id)
+            expect(response).to have_http_status(404)
+          end
+        end
+
+        context "Cover not found" do
+          it "should return 400 HTTP status" do
+            wrong_id = 0
+            @update_params = {
+              name: "La boutique de Chuck",
+              address: {
+                streetNumber: "52",
+                route: "Rue Georges Bonnac",
+                locality: "Bordeaux",
+                country: "France",
+                postalCode: "33000",
+                longitude: 44.8399608,
+                latitude: 0.5862431
+              },
+              email: "test@boutique.com",
+              siret: "75409821800029",
+              categoryIds: [
+                @categories[0].id,
+                @categories[1].id
+              ],
+              coverId: wrong_id
+            }
+            shop_employee_user = create(:shop_employee_user, email: 'shop.employee5678@ecity.fr')
+            shop = create(:shop)
+            shop.assign_ownership(shop_employee_user)
+            shop.save
+
+            request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
+
+            put :update, params: @update_params.merge(id: shop.id)
+
+            expect(response).to have_http_status(400)
+          end
+        end
+
+        context "Cover not found" do
+          it "should return 400 HTTP status" do
+            wrong_id = 0
+            @update_params = {
+              name: "La boutique de Chuck",
+              address: {
+                streetNumber: "52",
+                route: "Rue Georges Bonnac",
+                locality: "Bordeaux",
+                country: "France",
+                postalCode: "33000",
+                longitude: 44.8399608,
+                latitude: 0.5862431
+              },
+              email: "test@boutique.com",
+              siret: "75409821800029",
+              categoryIds: [
+                @categories[0].id,
+                @categories[1].id
+              ],
+              imageIds: [wrong_id]
+            }
+            shop_employee_user = create(:shop_employee_user, email: 'shop.employee5678@ecity.fr')
+            shop = create(:shop)
+            shop.assign_ownership(shop_employee_user)
+            shop.save
+
+            request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
+
+            put :update, params: @update_params.merge(id: shop.id)
+
+            expect(response).to have_http_status(400)
+          end
+        end
+
+      end
+      context 'Shop not found' do
+        it 'Should return 404 HTTP status' do
+          shop_employee_user = create(:shop_employee_user, email: 'shop.employee5678@ecity.fr')
+
+          shop = create(:shop)
+          shop.destroy
+
+          request.headers["HTTP_X_CLIENT_ID"] = generate_token(shop_employee_user)
+          put :update, params: { id: shop.id }
+
+          expect(response).to have_http_status(404)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Shop with 'id'=#{shop.id}").to_h.to_json)
+        end
+      end
       context "No Name" do
         before(:each) do
           @categories = []
@@ -766,44 +1307,6 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
             put :update, params: @update_params.merge(id: shop.id)
 
             expect(response.body).to eq(Dto::Errors::BadRequest.new("param is missing or the value is empty: route").to_h.to_json)
-          end
-        end
-        context "Avatar image not found" do
-          it "returns a 404 http status" do
-            image = create(:image)
-            wrong_avatar_id = image.id
-            @update_params = {
-              name: "oui",
-              email: "test@boutique.com",
-              siret: "75409821800029",
-              mobileNumber: "0666666666",
-              categoryIds: [
-                @categories[0].id,
-                @categories[1].id
-              ],
-              address: {
-                streetNumber: "52",
-                route: "Rue Georges Bonnac",
-                locality: "Bordeaux",
-                country: "France",
-                postalCode: "33000",
-                longitude: 44.8399608,
-                latitude: 0.5862431,
-                inseeCode: "33063"
-              },
-              avatarImageId: wrong_avatar_id
-            }
-            shop_employee_user = create(:shop_employee_user, email: 'shop.employee5681@ecity.fr')
-            shop = create(:shop)
-            shop.assign_ownership(shop_employee_user)
-            shop.save
-
-            request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
-
-            image.delete
-
-            put :update, params: @update_params.merge(id: shop.id)
-            expect(response).to have_http_status(404)
           end
         end
       end

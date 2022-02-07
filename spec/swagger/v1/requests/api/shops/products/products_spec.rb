@@ -23,20 +23,6 @@ RSpec.describe 'api/v1/shops/products', swagger_doc: 'v1/swagger.json', type: :r
           citizenAdvice: { type: :string, example: 'Produit trouvé un commercant trop sympa', description: 'Advice from citizen of product' },
           categoryId: { type: :integer, example: ENV['UNCLASSIFIED_CATEGORY_ID'], description: 'Category id of product' },
           shopId: { type: :integer, example: 453, description: 'Shop id of product' },
-=begin
-          imageUrls: {
-            type: 'array',
-            items: {
-              type: 'string'
-            },
-            example: [
-              'https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr',
-              'https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg'
-            ],
-            default: [],
-            description: 'List of product images urls'
-          },
-=end
           variants: {
             type: :array,
             items: {
@@ -46,6 +32,16 @@ RSpec.describe 'api/v1/shops/products', swagger_doc: 'v1/swagger.json', type: :r
                 weight: { type: :number, example: 0.56, description: "Weight of product's variant (in Kg)" },
                 quantity: { type: :integer, example: 9, description: "Stock of product's variant" },
                 isDefault: { type: :boolean, example: true, description: "Tell if this variant is the product's default variant" },
+                imageIds: {
+                  type: 'array',
+                  maxItems: 5,
+                  items: {
+                    type: 'number'
+                  },
+                  example: [234, 45566, 345],
+                  default: [],
+                  description: 'List of product images ids'
+                },
                 imageUrls: {
                   type: 'array',
                   items: {
@@ -185,20 +181,6 @@ RSpec.describe 'api/v1/shops/products', swagger_doc: 'v1/swagger.json', type: :r
           sellerAdvice: { type: :string, example: "Taille petite, prendre une demi pointure au dessus", description: 'Advice from seller of product' },
           isService: { type: :boolean, example: false, description: 'Tell if the product is a service' },
           categoryId: { type: :integer, example: ENV['UNCLASSIFIED_CATEGORY_ID'], description: 'Category id of product' },
-=begin
-          imageUrls: {
-            type: 'array',
-            items: {
-              type: 'string'
-            },
-            example: [
-              'https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr',
-              'https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg'
-            ],
-            default: [],
-            description: 'List of product images urls'
-          },
-=end
           variants: {
             type: :array,
             items: {
@@ -209,6 +191,16 @@ RSpec.describe 'api/v1/shops/products', swagger_doc: 'v1/swagger.json', type: :r
                 weight: { type: :number, example: 0.56, description: "Weight of product's variant (in Kg) (Required if new variant)" },
                 quantity: { type: :integer, example: 9, description: "Stock of product's variant (Required if new variant)" },
                 isDefault: { type: :boolean, example: true, description: "Tell if this variant is the product's default variant (Required if new variant)" },
+                imageIds: {
+                  type: 'array',
+                  maxItems: 5,
+                  items: {
+                    type: 'number'
+                  },
+                  example: [234, 45566, 345],
+                  default: [],
+                  description: 'List of product images ids'
+                },
                 imageUrls: {
                   type: 'array',
                   items: {

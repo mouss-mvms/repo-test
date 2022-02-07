@@ -46,6 +46,18 @@ RSpec.describe 'api/v1/shops', swagger_doc: 'v1/swagger.json', type: :request do
             example: 'Jardin Local',
             description: 'Display name of a shop.'
           },
+          avatarId: { type: :integer, example: 1, description: 'Avatar id of a shop'},
+          avatarUrl: { type: :string, example: 'http://www.image.com/image.jpg', description: 'Avatar url of a shop'},
+          coverId: { type: :integer, example: 1, description: 'Cover id of a shop'},
+          coverUrl: { type: :string, example: 'http://www.image.com/image.jpg', description: 'Cover url of a shop'},
+          imageIds: {
+            type: :array,
+            items: {
+              type: :integer,
+              example: 1
+            },
+            description: 'Image ids of shop'
+          },
           imageUrls: {
             type: :array,
             items: {
@@ -95,11 +107,6 @@ RSpec.describe 'api/v1/shops', swagger_doc: 'v1/swagger.json', type: :request do
             description: "Shop's website link"
           },
           address: V1::Examples::Request::Address.to_h,
-          avatarImageId: {
-            type: 'integer',
-            example: 14,
-            description: "Image id wanted to be the shop's avatar image"
-          },
         },
         required: %w[id name address email mobileNumber siret]
       }
@@ -133,13 +140,25 @@ RSpec.describe 'api/v1/shops', swagger_doc: 'v1/swagger.json', type: :request do
             example: 'Jardin Local',
             description: 'Display name of a shop.'
           },
+          avatarId: { type: :integer, example: 1, description: 'Avatar id of a shop'},
+          avatarUrl: { type: :string, example: 'http://www.image.com/image.jpg', description: 'Avatar url of a shop'},
+          coverId: { type: :integer, example: 1, description: 'Cover id of a shop'},
+          coverUrl: { type: :string, example: 'http://www.image.com/image.jpg', description: 'Cover url of a shop'},
+          imageIds: {
+            type: :array,
+            items: {
+              type: :integer,
+              example: 1
+            },
+            description: 'Image ids of shop'
+          },
           imageUrls: {
             type: :array,
             items: {
               type: :string,
               example: 'http://www.image.com/image.jpg'
             },
-            description: 'Images of a shop'
+            description: 'Image urls of a shop'
           },
           email: {
             type: 'string',
