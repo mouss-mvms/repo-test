@@ -254,7 +254,7 @@
                     "properties": {
                       "id": {
                         "type": "integer",
-                        "example": "3442",
+                        "example": null,
                         "description": "Unique identifier of a category."
                       },
                       "name": {
@@ -279,7 +279,7 @@
                           "properties": {
                             "id": {
                               "type": "integer",
-                              "example": "3442",
+                              "example": null,
                               "description": "Unique identifier of a category."
                             },
                             "name": {
@@ -380,7 +380,7 @@
                   "properties": {
                     "id": {
                       "type": "integer",
-                      "example": "3442",
+                      "example": null,
                       "description": "Unique identifier of a category."
                     },
                     "name": {
@@ -405,7 +405,7 @@
                         "properties": {
                           "id": {
                             "type": "integer",
-                            "example": "3442",
+                            "example": null,
                             "description": "Unique identifier of a category."
                           },
                           "name": {
@@ -822,7 +822,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -2838,7 +2838,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -3111,7 +3111,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -3624,7 +3624,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -3947,7 +3947,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -6363,7 +6363,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -7002,7 +7002,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3442",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -7155,10 +7155,37 @@
           "schema": {
             "type": "string"
           }
+        },
+        {
+          "name": "reject_reason",
+          "in": "body",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "typeCitizenRefuse": {
+                "type": "String",
+                "enum": [
+                  "not_comply",
+                  "out_of_stock",
+                  "already_exist",
+                  "other"
+                ],
+                "required": true
+              },
+              "textCitizenRefuse": {
+                "type": "String",
+                "description": "Describe the reason of reject (required if reason type is other)",
+                "example": "I don't sell this product anymore"
+              }
+            },
+            "required": [
+              "typeCitizenRefuse"
+            ]
+          }
         }
       ],
       "post": {
-        "summary": "Reject a product",
+        "summary": "Reject a product submitted",
         "tags": [
           "Products"
         ],
@@ -9645,7 +9672,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-dev"
+      "url": "http://0.0.0.0:3000/"
     }
   ],
   "components": {
@@ -9796,7 +9823,7 @@
         "properties": {
           "id": {
             "type": "integer",
-            "example": "3442",
+            "example": null,
             "description": "Unique identifier of a category."
           },
           "name": {
@@ -9821,7 +9848,7 @@
               "properties": {
                 "id": {
                   "type": "integer",
-                  "example": "3442",
+                  "example": null,
                   "description": "Unique identifier of a category."
                 },
                 "name": {

@@ -274,7 +274,16 @@ RSpec.describe 'api/v1/shops/products', swagger_doc: 'v1/swagger.json', type: :r
     parameter name: 'X-client-id', in: :header, type: :string, required: true
     parameter name: 'id', in: :path, type: :string, required: true
 
-    post('Reject a product') do
+    parameter name: 'reject_reason', in: :body, schema: {
+      type: :object,
+      properties: {
+        typeCitizenRefuse: { type: 'String', enum: ['not_comply', 'out_of_stock', 'already_exist', 'other'], required: true },
+        textCitizenRefuse: { type: 'String', description: 'Describe the reason of reject (required if reason type is other)', example: "I don't sell this product anymore" }
+      },
+      required: %w[typeCitizenRefuse]
+    }
+
+    post('Reject a product submitted') do
       tags 'Products'
       produces 'application/json'
       security [{ authorization: [] }]
