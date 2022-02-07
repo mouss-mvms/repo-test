@@ -286,6 +286,7 @@ RSpec.describe 'api/v1/shops/products', swagger_doc: 'v1/swagger.json', type: :r
     post('Reject a product submitted') do
       tags 'Products'
       produces 'application/json'
+      consumes 'application/json'
       security [{ authorization: [] }]
 
       response(200, 'Successful') do
