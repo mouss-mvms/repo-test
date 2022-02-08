@@ -29,17 +29,12 @@ module V1
                 example: 20,
                 description: 'Quantity in stock of a variant.'
               },
-              imageUrls: {
-                type: 'array',
+              images: {
+                type: "array",
                 items: {
-                  type: 'string'
+                  '$ref': '#/components/schemas/Image'
                 },
-                example: [
-                  'https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr',
-                  'https://leserigraphe.com/wp-content/uploads/2019/10/Walker-Texas-Ranger.jpg'
-                ],
-                default: [],
-                description: 'List of variant images urls'
+                description: 'Array of images'
               },
               isDefault: {
                 type: 'boolean',
@@ -60,7 +55,7 @@ module V1
               provider: {
                 type: :object,
                 properties: {
-                  name: { type: :string, example: 'wynd', description: 'Name of the provider'},
+                  name: { type: :string, example: 'wynd', description: 'Name of the provider' },
                   externalVariantId: { type: :string, example: '67ty7', description: 'Id of variant saved by the provider' }
                 }
               }

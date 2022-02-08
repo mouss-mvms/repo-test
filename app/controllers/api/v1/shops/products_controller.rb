@@ -79,16 +79,34 @@ module Api
             Rails.logger.error(e.message)
             error = Dto::Errors::NotFound.new(e.message)
             return render json: error.to_h, status: error.status
-          rescue => e
-            Rails.logger.error(e.message)
-            error = Dto::Errors::InternalServer.new(detail: e.message)
-            return render json: error.to_h, status: error.status
           else
             return render json: Dto::V1::Product::Response.create(product).to_h, status: :ok
           end
         end
 
+        def reject
+          raise ApplicationController::Forbidden.new unless @user.is_a_business_user?
+          product = @user.shop_employee.shops.last.products.find(params[:id])
+          raise ApplicationController::UnprocessableEntity.new unless product.submitted?
+          product.status = :refused
+          product.type_citizen_refuse = reject_params[:type_citizen_refuse].to_sym
+          product.text_citizen_refuse = reject_params[:text_citizen_refuse]
+          product.save!
+
+          render json: Dto::V1::Product::Response.create(product).to_h, status: :ok
+        end
+
         private
+
+        def reject_params
+          if params[:typeCitizenRefuse] == 'other'
+            raise ActionController::BadRequest.new('textCitizenRefuse cannot be blank') if !params.key?(:textCitizenRefuse) || params[:textCitizenRefuse].blank?
+          end
+          {
+            type_citizen_refuse: params[:typeCitizenRefuse],
+            text_citizen_refuse: params[:textCitizenRefuse]
+          }
+        end
 
         def product_params_update
           product_params = {}
@@ -113,7 +131,11 @@ module Api
                 hash[:weight] = v[:weight]
                 hash[:quantity] = v[:quantity]
                 hash[:is_default] = v[:isDefault]
-                hash[:image_urls] = v[:imageUrls]
+                if v[:imageIds]
+                  hash[:image_ids] = v.require(:imageIds) if v[:imageIds].each { |id| Image.find(id).file_url }
+                elsif v[:imageUrls]
+                  hash[:image_urls] = v.require(:imageUrls)
+                end
                 hash[:characteristics] = []
                 if v[:characteristics]
                   v.require(:characteristics).each { |c|
@@ -129,7 +151,6 @@ module Api
                 hash[:weight] = v.require(:weight)
                 hash[:quantity] = v.require(:quantity)
                 hash[:is_default] = v.require(:isDefault)
-                hash[:image_urls] = v[:imageUrls]
                 hash[:characteristics] = []
                 v.require(:characteristics).each { |c|
                   characteristic = {}
@@ -160,7 +181,6 @@ module Api
           product_params[:seller_advice] = params.require(:sellerAdvice)
           product_params[:is_service] = params.require(:isService)
           product_params[:citizen_advice] = params.permit(:citizenAdvice).values.first
-          #product_params[:image_urls] = params[:imageUrls]
           product_params[:category_id] = params.require(:categoryId)
           product_params[:shop_id] = params[:shopId].to_i if params[:shopId]
           product_params[:allergens] = params[:allergens]
@@ -173,7 +193,11 @@ module Api
             hash[:weight] = v.require(:weight)
             hash[:quantity] = v.require(:quantity)
             hash[:is_default] = v.require(:isDefault)
-            hash[:image_urls] = v[:imageUrls]
+            if v[:imageIds]
+              hash[:image_ids] = v.require(:imageIds) if v[:imageIds].each { |id| Image.find(id) }
+            elsif v[:imageUrls]
+              hash[:image_urls] = v.require(:imageUrls)
+            end
             if v[:goodDeal]
               hash[:good_deal] = {}
               hash[:good_deal][:start_at] = v[:goodDeal].require(:startAt)

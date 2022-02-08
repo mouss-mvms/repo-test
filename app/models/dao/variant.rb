@@ -4,11 +4,15 @@ module Dao
       product = ::Product.find(dto_variant_request.product_id)
       sample = ::Sample.create!(name: product.name, default: dto_variant_request.is_default, product_id: product.id)
 
-      if dto_variant_request.image_urls.present?
+      if dto_variant_request.image_ids.present?
+        images = Image.where(id: dto_variant_request.image_ids)
+        sample.images << images
+      elsif dto_variant_request.image_urls.present?
         dto_variant_request.image_urls.each do |image_url|
           Dao::Variant.set_image(object: sample, image_url: image_url)
         end
       end
+
       characteristics = dto_variant_request.characteristics
 
       color_characteristic = characteristics.detect { |char| char.name == "color" }
@@ -29,7 +33,7 @@ module Dao
         api_provider = ApiProvider.where(name: dto_variant_request.provider[:name]).first
         if api_provider
           reference.api_provider_variant = ApiProviderVariant.create!(api_provider: api_provider,
-                                                                    external_variant_id: dto_variant_request.provider[:external_variant_id])
+                                                                      external_variant_id: dto_variant_request.provider[:external_variant_id])
           reference.save!
 
         end
@@ -60,7 +64,10 @@ module Dao
         end
       end
 
-      if dto_variant_request.image_urls.present?
+      if dto_variant_request.image_ids.present?
+        images = Image.where(id: dto_variant_request.image_ids)
+        @reference.sample.images << images
+      elsif dto_variant_request.image_urls.present?
         dto_variant_request.image_urls.each do |image_url|
           Dao::Variant.set_image(object: @reference.sample, image_url: image_url)
         end
@@ -105,6 +112,7 @@ module Dao
       begin
         image = Shrine.remote_url(image_url)
         object.images.create(file: image, position: 1)
+        object.save!
       rescue StandardError => e
         Rails.logger.error(e)
         Rails.logger.error(e.message)

@@ -2,14 +2,14 @@ module Dto
   module V1
     module Selection
       class Response
-        attr_accessor :id, :name, :slug, :description, :image_url, :tag_ids, :start_at, :end_at, :home_page, :event, :state, :order, :products_count
+        attr_accessor :id, :name, :slug, :description, :image, :tag_ids, :start_at, :end_at, :home_page, :event, :state, :order, :products_count
 
         def initialize(**args)
           @id = args[:id]
           @name = args[:name]
           @slug = args[:slug]
           @description = args[:description]
-          @image_url = args[:image_url]
+          @image = args[:image]
           @tag_ids = args[:tag_ids]
           @start_at = args[:start_at]
           @end_at = args[:end_at]
@@ -27,7 +27,7 @@ module Dto
               name: selection.name,
               slug: selection.slug,
               description: selection.description,
-              image_url: selection&.image&.file_url,
+              image: Dto::V1::Image::Response.create(selection&.image),
               tag_ids: selection.tag_ids,
               start_at: selection.begin_date,
               end_at: selection.end_date,
@@ -46,7 +46,7 @@ module Dto
             name: @name,
             slug: @slug,
             description: @description,
-            imageUrl: @image_url,
+            image: @image.to_h,
             tagIds: @tag_ids,
             startAt: @start_at&.strftime('%d/%m/%Y'),
             endAt: @end_at&.strftime('%d/%m/%Y'),

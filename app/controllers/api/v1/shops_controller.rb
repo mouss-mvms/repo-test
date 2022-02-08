@@ -19,7 +19,7 @@ module Api
       def create
         shop_request = Dto::V1::Shop::Request.new(shop_params)
         ActiveRecord::Base.transaction do
-          shop = Dto::V1::Shop.build(dto_shop_request: shop_request)
+          shop = Dao::Shop.create(dto_shop_request: shop_request)
           shop.assign_ownership(@user)
           shop.save!
           response = Dto::V1::Shop::Response.create(shop).to_h
@@ -29,9 +29,8 @@ module Api
 
       def update
         shop_request = Dto::V1::Shop::Request.new(shop_params)
-        Image.find(shop_request.avatar_image_id) if shop_request.avatar_image_id
         ActiveRecord::Base.transaction do
-          shop = Dto::V1::Shop.build(dto_shop_request: shop_request, shop: @shop)
+          shop = Dao::Shop.update(dto_shop_request: shop_request, shop: @shop)
           response = Dto::V1::Shop::Response.create(shop).to_h
           return render json: response.to_h, status: :ok
         end
@@ -64,7 +63,22 @@ module Api
         shop_params[:address][:latitude] = params.require(:address).permit(:latitude).values.first
         shop_params[:address][:longitude] = params.require(:address).permit(:longitude).values.first
         shop_params[:address][:insee_code] = params.require(:address).require(:inseeCode)
-        shop_params[:avatar_image_id] = params[:avatarImageId]
+        if params[:avatarId]
+          shop_params[:avatar_id] = params[:avatarId] if Image.find(params[:avatarId])
+        elsif params[:avatarUrl]
+          shop_params[:avatar_url] = params[:avatarUrl]
+        end
+        if params[:coverId]
+          shop_params[:cover_id] = params[:coverId] if Image.find(params[:coverId])
+        elsif params[:coverUrl]
+          shop_params[:cover_url] = params[:coverUrl]
+        end
+        if params[:imageIds]
+          shop_params[:image_ids] = params[:imageIds] if params[:imageIds].each { |id| Image.find(id) }
+        elsif params[:imageUrls]
+          shop_params[:image_urls] = params[:imageUrls]
+        end
+
         return shop_params
       end
 
