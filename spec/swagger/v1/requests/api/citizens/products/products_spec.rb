@@ -191,7 +191,7 @@ RSpec.describe 'api/v1/citizens/products', swagger_doc: 'v1/swagger.json', type:
                   },
                   example: [234, 45566, 345],
                   default: [],
-                  description: 'List of product images ids (required if no imageUrls)'
+                  description: 'List of product images ids'
                 },
                 imageUrls: {
                   type: 'array',

@@ -13,9 +13,13 @@ module Dao
         }
       )
 
-      set_image(object: selection, image_url: dto_selection_request.image_url)
+      if dto_selection_request.image_id.present?
+        selection.image_id = dto_selection_request.image_id
+      else
+        set_image(object: selection, image_url: dto_selection_request.image_url)
+      end
 
-      if dto_selection_request.image_url.present?
+      if dto_selection_request.image_id.present? || dto_selection_request.image_url.present?
         tags = ::Tag.find(dto_selection_request.tag_ids)
         selection.tags = tags
       end
@@ -32,8 +36,10 @@ module Dao
         selection.tags = tags
       end
 
-      if dto_selection_request.image_url.present?
-        self.set_image(object: selection, image_url: dto_selection_request.image_url)
+      if dto_selection_request.image_id.present?
+        selection.image_id = dto_selection_request.image_id
+      else
+        set_image(object: selection, image_url: dto_selection_request.image_url)
       end
 
       selection.name = dto_selection_request.name if dto_selection_request.name.present?
