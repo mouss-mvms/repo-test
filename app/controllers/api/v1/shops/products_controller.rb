@@ -99,6 +99,9 @@ module Api
         private
 
         def reject_params
+          if params[:typeCitizenRefuse] == 'other'
+            raise ActionController::BadRequest.new('textCitizenRefuse cannot be blank') if !params.key?(:textCitizenRefuse) || params[:textCitizenRefuse].blank?
+          end
           {
             type_citizen_refuse: params[:typeCitizenRefuse],
             text_citizen_refuse: params[:textCitizenRefuse]
