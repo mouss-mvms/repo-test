@@ -19,12 +19,13 @@ RSpec.describe Dto::V1::Product::Response do
         expect(result.seller_advice).to eq(product.pro_advice)
         expect(result.shop_id).to eq(product.shop.id)
         expect(result.shop_name).to eq(product.shop.name)
-        expect(result.image_urls).to eq(product.images.map(&:file_url))
         expect(result.category).to be_instance_of(Dto::V1::Category::Response)
         expect(result.variants).to eq(product.references&.map { |reference| Dto::V1::Variant::Response.create(reference) })
         expect(result.citizen_advice).to eq(product.advice&.content)
         expect(result.created_at).to eq(product.created_at)
         expect(result.updated_at).to eq(product.updated_at)
+        expect(result.type_citizen_refuse).to eq(product.type_citizen_refuse)
+        expect(result.text_citizen_refuse).to eq(product.text_citizen_refuse)
       end
 
       context 'Product was created by a citizen' do
@@ -45,13 +46,14 @@ RSpec.describe Dto::V1::Product::Response do
           expect(result.seller_advice).to eq(product.pro_advice)
           expect(result.shop_id).to eq(product.shop.id)
           expect(result.shop_name).to eq(product.shop.name)
-          expect(result.image_urls).to eq(product.images.map(&:file_url))
           expect(result.category).to be_instance_of(Dto::V1::Category::Response)
           expect(result.variants).to eq(product.references&.map { |reference| Dto::V1::Variant::Response.create(reference) })
           expect(result.citizen_advice).to eq(product.advice&.content)
           expect(result.citizen).to be_instance_of(Dto::V1::Citizen::Response)
           expect(result.created_at).to eq(product.created_at)
           expect(result.updated_at).to eq(product.updated_at)
+          expect(result.type_citizen_refuse).to eq(product.type_citizen_refuse)
+          expect(result.text_citizen_refuse).to eq(product.text_citizen_refuse)
         end
       end
     end
@@ -73,7 +75,6 @@ RSpec.describe Dto::V1::Product::Response do
         expect(dto_hash[:category]).to eq(dto.category.to_h)
         expect(dto_hash[:brand]).to eq(dto.brand)
         expect(dto_hash[:status]).to eq(dto.status)
-        expect(dto_hash[:imageUrls]).to eq(dto.image_urls)
         expect(dto_hash[:sellerAdvice]).to eq(dto.seller_advice)
         expect(dto_hash[:shopId]).to eq(dto.shop_id)
         expect(dto_hash[:shopName]).to eq(dto.shop_name)
@@ -83,6 +84,8 @@ RSpec.describe Dto::V1::Product::Response do
         expect(dto_hash[:citizen]).to eq(dto.citizen.to_h)
         expect(dto_hash[:createdAt]).to eq(dto.created_at)
         expect(dto_hash[:updatedAt]).to eq(dto.updated_at)
+        expect(dto_hash[:typeCitizenRefuse]).to eq(dto.type_citizen_refuse)
+        expect(dto_hash[:textCitizenRefuse]).to eq(dto.text_citizen_refuse)
       end
     end
   end
