@@ -1,8 +1,8 @@
 module Api
   module V1
     class ProductsController < ApplicationController
-      before_action :uncrypt_token, only: [:update, :create, :destroy, :patch_auth]
-      before_action :retrieve_user, only: [:update, :create, :destroy, :patch_auth]
+      before_action :uncrypt_token, only: [:update, :destroy]
+      before_action :retrieve_user, only: [:update, :destroy]
 
       def show
         product = Product.find(params[:id])
@@ -76,7 +76,8 @@ module Api
         raise ApplicationController::Forbidden unless @user.is_a_citizen? || @user.is_a_business_user?
         product = Product.find(params[:id])
         if @user.is_a_citizen?
-          raise ApplicationController::Forbidden if @user.citizen.products.to_a.find { |p| p.id == product.id }.nil?
+          product_citizen = @user.citizen.products.to_a.find { |p| p.id == product.id }
+          raise ApplicationController::Forbidden if product_citizen.nil? || (product_citizen.status == "offline" || product_citizen.status == "online")
         end
         if @user.is_a_business_user?
           raise ApplicationController::Forbidden if @user.shop_employee.shops.to_a.find { |s| s.id == product.shop.id }.nil?

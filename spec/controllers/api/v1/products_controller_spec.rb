@@ -130,9 +130,18 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
     end
 
     context "Incorrect Params" do
+      before(:all) do
+        @wynd_provider = create(:api_provider, name: 'wynd')
+      end
+
+      after(:all) do
+        @wynd_provider.destroy
+      end
+
       context "Product not found" do
         it "should return 404 HTTP Status" do
           provider = create(:api_provider, name: 'wynd')
+          product = create(:product)
 
           update_params = {
             name: "Lot de 4 tasses à café style rétro AOC",
@@ -174,9 +183,9 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
               externalProductId: 'tye65'
             }
           }
-          Product.destroy_all
+          product.destroy
 
-          put :update_offline, params: update_params.merge(id: 3)
+          put :update_offline, params: update_params.merge(id: product.id)
 
           should respond_with(404)
         end
@@ -184,8 +193,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
       context "Category id is missing" do
         it "should return 400 HTTP status" do
-          provider = create(:api_provider, name: 'wynd')
-
           product = create(:product)
           update_params = {
             name: "Lot de 4 tasses à café style rétro AOC",
@@ -290,8 +297,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Origin of product is missing" do
           it "should return 400 HTTP Status" do
-            provider = create(:api_provider, name: 'wynd')
-
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -328,7 +333,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 },
               ],
               provider: {
-                name: provider.name,
+                name: @wynd_provider.name,
                 externalProductId: 'tye65'
               }
             }
@@ -343,8 +348,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Composition of product is missing" do
           it "should return 400 HTTP Status" do
-            provider = create(:api_provider, name: 'wynd')
-
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -382,7 +385,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 },
               ],
               provider: {
-                name: provider.name,
+                name: @wynd_provider.name,
                 externalProductId: 'tye65'
               }
             }
@@ -397,8 +400,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Allergens of product is missing" do
           it "should return 400 HTTP Status" do
-            provider = create(:api_provider, name: 'wynd')
-
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -437,7 +438,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 },
               ],
               provider: {
-                name: provider.name,
+                name: @wynd_provider.name,
                 externalProductId: 'tye65'
               }
             }
@@ -457,8 +458,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Origin of product is missing" do
           it "should return 400 HTTP Status" do
-            provider = create(:api_provider, name: 'wynd')
-
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -495,7 +494,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 },
               ],
               provider: {
-                name: provider.name,
+                name: @wynd_provider.name,
                 externalProductId: 'tye65'
               }
 
@@ -511,8 +510,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Composition of product is missing" do
           it "should return 400 HTTP Status" do
-            provider = create(:api_provider, name: 'wynd')
-
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -550,7 +547,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 },
               ],
               provider: {
-                name: provider.name,
+                name: @wynd_provider.name,
                 externalProductId: 'tye65'
               }
 
@@ -566,8 +563,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Allergens of product is missing" do
           it "should return 400 HTTP Status" do
-            provider = create(:api_provider, name: 'wynd')
-
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -606,7 +601,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 },
               ],
               provider: {
-                name: provider.name,
+                name: @wynd_provider.name,
                 externalProductId: 'tye65'
               }
 
@@ -627,8 +622,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Origin of product is missing" do
           it "should return 400 HTTP Status" do
-            provider = create(:api_provider, name: 'wynd')
-
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -666,10 +659,9 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 },
               ],
               provider: {
-                name: provider.name,
+                name: @wynd_provider.name,
                 externalProductId: 'tye65'
               }
-
             }
 
             put :update_offline, params: update_params.merge(id: product.id)
@@ -682,8 +674,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Composition of product is missing" do
           it "should return 400 HTTP Status" do
-            provider = create(:api_provider, name: 'wynd')
-
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -721,7 +711,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 },
               ],
               provider: {
-                name: provider.name,
+                name: @wynd_provider.name,
                 externalProductId: 'tye65'
               }
 
@@ -737,8 +727,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Allergens of product is missing" do
           it "should return 400 HTTP Status" do
-            provider = create(:api_provider, name: 'wynd')
-
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -777,7 +765,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 },
               ],
               provider: {
-                name: provider.name,
+                name: @wynd_provider.name,
                 externalProductId: 'tye65'
               }
 
@@ -798,8 +786,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Origin of product is missing" do
           it "should return 400 HTTP Status" do
-            provider = create(:api_provider, name: 'wynd')
-
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -837,7 +823,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 },
               ],
               provider: {
-                name: provider.name,
+                name: @wynd_provider.name,
                 externalProductId: 'tye65'
               }
 
@@ -853,8 +839,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Composition of product is missing" do
           it "should return 400 HTTP Status" do
-            provider = create(:api_provider, name: 'wynd')
-
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -892,7 +876,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 },
               ],
               provider: {
-                name: provider.name,
+                name: @wynd_provider.name,
                 externalProductId: 'tye65'
               }
 
@@ -908,8 +892,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Allergens of product is missing" do
           it "should return 400 HTTP Status" do
-            provider = create(:api_provider, name: 'wynd')
-
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -948,7 +930,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 },
               ],
               provider: {
-                name: provider.name,
+                name: @wynd_provider.name,
                 externalProductId: 'tye65'
               }
 
@@ -969,8 +951,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Origin of product is missing" do
           it "should return 400 HTTP Status" do
-            provider = create(:api_provider, name: 'wynd')
-
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -1008,7 +988,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 },
               ],
               provider: {
-                name: provider.name,
+                name: @wynd_provider.name,
                 externalProductId: 'tye65'
               }
 
@@ -1024,8 +1004,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Composition of product is missing" do
           it "should return 400 HTTP Status" do
-            provider = create(:api_provider, name: 'wynd')
-
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -1063,7 +1041,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 },
               ],
               provider: {
-                name: provider.name,
+                name: @wynd_provider.name,
                 externalProductId: 'tye65'
               }
 
@@ -1079,8 +1057,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Allergens of product is missing" do
           it "should return 400 HTTP Status" do
-            provider = create(:api_provider, name: 'wynd')
-
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -1119,7 +1095,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 },
               ],
               provider: {
-                name: provider.name,
+                name: @wynd_provider.name,
                 externalProductId: 'tye65'
               }
 
@@ -1140,8 +1116,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Origin of product is missing" do
           it "should return 400 HTTP Status" do
-            provider = create(:api_provider, name: 'wynd')
-
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -1179,7 +1153,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 },
               ],
               provider: {
-                name: provider.name,
+                name: @wynd_provider.name,
                 externalProductId: 'tye65'
               }
 
@@ -1195,8 +1169,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Composition of product is missing" do
           it "should return 400 HTTP Status" do
-            provider = create(:api_provider, name: 'wynd')
-
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -1234,7 +1206,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 },
               ],
               provider: {
-                name: provider.name,
+                name: @wynd_provider.name,
                 externalProductId: 'tye65'
               }
 
@@ -1250,8 +1222,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Allergens of product is missing" do
           it "should return 400 HTTP Status" do
-            provider = create(:api_provider, name: 'wynd')
-
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -1290,7 +1260,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 },
               ],
               provider: {
-                name: provider.name,
+                name: @wynd_provider.name,
                 externalProductId: 'tye65'
               }
 
@@ -1311,8 +1281,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
         context "Composition of product is missing" do
           it "should return 400 HTTP Status" do
-            provider = create(:api_provider, name: 'wynd')
-
             update_params = {
               name: "Lot de 4 tasses à café style rétro AOC",
               categoryId: category.id,
@@ -1350,7 +1318,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
                 },
               ],
               provider: {
-                name: provider.name,
+                name: @wynd_provider.name,
                 externalProductId: 'tye65'
               }
 
@@ -1418,7 +1386,6 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
       context "If product doesn't have provider" do
         it 'should return 403 HTTP Status' do
           product = create(:product)
-          provider = create(:api_provider, name: 'wynd')
 
           ref1 = create(:reference, product: product)
           ref2 = create(:reference, product: product)
@@ -5105,7 +5072,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
           patch :patch, params: update_params.merge(id: product.id)
 
           should respond_with(404)
-          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Category with 'id'=1").to_h.to_json)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Category with 'id'=#{i}").to_h.to_json)
         end
       end
 
@@ -7983,7 +7950,7 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
       context "All ok" do
         it "should return 204 HTTP status" do
           user_citizen = create(:citizen_user, email: "citizen6@ecity.fr")
-          product = create(:product)
+          product = create(:product, status: 3)
           user_citizen.citizen.products << product
           user_citizen.citizen.save
           request.headers["x-client-id"] = generate_token(user_citizen)
@@ -8009,6 +7976,32 @@ RSpec.describe Api::V1::ProductsController, type: :controller do
 
             should respond_with(404)
           end
+        end
+
+      end
+
+      context "Product shared was accepted by the shop's owner" do
+        it 'should return 403 HTTP Status' do
+          user_citizen = create(:citizen_user, email: "citizen6@ecity.fr")
+          product = create(:product, status: 0)
+          user_citizen.citizen.products << product
+          user_citizen.citizen.save
+
+          user_shop_employee = create(:shop_employee_user)
+          shop = create(:shop, products: [product])
+          product.shop_id = shop.id
+          product.save
+
+
+          user_shop_employee.shop_employee.shops << shop
+          user_shop_employee.shop_employee.save
+
+          request.headers["x-client-id"] = generate_token(user_citizen)
+
+          delete :destroy, params: { id: product.id }
+
+          should respond_with(403)
+          expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
         end
       end
 

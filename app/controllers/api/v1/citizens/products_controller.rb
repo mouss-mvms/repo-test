@@ -73,18 +73,17 @@ module Api
           if params[:variants]
             params[:variants].each do |v|
               hash = {}
-              raise ActionController::BadRequest.new("You can only pass imageIds or imageUrls, not both.") if v[:imageIds] && v[:imageUrls]
-              if params[:imageIds] || params[:imageUrls]
-                image_urls = params[:imageUrls] ? params[:imageUrls] : params[:imageIds].map { |id| Image.find(id).file_url }
+              if v[:imageIds]
+                hash[:image_ids] = v.require(:imageIds) if v[:imageIds].each { |id| Image.find(id).file_url }
+              elsif v[:imageUrls]
+                hash[:image_urls] = v.require(:imageUrls)
               end
               if v[:id]
                 hash[:id] = v[:id]
                 hash[:base_price] = v[:basePrice]
-                hash[:image_urls] = image_urls
                 hash
               else
                 hash[:base_price] = v.require(:basePrice)
-                hash[:image_urls] = image_urls
               end
               product_params[:variants] << hash
             end
@@ -115,7 +114,6 @@ module Api
             hash[:quantity] = v[:quantity] || 0
             hash[:is_default] = v[:isDefault]
             raise ActionController::ParameterMissing.new("imageIds or imageUrls") unless v[:imageIds] || v[:imageUrls]
-            raise ActionController::BadRequest.new("You can only pass imageIds or imageUrls, not both.") if v[:imageIds] && v[:imageUrls]
             if v[:imageIds] && v[:imageIds].count <= 5
               hash[:image_ids] = v.require(:imageIds) if v[:imageIds].each { |id| Image.find(id) }
             elsif v[:imageUrls] && v[:imageUrls].count <= 5
