@@ -21,7 +21,7 @@ module Api
           params[:provider].require(:name)
           params[:provider].require(:externalVariantId)
           raise ApplicationController::Forbidden if params[:provider][:name] != Product.find(params[:id]).api_provider_product&.api_provider&.name
-          dto_variant_request = Dto::V1::Variant::Request.new(variant_params)
+          dto_variant_request = Dto::V1::Variant::Request.new(offline_variant_params)
           ActiveRecord::Base.transaction do
             variant = Dao::Variant.create(dto_variant_request: dto_variant_request)
             response = Dto::V1::Variant::Response.create(Reference.find(variant.id)).to_h
@@ -45,6 +45,39 @@ module Api
         private
 
         def variant_params
+          variant_params = {}
+          variant_params[:product_id] = params.require(:id)
+          variant_params[:base_price] = params.require(:basePrice)
+          variant_params[:weight] = params.require(:weight)
+          variant_params[:quantity] = params.require(:quantity)
+          variant_params[:is_default] = params.require(:isDefault)
+          if params[:imageIds]
+            variant_params[:image_ids] = params.require(:imageIds) if params[:imageIds].each { |id| Image.find(id).file_url }
+          elsif params[:imageUrls]
+            variant_params[:image_urls] = params.require(:imageUrls)
+          end
+          if params[:goodDeal]
+            variant_params[:good_deal] = {}
+            variant_params[:good_deal][:start_at] = params[:goodDeal].require(:startAt)
+            variant_params[:good_deal][:end_at] = params[:goodDeal].require(:endAt)
+            variant_params[:good_deal][:discount] = params[:goodDeal].require(:discount)
+          end
+          variant_params[:characteristics] = []
+          params.require(:characteristics).each { |c|
+            characteristic = {}
+            characteristic[:name] = c.require(:name)
+            characteristic[:value] = c.require(:value)
+            variant_params[:characteristics] << characteristic
+          }
+          if params[:provider]
+            variant_params[:provider] = {}
+            variant_params[:provider][:name] = params[:provider][:name] if params[:provider][:name]
+            variant_params[:provider][:external_variant_id] = params[:provider][:externalVariantId] if params[:provider][:externalVariantId]
+          end
+          variant_params
+        end
+
+        def offline_variant_params
           variant_params = {}
           variant_params[:product_id] = params.require(:id)
           variant_params[:base_price] = params.require(:basePrice)

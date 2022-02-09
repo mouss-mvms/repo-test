@@ -4,11 +4,15 @@ module Dao
       product = ::Product.find(dto_variant_request.product_id)
       sample = ::Sample.create!(name: product.name, default: dto_variant_request.is_default, product_id: product.id)
 
-      if dto_variant_request.image_urls.present?
+      if dto_variant_request.image_ids.present?
+        images = Image.where(id: dto_variant_request.image_ids)
+        sample.images << images
+      elsif dto_variant_request.image_urls.present?
         dto_variant_request.image_urls.each do |image_url|
           Dao::Variant.set_image(object: sample, image_url: image_url)
         end
       end
+
       characteristics = dto_variant_request.characteristics
 
       color_characteristic = characteristics.detect { |char| char.name == "color" }
@@ -60,7 +64,10 @@ module Dao
         end
       end
 
-      if dto_variant_request.image_urls.present?
+      if dto_variant_request.image_ids.present?
+        images = Image.where(id: dto_variant_request.image_ids)
+        @reference.sample.images << images
+      elsif dto_variant_request.image_urls.present?
         dto_variant_request.image_urls.each do |image_url|
           Dao::Variant.set_image(object: @reference.sample, image_url: image_url)
         end
