@@ -190,7 +190,7 @@ module Api
           params.require(:variants).each { |v|
             hash = {}
             hash[:base_price] = v.require(:basePrice)
-            hash[:weight] = v.require(:weight)
+            hash[:weight] = v[:weight]
             hash[:quantity] = v.require(:quantity)
             hash[:is_default] = v.require(:isDefault)
             if v[:imageIds]

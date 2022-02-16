@@ -6476,7 +6476,6 @@
                       },
                       "required": [
                         "basePrice",
-                        "weight",
                         "quantity",
                         "isDefault"
                       ]
