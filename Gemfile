@@ -37,6 +37,7 @@ group :development, :test, :local do
   gem "rswag-specs"
   gem "shoulda-matchers"
   gem "factory_bot_rails"
+  gem "ruby_cowsay"
 end
 
 gem 'listen', '~> 3.3'
