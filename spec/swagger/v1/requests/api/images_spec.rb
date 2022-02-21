@@ -49,35 +49,4 @@ RSpec.describe "api/v1/auth/images", swagger_doc: "v1/swagger.json", type: :requ
       end
     end
   end
-
-  path "/api/v1/auth/avatar/images/{id}" do
-    parameter name: 'X-client-id', in: :header, type: :string, required: true
-    parameter name: :id, in: :path, type: :string, required: true
-
-    delete('Delete citizen avatar image') do
-      tags "Images"
-      produces "application/json"
-      description "Delete citizen avata image"
-      security [{ authorization: [] }]
-
-      response(204, "Image deleted") do
-        run_test!
-      end
-
-      response(400, "Bad Request") do
-        schema Examples::Errors::BadRequest.new.error
-        run_test!
-      end
-
-      response(401, 'Unauthorized') do
-        schema Examples::Errors::Unauthorized.new.error
-        run_test!
-      end
-
-      response(403, 'Forbidden') do
-        schema Examples::Errors::Forbidden.new.error
-        run_test!
-      end
-    end
-  end
 end

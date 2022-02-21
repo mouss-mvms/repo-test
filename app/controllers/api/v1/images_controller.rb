@@ -30,13 +30,6 @@ module Api
           render json: response, status: :created
         end
       end
-
-      def destroy_avatar
-        raise ApplicationController::Forbidden.new unless @user.is_a_citizen? && @user.citizen.image.id == params[:id].to_i
-
-        @user.citizen.image.destroy
-        render json: 'Image deleted', status: :no_content
-      end
     end
   end
 end
