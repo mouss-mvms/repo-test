@@ -3,8 +3,8 @@ require_relative '../../../models/dto/v1/image/request.rb'
 module Api
   module V1
     class ImagesController < ApplicationController
-      before_action :uncrypt_token, only: [:create]
-      before_action :retrieve_user, only: [:create]
+      before_action :uncrypt_token, only: [:create, :destroy_avatar]
+      before_action :retrieve_user, only: [:create, :destroy_avatar]
 
       def create
         threads = []
@@ -29,6 +29,13 @@ module Api
           response = Image.where(id: image_ids).map { |image| Dto::V1::Image::Response.create(image).to_h }
           render json: response, status: :created
         end
+      end
+
+      def destroy_avatar
+        raise ApplicationController::Forbidden.new unless @user.is_a_citizen? && @user.citizen.image.id == params[:id].to_i
+
+        @user.citizen.image.destroy
+        render json: 'Image deleted', status: :no_content
       end
     end
   end

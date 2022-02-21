@@ -9,7 +9,7 @@ RSpec.describe Api::V1::Admin::TagsController do
         name: 'Chuck',
         status: 'active',
         featured: true,
-        imageUrl: 'https://path/to/image.jpg'
+        imageId: create(:image).id
       }
       Tag.destroy_all
       expect(Tag.count).to eq(0)

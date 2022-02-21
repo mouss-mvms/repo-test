@@ -70,7 +70,7 @@ gem 'dalli'
 gem 'memcachier'
 
 source 'https://gem.fury.io/mvms/' do
-  gem 'mvms-core', '2.5.477'
+  gem 'mvms-core', '2.5.495'
 end
 
 gem 'newrelic_rpm'

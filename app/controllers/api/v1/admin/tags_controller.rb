@@ -16,7 +16,7 @@ module Api
           hash[:name] = params.require(:name)
           hash[:status] = params.require(:status)
           hash[:featured] = params[:featured] || false
-          hash[:image_url] = params[:imageUrl]
+          hash[:image_id] = params[:imageId]
           hash
         end
       end
