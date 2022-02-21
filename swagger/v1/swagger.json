@@ -254,7 +254,7 @@
                     "properties": {
                       "id": {
                         "type": "integer",
-                        "example": null,
+                        "example": "3527",
                         "description": "Unique identifier of a category."
                       },
                       "name": {
@@ -279,7 +279,7 @@
                           "properties": {
                             "id": {
                               "type": "integer",
-                              "example": null,
+                              "example": "3527",
                               "description": "Unique identifier of a category."
                             },
                             "name": {
@@ -380,7 +380,7 @@
                   "properties": {
                     "id": {
                       "type": "integer",
-                      "example": null,
+                      "example": "3527",
                       "description": "Unique identifier of a category."
                     },
                     "name": {
@@ -405,7 +405,7 @@
                         "properties": {
                           "id": {
                             "type": "integer",
-                            "example": null,
+                            "example": "3527",
                             "description": "Unique identifier of a category."
                           },
                           "name": {
@@ -822,7 +822,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": null,
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -1456,126 +1456,6 @@
                     "items": {
                       "type": "string",
                       "format": "binary"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/v1/auth/avatar/images/{id}": {
-      "parameters": [
-        {
-          "name": "X-client-id",
-          "in": "header",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        },
-        {
-          "name": "id",
-          "in": "path",
-          "required": true,
-          "schema": {
-            "type": "string"
-          }
-        }
-      ],
-      "delete": {
-        "summary": "Delete citizen avatar image",
-        "tags": [
-          "Images"
-        ],
-        "description": "Delete citizen avata image",
-        "security": [
-          {
-            "authorization": [
-
-            ]
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Image deleted"
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "detail": {
-                      "type": "string",
-                      "example": "The syntax of the query is incorrect.",
-                      "description": "Message of an error."
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Bad Request",
-                      "description": "Display description error."
-                    },
-                    "status": {
-                      "type": "integer",
-                      "example": 400,
-                      "description": "Status of an error."
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "detail": {
-                      "type": "string",
-                      "example": "",
-                      "description": "Message of an error."
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Unauthorized",
-                      "description": "Display description error."
-                    },
-                    "status": {
-                      "type": "integer",
-                      "example": 401,
-                      "description": "Status of an error."
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "detail": {
-                      "type": "string",
-                      "example": "",
-                      "description": "Message of an error."
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Forbidden",
-                      "description": "Display description error."
-                    },
-                    "status": {
-                      "type": "integer",
-                      "example": 403,
-                      "description": "Status of an error."
                     }
                   }
                 }
@@ -2958,7 +2838,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": null,
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -3231,7 +3111,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": null,
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -3744,7 +3624,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": null,
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -4067,7 +3947,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": null,
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -6483,7 +6363,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": null,
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -7121,7 +7001,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": null,
+                    "example": "3527",
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -9796,7 +9676,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000/"
+      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-staging"
     }
   ],
   "components": {
@@ -9947,7 +9827,7 @@
         "properties": {
           "id": {
             "type": "integer",
-            "example": null,
+            "example": "3527",
             "description": "Unique identifier of a category."
           },
           "name": {
@@ -9972,7 +9852,7 @@
               "properties": {
                 "id": {
                   "type": "integer",
-                  "example": null,
+                  "example": "3527",
                   "description": "Unique identifier of a category."
                 },
                 "name": {
