@@ -3,8 +3,8 @@ require_relative '../../../models/dto/v1/image/request.rb'
 module Api
   module V1
     class ImagesController < ApplicationController
-      before_action :uncrypt_token, only: [:create, :destroy_avatar]
-      before_action :retrieve_user, only: [:create, :destroy_avatar]
+      before_action :uncrypt_token, only: [:create]
+      before_action :retrieve_user, only: [:create]
 
       def create
         threads = []
