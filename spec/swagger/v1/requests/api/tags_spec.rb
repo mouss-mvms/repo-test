@@ -17,6 +17,7 @@ RSpec.describe 'api/v1/tags', swagger_doc: 'v1/swagger.json', type: :request do
           name: { type: :string, example: 'Noël', description: 'Name of the Tag.' },
           status: { type: :string, example: 'active', enum: ['active', 'not_active'], description: 'Status of the Tag.' },
           featured: { type: :boolean, example: true },
+          imageId: { type: :integer, example: 1 },
           imageUrl: { type: :string, example: 'https://path/to/image.jpeg', description: 'Image url of the Tag.' }
         },
         required: %w[name status]

@@ -8,18 +8,14 @@ RSpec.describe Api::V1::ImagesController, type: :controller do
         request.headers["x-client-id"] = generate_token(user)
         request.env["CONTENT_TYPE"] = "multipart/form-data"
         uploaded_files = []
-        2.times do
+        count = 2
+        count.times do
           uploaded_files << fixture_file_upload(Rails.root.join("spec/fixtures/files/images/harry-and-marv.jpg"), 'image/jpeg')
         end
-        Image.destroy_all
 
         post :create, params: { files: uploaded_files }
         should respond_with(201)
-        expect(response.body).to eq(
-          Image.all.map do |image|
-            Dto::V1::Image::Response.create(image).to_h
-          end.to_json
-        )
+        expect(JSON.parse(response.body).count).to eq(count)
       end
     end
 

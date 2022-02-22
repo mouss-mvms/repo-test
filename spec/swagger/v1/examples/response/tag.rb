@@ -10,7 +10,18 @@ module V1
               name: { type: :string, example: 'Noël', description: 'Name of the Tag.' },
               status: { type: :string, example: 'active', enum: ['active', 'not_active'], description: 'Status of the Tag.' },
               featured: { type: :boolean, example: true },
-              imageUrl: { type: :string, example: "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg", description: "ImageUrl of a tag." }
+              image: {
+                type: :object,
+                properties: {
+                  id: { type: :integer, example: 42 },
+                  originalUrl: { type: :string, example: 'https://path/to/original-image.jpg' },
+                  miniUrl: { type: :string, example: 'https://path/to/mini-format.jpg' },
+                  thumbUrl: { type: :string, example: 'https://path/to/thumb-format.jpg' },
+                  squareUrl: { type: :string, example: 'https://path/to/square-format.jpg' },
+                  wideUrl: { type: :string, example: 'https://path/to/wide-format.jpg' }
+                },
+                description: "Image of a tag"
+              },
             }
           }
         end
