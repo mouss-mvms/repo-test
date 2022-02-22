@@ -6,7 +6,8 @@ RSpec.describe Dto::V1::Tag::Response do
     context "All ok" do
       it "returns a Dto::V1::Tag::Response" do
         tag = create(:tag)
-        tag.image_url = create(:image).file_url
+        image = create(:image)
+        tag.image = image
         tag.save
 
         dto_tag = Dto::V1::Tag::Response.create(tag)
@@ -16,7 +17,7 @@ RSpec.describe Dto::V1::Tag::Response do
         expect(dto_tag.name).to eq(tag.name)
         expect(dto_tag.status).to eq(tag.status)
         expect(dto_tag.featured).to eq(tag.featured)
-        expect(dto_tag.image_url).to eq(tag.image_url)
+        expect(dto_tag.image).to be_instance_of(Dto::V1::Image::Response)
       end
     end
   end
@@ -25,7 +26,8 @@ RSpec.describe Dto::V1::Tag::Response do
     context "All ok" do
       it "returns a hash representation of Dto::V1::Tag::Response" do
         tag = create(:tag)
-        tag.image_url = create(:image).file_url
+        image = create(:image)
+        tag.image = image
         tag.save
 
         dto_tag = Dto::V1::Tag::Response.create(tag)
@@ -36,7 +38,7 @@ RSpec.describe Dto::V1::Tag::Response do
         expect(dto_hash[:name]).to eq(tag.name)
         expect(dto_hash[:status]).to eq(tag.status)
         expect(dto_hash[:featured]).to eq(tag.featured)
-        expect(dto_hash[:imageUrl]).to eq(tag.image_url)
+        expect(dto_hash[:image]).to eq(Dto::V1::Image::Response.create(image).to_h)
       end
     end
 
