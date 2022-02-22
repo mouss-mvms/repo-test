@@ -254,7 +254,7 @@
                     "properties": {
                       "id": {
                         "type": "integer",
-                        "example": "3527",
+                        "example": null,
                         "description": "Unique identifier of a category."
                       },
                       "name": {
@@ -279,7 +279,7 @@
                           "properties": {
                             "id": {
                               "type": "integer",
-                              "example": "3527",
+                              "example": null,
                               "description": "Unique identifier of a category."
                             },
                             "name": {
@@ -380,7 +380,7 @@
                   "properties": {
                     "id": {
                       "type": "integer",
-                      "example": "3527",
+                      "example": null,
                       "description": "Unique identifier of a category."
                     },
                     "name": {
@@ -405,7 +405,7 @@
                         "properties": {
                           "id": {
                             "type": "integer",
-                            "example": "3527",
+                            "example": null,
                             "description": "Unique identifier of a category."
                           },
                           "name": {
@@ -822,7 +822,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3527",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -2838,7 +2838,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3527",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -3111,7 +3111,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3527",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -3624,7 +3624,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3527",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -3947,7 +3947,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3527",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -6363,7 +6363,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3527",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "shopId": {
@@ -7001,7 +7001,7 @@
                   },
                   "categoryId": {
                     "type": "integer",
-                    "example": "3527",
+                    "example": null,
                     "description": "Category id of product"
                   },
                   "variants": {
@@ -8807,6 +8807,10 @@
                     "type": "boolean",
                     "example": true
                   },
+                  "imageId": {
+                    "type": "integer",
+                    "example": 1
+                  },
                   "imageUrl": {
                     "type": "string",
                     "example": "https://path/to/image.jpeg",
@@ -8923,10 +8927,35 @@
                       "type": "boolean",
                       "example": true
                     },
-                    "imageUrl": {
-                      "type": "string",
-                      "example": "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg",
-                      "description": "ImageUrl of a tag."
+                    "image": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "example": 42
+                        },
+                        "originalUrl": {
+                          "type": "string",
+                          "example": "https://path/to/original-image.jpg"
+                        },
+                        "miniUrl": {
+                          "type": "string",
+                          "example": "https://path/to/mini-format.jpg"
+                        },
+                        "thumbUrl": {
+                          "type": "string",
+                          "example": "https://path/to/thumb-format.jpg"
+                        },
+                        "squareUrl": {
+                          "type": "string",
+                          "example": "https://path/to/square-format.jpg"
+                        },
+                        "wideUrl": {
+                          "type": "string",
+                          "example": "https://path/to/wide-format.jpg"
+                        }
+                      },
+                      "description": "Image of a tag"
                     }
                   }
                 }
@@ -9676,7 +9705,7 @@
   },
   "servers": [
     {
-      "url": "https://stingy-advice-gw.aws-euc1.cloud-ara.tyk.io/catalog-staging"
+      "url": "http://localhost:3000/"
     }
   ],
   "components": {
@@ -9827,7 +9856,7 @@
         "properties": {
           "id": {
             "type": "integer",
-            "example": "3527",
+            "example": null,
             "description": "Unique identifier of a category."
           },
           "name": {
@@ -9852,7 +9881,7 @@
               "properties": {
                 "id": {
                   "type": "integer",
-                  "example": "3527",
+                  "example": null,
                   "description": "Unique identifier of a category."
                 },
                 "name": {
@@ -11578,10 +11607,35 @@
             "type": "boolean",
             "example": true
           },
-          "imageUrl": {
-            "type": "string",
-            "example": "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg",
-            "description": "ImageUrl of a tag."
+          "image": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "example": 42
+              },
+              "originalUrl": {
+                "type": "string",
+                "example": "https://path/to/original-image.jpg"
+              },
+              "miniUrl": {
+                "type": "string",
+                "example": "https://path/to/mini-format.jpg"
+              },
+              "thumbUrl": {
+                "type": "string",
+                "example": "https://path/to/thumb-format.jpg"
+              },
+              "squareUrl": {
+                "type": "string",
+                "example": "https://path/to/square-format.jpg"
+              },
+              "wideUrl": {
+                "type": "string",
+                "example": "https://path/to/wide-format.jpg"
+              }
+            },
+            "description": "Image of a tag"
           }
         }
       },
