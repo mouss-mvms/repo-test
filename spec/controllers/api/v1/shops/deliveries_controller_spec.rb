@@ -191,8 +191,6 @@ RSpec.describe Api::V1::Shops::DeliveriesController, type: :controller do
           put :update, params: params
 
           should respond_with(200)
-          expected_response = [Dto::V1::Delivery::Response.create(colissimo).to_h, Dto::V1::Delivery::Response.create(click_collect).to_h].to_json
-          expect(response.body).to eq(expected_response)
 
           shop.reload
           expect(shop.active_services.count).to eq(2)
