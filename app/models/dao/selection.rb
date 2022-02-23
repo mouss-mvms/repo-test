@@ -32,7 +32,7 @@ module Dao
       selection = ::Selection.find(dto_selection_request.id)
 
       if dto_selection_request.tag_ids.any?
-        tags = Tag.find(dto_selection_request.tag_ids)
+        tags = ::Tag.find(dto_selection_request.tag_ids)
         selection.tags = tags
       end
 
