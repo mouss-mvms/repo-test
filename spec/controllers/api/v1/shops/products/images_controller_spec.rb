@@ -46,6 +46,38 @@ RSpec.describe Api::V1::Shops::Products::ImagesController, type: :controller do
     end
 
     context "Errors" do
+      context "Bad product status" do
+        before(:all) do
+          @product_bad = create(:available_product, shop: @shop)
+          @reference_bad = @product.references.first
+          @sample_bad = @reference.sample
+          @shop_bad = @product.shop
+          @user_shop_employee.shop_employee.shops << @product.shop
+        end
+        context "Product has draft_cityzen status" do
+          it "should return HTTP status 403" do
+            image = create(:image)
+            @product_bad.update!(status: :draft_cityzen)
+            @sample_bad.images << image
+            request.headers['x-client-id'] = generate_token(@user_shop_employee)
+            delete :destroy, params: { product_id: @product_bad.id, id: image.id }
+            expect(response).to have_http_status(403)
+            expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
+          end
+        end
+
+        context "Product has refused status" do
+          it "should return HTTP status 403" do
+            image = create(:image)
+            @product_bad.update!(status: :refused)
+            @sample_bad.images << image
+            request.headers['x-client-id'] = generate_token(@user_shop_employee)
+            delete :destroy, params: { product_id: @product_bad.id, id: image.id }
+            expect(response).to have_http_status(403)
+            expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
+          end
+        end
+      end
       context 'Not found' do
         context "when image didn't exit" do
           it "should return HTTP status 404" do
