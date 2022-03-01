@@ -3732,10 +3732,8 @@
                 "required": [
                   "id",
                   "name",
-                  "description",
                   "brand",
                   "status",
-                  "sellerAdvice",
                   "isService",
                   "categoryId",
                   "variants",
@@ -6628,10 +6626,8 @@
                 },
                 "required": [
                   "name",
-                  "description",
                   "brand",
                   "status",
-                  "sellerAdvice",
                   "isService",
                   "categoryId",
                   "variants",
