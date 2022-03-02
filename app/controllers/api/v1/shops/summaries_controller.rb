@@ -54,7 +54,7 @@ module Api
             query: search_params[:query],
             criterias: search_criterias.create,
             aggs: [:brands_name, :services, :category_tree_ids, :category_id],
-            sort_params: search_params[:sort_by],
+            sort_params: search_params[:sort_by] || SEARCH_DEFAULT_SORT_BY,
             pagination: { page: search_params[:page], per_page: search_params[:per_page] || RESULT_PER_PAGE },
             random: search_params[:random]
           ).call

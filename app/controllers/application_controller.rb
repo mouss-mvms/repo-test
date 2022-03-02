@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::API
+  SEARCH_DEFAULT_SORT_BY = "highest-score-elastic"
 
   Forbidden = Class.new(ActionController::ActionControllerError)
   UnpermittedParameter = Class.new(ActionController::ActionControllerError)
