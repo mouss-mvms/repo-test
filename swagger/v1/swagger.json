@@ -6185,6 +6185,135 @@
         }
       }
     },
+    "/api/v1/auth/shops/self/products/{product_id}/images/{id}": {
+      "parameters": [
+        {
+          "name": "X-client-id",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of an image.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "product_id",
+          "in": "path",
+          "description": "Unique identifier of a product.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "delete": {
+        "summary": "Delete product image for a shop",
+        "tags": [
+          "Products"
+        ],
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Image deleted"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "The syntax of the query is incorrect.",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Bad Request",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 400,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 401,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 403,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/auth/shops/self/products": {
       "parameters": [
         {
@@ -6497,7 +6626,6 @@
                 },
                 "required": [
                   "name",
-                  "brand",
                   "status",
                   "isService",
                   "categoryId",
