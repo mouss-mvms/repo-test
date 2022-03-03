@@ -6,7 +6,7 @@ RSpec.describe Dto::V1::Shop::Response do
   describe "#create" do
     context "All ok" do
       it "should return a Dto::V1::Shop::Response" do
-        shop = create(:shop, featured: create(:image), profil: create(:image))
+        shop = create(:shop, featured: create(:image), profil: create(:image), thumbnail: create(:image))
         product = create(:available_product, shop_id: shop.id)
         product.references.first.update(base_price: 50.99, shop_id: shop.id)
         product.references.last.update(shop_id: shop.id)
@@ -25,6 +25,8 @@ RSpec.describe Dto::V1::Shop::Response do
         expect(dto_response.avatar.id).to eq(shop.profil.id)
         expect(dto_response.cover).to be_an_instance_of(Dto::V1::Image::Response)
         expect(dto_response.cover.id).to eq(shop.featured.id)
+        expect(dto_response.thumbnail).to be_an_instance_of(Dto::V1::Image::Response)
+        expect(dto_response.thumbnail.id).to eq(shop.thumbnail.id)
         expect(dto_response.description).to eq(shop.description)
         expect(dto_response.baseline).to eq(shop.baseline)
         expect(dto_response.facebook_link).to eq(shop.facebook_url)
@@ -44,7 +46,7 @@ RSpec.describe Dto::V1::Shop::Response do
   describe '#to_h' do
     context "All ok" do
       it 'should return a hash representation of a Dto::V1::Shop::Response' do
-        shop = create(:shop, featured: create(:image), profil: create(:image))
+        shop = create(:shop, featured: create(:image), profil: create(:image), thumbnail: create(:image))
         product = create(:available_product, shop_id: shop.id)
         product.references.first.update(base_price: 50.99, shop_id: shop.id)
         product.references.last.update(shop_id: shop.id)
@@ -61,6 +63,7 @@ RSpec.describe Dto::V1::Shop::Response do
         expect(dto_hash[:avatar]).to eq(dto_response.avatar.to_h)
         expect(dto_hash[:cover]).to eq(dto_response.cover.to_h)
         expect(dto_hash[:baseline]).to eq(dto_response.baseline)
+        expect(dto_hash[:thumbnail]).to eq(dto_response.thumbnail.to_h)
         expect(dto_hash[:description]).to eq(dto_response.description)
         expect(dto_hash[:facebookLink]).to eq(dto_response.facebook_link)
         expect(dto_hash[:instagramLink]).to eq(dto_response.instagram_link)

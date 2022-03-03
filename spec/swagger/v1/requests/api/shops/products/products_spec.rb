@@ -75,14 +75,14 @@ RSpec.describe 'api/v1/shops/products', swagger_doc: 'v1/swagger.json', type: :r
                   }
                 }
               },
-              required: %w[basePrice weight quantity isDefault]
+              required: %w[basePrice quantity isDefault]
             }
           },
           origin: { type: :string, example: 'France', description: 'Origin of product. (This field is mandatory for some categories)' },
           allergens: { type: :string, example: 'Contient des traces de fruit à coques', description: 'Advice of potencial allergens. (This field is mandatory for some categories)' },
           composition: { type: :string, example: 'Oeuf, sucre', description: 'Composition of product. (This field is mandatory for some categories)' }
         },
-        required: %w[name description brand status sellerAdvice isService categoryId variants characteristics shopId]
+        required: %w[name status isService categoryId variants characteristics shopId]
       }
 
       response(202, 'Accepted') do
@@ -116,11 +116,11 @@ RSpec.describe 'api/v1/shops/products', swagger_doc: 'v1/swagger.json', type: :r
       parameter name: :category, in: :query
       parameter name: :page, in: :query, description: 'Set as 1 if not set'
       parameter name: :limit, in: :query, description: 'Set as 15 if not set'
-      parameter name: :sortBy, in: :query,  schema: { type: :string, enum: [:created_at_desc, :created_at_asc] }
+      parameter name: :sortBy, in: :query, schema: { type: :string, enum: [:created_at_desc, :created_at_asc] }
 
       response(200, 'Successful') do
         schema type: :object,
-               properties:{
+               properties: {
                  products: {
                    type: :array,
                    items: { '$ref': '#/components/schemas/Product' }
@@ -273,7 +273,6 @@ RSpec.describe 'api/v1/shops/products', swagger_doc: 'v1/swagger.json', type: :r
   path '/api/v1/auth/shops/self/products/{id}/reject' do
     parameter name: 'X-client-id', in: :header, type: :string, required: true
     parameter name: 'id', in: :path, type: :string, required: true
-
 
     post('Reject a product submitted') do
       tags 'Products'

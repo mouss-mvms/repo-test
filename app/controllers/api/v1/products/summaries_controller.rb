@@ -56,7 +56,7 @@ module Api
           search_results = ::Requests::ProductSearches.new(
             query: search_parameters[:q],
             criterias: search_criterias.create,
-            sort_params: search_parameters[:sort_by],
+            sort_params: search_parameters[:sort_by] || SEARCH_DEFAULT_SORT_BY,
             random: search_parameters[:random],
             aggs: [:base_price, :brand_name, :colors, :sizes, :services, :category_tree_ids],
             pagination: { page: search_parameters[:page], per_page: RESULTS_PER_PAGE }

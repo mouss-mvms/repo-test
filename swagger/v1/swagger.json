@@ -3732,10 +3732,8 @@
                 "required": [
                   "id",
                   "name",
-                  "description",
                   "brand",
                   "status",
-                  "sellerAdvice",
                   "isService",
                   "categoryId",
                   "variants",
@@ -6187,6 +6185,135 @@
         }
       }
     },
+    "/api/v1/auth/shops/self/products/{product_id}/images/{id}": {
+      "parameters": [
+        {
+          "name": "X-client-id",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Unique identifier of an image.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        },
+        {
+          "name": "product_id",
+          "in": "path",
+          "description": "Unique identifier of a product.",
+          "required": true,
+          "schema": {
+            "type": "integer"
+          }
+        }
+      ],
+      "delete": {
+        "summary": "Delete product image for a shop",
+        "tags": [
+          "Products"
+        ],
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Image deleted"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "The syntax of the query is incorrect.",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Bad Request",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 400,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 401,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 403,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/auth/shops/self/products": {
       "parameters": [
         {
@@ -6476,7 +6603,6 @@
                       },
                       "required": [
                         "basePrice",
-                        "weight",
                         "quantity",
                         "isDefault"
                       ]
@@ -6500,10 +6626,7 @@
                 },
                 "required": [
                   "name",
-                  "description",
-                  "brand",
                   "status",
-                  "sellerAdvice",
                   "isService",
                   "categoryId",
                   "variants",
@@ -8808,6 +8931,10 @@
                     "type": "boolean",
                     "example": true
                   },
+                  "imageId": {
+                    "type": "integer",
+                    "example": 1
+                  },
                   "imageUrl": {
                     "type": "string",
                     "example": "https://path/to/image.jpeg",
@@ -8924,10 +9051,35 @@
                       "type": "boolean",
                       "example": true
                     },
-                    "imageUrl": {
-                      "type": "string",
-                      "example": "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg",
-                      "description": "ImageUrl of a tag."
+                    "image": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "example": 42
+                        },
+                        "originalUrl": {
+                          "type": "string",
+                          "example": "https://path/to/original-image.jpg"
+                        },
+                        "miniUrl": {
+                          "type": "string",
+                          "example": "https://path/to/mini-format.jpg"
+                        },
+                        "thumbUrl": {
+                          "type": "string",
+                          "example": "https://path/to/thumb-format.jpg"
+                        },
+                        "squareUrl": {
+                          "type": "string",
+                          "example": "https://path/to/square-format.jpg"
+                        },
+                        "wideUrl": {
+                          "type": "string",
+                          "example": "https://path/to/wide-format.jpg"
+                        }
+                      },
+                      "description": "Image of a tag"
                     }
                   }
                 }
@@ -11579,10 +11731,35 @@
             "type": "boolean",
             "example": true
           },
-          "imageUrl": {
-            "type": "string",
-            "example": "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg",
-            "description": "ImageUrl of a tag."
+          "image": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "example": 42
+              },
+              "originalUrl": {
+                "type": "string",
+                "example": "https://path/to/original-image.jpg"
+              },
+              "miniUrl": {
+                "type": "string",
+                "example": "https://path/to/mini-format.jpg"
+              },
+              "thumbUrl": {
+                "type": "string",
+                "example": "https://path/to/thumb-format.jpg"
+              },
+              "squareUrl": {
+                "type": "string",
+                "example": "https://path/to/square-format.jpg"
+              },
+              "wideUrl": {
+                "type": "string",
+                "example": "https://path/to/wide-format.jpg"
+              }
+            },
+            "description": "Image of a tag"
           }
         }
       },
