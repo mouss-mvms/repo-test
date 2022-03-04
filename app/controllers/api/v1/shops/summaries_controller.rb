@@ -85,7 +85,7 @@ module Api
           search_params[:is_random] = params[:random] if params[:random]
           search_params[:perimeter] = params[:perimeter] if params[:perimeter]
           search_params[:category] = params[:category] if params[:category]
-          search_params[:sort_by] = params[:sortBy].blank? ? SEARCH_DEFAULT_SORT_BY : search_params[:sortBy]
+          search_params[:sort_by] = params[:sortBy].blank? ? SEARCH_DEFAULT_SORT_BY : params[:sortBy]
           search_params[:random] = params[:sortBy] && params[:sortBy] == 'random'
           search_params[:page] = params[:page] ? params[:page] : "1"
           search_params[:per_page] = params[:perPage] if params[:perPage]
