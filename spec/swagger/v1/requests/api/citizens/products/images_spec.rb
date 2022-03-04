@@ -1,14 +1,15 @@
 require 'swagger_helper'
 
-RSpec.describe '/api/v1/auth/shops/self/products/image', swagger_doc: 'v1/swagger.json', type: :request do
-  path '/api/v1/auth/shops/self/products/{product_id}/images/{id}' do
+RSpec.describe 'api/v1/citizens/products', swagger_doc: 'v1/swagger.json', type: :request do
+  path '/api/v1/auth/citizens/self/products/{product_id}/images/{id}' do
     parameter name: 'X-client-id', in: :header, type: :string, required: true
     parameter name: :id, in: :path, type: :integer, description: 'Unique identifier of an image.'
     parameter name: :product_id, in: :path, type: :integer, description: 'Unique identifier of a product.'
 
-    delete('Delete product image for a shop') do
+    delete("Delete image of citizen's product") do
       tags 'Products'
-      produces "application/json"
+      produces 'application/json'
+      description "Delete image of citizen's product with status submitted."
       security [{ authorization: [] }]
 
       response(204, "Image deleted") do
