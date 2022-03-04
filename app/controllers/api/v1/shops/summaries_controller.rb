@@ -8,6 +8,7 @@ module Api
         MAX_PER_PAGE = 32
 
         def search
+          search_parameters = search_params
           raise ActionController::BadRequest.new("perPage params must be an integer between #{MIN_PER_PAGE} and #{MAX_PER_PAGE}.") unless search_params[:per_page].blank? || (search_params[:per_page].is_a?(Integer) && search_params[:per_page].between?(MIN_PER_PAGE, MAX_PER_PAGE))
           search_criterias = ::Criterias::Composite.new(::Criterias::Shops::NotDeleted)
                                                    .and(::Criterias::Shops::NotTemplated)
@@ -54,7 +55,7 @@ module Api
             query: search_params[:query],
             criterias: search_criterias.create,
             aggs: [:brands_name, :services, :category_tree_ids, :category_id],
-            sort_params: search_params[:sort_by] || SEARCH_DEFAULT_SORT_BY,
+            sort_params: search_params[:sort_by],
             pagination: { page: search_params[:page], per_page: search_params[:per_page] || RESULT_PER_PAGE },
             random: search_params[:random]
           ).call
@@ -84,7 +85,7 @@ module Api
           search_params[:is_random] = params[:random] if params[:random]
           search_params[:perimeter] = params[:perimeter] if params[:perimeter]
           search_params[:category] = params[:category] if params[:category]
-          search_params[:sort_by] = params[:sortBy] ? params[:sortBy] : 'name-asc'
+          search_params[:sort_by] = params[:sortBy].blank? ? SEARCH_DEFAULT_SORT_BY : search_params[:sortBy]
           search_params[:random] = params[:sortBy] && params[:sortBy] == 'random'
           search_params[:page] = params[:page] ? params[:page] : "1"
           search_params[:per_page] = params[:perPage] if params[:perPage]
