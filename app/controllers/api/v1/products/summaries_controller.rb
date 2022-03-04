@@ -56,7 +56,7 @@ module Api
           search_results = ::Requests::ProductSearches.new(
             query: search_parameters[:q],
             criterias: search_criterias.create,
-            sort_params: search_parameters[:sort_by] || SEARCH_DEFAULT_SORT_BY,
+            sort_params: search_parameters[:sort_by],
             random: search_parameters[:random],
             aggs: [:base_price, :brand_name, :colors, :sizes, :services, :category_tree_ids],
             pagination: { page: search_parameters[:page], per_page: RESULTS_PER_PAGE }
@@ -86,7 +86,7 @@ module Api
           search_params[:category] = params[:category] if params[:category].present?
           search_params[:selection_id] = params[:selectionId] if params[:selectionId].present?
           search_params[:services] = params[:services] if params[:services]
-          search_params[:sort_by] = params[:sortBy] ? params[:sortBy] : 'name-asc'
+          search_params[:sort_by] = params[:sortBy].blank? ? SEARCH_DEFAULT_SORT_BY : params[:sortBy]
           search_params[:random] = params[:sortBy] == 'random'
           search_params[:page] = params[:page] ? params[:page] : "1"
           search_params[:shop_id] = params[:shopId] if params[:shopId]
