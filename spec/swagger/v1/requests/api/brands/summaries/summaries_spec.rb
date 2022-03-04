@@ -6,14 +6,13 @@ RSpec.describe "api/v1/brands/summaries", swagger_doc: "v1/swagger.json", type: 
       tags 'Brands'
       consumes 'application/json'
       produces 'application/json'
-      description 'Return brand-summaries list'
       security [{ authorization: [] }]
 
       parameter name: :shops, in: :body, schema: {
         type: :object,
         properties: {
           q: { type: :string, example: 'rebok', description: 'Query for search.' },
-          sortBy: { type: :string, enum: ["products-count"] },
+          sortBy: { type: :string, enum: ["products-count", "highest-score-elastic"] },
           page: { type: :integer, example: 2, description: 'Search page number.' }
         }
       }
