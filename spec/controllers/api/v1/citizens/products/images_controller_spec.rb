@@ -10,6 +10,10 @@ RSpec.describe Api::V1::Citizens::Products::ImagesController, type: :controller 
       @reference = @product.references.first
       @sample = @reference.sample
       @shop = @product.shop
+      @token = generate_token(@citizen_user)
+    end
+    before(:each) do
+      @product.update(status: 3)
     end
     after(:all) do
       @shop.products.destroy_all
@@ -21,7 +25,7 @@ RSpec.describe Api::V1::Citizens::Products::ImagesController, type: :controller 
       it "should return http status 204 and destroy the image" do
         image = create(:image)
         @sample.images << image
-        request.headers['x-client-id'] = generate_token(@citizen_user)
+        request.headers['x-client-id'] = @token
         delete :destroy, params: { product_id: @product.id, id: image.id }
         expect(response).to have_http_status(204)
         expect(Image.where(id: image.id).first).to eq(nil)
@@ -30,48 +34,31 @@ RSpec.describe Api::V1::Citizens::Products::ImagesController, type: :controller 
 
     context "Errors" do
       context "Bad product status" do
-        before(:all) do
-          @product_bad = create(:available_product, shop: @shop)
-          @reference_bad = @product.references.first
-          @sample_bad = @reference.sample
-          @shop_bad = @product.shop
-          @product_bad.citizens << @citizen
-        end
-
-        context "Product has draft_cityzen status" do
+        context "Product hasn't submitted status" do
           it "should return HTTP status 403" do
-            image = create(:image)
-            @sample_bad.images << image
-            request.headers['x-client-id'] = generate_token(@citizen_user)
-            delete :destroy, params: { product_id: @product_bad.id, id: image.id }
-            expect(response).to have_http_status(403)
-            expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
-          end
-        end
-
-        context "Product has refused status" do
-          it "should return HTTP status 403" do
-            image = create(:image)
-            @sample_bad.images << image
-            request.headers['x-client-id'] = generate_token(@citizen_user)
-            delete :destroy, params: { product_id: @product_bad.id, id: image.id }
-            expect(response).to have_http_status(403)
-            expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
+            ::Product.statuses.each do |k, v|
+              next if k == "submitted"
+              @product.update!(status: k)
+              image = create(:image)
+              @sample.images << image
+              request.headers['x-client-id'] = @token
+              delete :destroy, params: { product_id: @product.id, id: image.id }
+              expect(response).to have_http_status(403)
+              expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
+            end
           end
         end
       end
 
-      context 'Not found' do
-        context "when image didn't exit" do
-          it "should return HTTP status 404" do
-            image = create(:image)
-            image.sample = @sample
-            image.destroy
-            request.headers['x-client-id'] = generate_token(@citizen_user)
-            delete :destroy, params: { product_id: @product.id, id: image.id }
-            expect(response).to have_http_status(404)
-            expect(response.body).to eq(Dto::Errors::NotFound.new("Could not find Image with id: #{image.id} for product_id: #{@product.id}").to_h.to_json)
-          end
+      context "when image didn't exit for the product" do
+        it "should return HTTP status 404" do
+          image = create(:image)
+          image.sample = @sample
+          image.destroy
+          request.headers['x-client-id'] = @token
+          delete :destroy, params: { product_id: @product.id, id: image.id }
+          expect(response).to have_http_status(404)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Could not find Image with id: #{image.id} for product_id: #{@product.id}").to_h.to_json)
         end
       end
 
