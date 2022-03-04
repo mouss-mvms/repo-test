@@ -19,7 +19,7 @@ Rails.application.routes.draw do
       instance_eval(File.read(Rails.root.join("config/routes/v1/categories.rb")))
       instance_eval(File.read(Rails.root.join("config/routes/v1/tags.rb")))
       instance_eval(File.read(Rails.root.join("config/routes/v1/images.rb")))
-      get "/citizens/:id/products", to: "citizens/products#index"
+      instance_eval(File.read(Rails.root.join("config/routes/v1/citizens.rb")))
     end
   end
 end
