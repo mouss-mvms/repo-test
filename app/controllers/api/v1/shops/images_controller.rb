@@ -4,9 +4,9 @@ module Api
       class ImagesController < ProsController
         def destroy
           shop = @user.shops.last
-          raise ApplicationController::Forbidden unless (shop.profil.id == params[:id].to_i) ||
-                                                        (shop.thumbnail.id == params[:id].to_i) ||
-                                                        (shop.featured.id == params[:id].to_i)
+          raise ApplicationController::Forbidden unless (shop.profil&.id == params[:id].to_i) ||
+                                                        (shop.thumbnail&.id == params[:id].to_i) ||
+                                                        (shop.featured&.id == params[:id].to_i)
           ::Image.destroy(params[:id])
         end
       end
