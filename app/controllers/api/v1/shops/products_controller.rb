@@ -176,7 +176,7 @@ module Api
           product_params[:id] = params[:id]
           product_params[:name] = params.require(:name)
           product_params[:description] = params[:description]
-          product_params[:brand] = params.require(:brand)
+          product_params[:brand] = params[:brand]
           product_params[:status] = params.require(:status)
           product_params[:seller_advice] = params[:sellerAdvice]
           product_params[:is_service] = params.require(:isService)

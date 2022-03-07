@@ -86,7 +86,7 @@ module Api
           search_params[:category] = params[:category] if params[:category].present?
           search_params[:selection_id] = params[:selectionId] if params[:selectionId].present?
           search_params[:services] = params[:services] if params[:services]
-          search_params[:sort_by] = params[:sortBy] ? params[:sortBy] : 'name-asc'
+          search_params[:sort_by] = params[:sortBy].blank? ? SEARCH_DEFAULT_SORT_BY : params[:sortBy]
           search_params[:random] = params[:sortBy] == 'random'
           search_params[:page] = params[:page] ? params[:page] : "1"
           search_params[:shop_id] = params[:shopId] if params[:shopId]

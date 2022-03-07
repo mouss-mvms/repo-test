@@ -2,7 +2,7 @@ module Dto
   module V1
     module Shop
       class Response
-        attr_accessor :id, :name, :slug, :images, :cover, :avatar, :description, :baseline, :facebook_link, :instagram_link, :website_link, :web_uri, :address, :siret, :email, :mobile_number, :lowest_product_price, :highest_product_price
+        attr_accessor :id, :name, :slug, :images, :cover, :avatar, :thumbnail, :description, :baseline, :facebook_link, :instagram_link, :website_link, :web_uri, :address, :siret, :email, :mobile_number, :lowest_product_price, :highest_product_price
 
         def initialize(**args)
           @id = args[:id]
@@ -13,7 +13,8 @@ module Dto
             @images << img
           end
           @avatar = args[:avatar]
-          @cover = args[:cover_image_url]
+          @cover = args[:cover]
+          @thumbnail = args[:thumbnail]
           @description = args[:description]
           @baseline = args[:baseline]
           @facebook_link = args[:facebook_link]
@@ -50,7 +51,8 @@ module Dto
                                                email: shop.email,
                                                mobile_number: shop.mobile_phone_number,
                                                avatar: Dto::V1::Image::Response.create(shop.profil) || nil,
-                                               cover_image_url: Dto::V1::Image::Response.create(shop.featured) || nil,
+                                               cover: Dto::V1::Image::Response.create(shop.featured) || nil,
+                                               thumbnail: Dto::V1::Image::Response.create(shop.thumbnail) || nil,
                                                lowest_product_price: shop.cheapest_ref&.base_price,
                                                highest_product_price: shop.most_expensive_ref&.base_price
                                              })
@@ -76,6 +78,7 @@ module Dto
           hash[:avatar] = @avatar&.to_h if fields.nil? || (fields.any? && fields.include?('avatar'))
           hash[:cover] = @cover&.to_h if fields.nil? || (fields.any? && fields.include?('cover'))
           hash[:baseline] = @baseline if fields.nil? || (fields.any? && fields.include?('baseline'))
+          hash[:thumbnail] = @thumbnail&.to_h if fields.nil? || (fields.any? && fields.include?('thumbnail'))
           hash[:description] = @description if fields.nil? || (fields.any? && fields.include?('description'))
           hash[:facebookLink] = @facebook_link if fields.nil? || (fields.any? && fields.include?('facebookLink'))
           hash[:instagramLink] = @instagram_link if fields.nil? || (fields.any? && fields.include?('instagramLink'))
