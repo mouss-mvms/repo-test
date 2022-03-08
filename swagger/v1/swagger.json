@@ -11400,6 +11400,7 @@
                 },
                 "imageUrl": {
                   "type": "string",
+                  "description": "thumbnail image of the shop",
                   "example": "https://static.wikia.nocookie.net/ghostbusters/images/e/e0/GB2film1999chapter04sc001.png/revision/latest?cb=20111220104753"
                 },
                 "coupons": {
@@ -11696,6 +11697,7 @@
           },
           "imageUrl": {
             "type": "string",
+            "description": "thumbnail image of the shop",
             "example": "https://static.wikia.nocookie.net/ghostbusters/images/e/e0/GB2film1999chapter04sc001.png/revision/latest?cb=20111220104753"
           },
           "coupons": {
