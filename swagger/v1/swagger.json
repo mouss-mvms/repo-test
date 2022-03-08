@@ -2852,7 +2852,6 @@
         "tags": [
           "Products"
         ],
-        "description": "Update a product and its variants.",
         "security": [
           {
             "authorization": [
@@ -3147,7 +3146,6 @@
         "tags": [
           "Products"
         ],
-        "description": "Return the product updated",
         "security": [
           {
             "authorization": [
@@ -3445,7 +3443,6 @@
         "tags": [
           "Products"
         ],
-        "description": "Delete a product",
         "security": [
           {
             "authorization": [
@@ -3528,7 +3525,6 @@
         "tags": [
           "Products"
         ],
-        "description": "Retrieve a product",
         "security": [
           {
             "authorization": [
@@ -3906,7 +3902,6 @@
         "tags": [
           "Products"
         ],
-        "description": "Delete a product",
         "security": [
           {
             "authorization": [
@@ -8935,7 +8930,6 @@
         "tags": [
           "Shops"
         ],
-        "description": "Search list of shops",
         "security": [
           {
             "authorization": [
