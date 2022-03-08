@@ -169,7 +169,7 @@ module Api
         product_params[:description] = params[:description]
         product_params[:brand] = params.require(:brand)
         product_params[:status] = params.require(:status)
-        product_params[:seller_advice] = params.require(:sellerAdvice)
+        product_params[:seller_advice] = params[:sellerAdvice]
         product_params[:is_service] = params.require(:isService)
         product_params[:citizen_advice] = params.permit(:citizenAdvice).values.first
         product_params[:category_id] = params.require(:categoryId)

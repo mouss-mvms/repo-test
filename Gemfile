@@ -37,6 +37,7 @@ group :development, :test, :local do
   gem "rswag-specs"
   gem "shoulda-matchers"
   gem "factory_bot_rails"
+  gem "ruby_cowsay"
 end
 
 gem 'listen', '~> 3.3'
@@ -69,7 +70,7 @@ gem 'dalli'
 gem 'memcachier'
 
 source 'https://gem.fury.io/mvms/' do
-  gem 'mvms-core', '2.5.477'
+  gem 'mvms-core', '2.5.511'
 end
 
 gem 'newrelic_rpm'

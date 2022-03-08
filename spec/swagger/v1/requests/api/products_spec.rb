@@ -313,7 +313,7 @@ RSpec.describe 'api/v1/products', swagger_doc: 'v1/swagger.json', type: :request
           allergens: { type: :string, example: 'Contient des traces de fruit à coques', description: 'Advice of potencial allergens. (This field is mandatory for some categories)' },
           composition: { type: :string, example: 'Oeuf, sucre', description: 'Composition of product. (This field is mandatory for some categories)' }
         },
-        required: %w[id name description brand status sellerAdvice isService categoryId variants characteristics]
+        required: %w[id name brand status isService categoryId variants characteristics]
       }
 
       response(200, 'Successful') do

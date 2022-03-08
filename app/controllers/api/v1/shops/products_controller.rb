@@ -175,10 +175,10 @@ module Api
           product_params = {}
           product_params[:id] = params[:id]
           product_params[:name] = params.require(:name)
-          product_params[:description] = params.require(:description)
-          product_params[:brand] = params.require(:brand)
+          product_params[:description] = params[:description]
+          product_params[:brand] = params[:brand]
           product_params[:status] = params.require(:status)
-          product_params[:seller_advice] = params.require(:sellerAdvice)
+          product_params[:seller_advice] = params[:sellerAdvice]
           product_params[:is_service] = params.require(:isService)
           product_params[:citizen_advice] = params.permit(:citizenAdvice).values.first
           product_params[:category_id] = params.require(:categoryId)
@@ -190,7 +190,7 @@ module Api
           params.require(:variants).each { |v|
             hash = {}
             hash[:base_price] = v.require(:basePrice)
-            hash[:weight] = v.require(:weight)
+            hash[:weight] = v[:weight]
             hash[:quantity] = v.require(:quantity)
             hash[:is_default] = v.require(:isDefault)
             if v[:imageIds]
