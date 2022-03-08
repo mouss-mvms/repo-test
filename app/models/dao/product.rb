@@ -94,7 +94,10 @@ module Dao
             product.status = :online :
             product.status = :offline
         end
+
         product.save!
+        product.touch(:updated_at)
+
         return product
       end
     end
@@ -143,6 +146,8 @@ module Dao
         product.status = :offline if ::Products::StatusSpecifications::CanBeOffline.new.is_satisfied_by?(product)
       end
       product.save!
+      product.touch(:updated_at)
+
       product
     end
 
