@@ -74,4 +74,6 @@ gem 'newrelic_rpm'
 #Pagination
 gem 'kaminari'
 
-gem 'mvms-core', path: '../../mvms-core'
+source 'https://gem.fury.io/mvms/' do
+  gem 'mvms-core', '2.5.531'
+end
