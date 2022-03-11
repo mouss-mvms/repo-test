@@ -69,11 +69,11 @@ gem 'jwt'
 gem 'dalli'
 gem 'memcachier'
 
-source 'https://gem.fury.io/mvms/' do
-  gem 'mvms-core', '2.5.511'
-end
-
 gem 'newrelic_rpm'
 
 #Pagination
 gem 'kaminari'
+
+source 'https://gem.fury.io/mvms/' do
+  gem 'mvms-core', '2.5.531'
+end
