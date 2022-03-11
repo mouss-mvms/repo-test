@@ -96,7 +96,6 @@ module Dao
         end
 
         product.save!
-        product.touch(:updated_at)
 
         return product
       end
