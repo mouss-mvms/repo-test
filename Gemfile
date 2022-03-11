@@ -75,5 +75,5 @@ gem 'newrelic_rpm'
 gem 'kaminari'
 
 source 'https://gem.fury.io/mvms/' do
-  gem 'mvms-core', '2.5.531'
+  gem 'mvms-core', '2.5.534'
 end
