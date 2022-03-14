@@ -6,7 +6,6 @@ RSpec.describe 'api/v1/shops/summaries', swagger_doc: 'v1/swagger.json', type: :
       tags 'Shops'
       consumes 'application/json'
       produces 'application/json'
-      description 'Search list of shops'
       security [{ authorization: [] }]
 
       parameter name: :shops, in: :body, schema: {
