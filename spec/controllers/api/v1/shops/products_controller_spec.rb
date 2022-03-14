@@ -196,19 +196,6 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
         end
       end
 
-      context 'Result is cached' do
-        it 'should return 304 HTTP Status' do
-          request.headers['HTTP_X_CLIENT_ID'] = @shop_employee_user_token
-          get :index
-          expect(response).to have_http_status(:ok)
-          etag = response.headers["ETag"]
-
-          request.headers['HTTP_X_CLIENT_ID'] = @shop_employee_user_token
-          request.env["HTTP_IF_NONE_MATCH"] = etag
-          get :index
-          expect(response).to have_http_status(304)
-        end
-      end
     end
 
     context 'User is not a shop employee' do
