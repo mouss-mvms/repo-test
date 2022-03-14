@@ -103,7 +103,7 @@ module Api
             raise ActionController::BadRequest.new('textCitizenRefuse cannot be blank') if !params.key?(:textCitizenRefuse) || params[:textCitizenRefuse].blank?
           end
           {
-            type_citizen_refuse: params[:typeCitizenRefuse],
+            type_citizen_refuse: params.require(:typeCitizenRefuse),
             text_citizen_refuse: params[:textCitizenRefuse]
           }
         end
