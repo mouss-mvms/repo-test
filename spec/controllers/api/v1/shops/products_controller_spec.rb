@@ -2288,6 +2288,23 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
       end
     end
 
+    context 'typeCitizenRefuse is blank' do
+      it "returns 400 HTTP status" do
+        product = create(:product, status: 'submitted')
+        shop = create(:shop)
+        shop.products << product
+        user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
+        user_shop_employee.shop_employee.shops << shop
+        user_shop_employee.shop_employee.save
+
+        request.headers["x-client-id"] = generate_token(user_shop_employee)
+
+        post :reject, params: { id: product.id }
+        expect(response).to have_http_status(400)
+        expect(response.body).to eq(Dto::Errors::BadRequest.new('param is missing or the value is empty: typeCitizenRefuse').to_h.to_json)
+      end
+    end
+
   end
 end
 
