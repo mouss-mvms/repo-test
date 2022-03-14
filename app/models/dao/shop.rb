@@ -43,7 +43,6 @@ module Dao
       set_baseline(dto_shop_request, shop) if dto_shop_request.baseline
 
       shop.save!
-      shop.touch(:updated_at)
       return shop
     end
 

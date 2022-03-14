@@ -2,7 +2,13 @@ module Dao
   class Variant
     def self.create(dto_variant_request:)
       product = ::Product.find(dto_variant_request.product_id)
-      sample = ::Sample.create!(name: product.name, default: dto_variant_request.is_default, product_id: product.id)
+
+      characteristics = dto_variant_request.characteristics
+
+      color_characteristic = characteristics.detect { |char| char.name == "color" }
+      size_characteristic = characteristics.detect { |char| char.name == "size" }
+
+      sample = ::Sample.create!(name: color_characteristic.value, default: dto_variant_request.is_default, product_id: product.id)
 
       if dto_variant_request.image_ids.present?
         images = Image.where(id: dto_variant_request.image_ids)
@@ -12,11 +18,6 @@ module Dao
           Dao::Variant.set_image(object: sample, image_url: image_url)
         end
       end
-
-      characteristics = dto_variant_request.characteristics
-
-      color_characteristic = characteristics.detect { |char| char.name == "color" }
-      size_characteristic = characteristics.detect { |char| char.name == "size" }
 
       reference = ::Reference.create!(
         weight: dto_variant_request.weight,
@@ -109,14 +110,8 @@ module Dao
     private
 
     def self.set_image(object:, image_url:)
-      begin
-        image = Shrine.remote_url(image_url)
-        object.images.create(file: image, position: 1)
-        object.save!
-      rescue StandardError => e
-        Rails.logger.error(e)
-        Rails.logger.error(e.message)
-      end
+      image = Shrine.remote_url(image_url)
+      object.images.create!(file: image, position: 1)
     end
 
     def self.date_from_string(date_string:)
