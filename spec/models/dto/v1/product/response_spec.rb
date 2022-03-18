@@ -26,6 +26,9 @@ RSpec.describe Dto::V1::Product::Response do
         expect(result.updated_at).to eq(product.updated_at)
         expect(result.type_citizen_refuse).to eq(product.type_citizen_refuse)
         expect(result.text_citizen_refuse).to eq(product.text_citizen_refuse)
+        expect(result.allergens).to eq(product.allergens)
+        expect(result.origin).to eq(product.origin)
+        expect(result.composition).to eq(product.composition)
       end
 
       context 'Product was created by a citizen' do
@@ -54,6 +57,9 @@ RSpec.describe Dto::V1::Product::Response do
           expect(result.updated_at).to eq(product.updated_at)
           expect(result.type_citizen_refuse).to eq(product.type_citizen_refuse)
           expect(result.text_citizen_refuse).to eq(product.text_citizen_refuse)
+          expect(result.allergens).to eq(product.allergens)
+          expect(result.origin).to eq(product.origin)
+          expect(result.composition).to eq(product.composition)
         end
       end
     end
@@ -86,6 +92,9 @@ RSpec.describe Dto::V1::Product::Response do
         expect(dto_hash[:updatedAt]).to eq(dto.updated_at)
         expect(dto_hash[:typeCitizenRefuse]).to eq(dto.type_citizen_refuse)
         expect(dto_hash[:textCitizenRefuse]).to eq(dto.text_citizen_refuse)
+        expect(dto_hash[:allergens]).to eq(dto.allergens)
+        expect(dto_hash[:origin]).to eq(dto.origin)
+        expect(dto_hash[:composition]).to eq(dto.composition)
       end
     end
   end
