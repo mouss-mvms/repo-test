@@ -77,3 +77,9 @@ gem 'kaminari'
 source 'https://gem.fury.io/mvms/' do
   gem 'mvms-core', '2.5.534'
 end
+
+# Data migration
+gem 'data_migrate'
+
+# Feature flipping
+gem 'flipper-active_record', '~> 0.22.2'
