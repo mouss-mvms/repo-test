@@ -2,7 +2,7 @@ module Dto
   module V1
     module Category
       class Response
-        attr_accessor :id, :name, :slug, :children, :has_children
+        attr_accessor :id, :name, :slug, :children, :has_children, :type
 
         def initialize(**args)
           @id = args[:id]
@@ -10,6 +10,7 @@ module Dto
           @slug = args[:slug]
           @has_children = args[:has_children]
           @children = args[:children]
+          @type = args[:type]
         end
 
         def self.create(category)
@@ -20,7 +21,8 @@ module Dto
             name: category.name,
             has_children: children.present?,
             slug: category.slug,
-            children: children.map { |child_category| self.create(child_category) }
+            children: children.map { |child_category| self.create(child_category) },
+            type: category.group
           )
         end
 
@@ -31,6 +33,7 @@ module Dto
           hash[:slug] = @slug
           hash[:hasChildren] = @has_children
           hash[:children] = @children&.map { |child| child.to_h } if fields&.any? && fields.include?(:children)
+          hash[:type] = @type if fields&.any? && fields.include?(:type)
           hash
         end
       end
