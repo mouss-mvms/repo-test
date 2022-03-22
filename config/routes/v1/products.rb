@@ -18,7 +18,6 @@ scope :products do
 end
 
 scope :auth do
-  put 'products/:id', to: 'products#update'
   delete 'products/:id', to: 'products#destroy'
   namespace :products do
     post ":id/reviews", to: "reviews#create"

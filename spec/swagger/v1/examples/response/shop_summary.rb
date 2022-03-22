@@ -47,7 +47,7 @@ module V1
               deletedAt: { type: :string, example: nil },
               numberOfOnlineProducts: { type: :integer, example: 233 },
               numberOfOrders: { type: :integer, example: 5 },
-              imageUrl: { type: :string, example: "https://static.wikia.nocookie.net/ghostbusters/images/e/e0/GB2film1999chapter04sc001.png/revision/latest?cb=20111220104753" },
+              imageUrl: { type: :string, description: 'thumbnail image of the shop', example: "https://static.wikia.nocookie.net/ghostbusters/images/e/e0/GB2film1999chapter04sc001.png/revision/latest?cb=20111220104753" },
               coupons: { type: :string, example: "[]" },
               pictogram_url: { type: :string, example: nil },
               services: {
