@@ -50,11 +50,22 @@ module V1
                       type: 'boolean',
                       example: 'true',
                       description: 'Category has children.'
+                    },
+                    type: {
+                      type: 'string',
+                      example: 'dry-food',
+                      description: 'Types of category',
+                      enum: ['dry-food', 'fresh-food', 'frozen-food', 'alcohol', 'explicit', 'cosmetic', 'clothing', 'food', 'services', 'unclassified']
                     }
                   }
-
                 },
                 description: 'List of children category.'
+              },
+              type: {
+                type: 'string',
+                example: 'dry-food',
+                description: 'Types of category',
+                enum: ['dry-food', 'fresh-food', 'frozen-food', 'alcohol', 'explicit', 'cosmetic', 'clothing', 'food', 'services', 'unclassified']
               }
             }
           }
