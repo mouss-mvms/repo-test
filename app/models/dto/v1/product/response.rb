@@ -28,6 +28,9 @@ module Dto
           @updated_at = args[:updated_at]
           @type_citizen_refuse = args[:type_citizen_refuse]
           @text_citizen_refuse = args[:text_citizen_refuse]
+          @allergens = args[:allergens]
+          @origin = args[:origin]
+          @composition = args[:composition]
         end
 
         def self.create(product)
@@ -51,7 +54,10 @@ module Dto
             created_at: product.created_at,
             updated_at: product.updated_at,
             type_citizen_refuse: product.type_citizen_refuse,
-            text_citizen_refuse: product.text_citizen_refuse
+            text_citizen_refuse: product.text_citizen_refuse,
+            allergens: product.allergens,
+            origin: product.origin,
+            composition: product.composition,
           )
         end
 
@@ -76,6 +82,9 @@ module Dto
             updatedAt: @updated_at,
             typeCitizenRefuse: @type_citizen_refuse,
             textCitizenRefuse: @text_citizen_refuse,
+            origin: @origin,
+            allergens: @allergens,
+            composition: @composition,
           }
         end
       end
