@@ -196,19 +196,6 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
         end
       end
 
-      context 'Result is cached' do
-        it 'should return 304 HTTP Status' do
-          request.headers['HTTP_X_CLIENT_ID'] = @shop_employee_user_token
-          get :index
-          expect(response).to have_http_status(:ok)
-          etag = response.headers["ETag"]
-
-          request.headers['HTTP_X_CLIENT_ID'] = @shop_employee_user_token
-          request.env["HTTP_IF_NONE_MATCH"] = etag
-          get :index
-          expect(response).to have_http_status(304)
-        end
-      end
     end
 
     context 'User is not a shop employee' do
@@ -2128,24 +2115,25 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
   end
 
   describe "POST #reject" do
-    context "All ok" do
-      before(:all) do
-        @product = create(:product, status: 'submitted')
-        @shop = create(:shop)
-        @shop.products << @product
-        @user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
-        @user_shop_employee.shop_employee.shops << @shop
-        @user_shop_employee.shop_employee.save
-        @user_shop_employee_token = generate_token(@user_shop_employee)
-      end
+    before(:all) do
+      @product = create(:product, status: 'submitted')
+      @shop = create(:shop)
+      @shop.products << @product
+      @user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
+      @user_shop_employee.shop_employee.shops << @shop
+      @user_shop_employee.shop_employee.save
+      @user_shop_employee_token = generate_token(@user_shop_employee)
+    end
 
-      after(:all) do
-        @user_shop_employee_token = nil
-        @product.destroy
-        @shop.destroy
-        @user_shop_employee.destroy
-        @user_shop_employee.shop_employee.destroy
-      end
+    after(:all) do
+      @user_shop_employee_token = nil
+      @product.destroy
+      @shop.destroy
+      @user_shop_employee.destroy
+      @user_shop_employee.shop_employee.destroy
+    end
+
+    context "All ok" do
       context "Reason is product doesn't comply" do
         it 'should return 200 HTTP Status with product updated to reject with reason set to not_comply' do
           request.headers["x-client-id"] = @user_shop_employee_token
@@ -2202,16 +2190,11 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
     context 'Product is online' do
       it 'should return 422 HTTP Status' do
-        product = create(:product, status: 'online')
-        shop = create(:shop)
-        shop.products << product
-        user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
-        user_shop_employee.shop_employee.shops << shop
-        user_shop_employee.shop_employee.save
+        @product.update(status: 'online')
 
-        request.headers["x-client-id"] = generate_token(user_shop_employee)
+        request.headers["x-client-id"] = @user_shop_employee_token
 
-        post :reject, params: {id: product.id, typeCitizenRefuse: 'not_comply'}
+        post :reject, params: {id: @product.id, typeCitizenRefuse: 'not_comply'}
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.body).to eq(Dto::Errors::UnprocessableEntity.new("ApplicationController::UnprocessableEntity").to_h.to_json)
@@ -2220,16 +2203,11 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
     context 'Product is offline' do
       it 'should return 422 HTTP Status' do
-        product = create(:product, status: 'offline')
-        shop = create(:shop)
-        shop.products << product
-        user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
-        user_shop_employee.shop_employee.shops << shop
-        user_shop_employee.shop_employee.save
+        @product.update(status: 'offline')
 
-        request.headers["x-client-id"] = generate_token(user_shop_employee)
+        request.headers["x-client-id"] = @user_shop_employee_token
 
-        post :reject, params: {id: product.id, typeCitizenRefuse: 'not_comply'}
+        post :reject, params: {id: @product.id, typeCitizenRefuse: 'not_comply'}
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(response.body).to eq(Dto::Errors::UnprocessableEntity.new("ApplicationController::UnprocessableEntity").to_h.to_json)
@@ -2239,31 +2217,31 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
     context "Product does not exist in shop's catalog" do
       it 'should return 404 HTTP Status' do
         product = create(:product, status: 'submitted')
-        shop = create(:shop)
-        user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
-        user_shop_employee.shop_employee.shops << shop
-        user_shop_employee.shop_employee.save
 
-        request.headers["x-client-id"] = generate_token(user_shop_employee)
+        request.headers["x-client-id"] = @user_shop_employee_token
 
         post :reject, params: {id: product.id, typeCitizenRefuse: 'not_comply'}
 
         expect(response).to have_http_status(:not_found)
         expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Product with 'id'=#{product.id} [WHERE \"products\".\"shop_id\" = $1]").to_h.to_json)
+
+        product.destroy
       end
     end
 
     context 'User is not a shop employee' do
       it 'should return 403 HTTP Status' do
-        product = create(:product, status: 'submitted')
         user_citizen = create(:citizen_user)
 
         request.headers["x-client-id"] = generate_token(user_citizen)
 
-        post :reject, params: {id: product.id, typeCitizenRefuse: 'not_comply'}
+        post :reject, params: {id: @product.id, typeCitizenRefuse: 'not_comply'}
 
         expect(response).to have_http_status(:forbidden)
         expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
+
+        user_citizen.destroy
+        user_citizen.citizen.destroy
       end
 
     end
@@ -2271,16 +2249,9 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
     context 'Reason is product is other' do
       context 'textCitizenRefuse is blank' do
         it 'should return 400 HTTP Status' do
-          product = create(:product, status: 'submitted')
-          shop = create(:shop)
-          shop.products << product
-          user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
-          user_shop_employee.shop_employee.shops << shop
-          user_shop_employee.shop_employee.save
+          request.headers["x-client-id"] = @user_shop_employee_token
 
-          request.headers["x-client-id"] = generate_token(user_shop_employee)
-
-          post :reject, params: {id: product.id, typeCitizenRefuse: 'other', textCitizenRefuse: ''}
+          post :reject, params: {id: @product.id, typeCitizenRefuse: 'other', textCitizenRefuse: ''}
 
           expect(response).to have_http_status(:bad_request)
           expect(response.body).to eq(Dto::Errors::BadRequest.new('textCitizenRefuse cannot be blank').to_h.to_json)
@@ -2288,6 +2259,15 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
       end
     end
 
+    context 'typeCitizenRefuse is blank' do
+      it "returns 400 HTTP status" do
+        request.headers["x-client-id"] = @user_shop_employee_token
+
+        post :reject, params: { id: @product.id }
+        expect(response).to have_http_status(400)
+        expect(response.body).to eq(Dto::Errors::BadRequest.new('param is missing or the value is empty: typeCitizenRefuse').to_h.to_json)
+      end
+    end
   end
 end
 
