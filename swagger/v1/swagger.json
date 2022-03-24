@@ -11060,7 +11060,6 @@
             "type": "integer",
             "example": 3
           },
-          
           "colors": {
             "type": "array",
             "items": {
