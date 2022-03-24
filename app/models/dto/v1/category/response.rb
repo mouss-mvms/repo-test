@@ -33,7 +33,7 @@ module Dto
           hash[:slug] = @slug
           hash[:hasChildren] = @has_children
           hash[:children] = @children&.map { |child| child.to_h } if fields&.any? && fields.include?(:children)
-          hash[:type] = @type if fields&.any? && fields.include?(:type)
+          hash[:type] = @type
           hash
         end
       end
