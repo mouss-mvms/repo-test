@@ -13,6 +13,8 @@ RSpec.describe Dao::Variant, :type => :model do
             quantity: 20,
             is_default: false,
             image_urls: [
+              "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr",
+              "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr",
               "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr"
             ],
             good_deal: {
@@ -44,8 +46,11 @@ RSpec.describe Dao::Variant, :type => :model do
         expect(reference.weight).to eq(dto_variant.weight)
         expect(reference.quantity).to eq(dto_variant.quantity)
         expect(reference.sample.default).to eq(dto_variant.is_default)
-        expect(reference.sample.images).not_to be_empty
-        expect(reference.sample.images.first.file_derivatives.values_at(:mini, :thumb, :square, :wide).all?(&:present?)).to be true
+        expect(reference.sample.images.count).to eq(create_params[:image_urls].count)
+        reference.sample.images.each_with_index do |image, index|
+          expect(image.position).to eq(index)
+          expect(image.file_derivatives.values_at(:mini, :thumb, :square, :wide).all?(&:present?)).to be true
+        end
         expect(reference.good_deal.starts_at.strftime("%d/%m/%Y")).to eq(dto_variant.good_deal.start_at)
         expect(reference.good_deal.discount).to eq(dto_variant.good_deal.discount)
         expect(reference.api_provider_variant.external_variant_id).to eq(dto_variant.provider[:external_variant_id])
@@ -61,8 +66,12 @@ RSpec.describe Dao::Variant, :type => :model do
 
     context "when image_ids" do
       it 'should create a variant' do
-        image = create(:image)
-        image.save
+        image1 = create(:image)
+        image2 = create(:image)
+        image3 = create(:image)
+        image1.save
+        image2.save
+        image3.save
         api_provider = create(:api_provider, name: 'wynd')
         product = create(:available_product, api_provider_product: ApiProviderProduct.create(external_product_id: 'trf67', api_provider: api_provider))
         create_params =
@@ -72,7 +81,9 @@ RSpec.describe Dao::Variant, :type => :model do
             quantity: 20,
             is_default: false,
             image_ids: [
-              image.id
+              image1.id,
+              image2.id,
+              image3.id
             ],
             good_deal: {
               start_at: "20/01/2021",
@@ -103,8 +114,10 @@ RSpec.describe Dao::Variant, :type => :model do
         expect(reference.weight).to eq(dto_variant.weight)
         expect(reference.quantity).to eq(dto_variant.quantity)
         expect(reference.sample.default).to eq(dto_variant.is_default)
-        expect(reference.sample.images).not_to be_empty
-        expect(reference.sample.images.first.file_derivatives.values_at(:mini, :thumb, :square, :wide).all?(&:present?)).to be true
+        reference.sample.images.each_with_index do |image, index|
+          expect(image.position).to eq(index)
+          expect(image.file_derivatives.values_at(:mini, :thumb, :square, :wide).all?(&:present?)).to be true
+        end
         expect(reference.good_deal.starts_at.strftime("%d/%m/%Y")).to eq(dto_variant.good_deal.start_at)
         expect(reference.good_deal.discount).to eq(dto_variant.good_deal.discount)
         expect(reference.api_provider_variant.external_variant_id).to eq(dto_variant.provider[:external_variant_id])
@@ -192,6 +205,7 @@ RSpec.describe Dao::Variant, :type => :model do
             quantity: 20,
             is_default: false,
             image_urls: [
+              "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr",
               "https://static.wikia.nocookie.net/charabattles/images/e/eb/Chuck_norris.jpg/revision/latest?cb=20170412123612&path-prefix=fr"
             ],
             good_deal: {
@@ -223,8 +237,10 @@ RSpec.describe Dao::Variant, :type => :model do
         expect(reference.weight).to eq(dto_variant.weight)
         expect(reference.quantity).to eq(dto_variant.quantity)
         expect(reference.sample.default).to eq(dto_variant.is_default)
-        expect(reference.sample.images).not_to be_empty
-        expect(reference.sample.images.first.file_derivatives.values_at(:mini, :thumb, :square, :wide).all?(&:present?)).to be true
+        reference.sample.images.each_with_index do |image, index|
+          expect(image.position).to eq(index)
+          expect(image.file_derivatives.values_at(:mini, :thumb, :square, :wide).all?(&:present?)).to be true
+        end
         expect(reference.good_deal.starts_at.strftime("%d/%m/%Y")).to eq(dto_variant.good_deal.start_at)
         expect(reference.good_deal.discount).to eq(dto_variant.good_deal.discount)
         expect(reference.api_provider_variant.external_variant_id).to eq(dto_variant.provider[:external_variant_id])
@@ -240,8 +256,12 @@ RSpec.describe Dao::Variant, :type => :model do
 
     context "when image_ids" do
       it 'should create a variant' do
-        image = create(:image)
-        image.save
+        image1 = create(:image)
+        image2 = create(:image)
+        image3 = create(:image)
+        image1.save
+        image2.save
+        image3.save
         api_provider = create(:api_provider, name: 'wynd')
         product = create(:available_product, api_provider_product: ApiProviderProduct.create(external_product_id: 'trf67', api_provider: api_provider))
         reference = create(:reference, product: product)
@@ -253,7 +273,9 @@ RSpec.describe Dao::Variant, :type => :model do
             quantity: 20,
             is_default: false,
             image_ids: [
-              image.id
+              image1.id,
+              image2.id,
+              image3.id
             ],
             good_deal: {
               start_at: "20/01/2021",
@@ -284,8 +306,10 @@ RSpec.describe Dao::Variant, :type => :model do
         expect(reference.weight).to eq(dto_variant.weight)
         expect(reference.quantity).to eq(dto_variant.quantity)
         expect(reference.sample.default).to eq(dto_variant.is_default)
-        expect(reference.sample.images).not_to be_empty
-        expect(reference.sample.images.first.file_derivatives.values_at(:mini, :thumb, :square, :wide).all?(&:present?)).to be true
+        reference.sample.images.each_with_index do |image, index|
+          expect(image.position).to eq(index)
+          expect(image.file_derivatives.values_at(:mini, :thumb, :square, :wide).all?(&:present?)).to be true
+        end
         expect(reference.good_deal.starts_at.strftime("%d/%m/%Y")).to eq(dto_variant.good_deal.start_at)
         expect(reference.good_deal.discount).to eq(dto_variant.good_deal.discount)
         expect(reference.api_provider_variant.external_variant_id).to eq(dto_variant.provider[:external_variant_id])
