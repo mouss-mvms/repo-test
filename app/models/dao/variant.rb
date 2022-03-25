@@ -12,6 +12,9 @@ module Dao
 
       if dto_variant_request.image_ids.present?
         images = Image.where(id: dto_variant_request.image_ids)
+        images.each_with_index do |image, index|
+          image.update(position: index)
+        end
         sample.images << images
       elsif dto_variant_request.image_urls.present?
         dto_variant_request.image_urls.each do |image_url|
@@ -67,6 +70,10 @@ module Dao
 
       if dto_variant_request.image_ids.present?
         images = Image.where(id: dto_variant_request.image_ids)
+        images_count = @reference.sample.images.count
+        images.each_with_index do |image, index|
+          image.update(position: images_count+index)
+        end
         @reference.sample.images << images
       elsif dto_variant_request.image_urls.present?
         dto_variant_request.image_urls.each do |image_url|
@@ -111,7 +118,7 @@ module Dao
 
     def self.set_image(object:, image_url:)
       image = Shrine.remote_url(image_url)
-      object.images.create!(file: image, position: 1)
+      object.images.create!(file: image)
     end
 
     def self.date_from_string(date_string:)
