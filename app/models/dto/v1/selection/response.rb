@@ -2,7 +2,7 @@ module Dto
   module V1
     module Selection
       class Response
-        attr_accessor :id, :name, :slug, :description, :image, :tag_ids, :start_at, :end_at, :home_page, :event, :state, :order, :products_count
+        attr_accessor :id, :name, :slug, :description, :image, :tag_ids, :start_at, :end_at, :home_page, :event, :state, :order, :products_count, :cover, :promoted
 
         def initialize(**args)
           @id = args[:id]
@@ -18,6 +18,8 @@ module Dto
           @state = args[:state]
           @order = args[:order]
           @products_count = args[:products_count]
+          @cover = args[:cover]
+          @promoted = args[:promoted]
         end
 
         def self.create(selection)
@@ -27,7 +29,7 @@ module Dto
               name: selection.name,
               slug: selection.slug,
               description: selection.description,
-              image: Dto::V1::Image::Response.create(selection&.image),
+              image: Dto::V1::Image::Response.create(selection.image),
               tag_ids: selection.tag_ids,
               start_at: selection.begin_date,
               end_at: selection.end_date,
@@ -35,7 +37,9 @@ module Dto
               event: selection.is_event,
               state: selection.state,
               order: selection.order,
-              products_count: selection.products.count
+              products_count: selection.products.count,
+              cover: Dto::V1::Image::Response.create(selection.cover_image),
+              promoted: selection.featured
             }
           )
         end
@@ -54,7 +58,9 @@ module Dto
             event: @event,
             state: @state,
             order: @order,
-            productsCount: @products_count
+            productsCount: @products_count,
+            cover: @cover.to_h,
+            promoted: @promoted
           }
         end
       end

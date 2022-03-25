@@ -15,7 +15,9 @@ RSpec.describe Dao::Selection, :type => :model do
         home_page: true,
         event: true,
         state: "active",
-        image_url: "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg"
+        image_url: "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg",
+        cover_url: "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg",
+        promoted: true
       }
       dto_variant = Dto::V1::Selection::Request.new(create_params)
       selection = Dao::Selection.create(dto_selection_request: dto_variant)
@@ -30,6 +32,9 @@ RSpec.describe Dao::Selection, :type => :model do
       expect(selection.state).to eq(create_params[:state])
       expect(selection.image).to_not be_nil
       expect(selection.image.file_derivatives.values_at(:mini, :thumb, :square, :wide).all?(&:present?)).to be true
+      expect(selection.cover_image).to_not be_nil
+      expect(selection.cover_image.file_derivatives.values_at(:mini, :thumb, :square, :wide).all?(&:present?)).to be true
+      expect(selection.featured).to eq(create_params[:promoted])
     end
   end
 
@@ -49,7 +54,9 @@ RSpec.describe Dao::Selection, :type => :model do
         home_page: true,
         event: true,
         state: "active",
-        image_url: "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg"
+        image_url: "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg",
+        cover_url: "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg",
+        promoted: true
       }
       dto_variant = Dto::V1::Selection::Request.new(update_params)
       selection = Dao::Selection.update(dto_selection_request: dto_variant)
@@ -64,6 +71,9 @@ RSpec.describe Dao::Selection, :type => :model do
       expect(selection.state).to eq(update_params[:state])
       expect(selection.image).to_not be_nil
       expect(selection.image.file_derivatives.values_at(:mini, :thumb, :square, :wide).all?(&:present?)).to be true
+      expect(selection.cover_image).to_not be_nil
+      expect(selection.cover_image.file_derivatives.values_at(:mini, :thumb, :square, :wide).all?(&:present?)).to be true
+      expect(selection.featured).to eq(update_params[:promoted])
     end
   end
 end
