@@ -59,10 +59,10 @@ module Dao
       selection.description = dto_selection_request.description if dto_selection_request.description.present?
       selection.begin_date = dto_selection_request.start_at if dto_selection_request.start_at.present?
       selection.end_date =dto_selection_request.end_at if dto_selection_request.end_at.present?
-      selection.is_home = dto_selection_request.home_page
-      selection.is_event = dto_selection_request.event
+      selection.is_home = dto_selection_request.home_page if dto_selection_request.home_page.is_a?(TrueClass) || dto_selection_request.home_page.is_a?(FalseClass)
+      selection.is_event = dto_selection_request.event if dto_selection_request.event.is_a?(TrueClass) || dto_selection_request.home_page.is_a?(FalseClass)
       selection.state = dto_selection_request.state if dto_selection_request.state.present?
-      selection.featured = dto_selection_request.promoted
+      selection.featured = dto_selection_request.promoted if dto_selection_request.promoted.is_a?(TrueClass) || dto_selection_request.promoted.is_a?(FalseClass)
 
       selection.save!
       selection
