@@ -15,8 +15,8 @@ module Dto
           args[:tag_ids]&.each { |v| @tag_ids << v}
           @start_at = args[:start_at]
           @end_at = args[:end_at]
-          @home_page = args[:home_page]
-          @event = args[:event]
+          @home_page = args[:home_page] || false
+          @event = args[:event] || false
           @state = args[:state]
           @cover_url = args[:cover_url]
           @cover_id = args[:cover_id]

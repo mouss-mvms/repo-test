@@ -16,7 +16,7 @@ module Dao
 
       if dto_selection_request.cover_id.present?
         selection.cover_image_id = dto_selection_request.cover_id
-      else 
+      else
         selection.cover_image = set_image(image_url: dto_selection_request.cover_url) if dto_selection_request.cover_url
       end
 
@@ -46,7 +46,7 @@ module Dao
       if dto_selection_request.image_id.present?
         selection.image_id = dto_selection_request.image_id
       else
-        selection.image = set_image(image_url: dto_selection_request.image_url)
+        selection.image = set_image(image_url: dto_selection_request.image_url) if dto_selection_request.image_url
       end
 
       if dto_selection_request.cover_id.present?
@@ -59,11 +59,11 @@ module Dao
       selection.description = dto_selection_request.description if dto_selection_request.description.present?
       selection.begin_date = dto_selection_request.start_at if dto_selection_request.start_at.present?
       selection.end_date =dto_selection_request.end_at if dto_selection_request.end_at.present?
-      selection.is_home = dto_selection_request.home_page if dto_selection_request.home_page
-      selection.is_event = dto_selection_request.event if dto_selection_request.event
+      selection.is_home = dto_selection_request.home_page
+      selection.is_event = dto_selection_request.event
       selection.state = dto_selection_request.state if dto_selection_request.state.present?
-      selection.featured = dto_selection_request.promoted if dto_selection_request.promoted.present?
-      
+      selection.featured = dto_selection_request.promoted
+
       selection.save!
       selection
     end
