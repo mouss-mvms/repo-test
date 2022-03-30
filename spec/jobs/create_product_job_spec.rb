@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "CreateProductJob", :type => :job do
   it 'should enqueue the job and perform it' do
-    shop = create(:shop)
+    shop = create(:old_shop_factory)
     category = create(:category)
     create_params = {
       name: "TEST Job create with sidekiq de ses morts",

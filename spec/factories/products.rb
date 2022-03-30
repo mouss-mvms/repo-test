@@ -18,7 +18,7 @@ FactoryBot.define do
     archived { false }
     status { 1 }
     category
-    shop
+    association :shop, factory: :old_shop_factory
   end
 
   factory :product_with_category, class: Product do
@@ -26,14 +26,14 @@ FactoryBot.define do
     archived { false }
     status { 1 }
     association :category, factory: :category
-    shop
+    association :shop, factory: :old_shop_factory
   end
 
   factory :available_product, class: Product do
     name { "MyString" }
     archived { false }
     status { 1 }
-    shop
+    association :shop, factory: :old_shop_factory
     category
     after :create do |product|
       shop = product.shop
@@ -47,7 +47,7 @@ FactoryBot.define do
     name { "product_with_services1" }
     archived { false }
     status { 1 }
-    shop
+    association :shop, factory: :old_shop_factory
     category
     after :create do |product|
       product.references << FactoryBot.create(:reference_without_services)
@@ -57,7 +57,7 @@ FactoryBot.define do
     name { "product_with_services2" }
     archived { false }
     status { 1 }
-    shop
+    association :shop, factory: :old_shop_factory
     category
     after :create do |product|
       product.references << FactoryBot.create(:reference_without_services2)
@@ -69,14 +69,14 @@ FactoryBot.define do
     archived { false }
     status { 0 }
     category
-    shop
+    association :shop, factory: :old_shop_factory
   end
 
   factory :product_created_by_citizen, class: Product do
     name { "MyString" }
     archived { false }
     status { 2 }
-    shop
+    association :shop, factory: :old_shop_factory
     category
   end
 
@@ -84,6 +84,6 @@ FactoryBot.define do
     archived { false }
     status { 1 }
     category
-    shop
+    association :shop, factory: :old_shop_factory
   end
 end

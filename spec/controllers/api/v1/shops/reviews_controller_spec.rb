@@ -4,7 +4,7 @@ RSpec.describe Api::V1::Shops::ReviewsController, type: :controller do
   describe "GET #index" do
     context "All ok" do
       it "returns an array of reviews" do
-        shop = create(:shop)
+        shop = create(:old_shop_factory)
         user = create(:user)
         shop.reviews << [create(:review, mark: 5, user_id: user.id, content: "Love this shop."), create(:review, mark: 4, user_id: user.id, content: "Like this product.")]
 
@@ -16,7 +16,7 @@ RSpec.describe Api::V1::Shops::ReviewsController, type: :controller do
       end
 
       it "should return HTTP status 304" do
-        shop = create(:shop)
+        shop = create(:old_shop_factory)
         user = create(:user)
         shop.reviews << [create(:review, mark: 5, user_id: user.id, content: "Love this shop."), create(:review, mark: 4, user_id: user.id, content: "Like this product.")]
 
@@ -46,7 +46,7 @@ RSpec.describe Api::V1::Shops::ReviewsController, type: :controller do
     context 'All ok' do
       it 'should return 201 HTTP Status with review' do
         user = create(:citizen_user)
-        shop = create(:shop)
+        shop = create(:old_shop_factory)
         params = {
           content: "Avis de la boutique",
           mark: 4
@@ -70,7 +70,7 @@ RSpec.describe Api::V1::Shops::ReviewsController, type: :controller do
         it "should return a 201 HTTP Status with answer's response" do
           user_citizen = create(:citizen_user)
           user_shop_employee = create(:shop_employee_user)
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           review = create(:review, user_id: user_citizen.id, shop_id: shop.id, content: 'La boutique est trop bien', mark: 5)
           params = {
             content: "Merci :)",
@@ -97,7 +97,7 @@ RSpec.describe Api::V1::Shops::ReviewsController, type: :controller do
       context 'content is not setted' do
         it 'should return a 400 HTTP Status' do
           user = create(:citizen_user)
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           params = {
             shopId: shop.id,
             mark: 4
@@ -116,7 +116,7 @@ RSpec.describe Api::V1::Shops::ReviewsController, type: :controller do
         context 'mark is not setted' do
           it 'should return a 400 HTTP Status' do
             user = create(:citizen_user)
-            shop = create(:shop)
+            shop = create(:old_shop_factory)
             params = {
               content: "Avis de la boutique",
               shopId: shop.id
@@ -134,7 +134,7 @@ RSpec.describe Api::V1::Shops::ReviewsController, type: :controller do
         context 'mark is upper than 5' do
           it 'should return a 400 HTTP Status' do
             user = create(:citizen_user)
-            shop = create(:shop)
+            shop = create(:old_shop_factory)
             params = {
               content: "Avis de la boutique",
               shopId: shop.id,
@@ -153,7 +153,7 @@ RSpec.describe Api::V1::Shops::ReviewsController, type: :controller do
         context 'mark is lower than 5' do
           it 'should return a 400 HTTP Status' do
             user = create(:citizen_user)
-            shop = create(:shop)
+            shop = create(:old_shop_factory)
             params = {
               content: "Avis de la boutique",
               shopId: shop.id,
@@ -175,7 +175,7 @@ RSpec.describe Api::V1::Shops::ReviewsController, type: :controller do
           it 'should return 400 HTTP Status' do
             user_citizen = create(:citizen_user)
             user_shop_employee = create(:shop_employee_user)
-            shop = create(:shop)
+            shop = create(:old_shop_factory)
             review = create(:review, user_id: user_citizen.id, shop_id: shop.id, content: 'La boutique est trop bien', mark: 5)
             params = {
               content: "Merci :)",
@@ -198,7 +198,7 @@ RSpec.describe Api::V1::Shops::ReviewsController, type: :controller do
       context 'Shop setted is not exist' do
         it 'should return 404 HTTP Status' do
           user = create(:citizen_user)
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           params = {
             content: "Avis de la boutique",
             shopId: 0,
@@ -220,7 +220,7 @@ RSpec.describe Api::V1::Shops::ReviewsController, type: :controller do
       context 'x-client-id is missing' do
         it 'should return 401 HTTP Status' do
           user = create(:citizen_user)
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           params = {
             content: "Avis de la boutique",
             shopId: shop.id,
@@ -237,7 +237,7 @@ RSpec.describe Api::V1::Shops::ReviewsController, type: :controller do
       context 'User not found' do
         it 'should return 403 HTTP Status' do
           user = create(:citizen_user)
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           params = {
             content: "Avis de la boutique",
             shopId: shop.id,

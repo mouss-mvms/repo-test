@@ -45,7 +45,7 @@ RSpec.describe Api::V1::Shops::SummariesController, type: :controller do
       context 'PerPage params' do
         context 'PerPage params is not an integer' do
           it 'should return 400 HTTP Status' do
-            city = create(:city)
+            city = create(:old_city_factory)
             post :search, params: { location: city.slug, perPage: '12' }
 
             expect(response).to have_http_status(:bad_request)
@@ -55,7 +55,7 @@ RSpec.describe Api::V1::Shops::SummariesController, type: :controller do
 
         context 'PerPage params is not in the range' do
           it 'should return 400 HTTP Status' do
-            city = create(:city)
+            city = create(:old_city_factory)
             post :search, params: { location: city.slug, perPage: 3000000 }
 
             expect(response).to have_http_status(:bad_request)

@@ -14,7 +14,7 @@ RSpec.describe Api::V1::Products::SummariesController do
 
       context "when category doesn't exist" do
         it "should return HTTP status NotFound - 404" do
-          location = create(:city)
+          location = create(:old_city_factory)
           post :search, params: { location: location.slug, category: "casque-radio-star-wars" }
           should respond_with(404)
           expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Category").to_h.to_json)
