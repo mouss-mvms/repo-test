@@ -30,6 +30,8 @@ module Dto
         end
 
         def self.create(shop)
+          return nil if shop.nil?
+
           images = []
           shop.images.each do |shop_image|
             images << Dto::V1::Image::Response.create(shop_image)

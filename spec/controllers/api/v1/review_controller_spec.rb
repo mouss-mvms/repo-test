@@ -5,7 +5,7 @@ RSpec.describe Api::V1::ReviewsController, type: :controller do
     context "All ok" do
       it 'should return 200 HTTP Status with review updated' do
         user = create(:user)
-        shop = create(:shop)
+        shop = create(:old_shop_factory)
         review = create(:review, mark: 4, shop_id: shop.id, content: "Avis non mis à jour", user_id: user.id)
         params = {
           content: "Avis mis à jour"
@@ -27,7 +27,7 @@ RSpec.describe Api::V1::ReviewsController, type: :controller do
       context 'x-client-id is missing' do
         it 'should return 401 HTTP Status' do
           user = create(:user)
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           review = create(:review, mark: 4, shop_id: shop.id, content: "Avis non mis à jour", user_id: user.id)
           params = {
             content: "Avis mis à jour"
@@ -44,7 +44,7 @@ RSpec.describe Api::V1::ReviewsController, type: :controller do
         it 'should return 403 HTTP Status' do
           user = create(:user)
           user2 = create(:user, email: 'user2@user.com')
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           review = create(:review, mark: 4, shop_id: shop.id, content: "Avis non mis à jour", user_id: user.id)
           params = {
             content: "Avis mis à jour"
@@ -64,7 +64,7 @@ RSpec.describe Api::V1::ReviewsController, type: :controller do
       context 'Content is blank' do
         it 'should return 400 HTTP Status' do
           user = create(:user)
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           review = create(:review, mark: 4, shop_id: shop.id, content: "Avis non mis à jour", user_id: user.id)
           params = {
             content: ""
@@ -81,7 +81,7 @@ RSpec.describe Api::V1::ReviewsController, type: :controller do
       context 'Review is an answer of another review' do
         it 'should return 400 HTTP Status' do
           user = create(:user)
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           review = create(:review, mark: 4, shop_id: shop.id, content: "Avis non mis à jour", user_id: user.id)
           answer_review = create(:review, shop_id: shop.id, content: "Reponse Avis", user_id: user.id, parent_id: review.id)
           params = {
@@ -102,7 +102,7 @@ RSpec.describe Api::V1::ReviewsController, type: :controller do
         context 'Mark is upper than 5' do
           it 'should return 400 HTTP Status' do
             user = create(:user)
-            shop = create(:shop)
+            shop = create(:old_shop_factory)
             review = create(:review, mark: 4, shop_id: shop.id, content: "Avis non mis à jour", user_id: user.id)
             params = {
               mark: 6
@@ -120,7 +120,7 @@ RSpec.describe Api::V1::ReviewsController, type: :controller do
         context 'Mark is lower than 0' do
           it 'should return 400 HTTP Status' do
             user = create(:user)
-            shop = create(:shop)
+            shop = create(:old_shop_factory)
             review = create(:review, mark: 4, shop_id: shop.id, content: "Avis non mis à jour", user_id: user.id)
             params = {
               mark: -1
@@ -142,7 +142,7 @@ RSpec.describe Api::V1::ReviewsController, type: :controller do
     context 'All ok' do
       it 'should return 204 HTTP status' do
         user = create(:user)
-        shop = create(:shop)
+        shop = create(:old_shop_factory)
         review = create(:review, mark: 4, shop_id: shop.id, content: "Avis non mis à jour", user_id: user.id)
 
         request.headers['x-client-id'] = generate_token(user)
@@ -156,7 +156,7 @@ RSpec.describe Api::V1::ReviewsController, type: :controller do
     context 'Review not found' do
       it 'should return 404 HTTP Status' do
         user = create(:user)
-        shop = create(:shop)
+        shop = create(:old_shop_factory)
         review = create(:review, mark: 4, shop_id: shop.id, content: "Avis non mis à jour", user_id: user.id)
         Review.destroy_all
 
@@ -172,7 +172,7 @@ RSpec.describe Api::V1::ReviewsController, type: :controller do
       context 'x-client-id is missing' do
         it 'should return 401 HTTP Status' do
           user = create(:user)
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           review = create(:review, mark: 4, shop_id: shop.id, content: "Avis non mis à jour", user_id: user.id)
 
           delete :destroy, params:  {id: review.id}
@@ -186,7 +186,7 @@ RSpec.describe Api::V1::ReviewsController, type: :controller do
         it 'should return 403 HTTP Status' do
           user = create(:user)
           user2 = create(:user, email: 'user2@user.com')
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           review = create(:review, mark: 4, shop_id: shop.id, content: "Avis non mis à jour", user_id: user.id)
 
           request.headers['x-client-id'] = generate_token(user2)

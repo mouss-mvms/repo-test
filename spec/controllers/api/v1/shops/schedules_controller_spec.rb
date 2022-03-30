@@ -5,7 +5,7 @@ RSpec.describe Api::V1::Shops::SchedulesController do
   describe 'GET #index' do
     context 'All ok' do
       it 'should return 200 HTTP Status with schedules of shop' do
-        shop = create(:shop)
+        shop = create(:old_shop_factory)
 
         get :index, params: { id: shop.id }
 
@@ -15,7 +15,7 @@ RSpec.describe Api::V1::Shops::SchedulesController do
       end
 
       it 'should return 304 HTTP Status' do
-        shop = create(:shop)
+        shop = create(:old_shop_factory)
         get :index, params: { id: shop.id }
         expect(response).to have_http_status(:ok)
 
@@ -51,7 +51,7 @@ RSpec.describe Api::V1::Shops::SchedulesController do
 
     context 'All ok' do
       it 'should return 200 HTTP status with updated schedules' do
-        shop = create(:shop)
+        shop = create(:old_shop_factory)
         user_shop_employee = create(:shop_employee_user)
         user_shop_employee.shop_employee.shops << shop
         user_shop_employee.shop_employee.save
@@ -90,7 +90,7 @@ RSpec.describe Api::V1::Shops::SchedulesController do
     context 'Bad authentication' do
       context 'x-client-id is missing' do
         it 'should return 401 HTTP Status' do
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           params = [
             generate_schedule_param(shop.schedules[0].id, "09:00", "14:00", "12:00", "19:00"),
             generate_schedule_param(shop.schedules[1].id, "09:00", "14:00", "12:00", "19:00"),
@@ -111,7 +111,7 @@ RSpec.describe Api::V1::Shops::SchedulesController do
       context 'User not found' do
         it 'should return 403 HTTP Status' do
           user_citizen = create(:citizen_user)
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           params = [
             generate_schedule_param(shop.schedules[0].id, "09:00", "14:00", "12:00", "19:00"),
             generate_schedule_param(shop.schedules[1].id, "09:00", "14:00", "12:00", "19:00"),
@@ -136,7 +136,7 @@ RSpec.describe Api::V1::Shops::SchedulesController do
       context 'User is not a shop employee' do
         it 'should return 403 HTTP Status' do
           user_citizen = create(:citizen_user)
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           params = [
             generate_schedule_param(shop.schedules[0].id, "09:00", "14:00", "12:00", "19:00"),
             generate_schedule_param(shop.schedules[1].id, "09:00", "14:00", "12:00", "19:00"),
@@ -160,7 +160,7 @@ RSpec.describe Api::V1::Shops::SchedulesController do
       context 'User is a shop employee but not the owner of the shop' do
         it 'should return 403 HTTP status' do
           user_shop_employee = create(:shop_employee_user)
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           params = [
             generate_schedule_param(shop.schedules[0].id, "09:00", "14:00", "12:00", "19:00"),
             generate_schedule_param(shop.schedules[1].id, "09:00", "14:00", "12:00", "19:00"),
@@ -186,7 +186,7 @@ RSpec.describe Api::V1::Shops::SchedulesController do
       context 'Shop not found' do
         it 'should return 404 HTTP status' do
           user_shop_employee = create(:shop_employee_user)
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           params = [
             generate_schedule_param(shop.schedules[0].id, "09:00", "14:00", "12:00", "19:00"),
             generate_schedule_param(shop.schedules[1].id, "09:00", "14:00", "12:00", "19:00"),
@@ -211,7 +211,7 @@ RSpec.describe Api::V1::Shops::SchedulesController do
       context 'Id is missing in object request schedule body' do
         it 'should return 400 HTTP Status' do
           user_shop_employee = create(:shop_employee_user)
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           user_shop_employee.shop_employee.shops << shop
           user_shop_employee.shop_employee.save
           params = [
@@ -236,7 +236,7 @@ RSpec.describe Api::V1::Shops::SchedulesController do
       context 'Id of schedule requested is not a schedule of the shop' do
         it 'should return 404 HTTP Status' do
           user_shop_employee = create(:shop_employee_user)
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           user_shop_employee.shop_employee.shops << shop
           user_shop_employee.shop_employee.save
           schedule = create(:schedule)

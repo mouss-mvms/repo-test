@@ -3,7 +3,7 @@ FactoryBot.define do
     name { "Territoire des apaches" }
     slug { "territoire-des-apaches" }
     after(:create) do |territory|
-      city = create(:city)
+      city = create(:old_city_factory)
       territory.cities << city
     end
   end

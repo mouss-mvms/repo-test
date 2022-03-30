@@ -6,7 +6,7 @@ RSpec.describe Dao::Product, :type => :model do
     context 'All ok' do
       context 'with image urls' do
         it 'should create a product' do
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           category = create(:category)
           create(:api_provider, name: 'wynd')
           provider = {
@@ -85,7 +85,7 @@ RSpec.describe Dao::Product, :type => :model do
         it 'should create a product' do
           image = create(:image)
           image.save!
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           category = create(:category)
           create(:api_provider, name: 'wynd')
           provider = {
@@ -164,7 +164,7 @@ RSpec.describe Dao::Product, :type => :model do
     context "The product doesn't meet the criteria to be online" do
       context "with image_urls" do
         it "should create a product but it's offline" do
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           category = create(:category)
           create(:api_provider, name: 'wynd')
           provider = {
@@ -244,7 +244,7 @@ RSpec.describe Dao::Product, :type => :model do
         it "should create a product but it's offline" do
           image = create(:image)
           image.save
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           category = create(:category)
           create(:api_provider, name: 'wynd')
           provider = {
@@ -323,7 +323,7 @@ RSpec.describe Dao::Product, :type => :model do
     context "The product is set as offline" do
       context "with image_urls" do
         it "should create a product and it's should be offline" do
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           category = create(:category)
           create(:api_provider, name: 'wynd')
           provider = {
@@ -402,7 +402,7 @@ RSpec.describe Dao::Product, :type => :model do
         it "should create a product and it's should be offline" do
           image = create(:image)
           image.save
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           category = create(:category)
           create(:api_provider, name: 'wynd')
           provider = {
@@ -481,7 +481,7 @@ RSpec.describe Dao::Product, :type => :model do
     context "The product status is setted as submitted" do
       context "with image_urls" do
         it "should create a product and it's should be in submitted status" do
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           category = create(:category)
           create_params = {
             name: "TEST Job create with sidekiq de ses morts",
@@ -551,7 +551,7 @@ RSpec.describe Dao::Product, :type => :model do
         it "should create a product and it's should be in submitted status" do
           image = create(:image)
           image.save
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           category = create(:category)
           create_params = {
             name: "TEST Job create with sidekiq de ses morts",
@@ -619,7 +619,7 @@ RSpec.describe Dao::Product, :type => :model do
 
     context "when the image url format is incorrect" do
       it 'should HTTP status 422' do
-        shop = create(:shop)
+        shop = create(:old_shop_factory)
         category = create(:category)
         create(:api_provider, name: 'wynd')
         provider = {
@@ -676,7 +676,7 @@ RSpec.describe Dao::Product, :type => :model do
 
   context '#create_async' do
     it 'should call CreateProductJob' do
-      shop = create(:shop)
+      shop = create(:old_shop_factory)
       category = create(:category)
       create_params = {
         name: "TEST Job create with sidekiq de ses morts",
@@ -724,7 +724,7 @@ RSpec.describe Dao::Product, :type => :model do
   context '#update' do
     context "All ok" do
       it 'should update a product' do
-        shop = create(:shop)
+        shop = create(:old_shop_factory)
         category = create(:category)
         reference = create(:reference, shop: shop)
         product = reference.product
@@ -826,7 +826,7 @@ RSpec.describe Dao::Product, :type => :model do
     context "Product is offline" do
       context "Product is set online and requirements are ok" do
         it 'should update product and should be online' do
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           category = create(:category)
           reference = create(:reference, shop: shop)
           product = reference.product
@@ -929,7 +929,7 @@ RSpec.describe Dao::Product, :type => :model do
 
       context "Product is set online and requirements are not ok" do
         it 'should update product and should be offline' do
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           category = create(:category)
           reference = create(:reference, shop: shop)
           product = reference.product
@@ -1034,7 +1034,7 @@ RSpec.describe Dao::Product, :type => :model do
     context "Product is submitted" do
       context "Product is set as refused" do
         it 'should update product and should be refused' do
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           category = create(:category)
           reference = create(:reference, shop: shop)
           product = reference.product
@@ -1137,7 +1137,7 @@ RSpec.describe Dao::Product, :type => :model do
 
       context "Product is accepted" do
         it 'should return updated product with offline or online status' do
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           category = create(:category)
           reference = create(:reference, shop: shop)
           product = reference.product
@@ -1243,7 +1243,7 @@ RSpec.describe Dao::Product, :type => :model do
     context "Product is not submitted" do
       context "Product is set as refused" do
         it 'should update product and the status should not changed' do
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           category = create(:category)
           reference = create(:reference, shop: shop)
           product = reference.product

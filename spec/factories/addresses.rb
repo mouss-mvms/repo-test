@@ -13,7 +13,7 @@ FactoryBot.define do
     latitude { 45.79923399999999 }
     longitude { 4.8470666 }
     after :create do |address|
-      address.city = FactoryBot.create(:city)
+      address.city = FactoryBot.create(:old_city_factory)
     end
   end
 end

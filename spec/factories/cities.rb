@@ -1,5 +1,9 @@
 FactoryBot.define do
   factory :city do
+
+  end
+
+  factory :old_city_factory, class: City do
     name { "Pau" }
     slug { "pau" }
     zip_code { 64000 }

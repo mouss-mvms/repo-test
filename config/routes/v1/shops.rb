@@ -1,6 +1,7 @@
 scope :auth do
   post "shops", to: "shops#create", as: nil
   put "shops/:id", to: "shops#update", as: nil
+  patch "shops/:id", to: 'shops#patch', as: nil
   namespace :shops do
     put ":id/schedules", to: "schedules#update"
     post ":id/reviews", to: "reviews#create"

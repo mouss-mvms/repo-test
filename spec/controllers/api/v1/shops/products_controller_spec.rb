@@ -24,7 +24,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
   describe "GET #index" do
     context 'All ok' do
       before(:all) do
-        @shop = create(:shop)
+        @shop = create(:old_shop_factory)
         @shop_employee_user = create(:shop_employee_user)
         @shop_employee_user.shop_employee.shops << @shop
         @shop_employee_user.shop_employee.save
@@ -228,7 +228,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
     context "All ok" do
       context "with variant image_urls" do
         it "should return 202 HTTP Status with product created" do
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           create_params = {
             name: "manteau MAC",
             slug: "manteau-mac",
@@ -280,7 +280,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
       context "with variant image_ids" do
         it "should return 202 HTTP Status with product created" do
           image = create(:image)
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           create_params = {
             name: "manteau MAC",
             slug: "manteau-mac",
@@ -331,7 +331,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
       context "imageUrls and imageIds are both sent" do
         it "should return 202 HTTP status" do
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           image = create(:image)
           create_params = {
             name: "manteau MAC",
@@ -478,7 +478,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
 
       context "Image not found" do
         it "should return 404 HTTP status" do
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           image_id = 0
           create_params = {
             name: "manteau MAC",
@@ -533,7 +533,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
             status: "online",
             isService: true,
             sellerAdvice: "pouet",
-            shopId: create(:shop).id,
+            shopId: create(:old_shop_factory).id,
             description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
             variants: [
               {
@@ -579,7 +579,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
             categoryId: 0,
             isService: true,
             sellerAdvice: "pouet",
-            shopId: create(:shop).id,
+            shopId: create(:old_shop_factory).id,
             description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
             variants: [
               {
@@ -632,7 +632,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               isService: true,
               sellerAdvice: "pouet",
               composition: "kqhsdghqsgd",
-              shopId: create(:shop).id,
+              shopId: create(:old_shop_factory).id,
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
               variants: [
                 {
@@ -680,7 +680,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               status: "online",
               isService: true,
               sellerAdvice: "pouet",
-              shopId: create(:shop).id,
+              shopId: create(:old_shop_factory).id,
               origin: "France",
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
               variants: [
@@ -729,7 +729,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               status: "online",
               isService: true,
               sellerAdvice: "pouet",
-              shopId: create(:shop).id,
+              shopId: create(:old_shop_factory).id,
               origin: "France",
               composition: "Tissu",
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
@@ -782,7 +782,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               isService: true,
               composition: 'ksdjfhjker',
               sellerAdvice: "pouet",
-              shopId: create(:shop).id,
+              shopId: create(:old_shop_factory).id,
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
               variants: [
                 {
@@ -831,7 +831,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               isService: true,
               allergens: 'hdfhzeidh',
               sellerAdvice: "pouet",
-              shopId: create(:shop).id,
+              shopId: create(:old_shop_factory).id,
               origin: "France",
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
               variants: [
@@ -880,7 +880,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               status: "online",
               isService: true,
               sellerAdvice: "pouet",
-              shopId: create(:shop).id,
+              shopId: create(:old_shop_factory).id,
               origin: "France",
               composition: "Tissu",
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
@@ -933,7 +933,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               isService: true,
               composition: 'qskhdgqjhdg',
               sellerAdvice: "pouet",
-              shopId: create(:shop).id,
+              shopId: create(:old_shop_factory).id,
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
               variants: [
                 {
@@ -981,7 +981,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               status: "online",
               isService: true,
               sellerAdvice: "pouet",
-              shopId: create(:shop).id,
+              shopId: create(:old_shop_factory).id,
               origin: "France",
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
               variants: [
@@ -1030,7 +1030,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               status: "online",
               isService: true,
               sellerAdvice: "pouet",
-              shopId: create(:shop).id,
+              shopId: create(:old_shop_factory).id,
               origin: "France",
               composition: "Tissu",
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
@@ -1084,7 +1084,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               isService: true,
               composition: 'kqjsdfjksd',
               sellerAdvice: "pouet",
-              shopId: create(:shop).id,
+              shopId: create(:old_shop_factory).id,
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
               variants: [
                 {
@@ -1132,7 +1132,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               status: "online",
               isService: true,
               sellerAdvice: "pouet",
-              shopId: create(:shop).id,
+              shopId: create(:old_shop_factory).id,
               origin: "France",
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
               variants: [
@@ -1181,7 +1181,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               status: "online",
               isService: true,
               sellerAdvice: "pouet",
-              shopId: create(:shop).id,
+              shopId: create(:old_shop_factory).id,
               origin: "France",
               composition: "Tissu",
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
@@ -1236,7 +1236,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               isService: true,
               composition: "khedzeghd",
               sellerAdvice: "pouet",
-              shopId: create(:shop).id,
+              shopId: create(:old_shop_factory).id,
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
               variants: [
                 {
@@ -1284,7 +1284,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               status: "online",
               isService: true,
               sellerAdvice: "pouet",
-              shopId: create(:shop).id,
+              shopId: create(:old_shop_factory).id,
               origin: "France",
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
               variants: [
@@ -1333,7 +1333,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               status: "online",
               isService: true,
               sellerAdvice: "pouet",
-              shopId: create(:shop).id,
+              shopId: create(:old_shop_factory).id,
               origin: "France",
               composition: "Tissu",
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
@@ -1386,7 +1386,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               isService: true,
               composition: "ksjdhfjkhfs",
               sellerAdvice: "pouet",
-              shopId: create(:shop).id,
+              shopId: create(:old_shop_factory).id,
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
               variants: [
                 {
@@ -1434,7 +1434,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               status: "online",
               isService: true,
               sellerAdvice: "pouet",
-              shopId: create(:shop).id,
+              shopId: create(:old_shop_factory).id,
               origin: "France",
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
               variants: [
@@ -1483,7 +1483,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               status: "online",
               isService: true,
               sellerAdvice: "pouet",
-              shopId: create(:shop).id,
+              shopId: create(:old_shop_factory).id,
               origin: "France",
               composition: "Tissu",
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
@@ -1537,7 +1537,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               status: "online",
               isService: true,
               sellerAdvice: "pouet",
-              shopId: create(:shop).id,
+              shopId: create(:old_shop_factory).id,
               origin: "France",
               description: "Manteau type Macintosh en tissu 100% coton déperlant sans traitement. Les fibres de coton à fibres extra longues (ELS) sont tissées de manière incroyablement dense - rien de plus. Les fibres ELS sont difficiles à trouver - seulement 2% du coton mondial peut fournir des fibres qui répondent à cette norme.Lorsque le tissu est mouillé, ces fils se dilatent et créent une barrière impénétrable contre l'eau. Le tissu à la sensation au touché, le drapé et la respirabilité du coton avec les propriétés techniques d'un tissu synthétique. Le manteau est doté d'une demi-doublure à imprimé floral réalisée au tampon à la main dans la plus pure tradition indienne.2 coloris: TAN ou BLACK",
               variants: [
@@ -1921,7 +1921,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
               },
             ],
           }
-          user_shop_employee.shop_employee.shops << create(:shop)
+          user_shop_employee.shop_employee.shops << create(:old_shop_factory)
           user_shop_employee.shop_employee.save
 
           request.headers["x-client-id"] = generate_token(user_shop_employee)
@@ -2117,7 +2117,7 @@ RSpec.describe Api::V1::Shops::ProductsController, type: :controller do
   describe "POST #reject" do
     before(:all) do
       @product = create(:product, status: 'submitted')
-      @shop = create(:shop)
+      @shop = create(:old_shop_factory)
       @shop.products << @product
       @user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
       @user_shop_employee.shop_employee.shops << @shop
