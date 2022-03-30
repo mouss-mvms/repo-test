@@ -14,7 +14,7 @@ class ApplicationController < ActionController::API
   rescue_from ApplicationController::InternalServerError, with: :render_internal_server_error
   rescue_from ApplicationController::Conflict, with: :render_conflict
   rescue_from ActiveRecord::RecordNotSaved, with: :render_internal_server_error
-  rescue_from ApplicationController::UnprocessableEntity, ActiveRecord::RecordNotDestroyed, with: :render_unprocessable_entity
+  rescue_from ApplicationController::UnprocessableEntity, ActiveRecord::RecordNotDestroyed, ActiveRecord::RecordInvalid, with: :render_unprocessable_entity
 
   def render_record_not_found(exception)
     Rails.logger.error(exception)
@@ -59,10 +59,8 @@ class ApplicationController < ActionController::API
     end
     begin
       @uncrypted_token = JWT.decode(request.headers['x-client-id'], ENV["JWT_SECRET"], true, { algorithm: 'HS256' })
-    rescue JWT::DecodeError => e
-      Rails.logger.error(e)
-      error = Dto::Errors::InternalServer.new(detail: "Enable to decrypt token")
-      return render json: error.to_h, status: error.status
+    rescue JWT::DecodeError
+      raise InternalServerError
     end
   end
 

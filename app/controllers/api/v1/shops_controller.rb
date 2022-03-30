@@ -3,8 +3,8 @@ module Api
     class ShopsController < ApplicationController
       before_action :uncrypt_token, except: [:show]
       before_action :retrieve_user, except: [:show]
-      before_action :check_user, except: [:show]
-      before_action :retrieve_shop, only: [:update]
+      before_action :check_user, except: [:show, :patch]
+      before_action :retrieve_shop, only: [:update, :patch]
       before_action :is_shop_owner, only: [:update]
 
       DEFAULT_FILTERS_SHOPS = [:brands, :services, :categories]
@@ -36,11 +36,69 @@ module Api
         end
       end
 
+      def patch
+        raise ApplicationController::Forbidden unless @user.is_an_admin? || (@user.is_a_business_user? &&
+                                                                            (@shop.owner == @user.shop_employee) &&
+                                                                            @shop.deleted_at.blank?)
+
+        ActiveRecord::Base.transaction do
+          shop = Dao::Shop.update(dto_shop_request: Dto::V1::Shop::Request.new(update_params), shop: @shop)
+          return render json: Dto::V1::Shop::Response.create(shop).to_h, status: :ok
+        end
+      end
+
       private
 
       def retrieve_shop
         raise ActionController::BadRequest.new('Shop_id is incorrect') unless params[:id].to_i > 0
         @shop = Shop.find(params[:id])
+      end
+
+      def update_params
+        update_params = {}
+        update_params[:name] = params[:name]
+        update_params[:email] = params[:email]
+        update_params[:mobile_number] = params[:mobileNumber]
+        update_params[:siret] = params[:siret]
+        update_params[:description] = params[:description]
+        update_params[:baseline] = params[:baseline]
+        update_params[:facebook_link] = params[:facebookLink]
+        update_params[:instagram_link] = params[:instagramLink]
+        update_params[:website_link] = params[:websiteLink]
+        update_params[:address] = {}
+        if params[:address]
+          address_param = params[:address]
+          update_params[:address][:street_number] = address_param.permit(:streetNumber).values.first
+          update_params[:address][:route] = address_param.require(:route)
+          update_params[:address][:locality] = address_param.require(:locality)
+          update_params[:address][:country] = address_param.require(:country)
+          update_params[:address][:postal_code] = address_param.permit(:postalCode).values.first
+          update_params[:address][:latitude] = address_param.permit(:latitude).values.first
+          update_params[:address][:longitude] = address_param.permit(:longitude).values.first
+          update_params[:address][:insee_code] = address_param.require(:inseeCode)
+        end
+        if params[:avatarId]
+          update_params[:avatar_id] = params[:avatarId] if Image.find(params[:avatarId])
+        elsif params[:avatarUrl]
+          update_params[:avatar_url] = params[:avatarUrl]
+        end
+        if params[:coverId]
+          update_params[:cover_id] = params[:coverId] if Image.find(params[:coverId])
+        elsif params[:coverUrl]
+          update_params[:cover_url] = params[:coverUrl]
+        end
+        if params[:thumbnailId]
+          update_params[:thumbnail_id] = params[:thumbnailId] if Image.find(params[:thumbnailId])
+        elsif params[:thumbnailUrl]
+          update_params[:thumbnail_url] = params[:thumbnailUrl] unless params[:thumbnailUrl].blank?
+        end
+        if params[:imageIds]
+          update_params[:image_ids] = params[:imageIds] if params[:imageIds].each { |id| Image.find(id) }
+        elsif params[:imageUrls]
+          update_params[:image_urls] = params[:imageUrls]
+        end
+
+        update_params
       end
 
       def shop_params
@@ -87,9 +145,9 @@ module Api
       end
 
       def is_shop_owner
-        raise ApplicationController::Forbidden unless @shop.owner == @user.shop_employee
+        raise ApplicationController::Forbidden unless (@shop.owner == @user.shop_employee)
       end
-
+      
     end
   end
 end

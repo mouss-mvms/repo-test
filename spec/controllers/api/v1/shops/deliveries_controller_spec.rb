@@ -4,7 +4,7 @@ RSpec.describe Api::V1::Shops::DeliveriesController, type: :controller do
   describe "GET #index" do
     context "All ok" do
       before(:each) do
-        @shop = create(:shop)
+        @shop = create(:old_shop_factory)
         delivery1 = create(:service_delivery, disabled: false)
         delivery2 = create(:service_not_delivery, disabled: false)
         @shop.services << delivery1
@@ -60,7 +60,7 @@ RSpec.describe Api::V1::Shops::DeliveriesController, type: :controller do
     context "All ok" do
       context "with freeDeliveryPrice" do
         it "should update shop deliveries" do
-          shop = create(:shop, is_self_delivery: false)
+          shop = create(:old_shop_factory, is_self_delivery: false)
           user = create(:shop_employee_user, email: 'chucknoris@mvms.fr')
           shop.owner = user.shop_employee
           colissimo = create(:service_delivery, name: "livraison par colissimo", shop_dependent: false, disabled: false)
@@ -109,7 +109,7 @@ RSpec.describe Api::V1::Shops::DeliveriesController, type: :controller do
 
       context "without freeDeliveryPrice" do
         it "should update shop deliveries" do
-          shop = create(:shop, is_self_delivery: false)
+          shop = create(:old_shop_factory, is_self_delivery: false)
           user = create(:shop_employee_user, email: 'chucknoris@mvms.fr')
           shop.owner = user.shop_employee
           colissimo = create(:service_delivery, name: "livraison par colissimo", shop_dependent: false, disabled: false)
@@ -157,7 +157,7 @@ RSpec.describe Api::V1::Shops::DeliveriesController, type: :controller do
 
       context "request removes livraison-par-le-commerçant" do
         it "reset shop free_delivery_price attributes" do
-          shop = create(:shop, is_self_delivery: false)
+          shop = create(:old_shop_factory, is_self_delivery: false)
           user = create(:shop_employee_user, email: 'chucknoris@mvms.fr')
           shop.owner = user.shop_employee
           colissimo = create(:service_delivery, name: "livraison par colissimo", shop_dependent: false, disabled: false)
@@ -215,7 +215,7 @@ RSpec.describe Api::V1::Shops::DeliveriesController, type: :controller do
 
       context "X-client-id is missing" do
         it "should returns 401 HTTP status" do
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
 
           put :update, params: { id: shop.id }
           should respond_with(401)
@@ -225,7 +225,7 @@ RSpec.describe Api::V1::Shops::DeliveriesController, type: :controller do
 
       context "x-client-id doesn't match shop user" do
         it "should return 403 HTTP status" do
-          shop = create(:shop)
+          shop = create(:old_shop_factory)
           user = create(:shop_employee_user, email: 'chucknoris@mvms.fr')
           shop.owner = user.shop_employee
           shop.save!
@@ -254,7 +254,7 @@ RSpec.describe Api::V1::Shops::DeliveriesController, type: :controller do
       context "serviceSlugs contains 'livraison-par-le-commerçant'" do
         context "freeDeliveryPrice value is < 1.0" do
           it "should returns 4OO HTTP Status" do
-            shop = create(:shop)
+            shop = create(:old_shop_factory)
             user = create(:shop_employee_user, email: 'chucknoris@mvms.fr')
             shop.owner = user.shop_employee
             shop.save!
@@ -278,7 +278,7 @@ RSpec.describe Api::V1::Shops::DeliveriesController, type: :controller do
 
         context "selfDeliveryPrice is missing" do
           it "should returns 4OO HTTP Status" do
-            shop = create(:shop)
+            shop = create(:old_shop_factory)
             user = create(:shop_employee_user, email: 'chucknoris@mvms.fr')
             shop.owner = user.shop_employee
             shop.save!
@@ -301,7 +301,7 @@ RSpec.describe Api::V1::Shops::DeliveriesController, type: :controller do
 
         context "selfDeliveryPrice value is 0" do
           it "should return 400 HTTP status" do
-            shop = create(:shop)
+            shop = create(:old_shop_factory)
             user = create(:shop_employee_user, email: 'chucknoris@mvms.fr')
             shop.owner = user.shop_employee
             shop.save!

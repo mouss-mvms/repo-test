@@ -5,7 +5,7 @@ RSpec.describe Api::V1::Products::JobsController, type: :controller do
         context "When it all ok" do
             let(:id) {"10aad2e35138aa982e0d848b" }
             it "should return HTTP status 200 - ok" do
-                shop = create(:shop)
+                shop = create(:old_shop_factory)
                 category = create(:category)
                 create_params = {
                 name: "TEST Job create with sidekiq de ses morts",

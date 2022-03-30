@@ -1,5 +1,11 @@
 FactoryBot.define do
   factory :shop do
+    name { "Boutique test" }
+    email { 'email-boutique-test@test.fr'}
+    siret { '75409821800029' }
+  end
+
+  factory :old_shop_factory, class: Shop do
     name { "gallazini" }
     siret { "434189163" }
     iban { "FR76 1820 6002 1054 8726 6700 217" }

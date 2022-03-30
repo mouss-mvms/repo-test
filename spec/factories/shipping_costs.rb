@@ -12,7 +12,7 @@
 
 FactoryBot.define do
   factory :shipping_cost do
-    shop
+    association :shop, factory: :old_shop_factory
     cost { 1.5 }
     name { "Coucou" }
   end
