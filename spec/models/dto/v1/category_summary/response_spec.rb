@@ -6,12 +6,14 @@ RSpec.describe Dto::V1::CategorySummary::Response do
     context 'All ok' do
       it 'should return a Dto::V1::Category::Response' do
         result = Dto::V1::CategorySummary::Response.create(category, { children: false })
+
         expect(result).to be_instance_of(Dto::V1::CategorySummary::Response)
         expect(result.id).to eq(category.id)
         expect(result.name).to eq(category.name)
         expect(result.slug).to eq(category.slug)
         expect(result.children).to eq([])
         expect(result.has_children).to eq(category.has_children)
+        expect(result.type).to eq(category.group)
       end
     end
   end
@@ -28,6 +30,7 @@ RSpec.describe Dto::V1::CategorySummary::Response do
           expect(dto_hash[:name]).to eq(dto.name)
           expect(dto_hash[:slug]).to eq(dto.slug)
           expect(dto_hash[:hasChildren]).to eq(dto.has_children)
+          expect(dto_hash[:type]).to eq(dto.type)
           expect(dto_hash.has_key?(:children)).to eq(false)
         end
       end

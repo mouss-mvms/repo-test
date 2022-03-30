@@ -14,6 +14,7 @@ RSpec.describe Dto::V1::Category::Response do
         expect(result.slug).to eq(category.slug)
         expect(result.children).to eq(children)
         expect(result.has_children).to eq(children.present?)
+        expect(result.type).to eq(category.group)
       end
     end
   end
@@ -32,6 +33,7 @@ RSpec.describe Dto::V1::Category::Response do
           expect(dto_hash[:slug]).to eq(dto.slug)
           expect(dto_hash[:children]).to eq(dto.children)
           expect(dto_hash[:hasChildren]).to eq(dto.has_children)
+          expect(dto_hash[:type]).to eq(dto.type)
         end
       end
 
@@ -47,6 +49,7 @@ RSpec.describe Dto::V1::Category::Response do
           expect(dto_hash[:slug]).to eq(dto.slug)
           expect(dto_hash[:hasChildren]).to eq(dto.has_children)
           expect(dto_hash.has_key?(:children)).to eq(false)
+          expect(dto_hash[:type]).to eq(dto.type)
         end
       end
     end
