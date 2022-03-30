@@ -26,10 +26,10 @@ FactoryBot.define do
     quantity { 10 }
     is_visible { false }
     weight { 1.5 }
-    association :shop, factory: :old_shop_factory
+    shop
     color
     size
-    association :product, factory: :product
+    product
     shipping_cost
     sample
     good_deal

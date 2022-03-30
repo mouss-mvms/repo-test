@@ -6,7 +6,8 @@ RSpec.describe Dto::V1::Shop::Response do
   describe "#create" do
     context "All ok" do
       it "should return a Dto::V1::Shop::Response" do
-        shop = create(:old_shop_factory, featured: create(:image), profil: create(:image), thumbnail: create(:image))
+        shop = create(:shop, featured: create(:image), profil: create(:image), thumbnail: create(:image))
+        create(:address, addressable: shop)
         product = create(:available_product, shop_id: shop.id)
         product.references.first.update(base_price: 50.99, shop_id: shop.id)
         product.references.last.update(shop_id: shop.id)
@@ -58,7 +59,8 @@ RSpec.describe Dto::V1::Shop::Response do
   describe '#to_h' do
     context "All ok" do
       it 'should return a hash representation of a Dto::V1::Shop::Response' do
-        shop = create(:old_shop_factory, featured: create(:image), profil: create(:image), thumbnail: create(:image))
+        shop = create(:shop, featured: create(:image), profil: create(:image), thumbnail: create(:image))
+        create(:address, addressable: shop)
         product = create(:available_product, shop_id: shop.id)
         product.references.first.update(base_price: 50.99, shop_id: shop.id)
         product.references.last.update(shop_id: shop.id)
