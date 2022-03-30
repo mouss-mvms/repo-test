@@ -4902,6 +4902,19 @@
                     "type": "string",
                     "example": "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg",
                     "description": "Required if no imageId"
+                  },
+                  "coverId": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "coverUrl": {
+                    "type": "string",
+                    "example": "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg"
+                  },
+                  "promoted": {
+                    "type": "boolean",
+                    "example": false,
+                    "description": "Selection is promoted."
                   }
                 },
                 "required": [
@@ -5250,6 +5263,19 @@
                   "imageUrl": {
                     "type": "string",
                     "example": "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg"
+                  },
+                  "coverId": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "coverUrl": {
+                    "type": "string",
+                    "example": "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg"
+                  },
+                  "promoted": {
+                    "type": "boolean",
+                    "example": false,
+                    "description": "Selection is promoted."
                   }
                 }
               }
@@ -11476,6 +11502,14 @@
             "type": "integer",
             "example": 100,
             "description": "Number of a selection's produ"
+          },
+          "cover": {
+            "$ref": "#/components/schemas/Image"
+          },
+          "promoted": {
+            "type": "boolean",
+            "example": false,
+            "description": "Selection is promoted."
           }
         }
       },

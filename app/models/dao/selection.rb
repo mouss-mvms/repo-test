@@ -9,14 +9,21 @@ module Dao
           end_date: dto_selection_request.end_at,
           is_home: dto_selection_request.home_page,
           is_event: dto_selection_request.event,
-          state: dto_selection_request.state
+          state: dto_selection_request.state,
+          featured: dto_selection_request.promoted
         }
       )
+
+      if dto_selection_request.cover_id.present?
+        selection.cover_image_id = dto_selection_request.cover_id
+      else 
+        selection.cover_image = set_image(image_url: dto_selection_request.cover_url) if dto_selection_request.cover_url
+      end
 
       if dto_selection_request.image_id.present?
         selection.image_id = dto_selection_request.image_id
       else
-        set_image(object: selection, image_url: dto_selection_request.image_url)
+        selection.image = set_image(image_url: dto_selection_request.image_url)
       end
 
       if dto_selection_request.image_id.present? || dto_selection_request.image_url.present?
@@ -39,7 +46,13 @@ module Dao
       if dto_selection_request.image_id.present?
         selection.image_id = dto_selection_request.image_id
       else
-        set_image(object: selection, image_url: dto_selection_request.image_url)
+        selection.image = set_image(image_url: dto_selection_request.image_url)
+      end
+
+      if dto_selection_request.cover_id.present?
+        selection.cover_image_id = dto_selection_request.cover_id
+      else
+        selection.cover_image = set_image(image_url: dto_selection_request.cover_url) if dto_selection_request.cover_url
       end
 
       selection.name = dto_selection_request.name if dto_selection_request.name.present?
@@ -49,6 +62,7 @@ module Dao
       selection.is_home = dto_selection_request.home_page if dto_selection_request.home_page
       selection.is_event = dto_selection_request.event if dto_selection_request.event
       selection.state = dto_selection_request.state if dto_selection_request.state.present?
+      selection.featured = dto_selection_request.promoted if dto_selection_request.promoted.present?
       
       selection.save!
       selection
@@ -56,10 +70,10 @@ module Dao
 
     private
 
-    def self.set_image(object:, image_url:)
+    def self.set_image(image_url:)
       begin
         image = Shrine.remote_url(image_url)
-        object.image = Image.create(file: image)
+        Image.create(file: image)
       rescue StandardError => e
         Rails.logger.error(e)
         Rails.logger.error(e.message)
