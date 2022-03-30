@@ -91,7 +91,7 @@ RSpec.describe Api::V1::Admin::SelectionsController do
         it "should return 403 HTTP status" do
           user = create(:user)
           request.headers['x-client-id'] = generate_token(user)
-          User.destroy_all
+          user.destroy
 
           get :index
           should respond_with(403)
@@ -148,7 +148,7 @@ RSpec.describe Api::V1::Admin::SelectionsController do
 
           get :show, params: { id: 44 }
           should respond_with(404)
-          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Selection with 'id'=44").to_h.to_json)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Selection with 'id'=#{response.request.params["id"]}").to_h.to_json)
         end
       end
     end
