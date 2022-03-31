@@ -387,10 +387,11 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
 
       context 'Tags not found' do
         it "should return 404 HTTP status" do
+          wrong_id = 0
           @create_params = {
             name: "oui",
             description: "oui oui oui",
-            tagIds: [15],
+            tagIds: [wrong_id],
             startAt: "17/05/2021",
             endAt: "18/06/2021",
             homePage: true,
@@ -400,7 +401,8 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
           }
           Selection.destroy_all
           post :create, params: @create_params
-          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Tag with 'id'=15").to_h.to_json)
+          expect(response).to have_http_status(404)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Tag with 'id'=#{wrong_id}").to_h.to_json)
           expect(Selection.all.count).to eq(0)
         end
       end
@@ -727,12 +729,13 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
       context 'Tags not found' do
         it "should return 404 HTTP status" do
           selection = create(:selection)
+          wrong_id = 0
           update_params = {
-            tagIds: [15]
+            tagIds: [wrong_id]
           }
           post :patch, params: update_params.merge(id: selection.id)
 
-          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Tag with 'id'=15").to_h.to_json)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Tag with 'id'=#{wrong_id}").to_h.to_json)
         end
       end
     end

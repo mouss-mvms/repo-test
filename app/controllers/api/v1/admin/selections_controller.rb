@@ -5,6 +5,7 @@ module Api
         def index
           params[:page] ||= 1
           selections = Selection.page(params[:page])
+          selections = selections.where(featured: params[:promoted]) if params[:promoted]
           selection_responses = selections.map { |selection| Dto::V1::Selection::Response.create(selection).to_h }
           response = { selections: selection_responses, page: params[:page].to_i, totalPages: selections.total_pages }
           render json: response, status: :ok
