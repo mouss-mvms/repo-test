@@ -6,6 +6,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
     context "All ok" do
       it 'should return shop information' do
         shop = create(:shop)
+        create(:address, addressable: shop)
         shop.address.addressable = shop
         shop.save
 
@@ -17,6 +18,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
 
       it 'should return http status 304' do
         shop = create(:shop)
+        create(:address, addressable: shop)
         shop.address.addressable = shop
         shop.save
         get :show, params: { id: shop.id }
@@ -99,7 +101,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
             instagramLink: "http://www.instagram.com",
             websiteLink: "http://www.website.com",
           }
-          allow(City).to receive(:find_or_create_city).and_return(create(:city))
+          allow(City).to receive(:find_or_create_city).and_return(create(:old_city_factory))
 
           shop_employee_user = create(:shop_employee_user, email: 'shop.employee789@ecity.fr')
           request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
@@ -167,7 +169,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
             instagramLink: "http://www.instagram.com",
             websiteLink: "http://www.website.com",
           }
-          allow(City).to receive(:find_or_create_city).and_return(create(:city))
+          allow(City).to receive(:find_or_create_city).and_return(create(:old_city_factory))
 
           shop_employee_user = create(:shop_employee_user, email: 'shop.employee789@ecity.fr')
           request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
@@ -237,7 +239,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
             instagramLink: "http://www.instagram.com",
             websiteLink: "http://www.website.com",
           }
-          allow(City).to receive(:find_or_create_city).and_return(create(:city))
+          allow(City).to receive(:find_or_create_city).and_return(create(:old_city_factory))
 
           shop_employee_user = create(:shop_employee_user, email: 'shop.employee789@ecity.fr')
           request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
@@ -544,7 +546,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
               instagramLink: "http://www.instagram.com",
               websiteLink: "http://www.website.com",
             }
-            allow(City).to receive(:find_or_create_city).and_return(create(:city))
+            allow(City).to receive(:find_or_create_city).and_return(create(:old_city_factory))
 
             shop_employee_user = create(:shop_employee_user, email: 'shop.employee789@ecity.fr')
             request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
@@ -585,7 +587,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
               instagramLink: "http://www.instagram.com",
               websiteLink: "http://www.website.com",
             }
-            allow(City).to receive(:find_or_create_city).and_return(create(:city))
+            allow(City).to receive(:find_or_create_city).and_return(create(:old_city_factory))
 
             shop_employee_user = create(:shop_employee_user, email: 'shop.employee789@ecity.fr')
             request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
@@ -626,7 +628,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
               instagramLink: "http://www.instagram.com",
               websiteLink: "http://www.website.com",
             }
-            allow(City).to receive(:find_or_create_city).and_return(create(:city))
+            allow(City).to receive(:find_or_create_city).and_return(create(:old_city_factory))
 
             shop_employee_user = create(:shop_employee_user, email: 'shop.employee789@ecity.fr')
             request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
@@ -675,7 +677,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         @categories << create(:category)
         @categories << create(:homme)
         @shop = create(:shop)
-        @city = create(:city)
+        @city = create(:old_city_factory)
         @shop.city_id = @city.id
         @shop.save
         @shop_address = create(:address, city: @city)
@@ -1353,4 +1355,462 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
       end
     end
   end
+
+  describe "PATCH #patch" do
+    before(:all) do
+      @shop = create(:shop)
+      create(:address, addressable: @shop)
+      @user = create(:user, admin: create(:admin))
+      @user_token = generate_token(@user)
+    end
+
+    after(:all) do
+      @user_token = nil
+      @user.destroy
+      @shop.addresses.destroy_all
+      @shop.destroy
+    end
+
+    context "All ok" do
+      before(:all) do
+        @city_referential = create(:city_referential, insee_code: '33063', name: 'Bordeaux', label: 'Bordeaux', department: '33')
+        @city = create(:city, name: 'Bordeaux', insee_code: '33063', zip_code: '33000', slug: 'bordeaux')
+      end
+
+      after(:all) do
+        @city_referential.destroy
+        @city.destroy
+      end
+
+      context "User is a shop's owner" do
+        before(:all) do
+          @user = create(:user, email: 'shop_employee517382@test.fr', shop_employee: create(:shop_employee, shops: [@shop]))
+          @shop.update(owner: @user.shop_employee)
+          @user_token = generate_token(@user)
+        end
+
+        after(:all) do
+          @user_token = nil
+          @user.destroy
+        end
+
+        it "should return 200 HTTP status with shop's informations updated" do
+          # Prepare
+          request.headers["HTTP_X_CLIENT_ID"] = @user_token
+
+          # Execute
+          patch :patch, params: { id: @shop.id,
+                                  name: 'Nom boutique MAJ',
+                                  email: 'maj-email@test.com',
+                                  siret: '75409821800029',
+                                  description: 'Description MAJ',
+                                  mobileNumber: '0612345678',
+                                  baseline: 'Baseline MAJ',
+                                  facebookLink: 'https://www.facebook.com/dummy/test',
+                                  instagramLink: 'https://www.instagram.com/dummy/test',
+                                  websiteLink: 'https://www.dummy.com',
+                                  address: {
+                                    streetNumber: '52',
+                                    route: 'Rue Georges Bonnac',
+                                    locality: 'Bordeaux',
+                                    country: 'France',
+                                    postalCode: '33000',
+                                    latitude: 44.84006,
+                                    longitude: -0.58397,
+                                    inseeCode: '33063'
+                                  }
+          }
+
+          # Assert
+          expect(response).to have_http_status(:ok)
+          result = JSON.parse(response.body, symbolize_names: true)
+          expect(result[:name]).to eq(response.request.params[:name])
+          expect(result[:email]).to eq(response.request.params[:email])
+          expect(result[:mobileNumber]).to eq(response.request.params[:mobileNumber])
+          expect(result[:siret]).to eq(response.request.params[:siret])
+          expect(result[:description]).to eq(response.request.params[:description])
+          expect(result[:baseline]).to eq(response.request.params[:baseline])
+          expect(result[:facebookLink]).to eq(response.request.params[:facebookLink])
+          expect(result[:instagramLink]).to eq(response.request.params[:instagramLink])
+          expect(result[:websiteLink]).to eq(response.request.params[:websiteLink])
+          expect(result[:address]).not_to be_nil
+          expect(result[:address][:streetNumber]).to eq(response.request.params[:address][:streetNumber])
+          expect(result[:address][:route]).to eq(response.request.params[:address][:route])
+          expect(result[:address][:locality]).to eq(response.request.params[:address][:locality])
+          expect(result[:address][:country]).to eq(response.request.params[:address][:country])
+          expect(result[:address][:postalCode]).to eq(response.request.params[:address][:postalCode])
+          expect(result[:address][:latitude]).to eq(response.request.params[:address][:latitude])
+          expect(result[:address][:longitude]).to eq(response.request.params[:address][:longitude])
+          expect(result[:address][:inseeCode]).to eq(response.request.params[:address][:inseeCode])
+        end
+
+        context 'ImageUrl is set' do
+          context 'For avatar' do
+            it 'should 200 HTTP status with avatar image set' do
+              # Prepare
+              request.headers["HTTP_X_CLIENT_ID"] = @user_token
+
+              # Execute
+              patch :patch, params: {id: @shop.id, avatarUrl: 'http://www.shutterstock.com/blog/wp-content/uploads/sites/5/2016/03/fall-trees-road-1.jpg'}
+
+              # Assert
+              expect(response).to have_http_status(:ok)
+              result = JSON.parse(response.body, symbolize_names: true)
+              expect(result[:avatar]).not_to be_nil
+            end
+          end
+
+          context 'For cover' do
+            it 'should 200 HTTP status with cover image set' do
+              # Prepare
+              request.headers["HTTP_X_CLIENT_ID"] = @user_token
+
+              # Execute
+              patch :patch, params: {id: @shop.id, coverUrl: 'http://www.shutterstock.com/blog/wp-content/uploads/sites/5/2016/03/fall-trees-road-1.jpg'}
+
+              # Assert
+              expect(response).to have_http_status(:ok)
+              result = JSON.parse(response.body, symbolize_names: true)
+              expect(result[:cover]).not_to be_nil
+            end
+          end
+
+          context 'For thumbnail' do
+            it 'should 200 HTTP status with thumbnail image set' do
+              # Prepare
+              request.headers["HTTP_X_CLIENT_ID"] = @user_token
+
+              # Execute
+              patch :patch, params: {id: @shop.id, thumbnailUrl: 'http://www.shutterstock.com/blog/wp-content/uploads/sites/5/2016/03/fall-trees-road-1.jpg'}
+
+              # Assert
+              expect(response).to have_http_status(:ok)
+              result = JSON.parse(response.body, symbolize_names: true)
+              expect(result[:thumbnail]).not_to be_nil
+            end
+          end
+        end
+
+        context 'ImageId is set' do
+          before(:each) do
+            @image = create(:image)
+          end
+          context 'For avatar' do
+            it 'should 200 HTTP status with profil image updated' do
+              # Prepare
+              request.headers["HTTP_X_CLIENT_ID"] = @user_token
+
+              # Execute
+              patch :patch, params: {id: @shop.id, avatarId: @image.id}
+
+              # Assert
+              expect(response).to have_http_status(:ok)
+              result = JSON.parse(response.body, symbolize_names: true)
+              expect(result[:avatar]).not_to be_nil
+              expect(@shop.reload.profil.id).to eq(@image.id)
+              expect(result[:avatar][:id]).to eq(@image.id)
+              expect(result[:avatar][:originalUrl]).to eq(@image.file_url)
+              expect(result[:avatar][:miniUrl]).to eq(@image.file_url(:mini))
+              expect(result[:avatar][:thumbUrl]).to eq(@image.file_url(:thumb))
+              expect(result[:avatar][:squareUrl]).to eq(@image.file_url(:square))
+              expect(result[:avatar][:wideUrl]).to eq(@image.file_url(:wide))
+            end
+          end
+
+          context 'For cover' do
+            it 'should 200 HTTP status with cover image updated' do
+              # Prepare
+              request.headers["HTTP_X_CLIENT_ID"] = @user_token
+
+              # Execute
+              patch :patch, params: {id: @shop.id, coverId: @image.id}
+
+              # Assert
+              expect(response).to have_http_status(:ok)
+              result = JSON.parse(response.body, symbolize_names: true)
+              expect(result[:cover]).not_to be_nil
+              expect(@shop.reload.featured.id).to eq(@image.id)
+              expect(result[:cover][:id]).to eq(@image.id)
+              expect(result[:cover][:originalUrl]).to eq(@image.file_url)
+              expect(result[:cover][:miniUrl]).to eq(@image.file_url(:mini))
+              expect(result[:cover][:thumbUrl]).to eq(@image.file_url(:thumb))
+              expect(result[:cover][:squareUrl]).to eq(@image.file_url(:square))
+              expect(result[:cover][:wideUrl]).to eq(@image.file_url(:wide))
+            end
+          end
+
+          context 'For thumbnail' do
+            it 'should 200 HTTP status with thumbnail image updated' do
+              # Prepare
+              request.headers["HTTP_X_CLIENT_ID"] = @user_token
+
+              # Execute
+              patch :patch, params: {id: @shop.id, thumbnailId: @image.id}
+
+              # Assert
+              expect(response).to have_http_status(:ok)
+              result = JSON.parse(response.body, symbolize_names: true)
+              expect(result[:thumbnail]).not_to be_nil
+              expect(@shop.reload.thumbnail.id).to eq(@image.id)
+              expect(result[:thumbnail][:id]).to eq(@image.id)
+              expect(result[:thumbnail][:originalUrl]).to eq(@image.file_url)
+              expect(result[:thumbnail][:miniUrl]).to eq(@image.file_url(:mini))
+              expect(result[:thumbnail][:thumbUrl]).to eq(@image.file_url(:thumb))
+              expect(result[:thumbnail][:squareUrl]).to eq(@image.file_url(:square))
+              expect(result[:thumbnail][:wideUrl]).to eq(@image.file_url(:wide))
+            end
+          end
+        end
+      end
+
+      context "User is an admin" do
+        it "should return 200 HTTP status with shop's informations updated" do
+          # Prepare
+          request.headers["HTTP_X_CLIENT_ID"] = @user_token
+
+          # Execute
+          patch :patch, params: { id: @shop.id,
+                                  name: 'Nom boutique MAJ',
+                                  email: 'maj-email@test.com',
+                                  siret: '75409821800029',
+                                  description: 'Description MAJ',
+                                  mobileNumber: '0612345678',
+                                  baseline: 'Baseline MAJ',
+                                  facebookLink: 'https://www.facebook.com/dummy/test',
+                                  instagramLink: 'https://www.instagram.com/dummy/test',
+                                  websiteLink: 'https://www.dummy.com',
+                                  address: {
+                                    streetNumber: '52',
+                                    route: 'Rue Georges Bonnac',
+                                    locality: 'Bordeaux',
+                                    country: 'France',
+                                    postalCode: '33000',
+                                    latitude: 44.84006,
+                                    longitude: -0.58397,
+                                    inseeCode: '33063'
+                                  }
+          }
+
+          # Assert
+          expect(response).to have_http_status(:ok)
+          result = JSON.parse(response.body, symbolize_names: true)
+          expect(result[:name]).to eq(response.request.params[:name])
+          expect(result[:email]).to eq(response.request.params[:email])
+          expect(result[:mobileNumber]).to eq(response.request.params[:mobileNumber])
+          expect(result[:siret]).to eq(response.request.params[:siret])
+          expect(result[:description]).to eq(response.request.params[:description])
+          expect(result[:baseline]).to eq(response.request.params[:baseline])
+          expect(result[:facebookLink]).to eq(response.request.params[:facebookLink])
+          expect(result[:instagramLink]).to eq(response.request.params[:instagramLink])
+          expect(result[:websiteLink]).to eq(response.request.params[:websiteLink])
+          expect(result[:address]).not_to be_nil
+          expect(result[:address][:streetNumber]).to eq(response.request.params[:address][:streetNumber])
+          expect(result[:address][:route]).to eq(response.request.params[:address][:route])
+          expect(result[:address][:locality]).to eq(response.request.params[:address][:locality])
+          expect(result[:address][:country]).to eq(response.request.params[:address][:country])
+          expect(result[:address][:postalCode]).to eq(response.request.params[:address][:postalCode])
+          expect(result[:address][:latitude]).to eq(response.request.params[:address][:latitude])
+          expect(result[:address][:longitude]).to eq(response.request.params[:address][:longitude])
+          expect(result[:address][:inseeCode]).to eq(response.request.params[:address][:inseeCode])
+        end
+
+        context 'ImageUrl is set' do
+          context 'For avatar' do
+            it 'should 200 HTTP status with avatar image set' do
+              # Prepare
+              request.headers["HTTP_X_CLIENT_ID"] = @user_token
+
+              # Execute
+              patch :patch, params: {id: @shop.id, avatarUrl: 'http://www.shutterstock.com/blog/wp-content/uploads/sites/5/2016/03/fall-trees-road-1.jpg'}
+
+              # Assert
+              expect(response).to have_http_status(:ok)
+              result = JSON.parse(response.body, symbolize_names: true)
+              expect(result[:avatar]).not_to be_nil
+            end
+          end
+
+          context 'For cover' do
+            it 'should 200 HTTP status with cover image set' do
+              # Prepare
+              request.headers["HTTP_X_CLIENT_ID"] = @user_token
+
+              # Execute
+              patch :patch, params: {id: @shop.id, coverUrl: 'http://www.shutterstock.com/blog/wp-content/uploads/sites/5/2016/03/fall-trees-road-1.jpg'}
+
+              # Assert
+              expect(response).to have_http_status(:ok)
+              result = JSON.parse(response.body, symbolize_names: true)
+              expect(result[:cover]).not_to be_nil
+            end
+          end
+
+          context 'For thumbnail' do
+            it 'should 200 HTTP status with thumbnail image set' do
+              # Prepare
+              request.headers["HTTP_X_CLIENT_ID"] = @user_token
+
+              # Execute
+              patch :patch, params: {id: @shop.id, thumbnailUrl: 'http://www.shutterstock.com/blog/wp-content/uploads/sites/5/2016/03/fall-trees-road-1.jpg'}
+
+              # Assert
+              expect(response).to have_http_status(:ok)
+              result = JSON.parse(response.body, symbolize_names: true)
+              expect(result[:thumbnail]).not_to be_nil
+            end
+          end
+        end
+
+        context 'ImageId is set' do
+          before(:each) do
+            @image = create(:image)
+          end
+
+          context 'For avatar' do
+            it 'should 200 HTTP status with profil image updated' do
+              # Prepare
+              request.headers["HTTP_X_CLIENT_ID"] = @user_token
+
+              # Execute
+              patch :patch, params: {id: @shop.id, avatarId: @image.id}
+
+              # Assert
+              expect(response).to have_http_status(:ok)
+              result = JSON.parse(response.body, symbolize_names: true)
+              expect(result[:avatar]).not_to be_nil
+              expect(@shop.reload.profil.id).to eq(@image.id)
+              expect(result[:avatar][:id]).to eq(@image.id)
+              expect(result[:avatar][:originalUrl]).to eq(@image.file_url)
+              expect(result[:avatar][:miniUrl]).to eq(@image.file_url(:mini))
+              expect(result[:avatar][:thumbUrl]).to eq(@image.file_url(:thumb))
+              expect(result[:avatar][:squareUrl]).to eq(@image.file_url(:square))
+              expect(result[:avatar][:wideUrl]).to eq(@image.file_url(:wide))
+            end
+          end
+
+          context 'For cover' do
+            it 'should 200 HTTP status with cover image updated' do
+              # Prepare
+              request.headers["HTTP_X_CLIENT_ID"] = @user_token
+
+              # Execute
+              patch :patch, params: {id: @shop.id, coverId: @image.id}
+
+              # Assert
+              expect(response).to have_http_status(:ok)
+              result = JSON.parse(response.body, symbolize_names: true)
+              expect(result[:cover]).not_to be_nil
+              expect(@shop.reload.featured.id).to eq(@image.id)
+              expect(result[:cover][:id]).to eq(@image.id)
+              expect(result[:cover][:originalUrl]).to eq(@image.file_url)
+              expect(result[:cover][:miniUrl]).to eq(@image.file_url(:mini))
+              expect(result[:cover][:thumbUrl]).to eq(@image.file_url(:thumb))
+              expect(result[:cover][:squareUrl]).to eq(@image.file_url(:square))
+              expect(result[:cover][:wideUrl]).to eq(@image.file_url(:wide))
+            end
+          end
+
+          context 'For thumbnail' do
+            it 'should 200 HTTP status with thumbnail image updated' do
+              # Prepare
+              request.headers["HTTP_X_CLIENT_ID"] = @user_token
+
+              # Execute
+              patch :patch, params: {id: @shop.id, thumbnailId: @image.id}
+
+              # Assert
+              expect(response).to have_http_status(:ok)
+              result = JSON.parse(response.body, symbolize_names: true)
+              expect(result[:thumbnail]).not_to be_nil
+              expect(@shop.reload.thumbnail.id).to eq(@image.id)
+              expect(result[:thumbnail][:id]).to eq(@image.id)
+              expect(result[:thumbnail][:originalUrl]).to eq(@image.file_url)
+              expect(result[:thumbnail][:miniUrl]).to eq(@image.file_url(:mini))
+              expect(result[:thumbnail][:thumbUrl]).to eq(@image.file_url(:thumb))
+              expect(result[:thumbnail][:squareUrl]).to eq(@image.file_url(:square))
+              expect(result[:thumbnail][:wideUrl]).to eq(@image.file_url(:wide))
+            end
+          end
+        end
+      end
+    end
+
+    context "User is a shop owner but id of shop requested is not his shop" do
+      it 'should return 403 HTTP status' do
+        # Prepare
+        user_shop_employee = create(:user, email: 'wrong-shop-employee@test.fr', shop_employee: create(:shop_employee))
+
+        request.headers["HTTP_X_CLIENT_ID"] = generate_token(user_shop_employee)
+
+        # Execute
+        patch :patch, params: {id: @shop.id, name: "MAJ nom boutique"}
+
+        # Assert
+        expect(response).to have_http_status(:forbidden)
+        expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
+      end
+    end
+
+    context "Shop requested does not exist" do
+      it 'should return 404 HTTP status' do
+        # Prepare
+        shop = create(:shop).destroy
+
+        request.headers['HTTP_X_CLIENT_ID'] = @user_token
+
+        # Execute
+        patch :patch, params: {id: shop.id, description: 'Description MAJ'}
+
+        # Assert
+        expect(response).to have_http_status(:not_found)
+        expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Shop with 'id'=#{response.request.params[:id]}").to_h.to_json)
+      end
+    end
+  
+    context "User is a shop owner and request a shop which has been soft deleted" do
+      it 'should return 403 HTTP status' do
+        # Prepare
+        shop = create(:shop)
+        user = create(:user, email: 'shop_employee@test.fr', shop_employee: create(:shop_employee, shops: [shop]))
+        shop.update(owner: user.shop_employee, deleted_at: Time.now)
+
+        request.headers['HTTP_X_CLIENT_ID'] = generate_token(user)
+        # Execute
+        patch :patch, params: {id: shop.id, description: 'Description MAJ'}
+
+        # Assert
+        expect(response).to have_http_status(:forbidden)
+        expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
+      end
+    end
+
+    context "User token not given" do
+      it 'should return 401 HTTP status' do
+        # Prepare
+
+        # Execute
+        patch :patch, params: {id: @shop.id, name: 'Name MAJ'}
+
+        # Assert
+        expect(response).to have_http_status(:unauthorized)
+        expect(response.body).to eq(Dto::Errors::Unauthorized.new.to_h.to_json)
+      end
+    end
+
+    context "User is not authorized" do
+      it 'should return 403 HTTP status' do
+        # Prepare
+        request.headers['HTTP_X_CLIENT_ID'] = generate_token(create(:user, email: 'wrong-user-type@test.fr',
+                                                                    customer: create(:customer)))
+
+        # Execute
+        patch :patch, params: {id: @shop.id, description: 'Description MAJ'}
+
+        # Assert
+        expect(response).to have_http_status(:forbidden)
+        expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
+      end
+    end
+  end
+
 end

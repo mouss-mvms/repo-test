@@ -29,7 +29,7 @@ FactoryBot.define do
     shop
     color
     size
-    association :product, factory: :product
+    product
     shipping_cost
     sample
     good_deal

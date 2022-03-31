@@ -7,6 +7,7 @@ RSpec.describe Dto::V1::Shop::Response do
     context "All ok" do
       it "should return a Dto::V1::Shop::Response" do
         shop = create(:shop, featured: create(:image), profil: create(:image), thumbnail: create(:image))
+        create(:address, addressable: shop)
         product = create(:available_product, shop_id: shop.id)
         product.references.first.update(base_price: 50.99, shop_id: shop.id)
         product.references.last.update(shop_id: shop.id)
@@ -41,12 +42,25 @@ RSpec.describe Dto::V1::Shop::Response do
         expect(dto_response.highest_product_price).to eq(shop.most_expensive_ref.base_price)
       end
     end
+
+    context 'Entry is nil' do
+      it 'should return nil' do
+        # Prepare
+
+        # Execute
+        result = Dto::V1::Shop::Response.create(nil)
+
+        # Assert
+        expect(result).to be_nil
+      end
+    end
   end
 
   describe '#to_h' do
     context "All ok" do
       it 'should return a hash representation of a Dto::V1::Shop::Response' do
         shop = create(:shop, featured: create(:image), profil: create(:image), thumbnail: create(:image))
+        create(:address, addressable: shop)
         product = create(:available_product, shop_id: shop.id)
         product.references.first.update(base_price: 50.99, shop_id: shop.id)
         product.references.last.update(shop_id: shop.id)

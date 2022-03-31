@@ -46,7 +46,7 @@ module V1
                   squareUrl: { type: :string, example: 'https://path/to/square-format.jpg' },
                   wideUrl: { type: :string, example: 'https://path/to/wide-format.jpg' }
                 },
-                description: "Avatar image of a shops"
+                description: "Avatar image of a shop"
               },
               cover: {
                 type: :object,
@@ -58,7 +58,19 @@ module V1
                   squareUrl: { type: :string, example: 'https://path/to/square-format.jpg' },
                   wideUrl: { type: :string, example: 'https://path/to/wide-format.jpg' }
                 },
-                description: "Cover image of a shops"
+                description: "Cover image of a shop"
+              },
+              mainImage: {
+                type: :object,
+                properties: {
+                  id: { type: :integer, example: 42 },
+                  originalUrl: { type: :string, example: 'https://path/to/original-image.jpg' },
+                  miniUrl: { type: :string, example: 'https://path/to/mini-format.jpg' },
+                  thumbUrl: { type: :string, example: 'https://path/to/thumb-format.jpg' },
+                  squareUrl: { type: :string, example: 'https://path/to/square-format.jpg' },
+                  wideUrl: { type: :string, example: 'https://path/to/wide-format.jpg' }
+                },
+                description: "Main image of a shop"
               },
               description: {
                 type: 'string',

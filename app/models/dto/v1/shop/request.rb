@@ -7,6 +7,8 @@ module Dto
           :avatar_url,
           :cover_id,
           :cover_url,
+          :thumbnail_url,
+          :thumbnail_id,
           :image_ids,
           :image_urls,
           :description,
@@ -26,6 +28,8 @@ module Dto
           @avatar_url = args[:avatar_url]
           @cover_id = args[:cover_id]
           @cover_url = args[:cover_url]
+          @thumbnail_url = args[:thumbnail_url]
+          @thumbnail_id = args[:thumbnail_id]
           @image_ids = []
           args[:image_ids]&.each do |img_id|
             @image_ids << img_id
@@ -41,7 +45,7 @@ module Dto
           @facebook_link = args[:facebook_link]
           @instagram_link = args[:instagram_link]
           @website_link = args[:website_link]
-          @address_request = Dto::V1::Address::Request.new(args[:address])
+          @address_request = Dto::V1::Address::Request.new(args[:address]) if args[:address] && args[:address].any?
           @siret = args[:siret]
           @avatar_image_id = args[:avatar_image_id]
         end

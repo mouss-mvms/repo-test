@@ -195,6 +195,10 @@ GEM
     ffi (1.15.4)
     figaro (1.2.0)
       thor (>= 0.14.0, < 2)
+    flipper (0.22.2)
+    flipper-active_record (0.22.2)
+      activerecord (>= 4.2, < 7)
+      flipper (~> 0.22.2)
     gems (1.2.0)
     globalid (1.0.0)
       activesupport (>= 5.0)
@@ -484,9 +488,11 @@ DEPENDENCIES
   bootsnap (>= 1.4.4)
   byebug
   dalli
+  data_migrate
   delayed_job_active_record
   factory_bot_rails
   figaro
+  flipper-active_record (~> 0.22.2)
   jwt
   kaminari
   listen (~> 3.3)
@@ -517,4 +523,4 @@ RUBY VERSION
    ruby 2.6.6p146
 
 BUNDLED WITH
-   2.3.0
+   2.3.9
