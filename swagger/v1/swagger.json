@@ -8727,6 +8727,16 @@
                     "example": "http://www.image.com/image.jpg",
                     "description": "Cover url of a shop"
                   },
+                  "thumbnailId": {
+                    "type": "integer",
+                    "example": 1,
+                    "description": "Thumbnail id of a shop"
+                  },
+                  "thumbnailUrl": {
+                    "type": "string",
+                    "example": "http://www.image.com/image.jpg",
+                    "description": "Thumbnail url of a shop"
+                  },
                   "imageIds": {
                     "type": "array",
                     "items": {
