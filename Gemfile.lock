@@ -135,6 +135,10 @@ GEM
     data_migrate (8.0.0)
       activerecord (>= 5.0)
       railties (>= 5.0)
+    database_cleaner-active_record (2.0.0)
+      activerecord (>= 5.a)
+      database_cleaner-core (~> 2.0.0)
+    database_cleaner-core (2.0.1)
     declarative (0.0.20)
     delayed_job (4.1.9)
       activesupport (>= 3.0, < 6.2)
@@ -490,6 +494,7 @@ DEPENDENCIES
   byebug
   dalli
   data_migrate
+  database_cleaner-active_record
   delayed_job_active_record
   factory_bot_rails
   figaro

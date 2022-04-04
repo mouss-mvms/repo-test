@@ -1,13 +1,12 @@
 module Api
   module V1
     class SelectionsController < ApplicationController
-      include Pagy::Backend
       before_action :uncrypt_token, only: [:create, :patch, :destroy]
       before_action :retrieve_user, only: [:create, :patch, :destroy]
 
       def index
-        per_page = params[:limit] || 16
-        pagination, selections = pagy(Selection.online, items: per_page)
+        params[:limit] ||= Pagy::DEFAULT[:items].to_i
+        pagination, selections = pagy(Selection.online, items: params[:limit])
         response = { selections: selections.map { |selection| Dto::V1::Selection::Response.create(selection).to_h }, page: pagination.page, totalPages: pagination.pages, totalCount: pagination.count }
         render json: response, status: :ok
       end
