@@ -21,3 +21,10 @@ pipelines:
             - git commit -m "[skip ci] Bitbucket pipelines - update swagger.json" || true
             - git pull
             - git push
+          services:
+            - memcached
+
+definitions:
+  services:
+    memcached:
+      image: memcached
