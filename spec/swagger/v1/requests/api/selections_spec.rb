@@ -30,7 +30,10 @@ RSpec.describe 'api/v1/selections', swagger_doc: 'v1/swagger.json', type: :reque
             enum: ["disabled", "active"]
           },
           imageId: { type: :integer, example: 1, description: "Required if no imageUrl"},
-          imageUrl: { type: :string, example: "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg", description: "Required if no imageId" }
+          imageUrl: { type: :string, example: "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg", description: "Required if no imageId"},
+          coverId: { type: :integer, example: 1 },
+          coverUrl: { type: :string, example: "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg" },
+          promoted: { type: :boolean, example: false, description: 'Selection is promoted.' }
         },
         required: %w[name description]
       }
@@ -66,6 +69,7 @@ RSpec.describe 'api/v1/selections', swagger_doc: 'v1/swagger.json', type: :reque
     get('List all selections for admin users.') do
       parameter name: 'x-client-id', in: :header, type: :string, description: 'Auth token of user', required: true
       parameter name: :page, in: :query, type: :integer, example: 1, description: 'Number of desired page.', required: true
+      parameter name: :promoted, in: :query, schema: { type: :string, enum: ["true", "false"], description: 'Selection is promoted' }
       parameter name: :limit, in: :query, type: :integer, description: 'Number of desired object per page. (default: 16)'
 
       tags 'Selections'
@@ -130,7 +134,10 @@ RSpec.describe 'api/v1/selections', swagger_doc: 'v1/swagger.json', type: :reque
             enum: ["disabled", "active"]
           },
           imageId: { type: :integer, example: 1 },
-          imageUrl: { type: :string, example: "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg" }
+          imageUrl: { type: :string, example: "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg" },
+          coverId: { type: :integer, example: 1 },
+          coverUrl: { type: :string, example: "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg" },
+          promoted: { type: :boolean, example: false, description: 'Selection is promoted.' }
         }
       }
 
