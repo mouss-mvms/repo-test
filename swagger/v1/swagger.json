@@ -4948,6 +4948,14 @@
             "schema": {
               "type": "integer"
             }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of desired object per page. (default: 16)",
+            "schema": {
+              "type": "integer"
+            }
           }
         ],
         "tags": [
@@ -4978,6 +4986,10 @@
                     "page": {
                       "type": "integer",
                       "example": 1
+                    },
+                    "totalCount": {
+                      "type": "integer",
+                      "example": 250
                     },
                     "totalPages": {
                       "type": "integer",
