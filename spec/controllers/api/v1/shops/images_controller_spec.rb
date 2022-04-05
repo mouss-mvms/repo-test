@@ -5,7 +5,7 @@ RSpec.describe Api::V1::Shops::ImagesController, type: :controller do
     before(:all) do
       @user_shop_employee = create(:shop_employee_user)
       @user_shop_employee_token = generate_token(@user_shop_employee)
-      @shop = create(:old_shop_factory, owner: @user_shop_employee.shop_employee)
+      @shop = create(:shop, owner: @user_shop_employee.shop_employee)
       @user_shop_employee.shop_employee.shops << @shop
       @user_shop_employee.shop_employee.save
     end

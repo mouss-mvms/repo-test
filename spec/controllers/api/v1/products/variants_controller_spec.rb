@@ -4,7 +4,7 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
   describe 'DELETE #destroy' do
     context 'All ok' do
       it 'should return 204 HTTP status' do
-        shop = create(:old_shop_factory)
+        shop = create(:shop)
         product = create(:product)
         ref1 = create(:reference)
         product.references << ref1
@@ -89,7 +89,7 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
     context 'Bad params' do
       context "Product doesn't find" do
         it 'should return 404 HTTP Status' do
-          shop = create(:old_shop_factory)
+          shop = create(:shop)
           product = create(:product)
           ref1 = create(:reference)
           product.references << ref1
@@ -116,7 +116,7 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
 
       context "Reference doesn't exist for the product" do
         it 'should return 404 HTTP Status' do
-          shop = create(:old_shop_factory)
+          shop = create(:shop)
           product = create(:product)
           ref1 = create(:reference)
           ref2 = create(:reference)
@@ -145,7 +145,7 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
   describe 'DELETE #destroy_offline' do
     context 'All ok' do
       it 'should return 204 HTTP status' do
-        shop = create(:old_shop_factory)
+        shop = create(:shop)
         product = create(:product)
         ref1 = create(:reference)
         product.references << ref1
@@ -165,7 +165,7 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
     context 'Bad Params' do
       context "Product doesn't find" do
         it 'should return 404 HTTP Status' do
-          shop = create(:old_shop_factory)
+          shop = create(:shop)
           product = create(:product)
           ref1 = create(:reference)
           product.references << ref1
@@ -184,7 +184,7 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
 
       context "Reference doesn't exist for the product" do
         it 'should return 404 HTTP Status' do
-          shop = create(:old_shop_factory)
+          shop = create(:shop)
           product = create(:product)
           ref1 = create(:reference)
           ref2 = create(:reference)
@@ -256,6 +256,7 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
 
       context "product does not exist" do
         it "should return 404 HTTP status" do
+          wrong_id = 0
           variant_params = {
             basePrice: 379,
             weight: 1,
@@ -282,9 +283,9 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
               externalVariantId: "34ty"
             }
           }
-          post :create_offline, params: variant_params.merge(id: 69)
+          post :create_offline, params: variant_params.merge(id: wrong_id)
           should respond_with(404)
-          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Product with 'id'=69").to_h.to_json)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Product with 'id'=#{wrong_id}").to_h.to_json)
         end
       end
 
@@ -741,7 +742,7 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
     context "All ok" do
       context "with image_urls" do
         it "should return created a variant" do
-          shop = create(:old_shop_factory)
+          shop = create(:shop)
           product = create(:available_product)
           shop.products << product
           user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
@@ -795,7 +796,7 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
       context "with image_ids" do
         it "should return created a variant" do
           image = create(:image)
-          shop = create(:old_shop_factory)
+          shop = create(:shop)
           product = create(:available_product)
           shop.products << product
           user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
@@ -850,7 +851,7 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
       context "imageIds and imageUrls are both sent" do
         it "should return created a variant" do
           image = create(:image)
-          shop = create(:old_shop_factory)
+          shop = create(:shop)
           product = create(:available_product)
           shop.products << product
           user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
@@ -907,7 +908,7 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
     context 'Bad authentication' do
       context "x-client-id is missing" do
         it "should return 401 HTTP status" do
-          shop = create(:old_shop_factory)
+          shop = create(:shop)
           product = create(:available_product)
           shop.products << product
           user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
@@ -1037,7 +1038,7 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
     context "Bad Params" do
       context "product id is missing" do
         it "should return 400 HTTP status" do
-          shop = create(:old_shop_factory)
+          shop = create(:shop)
           user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
           user_shop_employee.shop_employee.shops << shop
           user_shop_employee.shop_employee.save
@@ -1078,7 +1079,7 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
 
       context "product does not exist" do
         it "should return 404 HTTP status" do
-          shop = create(:old_shop_factory)
+          shop = create(:shop)
           user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
           user_shop_employee.shop_employee.shops << shop
           user_shop_employee.shop_employee.save
@@ -1120,7 +1121,7 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
       context "variant" do
         context "required params are missing" do
           it "should return 400 HTTP status" do
-            shop = create(:old_shop_factory)
+            shop = create(:shop)
             product = create(:available_product)
             shop.products << product
             user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
@@ -1170,7 +1171,7 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
 
         context "required params are nil" do
           it "should return 400 HTTP status" do
-            shop = create(:old_shop_factory)
+            shop = create(:shop)
             product = create(:available_product)
             shop.products << product
             user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
@@ -1223,7 +1224,7 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
         context "images not found" do
           it "returns 404 HTTP status" do
             image_id = 0
-            shop = create(:old_shop_factory)
+            shop = create(:shop)
             product = create(:available_product)
             shop.products << product
             user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
@@ -1270,7 +1271,7 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
       context "good_deal" do
         context "required params are missing" do
           it "should return 400 HTTP status" do
-            shop = create(:old_shop_factory)
+            shop = create(:shop)
             product = create(:available_product)
             shop.products << product
             user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
@@ -1319,7 +1320,7 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
 
         context "required params are nil" do
           it "should return 400 HTTP status" do
-            shop = create(:old_shop_factory)
+            shop = create(:shop)
             product = create(:available_product)
             shop.products << product
             user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
@@ -1370,7 +1371,7 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
       context "characteristics" do
         context "required params are missing" do
           it "should return 400 HTTP status" do
-            shop = create(:old_shop_factory)
+            shop = create(:shop)
             product = create(:available_product)
             shop.products << product
             user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")
@@ -1415,7 +1416,7 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
 
         context "required params are nil" do
           it "should return 400 HTTP status" do
-            shop = create(:old_shop_factory)
+            shop = create(:shop)
             product = create(:available_product)
             shop.products << product
             user_shop_employee = create(:shop_employee_user, email: "shop.employee310@ecity.fr")

@@ -6,7 +6,7 @@ RSpec.describe Dto::V1::Review::Response do
       it 'should return a Dto::V1::Review::Response' do
         user_citizen = create(:citizen_user)
         user_shop_employee = create(:shop_employee_user)
-        shop = create(:old_shop_factory)
+        shop = create(:shop)
         shop.owner = user_shop_employee.shop_employee
         shop.save
         review = create(:review, shop_id: shop.id, user_id: user_citizen.id, content: "Boutique Super", mark: 5)
@@ -43,7 +43,7 @@ RSpec.describe Dto::V1::Review::Response do
       it 'should return a hash representation of Dto::V1::Review::Response' do
         user_citizen = create(:citizen_user)
         user_shop_employee = create(:shop_employee_user)
-        shop = create(:old_shop_factory)
+        shop = create(:shop)
         shop.owner = user_shop_employee.shop_employee
         shop.save
         review = create(:review, shop_id: shop.id, user_id: user_citizen.id, content: "Boutique Super", mark: 5)

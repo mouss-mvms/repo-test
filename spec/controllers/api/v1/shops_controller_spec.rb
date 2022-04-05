@@ -5,7 +5,8 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
   describe "GET #show" do
     context "All ok" do
       it 'should return shop information' do
-        shop = create(:old_shop_factory)
+        shop = create(:shop)
+        create(:address, addressable: shop)
         shop.address.addressable = shop
         shop.save
 
@@ -16,7 +17,8 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
       end
 
       it 'should return http status 304' do
-        shop = create(:old_shop_factory)
+        shop = create(:shop)
+        create(:address, addressable: shop)
         shop.address.addressable = shop
         shop.save
         get :show, params: { id: shop.id }
@@ -32,7 +34,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
 
     context "Shop id is 0" do
       it 'should return 400 HTTP Status' do
-        shop = create(:old_shop_factory)
+        shop = create(:shop)
 
         get :show, params: { id: 0 }
 
@@ -50,7 +52,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
 
     context "Shop doesn't exist" do
       it 'should return 404 HTTP Status' do
-        shop = create(:old_shop_factory)
+        shop = create(:shop)
         shop.destroy
         get :show, params: { id: shop.id }
 
@@ -674,7 +676,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         @categories = []
         @categories << create(:category)
         @categories << create(:homme)
-        @shop = create(:old_shop_factory)
+        @shop = create(:shop)
         @city = create(:old_city_factory)
         @shop.city_id = @city.id
         @shop.save
@@ -975,7 +977,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
               avatarId: wrong_avatar_id
             }
             shop_employee_user = create(:shop_employee_user, email: 'shop.employee5681@ecity.fr')
-            shop = create(:old_shop_factory)
+            shop = create(:shop)
             shop.assign_ownership(shop_employee_user)
             shop.save
 
@@ -1011,7 +1013,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
               coverId: wrong_id
             }
             shop_employee_user = create(:shop_employee_user, email: 'shop.employee5678@ecity.fr')
-            shop = create(:old_shop_factory)
+            shop = create(:shop)
             shop.assign_ownership(shop_employee_user)
             shop.save
 
@@ -1046,7 +1048,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
               imageIds: [wrong_id]
             }
             shop_employee_user = create(:shop_employee_user, email: 'shop.employee5678@ecity.fr')
-            shop = create(:old_shop_factory)
+            shop = create(:shop)
             shop.assign_ownership(shop_employee_user)
             shop.save
 
@@ -1063,7 +1065,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         it 'Should return 404 HTTP status' do
           shop_employee_user = create(:shop_employee_user, email: 'shop.employee5678@ecity.fr')
 
-          shop = create(:old_shop_factory)
+          shop = create(:shop)
           shop.destroy
 
           request.headers["HTTP_X_CLIENT_ID"] = generate_token(shop_employee_user)
@@ -1098,7 +1100,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
             ]
           }
           shop_employee_user = create(:shop_employee_user, email: 'shop.employee5678@ecity.fr')
-          shop = create(:old_shop_factory)
+          shop = create(:shop)
           shop.assign_ownership(shop_employee_user)
           shop.save
 
@@ -1135,7 +1137,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
             ]
           }
           shop_employee_user = create(:shop_employee_user, email: 'shop.employee5679@ecity.fr')
-          shop = create(:old_shop_factory)
+          shop = create(:shop)
           shop.assign_ownership(shop_employee_user)
           shop.save
           request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
@@ -1162,7 +1164,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
             siret: "75409821800029",
           }
           shop_employee_user = create(:shop_employee_user, email: 'shop.employee5680@ecity.fr')
-          shop = create(:old_shop_factory)
+          shop = create(:shop)
           shop.assign_ownership(shop_employee_user)
           shop.save
           request.headers['HTTP_X_CLIENT_ID'] = generate_token(shop_employee_user)
@@ -1192,7 +1194,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
             ]
           }
           shop_employee_user = create(:shop_employee_user, email: 'shop.employee5681@ecity.fr')
-          shop = create(:old_shop_factory)
+          shop = create(:shop)
           shop.assign_ownership(shop_employee_user)
           shop.save
 
@@ -1234,7 +1236,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
               }
             }
             shop_employee_user = create(:shop_employee_user, email: 'shop.employee5681@ecity.fr')
-            shop = create(:old_shop_factory)
+            shop = create(:shop)
             shop.assign_ownership(shop_employee_user)
             shop.save
 
@@ -1266,7 +1268,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
               }
             }
             shop_employee_user = create(:shop_employee_user, email: 'shop.employee5681@ecity.fr')
-            shop = create(:old_shop_factory)
+            shop = create(:shop)
             shop.assign_ownership(shop_employee_user)
             shop.save
 
@@ -1298,7 +1300,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
               }
             }
             shop_employee_user = create(:shop_employee_user, email: 'shop.employee5681@ecity.fr')
-            shop = create(:old_shop_factory)
+            shop = create(:shop)
             shop.assign_ownership(shop_employee_user)
             shop.save
 
@@ -1344,7 +1346,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
       context "User is not the owner of shop" do
         it "Should return 403 HTTP Status" do
           shop_employee_user = create(:shop_employee_user, email: 'shop.employee536@ecity.fr')
-          @shop = create(:old_shop_factory)
+          @shop = create(:shop)
           request.headers["HTTP_X_CLIENT_ID"] = generate_token(shop_employee_user)
           put :update, params: { id: @shop.id }
 
@@ -1356,7 +1358,8 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
 
   describe "PATCH #patch" do
     before(:all) do
-      @shop = create(:old_shop_factory)
+      @shop = create(:shop)
+      create(:address, addressable: @shop)
       @user = create(:user, admin: create(:admin))
       @user_token = generate_token(@user)
     end
@@ -1364,6 +1367,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
     after(:all) do
       @user_token = nil
       @user.destroy
+      Address.where(addressable_id: @shop.addresses, addressable_type: 'Shop').destroy_all
       @shop.destroy
     end
 
@@ -1806,6 +1810,49 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         expect(response).to have_http_status(:forbidden)
         expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
       end
+    end
+
+    context 'Bug #25u1950' do
+
+      context "When facebookLink param is set but value is nil" do
+        it 'should return 200 HTTP Status with facebookLink reset' do
+          request.headers["HTTP_X_CLIENT_ID"] = @user_token
+          @shop.update(facebook_url: 'https://www.facebook.com/tests')
+
+          patch :patch, params: {id: @shop.id, facebookLink: nil}
+
+          expect(response).to have_http_status(:ok)
+          result = JSON.parse(response.body, symbolize_names: true)
+          expect(result[:facebookLink].blank?).to be_truthy
+        end
+      end
+
+      context "When instagramLink param is set but value is nil" do
+        it 'should return 200 HTTP Status with instagramLink reset' do
+          request.headers["HTTP_X_CLIENT_ID"] = @user_token
+          @shop.update(instagram_url: 'https://www.instagram.com/tests')
+
+          patch :patch, params: {id: @shop.id, instagramLink: nil}
+
+          expect(response).to have_http_status(:ok)
+          result = JSON.parse(response.body, symbolize_names: true)
+          expect(result[:instagramLink].blank?).to be_truthy
+        end
+      end
+
+      context "When websiteLink param is set but value is nil" do
+        it 'should return 200 HTTP Status with websiteLink reset' do
+          request.headers["HTTP_X_CLIENT_ID"] = @user_token
+          @shop.update(url: 'https://www.website.com/tests')
+
+          patch :patch, params: {id: @shop.id, websiteLink: nil}
+
+          expect(response).to have_http_status(:ok)
+          result = JSON.parse(response.body, symbolize_names: true)
+          expect(result[:websiteLink].blank?).to be_truthy
+        end
+      end
+
     end
   end
 

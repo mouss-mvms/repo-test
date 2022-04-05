@@ -47,7 +47,7 @@ module V1
                 description: "Insee code"
               }
             },
-            required: %w[streetNumber route locality country postalCode latitude longitude inseeCode]
+            required: %w[streetNumber route locality country postalCode inseeCode]
           }
         end
       end

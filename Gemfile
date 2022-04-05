@@ -36,8 +36,12 @@ group :development, :test, :local do
   gem "rspec-rails"
   gem "rswag-specs"
   gem "shoulda-matchers"
-  gem "factory_bot_rails"
+  gem "factory_bot"
   gem "ruby_cowsay"
+end
+
+group :test do
+  gem 'database_cleaner-active_record'
 end
 
 gem 'listen', '~> 3.3'
@@ -65,21 +69,14 @@ gem 'simple_token_authentication', '~>1.0'
 
 gem 'jwt'
 
-#Cache
-gem 'dalli'
-gem 'memcachier'
-
 gem 'newrelic_rpm'
 
 #Pagination
 gem 'kaminari'
 
 source 'https://gem.fury.io/mvms/' do
-  gem 'mvms-core', '2.5.562.1'
+  gem 'mvms-core', '2.5.599'
 end
 
 # Data migration
 gem 'data_migrate'
-
-# Feature flipping
-gem 'flipper-active_record', '~> 0.22.2'

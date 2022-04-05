@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::API
+  include Pagy::Backend
   SEARCH_DEFAULT_SORT_BY = "highest-score-elastic"
 
   Forbidden = Class.new(ActionController::ActionControllerError)
@@ -59,8 +60,9 @@ class ApplicationController < ActionController::API
     end
     begin
       @uncrypted_token = JWT.decode(request.headers['x-client-id'], ENV["JWT_SECRET"], true, { algorithm: 'HS256' })
-    rescue JWT::DecodeError
-      raise InternalServerError
+    rescue JWT::DecodeError => e
+      error = Dto::Errors::Unauthorized.new
+      return render json: error.to_h, status: error.status
     end
   end
 
