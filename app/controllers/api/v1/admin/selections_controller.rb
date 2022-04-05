@@ -3,11 +3,11 @@ module Api
     module Admin
       class SelectionsController < AdminsController
         def index
-          params[:page] ||= 1
-          selections = Selection.page(params[:page])
-          selections = selections.where(featured: params[:promoted]) if params[:promoted]
-          selection_responses = selections.map { |selection| Dto::V1::Selection::Response.create(selection).to_h }
-          response = { selections: selection_responses, page: params[:page].to_i, totalPages: selections.total_pages }
+          params[:page] ||= Pagy::DEFAULT[:page]
+          params[:limit] ||= Pagy::DEFAULT[:items].to_i
+          pagination, selections = pagy(Selection, items: params[:limit])
+          selection_responses = selections.order(id: :asc).map { |selection| Dto::V1::Selection::Response.create(selection).to_h }
+          response = { selections: selection_responses, page: pagination.page, totalCount: pagination.count, totalPages: pagination.pages }
           render json: response, status: :ok
         end
 

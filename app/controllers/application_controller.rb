@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::API
+  include Pagy::Backend
   SEARCH_DEFAULT_SORT_BY = "highest-score-elastic"
 
   Forbidden = Class.new(ActionController::ActionControllerError)
