@@ -2,22 +2,22 @@ module Dao
   module Shop
 
     def self.update(dto_shop_request:, shop:)
-      shop.assign_attributes(
-        name: dto_shop_request.name,
-        email: dto_shop_request.email,
-        mobile_phone_number: dto_shop_request.mobile_number,
-        siret: dto_shop_request.siret,
-        facebook_url: dto_shop_request.facebook_link,
-        instagram_url: dto_shop_request.instagram_link,
-        url: dto_shop_request.website_link,
-      )
+      shop.name = dto_shop_request.name unless dto_shop_request.name.blank?
+      shop.email = dto_shop_request.email unless dto_shop_request.email.blank?
+      shop.siret = dto_shop_request.siret unless dto_shop_request.siret.blank?
+      shop.mobile_phone_number = dto_shop_request.mobile_number unless dto_shop_request.mobile_number.blank?
+      shop.facebook_url = dto_shop_request.facebook_link if dto_shop_request.facebook_link
+      shop.instagram_url = dto_shop_request.instagram_link if dto_shop_request.instagram_link
+      shop.url = dto_shop_request.website_link if dto_shop_request.website_link
 
       set_images(dto: dto_shop_request, object: shop)
       set_description(dto_shop_request, shop) if dto_shop_request.description
       set_baseline(dto_shop_request, shop) if dto_shop_request.baseline
 
-      dto_shop_request.address_request.addressable_id = shop.id
-      Dto::V1::Address.build(dto_shop_request.address_request)
+      if dto_shop_request.address_request
+        dto_shop_request.address_request.addressable_id = shop.id
+        Dto::V1::Address.build(dto_shop_request.address_request)
+      end
 
       shop.save!
       shop.touch(:updated_at)
@@ -60,9 +60,21 @@ module Dao
           .update!(content: dto_shop_request.description)
     end
 
+    def self.set_thumbnail(dto:, object:)
+      if dto.thumbnail_url
+        image = create_image(image_url: dto.thumbnail_url)
+        object.update!(thumbnail_id: image.id)
+      else
+        if dto.thumbnail_id
+          object.thumbnail_id = dto.thumbnail_id
+        end
+      end
+    end
+
     def self.set_images(dto:, object:)
       set_avatar_image(dto: dto, object: object)
       set_cover_image(dto: dto, object: object)
+      set_thumbnail(dto: dto, object: object)
       set_shop_galleries(dto: dto, object: object)
     end
 

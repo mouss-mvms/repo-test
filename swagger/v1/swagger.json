@@ -4902,6 +4902,19 @@
                     "type": "string",
                     "example": "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg",
                     "description": "Required if no imageId"
+                  },
+                  "coverId": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "coverUrl": {
+                    "type": "string",
+                    "example": "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg"
+                  },
+                  "promoted": {
+                    "type": "boolean",
+                    "example": false,
+                    "description": "Selection is promoted."
                   }
                 },
                 "required": [
@@ -4936,6 +4949,26 @@
             "schema": {
               "type": "integer"
             }
+          },
+          {
+            "name": "promoted",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "description": "Selection is promoted"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of desired object per page. (default: 16)",
+            "schema": {
+              "type": "integer"
+            }
           }
         ],
         "tags": [
@@ -4966,6 +4999,10 @@
                     "page": {
                       "type": "integer",
                       "example": 1
+                    },
+                    "totalCount": {
+                      "type": "integer",
+                      "example": 250
                     },
                     "totalPages": {
                       "type": "integer",
@@ -5250,6 +5287,19 @@
                   "imageUrl": {
                     "type": "string",
                     "example": "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg"
+                  },
+                  "coverId": {
+                    "type": "integer",
+                    "example": 1
+                  },
+                  "coverUrl": {
+                    "type": "string",
+                    "example": "https:/mavillemonshopping-exemples.com/uploads/development/image/46718/file/thumb-473860fqsfsqfac939fb02d2a0263cf171.jpg"
+                  },
+                  "promoted": {
+                    "type": "boolean",
+                    "example": false,
+                    "description": "Selection is promoted."
                   }
                 }
               }
@@ -8301,6 +8351,14 @@
           "schema": {
             "type": "string"
           }
+        },
+        {
+          "name": "X-client-id",
+          "in": "header",
+          "required": true,
+          "schema": {
+            "type": "string"
+          }
         }
       ],
       "put": {
@@ -8308,7 +8366,6 @@
         "tags": [
           "Shops"
         ],
-        "description": "Update a shop",
         "security": [
           {
             "authorization": [
@@ -8317,14 +8374,7 @@
           }
         ],
         "parameters": [
-          {
-            "name": "X-client-id",
-            "in": "header",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
+
         ],
         "responses": {
           "200": {
@@ -8503,8 +8553,6 @@
                       "locality",
                       "country",
                       "postalCode",
-                      "latitude",
-                      "longitude",
                       "inseeCode"
                     ]
                   }
@@ -8517,6 +8565,298 @@
                   "mobileNumber",
                   "siret"
                 ]
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update Shop",
+        "tags": [
+          "Shops"
+        ],
+        "security": [
+          {
+            "authorization": [
+
+            ]
+          }
+        ],
+        "parameters": [
+
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "$ref": "#/components/schemas/Shop"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "The syntax of the query is incorrect.",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Bad Request",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 400,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Unauthorized",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 401,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Forbidden",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 403,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detail": {
+                      "type": "string",
+                      "example": "Resource not found",
+                      "description": "Message of an error."
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Not found",
+                      "description": "Display description error."
+                    },
+                    "status": {
+                      "type": "integer",
+                      "example": 404,
+                      "description": "Status of an error."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Jardin Local",
+                    "description": "Display name of a shop."
+                  },
+                  "avatarId": {
+                    "type": "integer",
+                    "example": 1,
+                    "description": "Avatar id of a shop"
+                  },
+                  "avatarUrl": {
+                    "type": "string",
+                    "example": "http://www.image.com/image.jpg",
+                    "description": "Avatar url of a shop"
+                  },
+                  "coverId": {
+                    "type": "integer",
+                    "example": 1,
+                    "description": "Cover id of a shop"
+                  },
+                  "coverUrl": {
+                    "type": "string",
+                    "example": "http://www.image.com/image.jpg",
+                    "description": "Cover url of a shop"
+                  },
+                  "thumbnailId": {
+                    "type": "integer",
+                    "example": 1,
+                    "description": "Thumbnail id of a shop"
+                  },
+                  "thumbnailUrl": {
+                    "type": "string",
+                    "example": "http://www.image.com/image.jpg",
+                    "description": "Thumbnail url of a shop"
+                  },
+                  "imageIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "description": "Image ids of shop"
+                  },
+                  "imageUrls": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "example": "http://www.image.com/image.jpg"
+                    },
+                    "description": "Images of a shop"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "L'email d'une boutique",
+                    "description": "Shop's email"
+                  },
+                  "mobileNumber": {
+                    "type": "string",
+                    "example": "0677777777",
+                    "description": "Shop's mobile number"
+                  },
+                  "description": {
+                    "type": "string",
+                    "example": "La description d'une boutique",
+                    "description": "Shop's description"
+                  },
+                  "baseline": {
+                    "type": "string",
+                    "example": "Ma boutique est top",
+                    "description": "Shop's baseline"
+                  },
+                  "siret": {
+                    "type": "string",
+                    "example": "75409821800029",
+                    "description": "Shop's siret"
+                  },
+                  "facebookLink": {
+                    "type": "string",
+                    "example": "http://www.facebook.com/boutique",
+                    "description": "Shop's facebook link"
+                  },
+                  "instagramLink": {
+                    "type": "string",
+                    "example": "http://www.instagram.com/boutique",
+                    "description": "Shop's instagram link"
+                  },
+                  "websiteLink": {
+                    "type": "string",
+                    "example": "http://www.boutique.com/",
+                    "description": "Shop's website link"
+                  },
+                  "address": {
+                    "type": "object",
+                    "properties": {
+                      "streetNumber": {
+                        "type": "string",
+                        "example": "33",
+                        "description": "Address's street number"
+                      },
+                      "route": {
+                        "type": "string",
+                        "example": "Rue Georges Bonnac",
+                        "description": "Address's route"
+                      },
+                      "locality": {
+                        "type": "string",
+                        "example": "Bordeaux",
+                        "description": "Address's locality"
+                      },
+                      "country": {
+                        "type": "string",
+                        "example": "France",
+                        "description": "Address's country"
+                      },
+                      "postalCode": {
+                        "type": "string",
+                        "example": "33000",
+                        "description": "Address's postal code"
+                      },
+                      "latitude": {
+                        "type": "number",
+                        "example": 44.82408,
+                        "description": "Address's latitude"
+                      },
+                      "longitude": {
+                        "type": "number",
+                        "example": -0.62295,
+                        "description": "Address's longitude"
+                      },
+                      "inseeCode": {
+                        "type": "string",
+                        "example": "33063",
+                        "description": "Insee code"
+                      }
+                    },
+                    "required": [
+                      "streetNumber",
+                      "route",
+                      "locality",
+                      "country",
+                      "postalCode",
+                      "inseeCode"
+                    ]
+                  }
+                }
               }
             }
           }
@@ -11192,6 +11532,14 @@
             "type": "integer",
             "example": 100,
             "description": "Number of a selection's produ"
+          },
+          "cover": {
+            "$ref": "#/components/schemas/Image"
+          },
+          "promoted": {
+            "type": "boolean",
+            "example": false,
+            "description": "Selection is promoted."
           }
         }
       },
@@ -11274,7 +11622,7 @@
                 "example": "https://path/to/wide-format.jpg"
               }
             },
-            "description": "Avatar image of a shops"
+            "description": "Avatar image of a shop"
           },
           "cover": {
             "type": "object",
@@ -11304,7 +11652,37 @@
                 "example": "https://path/to/wide-format.jpg"
               }
             },
-            "description": "Cover image of a shops"
+            "description": "Cover image of a shop"
+          },
+          "mainImage": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "example": 42
+              },
+              "originalUrl": {
+                "type": "string",
+                "example": "https://path/to/original-image.jpg"
+              },
+              "miniUrl": {
+                "type": "string",
+                "example": "https://path/to/mini-format.jpg"
+              },
+              "thumbUrl": {
+                "type": "string",
+                "example": "https://path/to/thumb-format.jpg"
+              },
+              "squareUrl": {
+                "type": "string",
+                "example": "https://path/to/square-format.jpg"
+              },
+              "wideUrl": {
+                "type": "string",
+                "example": "https://path/to/wide-format.jpg"
+              }
+            },
+            "description": "Main image of a shop"
           },
           "description": {
             "type": "string",

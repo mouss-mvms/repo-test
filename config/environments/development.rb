@@ -67,4 +67,8 @@ Rails.application.configure do
 
   # Avoid belongs_to required by defaults
   config.active_record.belongs_to_required_by_default = false
+
+  log_level = ENV["LOG_LEVEL"].blank? ? :info : ENV["LOG_LEVEL"].to_sym
+  config.log_level = log_level
+
 end

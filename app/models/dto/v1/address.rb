@@ -19,7 +19,8 @@ module Dto
                           longitude: dto_address_request.longitude,
                           validate_firstname_lastname_phone: false,
                           addressable_id: dto_address_request.addressable_id,
-                          addressable_type: dto_address_request.addressable_type
+                          addressable_type: dto_address_request.addressable_type,
+                          city: City.find_by(insee_code: dto_address_request.insee_code)
                         })
       end
 
