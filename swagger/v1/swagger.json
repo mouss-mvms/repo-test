@@ -8541,8 +8541,6 @@
                       "locality",
                       "country",
                       "postalCode",
-                      "latitude",
-                      "longitude",
                       "inseeCode"
                     ]
                   }
@@ -8843,8 +8841,6 @@
                       "locality",
                       "country",
                       "postalCode",
-                      "latitude",
-                      "longitude",
                       "inseeCode"
                     ]
                   }
