@@ -4951,6 +4951,18 @@
             }
           },
           {
+            "name": "promoted",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "description": "Selection is promoted"
+            }
+          },
+          {
             "name": "limit",
             "in": "query",
             "description": "Number of desired object per page. (default: 16)",
