@@ -1,13 +1,12 @@
 module Api
   module V1
     class SelectionsController < ApplicationController
-      include Pagy::Backend
       before_action :uncrypt_token, only: [:create, :patch, :destroy]
       before_action :retrieve_user, only: [:create, :patch, :destroy]
 
       def index
-        per_page = params[:limit] || 16
-        pagination, selections = pagy(Selection.online, items: per_page)
+        params[:limit] ||= Pagy::DEFAULT[:items].to_i
+        pagination, selections = pagy(Selection.online, items: params[:limit])
         response = { selections: selections.map { |selection| Dto::V1::Selection::Response.create(selection).to_h }, page: pagination.page, totalPages: pagination.pages, totalCount: pagination.count }
         render json: response, status: :ok
       end
@@ -30,8 +29,6 @@ module Api
             raise ApplicationController::NotFound.new(e)
           rescue ActiveRecord::RecordNotSaved, ArgumentError => e
             raise ApplicationController::UnprocessableEntity.new(e)
-          rescue => e
-            raise ApplicationController::InternalServerError.new()
           else
             return render json: Dto::V1::Selection::Response.create(selection).to_h, status: :created
           end
@@ -70,6 +67,9 @@ module Api
         hash[:home_page] = params[:homePage]
         hash[:event] = params[:event]
         hash[:state] = params[:state]
+        hash[:cover_url] = params[:coverUrl]
+        hash[:cover_id] = params[:coverId]
+        hash[:promoted] = params[:promoted]
         hash
       end
 
@@ -89,6 +89,9 @@ module Api
         hash[:home_page] = params[:homePage]
         hash[:event] = params[:event]
         hash[:state] = params[:state]
+        hash[:cover_url] = params[:coverUrl]
+        hash[:cover_id] = params[:coverId]
+        hash[:promoted] = params[:promoted]
         hash
       end
     end

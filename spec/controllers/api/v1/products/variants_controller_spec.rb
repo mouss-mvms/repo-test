@@ -256,6 +256,7 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
 
       context "product does not exist" do
         it "should return 404 HTTP status" do
+          wrong_id = 0
           variant_params = {
             basePrice: 379,
             weight: 1,
@@ -282,9 +283,9 @@ RSpec.describe Api::V1::Products::VariantsController, type: :controller do
               externalVariantId: "34ty"
             }
           }
-          post :create_offline, params: variant_params.merge(id: 69)
+          post :create_offline, params: variant_params.merge(id: wrong_id)
           should respond_with(404)
-          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Product with 'id'=69").to_h.to_json)
+          expect(response.body).to eq(Dto::Errors::NotFound.new("Couldn't find Product with 'id'=#{wrong_id}").to_h.to_json)
         end
       end
 
