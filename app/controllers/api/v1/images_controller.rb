@@ -10,12 +10,12 @@ module Api
         threads = []
         files = params[:files]
         begin
-          files.each do |file|
+          files.each_with_index do |file, index|
             threads << Thread.new {
               raise ApplicationController::UnpermittedParameter.new("Incorrect File Format") unless file.is_a?(ActionDispatch::Http::UploadedFile)
               image_dto = Dto::V1::Image::Request.create(image: file)
               Rails.application.executor.wrap do # Avoid Circular dependency detected while autoloading constant Image
-                image = Image.create!(file: image_dto.tempfile)
+                image = Image.create!(file: image_dto.tempfile, position: index)
                 Thread.current["image_id"] = image.id
               end
             }
@@ -26,7 +26,7 @@ module Api
           image_ids = ActiveSupport::Dependencies.interlock.permit_concurrent_loads do # Enable Image to be invoked by multiple threads at the same time
             threads.map { |thread| thread.join(); thread[:image_id] }
           end
-          response = Image.where(id: image_ids).map { |image| Dto::V1::Image::Response.create(image).to_h }
+          response = Image.where(id: image_ids).order(position: :asc).map { |image| Dto::V1::Image::Response.create(image).to_h }
           render json: response, status: :created
         end
       end

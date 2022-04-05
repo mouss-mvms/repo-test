@@ -75,7 +75,7 @@ gem 'newrelic_rpm'
 gem 'kaminari'
 
 source 'https://gem.fury.io/mvms/' do
-  gem 'mvms-core', '2.5.596'
+  gem 'mvms-core', '2.5.599'
 end
 
 # Data migration

@@ -6,9 +6,9 @@ module Dao
       shop.email = dto_shop_request.email unless dto_shop_request.email.blank?
       shop.siret = dto_shop_request.siret unless dto_shop_request.siret.blank?
       shop.mobile_phone_number = dto_shop_request.mobile_number unless dto_shop_request.mobile_number.blank?
-      shop.facebook_url = dto_shop_request.facebook_link unless dto_shop_request.facebook_link.blank?
-      shop.instagram_url = dto_shop_request.instagram_link unless dto_shop_request.instagram_link.blank?
-      shop.url = dto_shop_request.website_link unless dto_shop_request.website_link.blank?
+      shop.facebook_url = dto_shop_request.facebook_link if dto_shop_request.facebook_link
+      shop.instagram_url = dto_shop_request.instagram_link if dto_shop_request.instagram_link
+      shop.url = dto_shop_request.website_link if dto_shop_request.website_link
 
       set_images(dto: dto_shop_request, object: shop)
       set_description(dto_shop_request, shop) if dto_shop_request.description

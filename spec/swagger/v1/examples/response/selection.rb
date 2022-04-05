@@ -24,7 +24,9 @@ module V1
               },
               order: { type: :integer, example: 79, description: "Order of the  selection." },
               image: { '$ref': '#/components/schemas/Image' },
-              productsCount: { type: :integer, example: 100, description: "Number of a selection's produ" }
+              productsCount: { type: :integer, example: 100, description: "Number of a selection's produ" },
+              cover: { '$ref': '#/components/schemas/Image' },
+              promoted: { type: :boolean, example: false, description: 'Selection is promoted.' }
             }
           }
         end
