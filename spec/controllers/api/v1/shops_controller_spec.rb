@@ -1367,7 +1367,7 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
     after(:all) do
       @user_token = nil
       @user.destroy
-      @shop.addresses.destroy_all
+      Address.where(addressable_id: @shop.addresses, addressable_type: 'Shop').destroy_all
       @shop.destroy
     end
 
@@ -1810,6 +1810,49 @@ RSpec.describe Api::V1::ShopsController, type: :controller do
         expect(response).to have_http_status(:forbidden)
         expect(response.body).to eq(Dto::Errors::Forbidden.new.to_h.to_json)
       end
+    end
+
+    context 'Bug #25u1950' do
+
+      context "When facebookLink param is set but value is nil" do
+        it 'should return 200 HTTP Status with facebookLink reset' do
+          request.headers["HTTP_X_CLIENT_ID"] = @user_token
+          @shop.update(facebook_url: 'https://www.facebook.com/tests')
+
+          patch :patch, params: {id: @shop.id, facebookLink: nil}
+
+          expect(response).to have_http_status(:ok)
+          result = JSON.parse(response.body, symbolize_names: true)
+          expect(result[:facebookLink].blank?).to be_truthy
+        end
+      end
+
+      context "When instagramLink param is set but value is nil" do
+        it 'should return 200 HTTP Status with instagramLink reset' do
+          request.headers["HTTP_X_CLIENT_ID"] = @user_token
+          @shop.update(instagram_url: 'https://www.instagram.com/tests')
+
+          patch :patch, params: {id: @shop.id, instagramLink: nil}
+
+          expect(response).to have_http_status(:ok)
+          result = JSON.parse(response.body, symbolize_names: true)
+          expect(result[:instagramLink].blank?).to be_truthy
+        end
+      end
+
+      context "When websiteLink param is set but value is nil" do
+        it 'should return 200 HTTP Status with websiteLink reset' do
+          request.headers["HTTP_X_CLIENT_ID"] = @user_token
+          @shop.update(url: 'https://www.website.com/tests')
+
+          patch :patch, params: {id: @shop.id, websiteLink: nil}
+
+          expect(response).to have_http_status(:ok)
+          result = JSON.parse(response.body, symbolize_names: true)
+          expect(result[:websiteLink].blank?).to be_truthy
+        end
+      end
+
     end
   end
 

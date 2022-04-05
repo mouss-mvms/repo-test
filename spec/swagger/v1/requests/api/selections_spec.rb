@@ -69,6 +69,7 @@ RSpec.describe 'api/v1/selections', swagger_doc: 'v1/swagger.json', type: :reque
     get('List all selections for admin users.') do
       parameter name: 'x-client-id', in: :header, type: :string, description: 'Auth token of user', required: true
       parameter name: :page, in: :query, type: :integer, example: 1, description: 'Number of desired page.', required: true
+      parameter name: :promoted, in: :query, schema: { type: :string, enum: ["true", "false"], description: 'Selection is promoted' }
       parameter name: :limit, in: :query, type: :integer, description: 'Number of desired object per page. (default: 16)'
 
       tags 'Selections'

@@ -139,6 +139,8 @@ RSpec.describe 'api/v1/shops', swagger_doc: 'v1/swagger.json', type: :request do
           avatarUrl: { type: :string, example: 'http://www.image.com/image.jpg', description: 'Avatar url of a shop'},
           coverId: { type: :integer, example: 1, description: 'Cover id of a shop'},
           coverUrl: { type: :string, example: 'http://www.image.com/image.jpg', description: 'Cover url of a shop'},
+          thumbnailId: { type: :integer, example: 1, description: 'Thumbnail id of a shop'},
+          thumbnailUrl: { type: :string, example: 'http://www.image.com/image.jpg', description: 'Thumbnail url of a shop'},
           imageIds: {
             type: :array,
             items: {

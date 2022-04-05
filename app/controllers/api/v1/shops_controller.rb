@@ -62,9 +62,15 @@ module Api
         update_params[:siret] = params[:siret]
         update_params[:description] = params[:description]
         update_params[:baseline] = params[:baseline]
-        update_params[:facebook_link] = params[:facebookLink]
-        update_params[:instagram_link] = params[:instagramLink]
-        update_params[:website_link] = params[:websiteLink]
+        if params.key?(:facebookLink)
+          update_params[:facebook_link] = params[:facebookLink].blank? ? "" : params[:facebookLink]
+        end
+        if params.key?(:instagramLink)
+          update_params[:instagram_link] = params[:instagramLink].blank? ? "" : params[:instagramLink]
+        end
+        if params.key?(:websiteLink)
+          update_params[:website_link] = params[:websiteLink].blank? ? "" : params[:websiteLink]
+        end
         update_params[:address] = {}
         if params[:address]
           address_param = params[:address]
