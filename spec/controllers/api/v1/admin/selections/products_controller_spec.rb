@@ -46,6 +46,16 @@ RSpec.describe Api::V1::Admin::Selections::ProductsController do
         end
       end
 
+      context "bad x-client-id" do
+        it "should return 401 HTTP status" do
+          selection = create(:selection)
+          request.headers['x-client-id'] = "BadTokenUser"
+          get :index, params: { id: selection.id }
+          should respond_with(401)
+          expect(response.body).to eq(Dto::Errors::Unauthorized.new.to_h.to_json)
+        end
+      end
+      
       context "user doesn't exist" do
         it "should return 403 HTTP status" do
           selection = create(:selection)

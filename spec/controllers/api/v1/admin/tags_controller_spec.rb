@@ -109,6 +109,15 @@ RSpec.describe Api::V1::Admin::TagsController do
       end
     end
 
+    context "bad x-client-id" do
+      it "should return 401 HTTP status" do
+        request.headers['x-client-id'] = "BadTokenUser"
+        post :create, params: { id: 44 }
+        should respond_with(401)
+        expect(response.body).to eq(Dto::Errors::Unauthorized.new.to_h.to_json)
+      end
+    end
+
     context "user doesn't exist" do
       it "should return 403 HTTP status" do
         user = create(:user)

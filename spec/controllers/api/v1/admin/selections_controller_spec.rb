@@ -91,6 +91,15 @@ RSpec.describe Api::V1::Admin::SelectionsController do
         end
       end
 
+      context "bad x-client-id" do
+        it "should return 401 HTTP status" do
+          request.headers['x-client-id'] = "BadTokenUser"
+          get :index
+          should respond_with(401)
+          expect(response.body).to eq(Dto::Errors::Unauthorized.new.to_h.to_json)
+        end
+      end
+
       context "user doesn't exist" do
         it "should return 403 HTTP status" do
           user = create(:user)
@@ -160,6 +169,15 @@ RSpec.describe Api::V1::Admin::SelectionsController do
     describe "Bad Authentication" do
       context "no x-client-id" do
         it "should return 401 HTTP status" do
+          get :show, params: { id: 44 }
+          should respond_with(401)
+          expect(response.body).to eq(Dto::Errors::Unauthorized.new.to_h.to_json)
+        end
+      end
+
+      context "bad x-client-id" do
+        it "should return 401 HTTP status" do
+          request.headers['x-client-id'] = "BadTokenUser"
           get :show, params: { id: 44 }
           should respond_with(401)
           expect(response.body).to eq(Dto::Errors::Unauthorized.new.to_h.to_json)
