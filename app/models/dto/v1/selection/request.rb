@@ -2,7 +2,7 @@ module Dto
   module V1
     module Selection
       class Request
-        attr_accessor :id, :name, :slug, :description, :image_url, :image_id, :tag_ids, :start_at, :end_at, :home_page, :event, :state, :cover_id, :cover_url, :promoted
+        attr_accessor :id, :name, :slug, :description, :image_url, :image_id, :tag_ids, :start_at, :end_at, :home_page, :event, :state, :cover_id, :cover_url, :promoted, :long_description
 
         def initialize(**args)
           @id = args[:id]
@@ -21,6 +21,7 @@ module Dto
           @cover_url = args[:cover_url]
           @cover_id = args[:cover_id]
           @promoted = args[:promoted] || false
+          @long_description = args[:long_description]
         end
       end
     end

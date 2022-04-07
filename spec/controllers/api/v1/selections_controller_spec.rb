@@ -58,251 +58,208 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
 
   describe "POST #create" do
     context "All ok" do
+      before :all do
+        @tag1 = create(:tag)
+        @tag2 = create(:tag)
+        @tag3 = create(:tag)
+        @params = {
+          name: "Selection Test",
+          description: "Ceci est discription test.",
+          tagIds: [@tag1.id, @tag2.id, @tag3.id],
+          startAt: "17/05/2021",
+          endAt: "18/06/2021",
+          homePage: true,
+          event: true,
+          state: "active",
+          long_description: "My money's in that office, right? If she start giving me some bullshit about it ain't there, and we got to go someplace else and get it, I'm gonna shoot you in the head then and there. Then I'm gonna shoot that bitch in the kneecaps, find out where my goddamn money is. She gonna tell me too. Hey, look at me when I'm talking to you, motherfucker. You listen: we go in there, and that nigga Winston or anybody else is in there, you the first motherfucker to get shot. You understand?
+          Look, just because I don't be givin' no man a foot massage don't make it right for Marsellus to throw Antwone into a glass motherfuckin' house, fuckin' up the way the nigger talks. Motherfucker do that shit to me, he better paralyze my ass, 'cause I'll kill the motherfucker, know what I'm sayin'?
+          Now that there is the Tec-9, a crappy spray gun from South Miami. This gun is advertised as the most popular gun in American crime. Do you believe that shit? It actually says that in the little book that comes with it: the most popular gun in American crime. Like they're actually proud of that shit."
+        }
+        @admin = create(:admin_user)
+        @admin_token = generate_token(@admin)
+        @image = create(:image)
+        @cover = create(:image)
+      end
+
+      after :all do
+        Selection.destroy_all
+        @tag1.destroy
+        @tag2.destroy
+        @tag3.destroy
+        @image.destroy
+        @cover.destroy
+        @params = nil
+        @admin.destroy
+        @admin_token = nil
+      end
+
       context "when imageUrl" do
         it 'should return 201 HTTP status code with selection object' do
-          tag1 = create(:tag)
-          tag2 = create(:tag)
-          tag3 = create(:tag)
-          @create_params = {
-            name: "Selection Test",
-            description: "Ceci est discription test.",
-            tagIds: [tag1.id, tag2.id, tag3.id],
-            startAt: "17/05/2021",
-            endAt: "18/06/2021",
-            homePage: true,
-            event: true,
-            state: "active",
-            imageUrl: "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg"
-          }
+          create_params = @params.clone
+          create_params[:imageUrl] = "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg"
 
-          admin_user = create(:admin_user)
-          request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
+          request.headers['HTTP_X_CLIENT_ID'] = @admin_token
 
-          post :create, params: @create_params
+          post :create, params: create_params
 
           expect(response).to have_http_status(201)
           response_body = JSON.parse(response.body, symbolize_names: true)
-          expect(response_body[:name]).to eq(@create_params[:name])
-          expect(response_body[:description]).to eq(@create_params[:description])
-          expect(response_body[:tagIds]).to eq(@create_params[:tagIds])
+          expect(response_body[:name]).to eq(create_params[:name])
+          expect(response_body[:description]).to eq(create_params[:description])
+          expect(response_body[:tagIds]).to eq(create_params[:tagIds])
           expect(response_body[:startAt]).to_not be_empty
           expect(response_body[:endAt]).to_not be_empty
-          expect(response_body[:homePage]).to eq(@create_params[:homePage])
-          expect(response_body[:event]).to eq(@create_params[:event])
-          expect(response_body[:state]).to eq(@create_params[:state])
+          expect(response_body[:homePage]).to eq(create_params[:homePage])
+          expect(response_body[:event]).to eq(create_params[:event])
+          expect(response_body[:state]).to eq(create_params[:state])
           expect(response_body[:image]).to_not be_empty
           expect(response_body[:cover]).to be_empty
           expect(response_body[:promoted]).to be_falsey
+          expect(response_body[:longDescription]).to eq(create_params[:longDescription])
         end
       end
 
       context "when imageId" do
         it 'should return 201 HTTP status code with selection object' do
-          image = create(:image)
-          tag1 = create(:tag)
-          tag2 = create(:tag)
-          tag3 = create(:tag)
-          @create_params = {
-            name: "Selection Test",
-            description: "Ceci est discription test.",
-            tagIds: [tag1.id, tag2.id, tag3.id],
-            startAt: "17/05/2021",
-            endAt: "18/06/2021",
-            homePage: true,
-            event: true,
-            state: "active",
-            imageId: image.id
-          }
+          create_params = @params.clone
+          create_params[:imageId] = @image.id
 
-          admin_user = create(:admin_user)
-          request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
-
-          post :create, params: @create_params
+          request.headers['HTTP_X_CLIENT_ID'] = @admin_token
+          post :create, params: create_params
 
           expect(response).to have_http_status(201)
           response_body = JSON.parse(response.body, symbolize_names: true)
-          expect(response_body[:name]).to eq(@create_params[:name])
-          expect(response_body[:description]).to eq(@create_params[:description])
-          expect(response_body[:tagIds]).to eq(@create_params[:tagIds])
+          expect(response_body[:name]).to eq(create_params[:name])
+          expect(response_body[:description]).to eq(create_params[:description])
+          expect(response_body[:tagIds]).to eq(create_params[:tagIds])
           expect(response_body[:startAt]).to_not be_empty
           expect(response_body[:endAt]).to_not be_empty
-          expect(response_body[:homePage]).to eq(@create_params[:homePage])
-          expect(response_body[:event]).to eq(@create_params[:event])
-          expect(response_body[:state]).to eq(@create_params[:state])
+          expect(response_body[:homePage]).to eq(create_params[:homePage])
+          expect(response_body[:event]).to eq(create_params[:event])
+          expect(response_body[:state]).to eq(create_params[:state])
           expect(response_body[:image]).to_not be_empty
-          expect(response_body[:image][:originalUrl]).to eq(image.file_url)
-          expect(response_body[:image][:id]).to eq(@create_params[:imageId])
+          expect(response_body[:image][:originalUrl]).to eq(@image.file_url)
+          expect(response_body[:image][:id]).to eq(create_params[:imageId])
           expect(response_body[:cover]).to be_empty
           expect(response_body[:promoted]).to be_falsey
+          expect(response_body[:longDescription]).to eq(create_params[:longDescription])
         end
       end
 
       context "when imageId and imageUrl are both sent" do
         it "should return 201 HTTP status code with selection object with only imageId" do
-          image = create(:image)
-          tag1 = create(:tag)
-          tag2 = create(:tag)
-          tag3 = create(:tag)
-          @create_params = {
-            name: "Selection Test",
-            description: "Ceci est discription test.",
-            tagIds: [tag1.id, tag2.id, tag3.id],
-            startAt: "17/05/2021",
-            endAt: "18/06/2021",
-            homePage: true,
-            event: true,
-            state: "active",
-            imageId: image.id,
-            imageUrl: "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg"
-          }
+          create_params = @params.clone
+          create_params[:imageId] = @image.id
+          create_params[:imageUrl] =  "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg",
 
-          admin_user = create(:admin_user)
-          request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
+          request.headers['HTTP_X_CLIENT_ID'] = @admin_token
 
-          post :create, params: @create_params
+          post :create, params: create_params
 
           expect(response).to have_http_status(201)
           response_body = JSON.parse(response.body, symbolize_names: true)
-          expect(response_body[:name]).to eq(@create_params[:name])
-          expect(response_body[:description]).to eq(@create_params[:description])
-          expect(response_body[:tagIds]).to eq(@create_params[:tagIds])
+          expect(response_body[:name]).to eq(create_params[:name])
+          expect(response_body[:description]).to eq(create_params[:description])
+          expect(response_body[:tagIds]).to eq(create_params[:tagIds])
           expect(response_body[:startAt]).to_not be_empty
           expect(response_body[:endAt]).to_not be_empty
-          expect(response_body[:homePage]).to eq(@create_params[:homePage])
-          expect(response_body[:event]).to eq(@create_params[:event])
-          expect(response_body[:state]).to eq(@create_params[:state])
+          expect(response_body[:homePage]).to eq(create_params[:homePage])
+          expect(response_body[:event]).to eq(create_params[:event])
+          expect(response_body[:state]).to eq(create_params[:state])
           expect(response_body[:image]).to_not be_empty
-          expect(response_body[:image][:originalUrl]).to eq(image.file_url)
+          expect(response_body[:image][:originalUrl]).to eq(@image.file_url)
           expect(response_body[:cover]).to be_empty
           expect(response_body[:promoted]).to be_falsey
+          expect(response_body[:longDescription]).to eq(create_params[:longDescription])
         end
       end
-  
+
       context "when coverUrl" do
         it 'should return 201 HTTP status code with selection object' do
-          tag1 = create(:tag)
-          tag2 = create(:tag)
-          tag3 = create(:tag)
-          @create_params = {
-            name: "Selection Test",
-            description: "Ceci est discription test.",
-            tagIds: [tag1.id, tag2.id, tag3.id],
-            startAt: "17/05/2021",
-            endAt: "18/06/2021",
-            homePage: true,
-            event: true,
-            state: "active",
-            imageUrl: "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg",
-            coverUrl: "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg"
-          }
+          create_params = @params.clone
+          create_params[:imageUrl] = "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg"
+          create_params[:coverUrl] = "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg"
 
-          admin_user = create(:admin_user)
-          request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
+          request.headers['HTTP_X_CLIENT_ID'] = @admin_token
 
-          post :create, params: @create_params
+          post :create, params: create_params
 
           expect(response).to have_http_status(201)
           response_body = JSON.parse(response.body, symbolize_names: true)
-          expect(response_body[:name]).to eq(@create_params[:name])
-          expect(response_body[:description]).to eq(@create_params[:description])
-          expect(response_body[:tagIds]).to eq(@create_params[:tagIds])
+          expect(response_body[:name]).to eq(create_params[:name])
+          expect(response_body[:description]).to eq(create_params[:description])
+          expect(response_body[:tagIds]).to eq(create_params[:tagIds])
           expect(response_body[:startAt]).to_not be_empty
           expect(response_body[:endAt]).to_not be_empty
-          expect(response_body[:homePage]).to eq(@create_params[:homePage])
-          expect(response_body[:event]).to eq(@create_params[:event])
-          expect(response_body[:state]).to eq(@create_params[:state])
+          expect(response_body[:homePage]).to eq(create_params[:homePage])
+          expect(response_body[:event]).to eq(create_params[:event])
+          expect(response_body[:state]).to eq(create_params[:state])
           expect(response_body[:image]).to_not be_empty
           expect(response_body[:cover]).to_not be_empty
           expect(response_body[:promoted]).to be_falsey
+          expect(response_body[:longDescription]).to eq(create_params[:longDescription])
         end
       end
 
       context "when coverId" do
         it 'should return 201 HTTP status code with selection object' do
-          cover = create(:image)
-          tag1 = create(:tag)
-          tag2 = create(:tag)
-          tag3 = create(:tag)
-          @create_params = {
-            name: "Selection Test",
-            description: "Ceci est discription test.",
-            tagIds: [tag1.id, tag2.id, tag3.id],
-            startAt: "17/05/2021",
-            endAt: "18/06/2021",
-            homePage: true,
-            event: true,
-            state: "active",
-            imageUrl: "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg",
-            coverId: cover.id
-          }
+          create_params = @params.clone
+          create_params[:imageUrl] = "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg"
+          create_params[:coverId] = @cover.id
 
-          admin_user = create(:admin_user)
-          request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
+          request.headers['HTTP_X_CLIENT_ID'] = @admin_token
 
-          post :create, params: @create_params
+          post :create, params: create_params
 
           expect(response).to have_http_status(201)
           response_body = JSON.parse(response.body, symbolize_names: true)
-          expect(response_body[:name]).to eq(@create_params[:name])
-          expect(response_body[:description]).to eq(@create_params[:description])
-          expect(response_body[:tagIds]).to eq(@create_params[:tagIds])
+          expect(response_body[:name]).to eq(create_params[:name])
+          expect(response_body[:description]).to eq(create_params[:description])
+          expect(response_body[:tagIds]).to eq(create_params[:tagIds])
           expect(response_body[:startAt]).to_not be_empty
           expect(response_body[:endAt]).to_not be_empty
-          expect(response_body[:homePage]).to eq(@create_params[:homePage])
-          expect(response_body[:event]).to eq(@create_params[:event])
-          expect(response_body[:state]).to eq(@create_params[:state])
+          expect(response_body[:homePage]).to eq(create_params[:homePage])
+          expect(response_body[:event]).to eq(create_params[:event])
+          expect(response_body[:state]).to eq(create_params[:state])
           expect(response_body[:image]).to_not be_empty
           expect(response_body[:cover]).to_not be_empty
-          expect(response_body[:cover][:originalUrl]).to eq(cover.file_url)
-          expect(response_body[:cover][:id]).to eq(@create_params[:coverId])
+          expect(response_body[:cover][:originalUrl]).to eq(@cover.file_url)
+          expect(response_body[:cover][:id]).to eq(create_params[:coverId])
           expect(response_body[:promoted]).to be_falsey
+          expect(response_body[:longDescription]).to eq(create_params[:longDescription])
         end
       end
 
       context "when coverId and coverUrl are both sent" do
         it "should return 201 HTTP status code with selection object with only coverId" do
-          image = create(:image)
-          cover = create(:image)
-          tag1 = create(:tag)
-          tag2 = create(:tag)
-          tag3 = create(:tag)
-          @create_params = {
-            name: "Selection Test",
-            description: "Ceci est discription test.",
-            tagIds: [tag1.id, tag2.id, tag3.id],
-            startAt: "17/05/2021",
-            endAt: "18/06/2021",
-            homePage: true,
-            event: true,
-            state: "active",
-            imageId: image.id,
-            imageUrl: "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg",
-            coverId: cover.id,
-            coverUrl: "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg"
-          }
+          create_params = @params.clone
+          create_params[:imageUrl] = "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg"
+          create_params[:imageId] = @image.id
+          create_params[:coverUrl] = "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg"
+          create_params[:coverId] = @cover.id
 
-          admin_user = create(:admin_user)
-          request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
+          request.headers['HTTP_X_CLIENT_ID'] = @admin_token
 
-          post :create, params: @create_params
+          post :create, params: create_params
 
           expect(response).to have_http_status(201)
           response_body = JSON.parse(response.body, symbolize_names: true)
-          expect(response_body[:name]).to eq(@create_params[:name])
-          expect(response_body[:description]).to eq(@create_params[:description])
-          expect(response_body[:tagIds]).to eq(@create_params[:tagIds])
+          expect(response_body[:name]).to eq(create_params[:name])
+          expect(response_body[:description]).to eq(create_params[:description])
+          expect(response_body[:tagIds]).to eq(create_params[:tagIds])
           expect(response_body[:startAt]).to_not be_empty
           expect(response_body[:endAt]).to_not be_empty
-          expect(response_body[:homePage]).to eq(@create_params[:homePage])
-          expect(response_body[:event]).to eq(@create_params[:event])
-          expect(response_body[:state]).to eq(@create_params[:state])
+          expect(response_body[:homePage]).to eq(create_params[:homePage])
+          expect(response_body[:event]).to eq(create_params[:event])
+          expect(response_body[:state]).to eq(create_params[:state])
           expect(response_body[:image]).to_not be_empty
-          expect(response_body[:image][:originalUrl]).to eq(image.file_url)
-          expect(response_body[:image][:id]).to eq(@create_params[:imageId])
+          expect(response_body[:image][:originalUrl]).to eq(@image.file_url)
+          expect(response_body[:image][:id]).to eq(create_params[:imageId])
           expect(response_body[:cover]).to_not be_empty
-          expect(response_body[:cover][:originalUrl]).to eq(cover.file_url)
-          expect(response_body[:cover][:id]).to eq(@create_params[:coverId])
+          expect(response_body[:cover][:originalUrl]).to eq(@cover.file_url)
+          expect(response_body[:cover][:id]).to eq(create_params[:coverId])
           expect(response_body[:promoted]).to be_falsey
+          expect(response_body[:longDescription]).to eq(create_params[:longDescription])
         end
       end
     end
@@ -437,29 +394,45 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
 
   describe "PATCH #patch" do
     context "All ok" do
-      before(:each) do
-        admin_user = create(:admin_user)
-        request.headers['HTTP_X_CLIENT_ID'] = generate_token(admin_user)
+      before :all do
+        @admin_user = create(:admin_user)
+        @admin_token = generate_token(@admin_user)
+        @tag1 = create(:tag)
+        @tag2 = create(:tag)
+        @tag3 = create(:tag)
+        @params = {
+          name: "Selection Test",
+          description: "Ceci est discription test.",
+          tagIds: [@tag1.id, @tag2.id, @tag3.id],
+          startAt: "17/05/2021",
+          endAt: "18/06/2021",
+          homePage: true,
+          event: true,
+          state: "active",
+          long_description: "My money's in that office, right? If she start giving me some bullshit about it ain't there, and we got to go someplace else and get it, I'm gonna shoot you in the head then and there. Then I'm gonna shoot that bitch in the kneecaps, find out where my goddamn money is. She gonna tell me too. Hey, look at me when I'm talking to you, motherfucker. You listen: we go in there, and that nigga Winston or anybody else is in there, you the first motherfucker to get shot. You understand?
+          Look, just because I don't be givin' no man a foot massage don't make it right for Marsellus to throw Antwone into a glass motherfuckin' house, fuckin' up the way the nigger talks. Motherfucker do that shit to me, he better paralyze my ass, 'cause I'll kill the motherfucker, know what I'm sayin'?
+          Now that there is the Tec-9, a crappy spray gun from South Miami. This gun is advertised as the most popular gun in American crime. Do you believe that shit? It actually says that in the little book that comes with it: the most popular gun in American crime. Like they're actually proud of that shit."
+        }
+        @image = create(:image)
+        @cover = create(:image)
+      end
+
+      after :all do
+        @admin_token = nil
+        Selection.destroy_all
+        @tag1.destroy
+        @tag2.destroy
+        @tag3.destroy
+        @admin_user.destroy
       end
 
       context "with imageUrl" do
         it 'should return 200 HTTP status code with selection object' do
           selection = create(:selection)
-          tag1 = create(:tag)
-          tag2 = create(:tag)
-          tag3 = create(:tag)
-          update_params = {
-            name: "Selectiofaan Test",
-            description: "Ceci est description test.",
-            tagIds: [tag1.id, tag2.id, tag3.id],
-            startAt: "17/05/2021",
-            endAt: "18/06/2021",
-            homePage: true,
-            event: true,
-            state: "active",
-            imageUrl: "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg"
-          }
+          update_params = @params.clone
+          update_params[:imageUrl] = "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg"
 
+          request.headers['x-client-id'] = @admin_token
           post :patch, params: update_params.merge(id: selection.id)
 
           expect(response).to have_http_status(200)
@@ -473,28 +446,17 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
           expect(response_body[:event]).to eq(update_params[:event])
           expect(response_body[:state]).to eq(update_params[:state])
           expect(response_body[:image]).to_not be_empty
+          expect(response_body[:longDescription]).to eq(update_params[:longDescription])
         end
       end
 
       context "with imageId" do
         it 'should return 200 HTTP status code with selection object' do
-          image = create(:image)
           selection = create(:selection)
-          tag1 = create(:tag)
-          tag2 = create(:tag)
-          tag3 = create(:tag)
-          update_params = {
-            name: "Selectiofaan Test",
-            description: "Ceci est description test.",
-            tagIds: [tag1.id, tag2.id, tag3.id],
-            startAt: "17/05/2021",
-            endAt: "18/06/2021",
-            homePage: true,
-            event: true,
-            state: "active",
-            imageId: image.id
-          }
+          update_params = @params.clone
+          update_params[:imageId] = @image.id
 
+          request.headers['x-client-id'] = @admin_token
           post :patch, params: update_params.merge(id: selection.id)
 
           expect(response).to have_http_status(200)
@@ -508,30 +470,21 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
           expect(response_body[:event]).to eq(update_params[:event])
           expect(response_body[:state]).to eq(update_params[:state])
           expect(response_body[:image]).to_not be_empty
-          expect(response_body[:image][:originalUrl]).to eq(image.file_url)
+          expect(response_body[:image][:originalUrl]).to eq(@image.file_url)
+          expect(response_body[:longDescription]).to eq(update_params[:longDescription])
         end
       end
 
       context "imageId and imagUrl are both sent" do
         it "should return 200 HTTP status code with selection object" do
           selection = create(:selection)
-          image = create(:image)
-          tag1 = create(:tag)
-          tag2 = create(:tag)
-          tag3 = create(:tag)
-          update_params = {
-            name: "Selectiofaan Test",
-            description: "Ceci est description test.",
-            tagIds: [tag1.id, tag2.id, tag3.id],
-            startAt: "17/05/2021",
-            endAt: "18/06/2021",
-            homePage: true,
-            event: true,
-            state: "active",
-            imageId: image.id,
-            imageUrl: "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg"
-          }
+          update_params = @params.clone
+          update_params[:imageUrl] = "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg"
+          update_params[:imageId] = @image.id
 
+          request.headers['x-client-id'] = @admin_token
+
+          request.headers['x-client-id'] = @admin_token
           post :patch, params: update_params.merge(id: selection.id)
 
           expect(response).to have_http_status(200)
@@ -545,30 +498,20 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
           expect(response_body[:event]).to eq(update_params[:event])
           expect(response_body[:state]).to eq(update_params[:state])
           expect(response_body[:image]).to_not be_empty
-          expect(response_body[:image][:originalUrl]).to eq(image.file_url)
+          expect(response_body[:image][:originalUrl]).to eq(@image.file_url)
+          expect(response_body[:longDescription]).to eq(update_params[:longDescription])
         end
       end
 
       context "with coverUrl" do
         it 'should return 200 HTTP status code with selection object' do
           selection = create(:selection)
-          tag1 = create(:tag)
-          tag2 = create(:tag)
-          tag3 = create(:tag)
-          update_params = {
-            name: "Selectiofaan Test",
-            description: "Ceci est description test.",
-            tagIds: [tag1.id, tag2.id, tag3.id],
-            startAt: "17/05/2021",
-            endAt: "18/06/2021",
-            homePage: true,
-            event: true,
-            state: "active",
-            imageUrl: "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg",
-            coverUrl: "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg",
-            promoted: true
-          }
+          update_params = @params.clone
+          update_params[:imageUrl] = "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg"
+          update_params[:coverUrl] = "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg"
+          update_params[:promoted] = true
 
+          request.headers['x-client-id'] = @admin_token
           post :patch, params: update_params.merge(id: selection.id)
 
           expect(response).to have_http_status(200)
@@ -583,7 +526,7 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
           expect(response_body[:state]).to eq(update_params[:state])
           expect(response_body[:image]).to_not be_empty
           expect(response_body[:cover]).to_not be_empty
-
+          expect(response_body[:longDescription]).to eq(update_params[:longDescription])
           expect(response_body[:promoted]).to eq(update_params[:promoted])
         end
       end
@@ -591,24 +534,12 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
       context "with coverId" do
         it 'should return 200 HTTP status code with selection object' do
           selection = create(:selection)
-          cover = create(:image)
-          tag1 = create(:tag)
-          tag2 = create(:tag)
-          tag3 = create(:tag)
-          update_params = {
-            name: "Selectiofaan Test",
-            description: "Ceci est description test.",
-            tagIds: [tag1.id, tag2.id, tag3.id],
-            startAt: "17/05/2021",
-            endAt: "18/06/2021",
-            homePage: true,
-            event: true,
-            state: "active",
-            imageUrl: "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg",
-            coverId: cover.id,
-            promoted: true
-          }
+          update_params = @params.clone
+          update_params[:imageUrl] = "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg"
+          update_params[:coverId] = @cover.id
+          update_params[:promoted] = true
 
+          request.headers['x-client-id'] = @admin_token
           post :patch, params: update_params.merge(id: selection.id)
 
           expect(response).to have_http_status(200)
@@ -624,35 +555,23 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
           expect(response_body[:image]).to_not be_empty
           expect(response_body[:cover]).to_not be_empty
           expect(response_body[:cover][:id]).to eq(update_params[:coverId])
-          expect(response_body[:cover][:originalUrl]).to eq(cover.file_url)
+          expect(response_body[:cover][:originalUrl]).to eq(@cover.file_url)
           expect(response_body[:promoted]).to eq(update_params[:promoted])
+          expect(response_body[:longDescription]).to eq(update_params[:longDescription])
         end
       end
 
       context "coverUrl and coverId are both sent" do
         it "should return 200 HTTP status code with selection object with only coverId" do
           selection = create(:selection)
-          image = create(:image)
-          cover = create(:image)
-          tag1 = create(:tag)
-          tag2 = create(:tag)
-          tag3 = create(:tag)
-          update_params = {
-            name: "Selectiofaan Test",
-            description: "Ceci est description test.",
-            tagIds: [tag1.id, tag2.id, tag3.id],
-            startAt: "17/05/2021",
-            endAt: "18/06/2021",
-            homePage: true,
-            event: true,
-            state: "active",
-            imageId: image.id,
-            imageUrl: "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg",
-            coverId: cover.id,
-            coverUrl: "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg",
-            promoted: true
-          }
+          update_params = @params.clone
+          update_params[:imageUrl] = "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg"
+          update_params[:imageId] = @image.id
+          update_params[:coverUrl] = "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg"
+          update_params[:coverId] = @cover.id
+          update_params[:promoted] = true
 
+          request.headers['x-client-id'] = @admin_token
           post :patch, params: update_params.merge(id: selection.id)
 
           expect(response).to have_http_status(200)
@@ -666,12 +585,13 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
           expect(response_body[:event]).to eq(update_params[:event])
           expect(response_body[:state]).to eq(update_params[:state])
           expect(response_body[:image]).to_not be_empty
-          expect(response_body[:image][:originalUrl]).to eq(image.file_url)
+          expect(response_body[:image][:originalUrl]).to eq(@image.file_url)
           expect(response_body[:image][:id]).to eq(update_params[:imageId])
           expect(response_body[:cover]).to_not be_empty
-          expect(response_body[:cover][:originalUrl]).to eq(cover.file_url)
+          expect(response_body[:cover][:originalUrl]).to eq(@cover.file_url)
           expect(response_body[:cover][:id]).to eq(update_params[:coverId])
           expect(response_body[:promoted]).to eq(update_params[:promoted])
+          expect(response_body[:longDescription]).to eq(update_params[:longDescription])
         end
       end
     end

@@ -10,7 +10,8 @@ module Dao
           is_home: dto_selection_request.home_page,
           is_event: dto_selection_request.event,
           state: dto_selection_request.state,
-          featured: dto_selection_request.promoted
+          featured: dto_selection_request.promoted,
+          long_description: dto_selection_request.long_description
         }
       )
 
@@ -63,6 +64,7 @@ module Dao
       selection.is_event = dto_selection_request.event if dto_selection_request.event.is_a?(TrueClass) || dto_selection_request.home_page.is_a?(FalseClass)
       selection.state = dto_selection_request.state if dto_selection_request.state.present?
       selection.featured = dto_selection_request.promoted if dto_selection_request.promoted.is_a?(TrueClass) || dto_selection_request.promoted.is_a?(FalseClass)
+      selection.long_description = dto_selection_request.long_description
 
       selection.save!
       selection

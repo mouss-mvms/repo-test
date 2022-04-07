@@ -70,6 +70,7 @@ module Api
         hash[:cover_url] = params[:coverUrl]
         hash[:cover_id] = params[:coverId]
         hash[:promoted] = params[:promoted]
+        hash[:long_description] = params[:longDescription]
         hash
       end
 
@@ -92,6 +93,7 @@ module Api
         hash[:cover_url] = params[:coverUrl]
         hash[:cover_id] = params[:coverId]
         hash[:promoted] = params[:promoted]
+        hash[:long_description] = params[:longDescription]
         hash
       end
     end
