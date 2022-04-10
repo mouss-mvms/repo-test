@@ -1,6 +1,6 @@
 require 'swagger_helper'
 
-RSpec.describe 'api/v1/shops/summaries', swagger_doc: 'v1/swagger.json', type: :request do
+RSpec.describe 'api/v1/shops/summaries', swagger_doc: swagger_path(version: 1), type: :request do
   path '/api/v1/shops/summaries/search' do
     post("Search shops") do
       tags 'Shops'

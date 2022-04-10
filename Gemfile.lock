@@ -269,6 +269,8 @@ GEM
       activerecord
       kaminari-core (= 1.2.1)
     kaminari-core (1.2.1)
+    knapsack_pro (3.2.1)
+      rake
     listen (3.7.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
@@ -500,6 +502,7 @@ DEPENDENCIES
   figaro
   jwt
   kaminari
+  knapsack_pro
   listen (~> 3.3)
   mvms-core (= 2.5.607)!
   newrelic_rpm
@@ -527,4 +530,4 @@ RUBY VERSION
    ruby 2.6.6p146
 
 BUNDLED WITH
-   2.3.10
+   2.3.9

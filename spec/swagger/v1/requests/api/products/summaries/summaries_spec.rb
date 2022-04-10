@@ -1,6 +1,6 @@
 require "spec_helper"
 
-RSpec.describe "api/v1/products/summaries", swagger_doc: "v1/swagger.json", type: :request do
+RSpec.describe "api/v1/products/summaries", swagger_doc: swagger_path(version: 1), type: :request do
   path '/api/v1/products/summaries/search' do
     post('Return product-summaries list with filters') do
       tags 'Products'

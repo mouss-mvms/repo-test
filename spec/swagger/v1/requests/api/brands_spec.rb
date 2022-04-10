@@ -1,6 +1,6 @@
 require 'swagger_helper'
 
-RSpec.describe 'api/v1/brands', swagger_doc: 'v1/swagger.json', type: :request do
+RSpec.describe 'api/v1/brands', swagger_doc: swagger_path(version: 1), type: :request do
 
   path '/api/v1/auth/brands' do
     parameter name: 'X-client-id', in: :header, type: :string, required: true

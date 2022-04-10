@@ -17,6 +17,13 @@ require './spec/swagger/examples/errors.rb'
 
 require 'rails_helper'
 
+def swagger_path(version:)
+  path = "v#{version.to_s}"
+  path += "/#{Rails.env}" unless Rails.env.test? || Rails.env.production?
+  path += "/swagger.json"
+  return path
+end
+
 RSpec.configure do |config|
   # Specify a root folder where Swagger JSON files are generated
   # NOTE: If you're using the rswag-api to serve API descriptions, you'll need
@@ -30,7 +37,7 @@ RSpec.configure do |config|
   # document below. You can override this behavior by adding a swagger_doc tag to the
   # the root example_group in your specs, e.g. describe '...', swagger_doc: 'v2/swagger.json'
   config.swagger_docs = {
-    'v1/swagger.json' => {
+    swagger_path(version:1) => {
       openapi: '3.0.1',
       info: {
         title: 'CATALOG API',

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'api/v1/tags', swagger_doc: 'v1/swagger.json', type: :request do
+RSpec.describe 'api/v1/tags', swagger_doc: swagger_path(version: 1), type: :request do
   path '/api/v1/auth/admin/tags' do
     parameter name: 'x-client-id', in: :header, type: :string, description: 'Auth token of user', required: true
 

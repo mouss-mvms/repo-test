@@ -1,6 +1,6 @@
 require 'swagger_helper'
 
-RSpec.describe 'api/v1/selections', swagger_doc: 'v1/swagger.json', type: :request do
+RSpec.describe 'api/v1/selections', swagger_doc: swagger_path(version: 1), type: :request do
   path '/api/v1/auth/selections' do
     parameter name: 'x-client-id', in: :header, type: :string, description: 'Auth token of user', required: true
 

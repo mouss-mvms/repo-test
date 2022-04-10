@@ -32,12 +32,16 @@ gem 'rack-cors'
 group :development, :test, :local do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
-  gem 'pry-byebug'
+  gem 'pry-byebug'  
+  gem "ruby_cowsay"
+  gem 'knapsack_pro'
+end
+
+group :development, :test, :local,:staging do
   gem "rspec-rails"
   gem "rswag-specs"
   gem "shoulda-matchers"
   gem "factory_bot"
-  gem "ruby_cowsay"
 end
 
 group :test do

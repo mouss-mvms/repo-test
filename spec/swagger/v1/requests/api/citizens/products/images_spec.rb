@@ -1,6 +1,6 @@
 require 'swagger_helper'
 
-RSpec.describe 'api/v1/citizens/products', swagger_doc: 'v1/swagger.json', type: :request do
+RSpec.describe 'api/v1/citizens/products', swagger_doc: swagger_path(version: 1), type: :request do
   path '/api/v1/auth/citizens/self/products/{product_id}/images/{id}' do
     parameter name: 'X-client-id', in: :header, type: :string, required: true
     parameter name: :id, in: :path, type: :integer, description: 'Unique identifier of an image.'

@@ -1,6 +1,6 @@
 require 'swagger_helper'
 
-RSpec.describe 'api/v1/citizens/products', swagger_doc: 'v1/swagger.json', type: :request do
+RSpec.describe 'api/v1/citizens/products', swagger_doc: swagger_path(version: 1), type: :request do
   path '/api/v1/citizens/{id}/products' do
     parameter name: 'id', in: :path, type: :string, description: 'Unique identifier of the citizen.'
 

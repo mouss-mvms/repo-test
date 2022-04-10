@@ -1,0 +1,27 @@
+{
+    "name": "Mvms api catalog deployment",
+    "description": "This file is used in order to setup Heroku pipelines and review apps settings/deployment",
+    "buildpacks": [
+        { "url": "heroku/ruby" }
+    ],       
+    "environments": {
+      "test": {
+        "env": {  
+          "POSTGRESQL_VERSION": "14",
+          "KNAPSACK_PRO_TEST_FILE_EXCLUDE_PATTERN":"spec/swagger/**{,/*/**}/*_spec.rb"
+        },
+        "formation": {
+            "test": {
+              "quantity": 2,
+              "size": "standard-2x"
+            }
+        },
+        "addons": ["heroku-postgresql:in-dyno"],
+        "scripts": {
+            "test-setup": "export RAILS_ENV=test && rails g mvms:core:copy_migrations && rails db:migrate RAILS_ENV=test",
+            "test": "KNAPSACK_PRO_TEST_FILE_EXCLUDE_PATTERN=\"spec/swagger/**{,/*/**}/*_spec.rb\" && bundle exec rake knapsack_pro:rspec"
+        }    
+      }
+    }
+  }
+  

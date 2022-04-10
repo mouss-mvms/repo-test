@@ -1,6 +1,6 @@
 require 'swagger_helper'
 
-RSpec.describe 'api/v1/shops/deliveries', swagger_doc: 'v1/swagger.json', type: :request do
+RSpec.describe 'api/v1/shops/deliveries', swagger_doc: swagger_path(version: 1), type: :request do
   path '/api/v1/shops/{id}/deliveries' do
     parameter name: :id, in: :path, type: :integer, description: 'Unique identifier of the shop.'
 

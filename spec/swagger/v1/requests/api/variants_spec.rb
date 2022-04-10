@@ -1,6 +1,6 @@
  require 'swagger_helper'
 
- RSpec.describe 'api/v1/variants', swagger_doc: 'v1/swagger.json', type: :request do
+ RSpec.describe 'api/v1/variants', swagger_doc: swagger_path(version: 1), type: :request do
    path '/api/v1/auth/variants/{id}' do
      parameter name: 'id', in: :path, type: :integer, description: 'Unique identifier of the variant of a product.'
      parameter name: 'x-client-id', in: :header, type: :string, required: true

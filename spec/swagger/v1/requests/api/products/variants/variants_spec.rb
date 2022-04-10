@@ -1,6 +1,6 @@
 require "spec_helper"
 
-RSpec.describe "api/v1/products/variants", swagger_doc: "v1/swagger.json", type: :request do
+RSpec.describe "api/v1/products/variants", swagger_doc: swagger_path(version: 1), type: :request do
   path '/api/v1/products/{id}/variants' do
     parameter name: :id, in: :path, type: :integer, description: 'Unique identifier of the product.'
 

@@ -1,6 +1,6 @@
 require 'swagger_helper'
 
-RSpec.describe 'api/v1/categories', swagger_doc: 'v1/swagger.json', type: :request do
+RSpec.describe 'api/v1/categories', swagger_doc: swagger_path(version: 1), type: :request do
 
   path '/api/v1/categories/roots' do
     parameter name: :children, in: :query, type: :boolean, description: 'Should return category children.'

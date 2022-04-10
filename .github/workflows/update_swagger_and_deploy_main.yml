@@ -1,0 +1,77 @@
+# This workflow uses actions that are not certified by GitHub.  They are
+# provided by a third-party and are governed by separate terms of service,
+# privacy policy, and support documentation.
+#
+# This workflow will install a prebuilt Ruby version, install dependencies, and
+# run tests and linters.
+name: "Update swagger.json and deploy to development and staging"
+on: 
+  push:
+    branches:
+      - 'main'
+
+jobs:      
+  update_swagger_and_deploy:     
+    if: "!contains(github.event.head_commit.message, 'skip push')"         
+    runs-on: ubuntu-latest    
+    env:      
+      DATABASE_URL: ${{ secrets.DATABASE_DEV_URL }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_BUCKET: ${{ secrets.AWS_BUCKET }}
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      SECRET_KEY_BASE: ${{ secrets.STAGING_SECRET_KEY_BASE }}
+      FORCE_FEATURES: ${{ secrets.FORCE_FEATURES}}
+      DEV_TYK_API_URL: ${{ secrets.DEV_TYK_API_URL}}
+      STAGING_TYK_API_URL: ${{ secrets.STAGING_TYK_API_URL}}
+      PROD_TYK_API_URL: ${{ secrets.PROD_TYK_API_URL}}      
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3    
+        with:           
+          token: ${{ secrets.WORKFLOW_TOKEN }}      
+      - name: setup git config
+        run: |
+          git config user.name "MVMS-Bot"
+          git config user.email "mvms.dev@gmail.com"  
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+      - name: Update swagger.json
+        run: |   
+          export DATABASE_URL="postgres://ue1rgleac2brfs:pd2aece2fa947c8901d06f32fbf7c0daef02712bfc10faec1a563f3f5fbc3999e@ec2-54-74-206-102.eu-west-1.compute.amazonaws.com:5432/d88qcna1ceab3j"
+          gem install bundler
+          bundle config https://gem.fury.io/mvms/ 1NRAu1-s5LftEnpweDkWewfASsrNMbVmaQ
+          bundler update --bundler
+          bundle install
+          git pull
+
+          export BASE_URL=${{ secrets.DEV_TYK_API_URL}}
+          export RAILS_ENV="development" && bundle exec rake rswag PATTERN="spec/swagger/**/*_spec.rb"          
+          git add swagger/v1/development/swagger.json
+          
+          export BASE_URL=${{ secrets.STAGING_TYK_API_URL}}
+          export RAILS_ENV="staging" && bundle exec rake rswag PATTERN="spec/swagger/**/*_spec.rb"
+          git add swagger/v1/staging/swagger.json
+
+          export BASE_URL=${{ secrets.PROD_TYK_API_URL}}
+          export RAILS_ENV="test" && bundle exec rake rswag PATTERN="spec/swagger/**/*_spec.rb"
+          git add swagger/v1/swagger.json
+
+          git commit -m "[skip push] Github actions - update swagger.json" || true          
+          git push
+      
+      - name: Deploy to development
+        uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: ${{secrets.DEV_HEROKU_APP_NAME}} #Must be unique in Heroku
+          heroku_email: ${{secrets.HEROKU_EMAIL}}          
+      
+      - name: Deploy to staging
+        uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: ${{secrets.STAGING_HEROKU_APP_NAME}} #Must be unique in Heroku
+          heroku_email: ${{secrets.HEROKU_EMAIL}}          
+          
+      
