@@ -45,15 +45,15 @@ jobs:
           bundle install
           git pull
 
-          export BASE_URL=${{ secrets.DEV_TYK_API_URL}}
+          export API_BASE_URL=${{ secrets.DEV_TYK_API_URL}}          
           export RAILS_ENV="development" && bundle exec rake rswag PATTERN="spec/swagger/**/*_spec.rb"          
           git add swagger/v1/development/swagger.json
           
-          export BASE_URL=${{ secrets.STAGING_TYK_API_URL}}
+          export API_BASE_URL=${{ secrets.STAGING_TYK_API_URL}}
           export RAILS_ENV="staging" && bundle exec rake rswag PATTERN="spec/swagger/**/*_spec.rb"
           git add swagger/v1/staging/swagger.json
 
-          export BASE_URL=${{ secrets.PROD_TYK_API_URL}}
+          export API_BASE_URL=${{ secrets.PROD_TYK_API_URL}}
           export RAILS_ENV="test" && bundle exec rake rswag PATTERN="spec/swagger/**/*_spec.rb"
           git add swagger/v1/swagger.json
 
