@@ -5600,6 +5600,29 @@
             ]
           }
         ],
+        "parameters": [
+          {
+            "name": "promoted",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "description": "Selection is promoted"
+            }
+          },
+          {
+            "name": "slug",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "example": "alimentaire",
+              "description": "Search selections with the desired slug"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "successful",
