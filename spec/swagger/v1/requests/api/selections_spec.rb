@@ -253,6 +253,9 @@ RSpec.describe 'api/v1/selections', swagger_doc: swagger_path(version: 1), type:
       description 'Lists all the online selections.'
       security [{ authorization: [] }]
 
+      parameter name: :promoted, in: :query, schema: { type: :string, enum: ["true", "false"], description: 'Selection is promoted' }
+      parameter name: :slug, in: :query, schema: { type: :string, example: "alimentaire", description: 'Search selections with the desired slug' }
+
       response(200, 'successful') do
         schema type: :object,
                properties: {
