@@ -6,7 +6,11 @@ module Api
 
       def index
         params[:limit] ||= Pagy::DEFAULT[:items].to_i
-        pagination, selections = pagy(Selection.online, items: params[:limit])
+        selections = Selection.online
+        selections = selections.where(featured: params[:promoted]) if params[:promoted]
+        selections = selections.where(slug: params[:slug]) if params[:slug].present?
+
+        pagination, selections = pagy(selections, items: params[:limit])
         response = { selections: selections.map { |selection| Dto::V1::Selection::Response.create(selection).to_h }, page: pagination.page, totalPages: pagination.pages, totalCount: pagination.count }
         render json: response, status: :ok
       end

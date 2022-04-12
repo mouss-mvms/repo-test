@@ -4,20 +4,51 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
 
   describe "GET #index" do
     context "All ok" do
-      before(:each) do
+      before(:all) do
+        @count = 16
+        create_list(:online_selection, @count)
+      end
+
+      after(:all) do
+        @count = nil
         Selection.destroy_all
       end
+
       context "No page params" do
         it "should return 200 HTTP status" do
-          count = 16
-          create_list(:online_selection, count)
-
           get :index
           should respond_with(200)
           result = JSON.parse(response.body).deep_symbolize_keys
-          expect(result[:selections].count).to eq(count)
+          expect(result[:selections].count).to eq(@count)
           result[:selections].each do |result_selection|
             expect_selection = Selection.find(result_selection[:id])
+            expect(result_selection).to eq(Dto::V1::Selection::Response.create(expect_selection).to_h)
+          end
+        end
+      end
+
+      context "when params promoted is true" do
+        it "should return HTTP status 200 with only promoted selections" do
+          get :index, params: { promoted: "true" }
+          should respond_with(200)
+          result = JSON.parse(response.body).deep_symbolize_keys
+          result[:selections].each do |result_selection|
+            expect_selection = Selection.find(result_selection[:id])
+            expect(expect_selection.featured).to be_truthy
+            expect(result_selection).to eq(Dto::V1::Selection::Response.create(expect_selection).to_h)
+          end
+        end
+      end
+
+      context "when slug params is present" do
+        it "should return HTTP status 200 with only promoted selections" do
+          selection = create(:online_selection)
+          get :index, params: { slug: selection.slug }
+          should respond_with(200)
+          result = JSON.parse(response.body).deep_symbolize_keys
+          result[:selections].each do |result_selection|
+            expect_selection = Selection.find(result_selection[:id])
+            expect(expect_selection.slug).to eq(selection.slug)
             expect(result_selection).to eq(Dto::V1::Selection::Response.create(expect_selection).to_h)
           end
         end
@@ -150,9 +181,9 @@ RSpec.describe Api::V1::SelectionsController, type: :controller do
         it "should return 201 HTTP status code with selection object with only imageId" do
           create_params = @params.clone
           create_params[:imageId] = @image.id
-          create_params[:imageUrl] =  "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg",
+          create_params[:imageUrl] = "https://www.japanfm.fr/wp-content/uploads/2021/03/Emma-Watson-Tous-les-films-a-venir-2021-Derniere-mise.jpg",
 
-          request.headers['HTTP_X_CLIENT_ID'] = @admin_token
+            request.headers['HTTP_X_CLIENT_ID'] = @admin_token
 
           post :create, params: create_params
 
