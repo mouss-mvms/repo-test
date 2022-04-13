@@ -10,7 +10,7 @@ class ApplicationController < ActionController::API
   UnprocessableEntity = Class.new(ActionController::ActionControllerError)
 
   rescue_from ActiveRecord::RecordNotFound, ApplicationController::NotFound, with: :render_record_not_found
-  rescue_from ActionController::ParameterMissing, ApplicationController::UnpermittedParameter, ActionController::BadRequest, with: :render_bad_request
+  rescue_from ActionController::ParameterMissing, ApplicationController::UnpermittedParameter, ActionController::BadRequest, Pagy::OverflowError, with: :render_bad_request
   rescue_from ApplicationController::Forbidden, with: :render_forbidden
   rescue_from ApplicationController::InternalServerError, with: :render_internal_server_error
   rescue_from ApplicationController::Conflict, with: :render_conflict
